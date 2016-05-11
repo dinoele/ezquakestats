@@ -202,7 +202,8 @@ class Player:
         return 0.0 if (denominator == 0) else (float(self.kills) / denominator)
 
     def efficiency(self): # Efficiency: Frags / ( Frags + Deaths + Suicides ).
-        return (float(self.kills) / float(self.kills + self.deaths + self.suicides + self.teamkills)) * 100
+        denominator = float(self.kills + self.deaths + self.suicides + self.teamkills)
+        return 0.0 if (denominator == 0) else (float(self.kills) / denominator) * 100
 
     def damageDelta(self):
         return (self.gvn - self.tkn)
