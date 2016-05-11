@@ -198,7 +198,8 @@ class Player:
         return (self.origScore - self.deaths - self.suicides- self.origDelta);
 
     def killRatio(self): # Kill Ratio: Frags / ( Deaths + Suicides ).
-        return float(self.kills) / float(self.deaths + self.suicides + self.teamkills)
+        denominator = float(self.deaths + self.suicides + self.teamkills);
+        return 0.0 if (denominator == 0) else (float(self.kills) / denominator)
 
     def efficiency(self): # Efficiency: Frags / ( Frags + Deaths + Suicides ).
         return (float(self.kills) / float(self.kills + self.deaths + self.suicides + self.teamkills)) * 100
