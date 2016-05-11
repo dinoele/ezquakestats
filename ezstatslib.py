@@ -94,7 +94,9 @@ def suicideDetection(s):
                   "suicides", \
                   "died", \
                   "discharges into the water", \
-                  "discharges into the slime"]
+                  "discharges into the slime", \
+                  "can't exist on slime alone", \
+                  "gulped a load of slime"]
     for det in detectStrs:
          if det in s:
             return True,s.split( )[0]
