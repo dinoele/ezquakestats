@@ -72,7 +72,11 @@ while not ezstatslib.isMatchEnd(line):
         plname = line.split(" ")[0];
         pl = Player( "", plname, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
         dropedplayers.append(pl); 
-    
+
+    # Majority votes for mapchange
+    if "Majority votes for mapchange" in line:
+        print "Majority votes for mapchange"
+        exit(1)
 
 while not "Player statistics" in line:
     line = f.readline()
@@ -142,6 +146,23 @@ mapName = line.split(" ")[0]
 
 f.close()
 
+# check that there are more than 1 players
+if len(allplayers) == 0:
+    print "No players at all"
+    exit(1)
+
+if len(allplayers) == 1:
+    print "Only one player:", allplayers[0].name
+    exit(1)
+
+# check that there at least one kill
+killsSum = 0
+for pl in allplayers:
+    killsSum += pl.origScore;
+if killsSum == 0:
+    print "There are no kills"
+    exit(1)
+
 # head-to-head stats init
 headToHead = {}
 for pl1 in allplayers:
@@ -179,12 +200,12 @@ for logline in matchlog:
                 pl.kills += 1
                 pl.tele_kills += 1
                 isFoundWho = True
-            
+
             if pl.name == whom:
                 pl.deaths += 1
                 pl.tele_deaths += 1
                 isFoundWhom = True
-                
+
         if who != "":
             fillH2H(who,whom)
 
