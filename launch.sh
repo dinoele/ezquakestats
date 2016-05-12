@@ -1,7 +1,21 @@
 #!/bin/bash
-if [ $# -eq 0 ]
+let num=1
+if [ $# -eq 1 ]
   then
-    wget <link_to_ezquake_log> -O - | tac | grep begun -m 1 -A 1 -B 10000 | tac | python getstats_deathmatch.py
-  else
-    wget <link_to_ezquake_log> -O - | tac | grep begun -m $1 -A 1 -B 10000 | tac | python getstats_deathmatch.py
+    num=$1
+fi
+
+if [ $num -gt 0 ]
+    then
+        let flag=1
+        while [ $flag -eq 1 ]
+        do
+            echo "num="$num
+            wget <link_to_ezquake_log> -O - | tac | grep begun -m $num -A 1 -B 10000 | tac | python getstats_deathmatch.py
+            if [ $? -eq 0 ]
+                then
+                    let flag=0
+            fi
+            let num=$num+1
+        done
 fi
