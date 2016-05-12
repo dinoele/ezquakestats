@@ -248,14 +248,14 @@ class Player:
                                                                                                                                                              (float(self.tele_kills) / float(totalValue) * 100))
 
     def getWeaponsKills(self, totalValue, weaponsCheck):
-        rlstr   = "" if not weaponsCheck.is_rl   else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_kills,   (float(self.rl_kills)   / float(totalValue) * 100));
-        lgstr   = "" if not weaponsCheck.is_lg   else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_kills,   (float(self.lg_kills)   / float(totalValue) * 100));
-        glstr   = "" if not weaponsCheck.is_gl   else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_kills,   (float(self.gl_kills)   / float(totalValue) * 100));
-        sgstr   = "" if not weaponsCheck.is_sg   else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_kills,   (float(self.sg_kills)   / float(totalValue) * 100));
-        ssgstr  = "" if not weaponsCheck.is_ssg  else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_kills,  (float(self.ssg_kills)  / float(totalValue) * 100));
-        ngstr   = "" if not weaponsCheck.is_ng   else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_kills,   (float(self.ng_kills)   / float(totalValue) * 100));
-        sngstr  = "" if not weaponsCheck.is_sng  else "sng:{0:3d}({1:6.3}%), ".format( self.sng_kills,  (float(self.sng_kills)  / float(totalValue) * 100));
-        telestr = "" if not weaponsCheck.is_tele else "tele:{0:3d}({1:6.3}%), ".format(self.tele_kills, (float(self.tele_kills) / float(totalValue) * 100));
+        rlstr   = "" if not weaponsCheck.is_rl   or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_kills,   (float(self.rl_kills)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg   or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_kills,   (float(self.lg_kills)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl   or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_kills,   (float(self.gl_kills)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg   or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_kills,   (float(self.sg_kills)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg  or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_kills,  (float(self.ssg_kills)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng   or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_kills,   (float(self.ng_kills)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng  or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_kills,  (float(self.sng_kills)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_kills, (float(self.tele_kills) / float(totalValue) * 100));
 
         resstr = "%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, telestr);
         if len(resstr) > 2:
@@ -285,14 +285,14 @@ class Player:
                                                                                                                                                              (float(self.tele_deaths) / float(totalValue) * 100))
 
     def getWeaponsDeaths(self, totalValue, weaponsCheck):
-        rlstr   = "" if not weaponsCheck.is_rl   else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_deaths,   (float(self.rl_deaths)   / float(totalValue) * 100));
-        lgstr   = "" if not weaponsCheck.is_lg   else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_deaths,   (float(self.lg_deaths)   / float(totalValue) * 100));
-        glstr   = "" if not weaponsCheck.is_gl   else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_deaths,   (float(self.gl_deaths)   / float(totalValue) * 100));
-        sgstr   = "" if not weaponsCheck.is_sg   else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_deaths,   (float(self.sg_deaths)   / float(totalValue) * 100));
-        ssgstr  = "" if not weaponsCheck.is_ssg  else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_deaths,  (float(self.ssg_deaths)  / float(totalValue) * 100));
-        ngstr   = "" if not weaponsCheck.is_ng   else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_deaths,   (float(self.ng_deaths)   / float(totalValue) * 100));
-        sngstr  = "" if not weaponsCheck.is_sng  else "sng:{0:3d}({1:6.3}%), ".format( self.sng_deaths,  (float(self.sng_deaths)  / float(totalValue) * 100));
-        telestr = "" if not weaponsCheck.is_tele else "tele:{0:3d}({1:6.3}%), ".format(self.tele_deaths, (float(self.tele_deaths) / float(totalValue) * 100));
+        rlstr   = "" if not weaponsCheck.is_rl   or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_deaths,   (float(self.rl_deaths)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg   or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_deaths,   (float(self.lg_deaths)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl   or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_deaths,   (float(self.gl_deaths)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg   or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_deaths,   (float(self.sg_deaths)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg  or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_deaths,  (float(self.ssg_deaths)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng   or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_deaths,   (float(self.ng_deaths)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng  or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_deaths,  (float(self.sng_deaths)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_deaths, (float(self.tele_deaths) / float(totalValue) * 100));
 
         resstr = "%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, telestr);
         if len(resstr) > 2:
