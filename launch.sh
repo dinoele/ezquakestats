@@ -5,7 +5,7 @@ if [ $# -eq 1 ]
     num=$1
 fi
 
-if [ $num -gt 1 ]
+if [ $num -gt 0 ]
     then
         let flag=1
         while [ $flag -eq 1 ]
