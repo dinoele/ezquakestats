@@ -14,6 +14,16 @@ import ezstatslib
 
 possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe", "tele"]
 
+READ_LINES_LIMIT = 2000
+
+def readLineWithCheck(f, num):
+    line = f.readline()
+    num += 1
+    if (num > READ_LINES_LIMIT):
+        print "ERROR: too many lines, limit =", READ_LINES_LIMIT
+        exit(2)
+    return line,num
+
 def isMatchStart(s):
     if "The match has begun" in s:
         return True

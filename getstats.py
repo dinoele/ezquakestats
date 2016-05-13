@@ -76,7 +76,7 @@ players2 = []
 allplayers = []
 disconnectedplayers = []
 
-line = f.readline()
+line = f.readline()  # TODO use ezstatslib.readLineWithCheck
 #while not "matchdate" in line:
 #    line = f.readline()
 #matchdate = line.split("matchdate: ")[1].split("\n")[0]

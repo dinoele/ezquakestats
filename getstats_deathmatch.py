@@ -17,7 +17,7 @@ def fillH2H(who,whom):
     for elem in headToHead[who]:
         if elem[0] == whom:
             elem[1] += 1
-    
+
 usageString = "" 
 versionString = ""
 parser = OptionParser(usage=usageString, version=versionString)
@@ -48,7 +48,12 @@ disconnectedplayers = []
 dropedplayers = []
 spectators = []
 
-line = f.readline()
+readLinesNum = 0
+
+#line = f.readline()
+#readLinesNum += 1
+line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
+
 #while not "matchdate" in line:
 #    line = f.readline()
 #matchdate = line.split("matchdate: ")[1].split("\n")[0]
@@ -60,12 +65,17 @@ while not ezstatslib.isMatchStart(line):
     if "matchdate" in line:    
         matchdate = line.split("matchdate: ")[1].split("\n")[0]
 
-    line = f.readline()
+#    line = f.readline()
+#    readLinesNum += 1
+    line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 
 line = f.readline()
+readLinesNum += 1
 while not ezstatslib.isMatchEnd(line):
     matchlog.append(line)
-    line = f.readline()
+#    line = f.readline()
+#    readLinesNum += 1
+    line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 
     # rea[rbf] left the game with 23 frags
     if "left the game" in line:
@@ -79,10 +89,15 @@ while not ezstatslib.isMatchEnd(line):
         exit(1)
 
 while not "Player statistics" in line:
-    line = f.readline()
+#    line = f.readline()
+#    readLinesNum += 1
+    line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
+    
+
 line = f.readline()  # (=================================)
 line = f.readline()  # Frags (rank) . efficiency
 line = f.readline()
+readLinesNum += 3
 
 while not "top scorers" in line:
     playerName = line.split(' ')[1].split(':')[0]  # zrkn:
@@ -93,32 +108,41 @@ while not "top scorers" in line:
 
 
     line = f.readline()    # "  45 (2) 51.1%"
+    readLinesNum += 1
+
     stats = line.split(' ')
 
     pl = Player( "", playerName, int(stats[2]), int( stats[3].split('(')[1].split(')')[0]), 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
         
     line = f.readline() # Wp: rl52.1% sg12.2%
+    readLinesNum += 1
+
     pl.parseWeapons(line)
 
     line = f.readline() # RL skill: ad:82.2 dh:25
+    readLinesNum += 1
     pl.rlskill_ad = float(line.split("ad:")[1].split(" ")[0])
     pl.rlskill_dh = float(line.split("dh:")[1].split(" ")[0])
 
     line = f.readline() # Armr&mhs: ga:0 ya:4 ra:1 mh:1
+    readLinesNum += 1
     pl.ga = int(line.split("ga:")[1].split(" ")[0])
     pl.ya = int(line.split("ya:")[1].split(" ")[0])
     pl.ra = int(line.split("ra:")[1].split(" ")[0])
     pl.mh = int(line.split("mh:")[1].split(" ")[0])
 
     line = f.readline() # Damage: Tkn:4279 Gvn:4217 Tm:284
+    readLinesNum += 1
     pl.tkn = int(line.split("Tkn:")[1].split(" ")[0])
     pl.gvn = int(line.split("Gvn:")[1].split(" ")[0])
     pl.tm  = int(line.split("Tm:")[1].split(" ")[0])
 
     line = f.readline() # Streaks: Frags:3 QuadRun:0
+    readLinesNum += 1
     pl.streaks = int(line.split("Streaks: Frags:")[1].split(" ")[0])
 
     line = f.readline() # SpawnFrags: 4
+    readLinesNum += 1
     pl.spawnfrags = int(line.split("SpawnFrags: ")[1].split(" ")[0])
 
     allplayers.append(pl)
@@ -127,7 +151,9 @@ while not "top scorers" in line:
         if "top scorers" in line:
             break;
         else:
-            line = f.readline()
+            #line = f.readline()
+            #readLinesNum += 1
+            line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 
 # check droped players and add them to allplayers collection
 for pl1 in dropedplayers:
