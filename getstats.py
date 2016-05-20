@@ -8,6 +8,9 @@ from operator import itemgetter, attrgetter, methodcaller
 
 from optparse import OptionParser,OptionValueError
 
+import fileinput
+import os.path
+
 import ezstatslib
 from ezstatslib import Team,Player
 
@@ -61,8 +64,10 @@ if len(restargs) != 0:
     parser.error("incorrect parameters count(%d)" % (len(restargs)))
     exit(0)
 
-#f = open("tmp.log", "r")
-f = open(options.inputFile, "r")
+if options.inputFile:
+    f = fileinput.input(options.inputFile)
+else:
+    f = sys.stdin
 
 matchdate = ""
 matchlog = []
