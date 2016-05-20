@@ -14,7 +14,7 @@ import ezstatslib
 
 possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe", "tele"]
 
-READ_LINES_LIMIT = 2000
+READ_LINES_LIMIT = 10000
 
 def readLineWithCheck(f, num):
     line = f.readline()
