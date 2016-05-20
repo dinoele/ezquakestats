@@ -14,6 +14,12 @@ import os.path
 import ezstatslib
 from ezstatslib import Team,Player
 
+COMMAND_LOG_LOCAL_SMALL_DELIM = "__________";
+COMMAND_LOG_LOCAL_BIG_DELIM   = "___________________________________";
+
+COMMAND_LOG_NET_SMALL_DELIM   = "(========)";
+COMMAND_LOG_NET_BIG_DELIM     = "(=================================)";
+
 teammateTelefrags = [] # array of names who was telegragged by teammates
 
 def fillH2H(who,whom):
@@ -55,7 +61,8 @@ usageString = ""
 versionString = ""
 parser = OptionParser(usage=usageString, version=versionString)
 
-parser.add_option("-f",   action="store",       dest="inputFile",      type="str",  metavar="LOG_FILE", help="")
+parser.add_option("-f",        action="store",       dest="inputFile",      type="str",  metavar="LOG_FILE", help="")
+parser.add_option("--net-log", action="store_true",  dest="netLog",         default=False,                   help="")
 
 (options, restargs) = parser.parse_args()
 
@@ -80,6 +87,9 @@ players1 = []
 players2 = []
 allplayers = []
 disconnectedplayers = []
+
+smallDelimiter = COMMAND_LOG_NET_SMALL_DELIM if options.netLog else COMMAND_LOG_LOCAL_SMALL_DELIM;
+bigDelimiter   = COMMAND_LOG_NET_BIG_DELIM   if options.netLog else COMMAND_LOG_LOCAL_BIG_DELIM;
 
 line = f.readline()  # TODO use ezstatslib.readLineWithCheck
 #while not "matchdate" in line:
@@ -108,7 +118,7 @@ teamName1 = line.split('[')[1].split(']')[0]
 
 line = f.readline()
 while not "Team [" in line:
-    while not "__________" in line:
+    while not smallDelimiter in line:
         line = f.readline()
 
         if "Team [" in line:
@@ -170,14 +180,14 @@ teamName2 = line.split('[')[1].split(']')[0]
 
 
 line = f.readline()
-while not "___________________________________" in line:
-    while not "__________" in line:
+while not bigDelimiter in line:
+    while not smallDelimiter in line:
         line = f.readline()
 
-        if "___________________________________" in line:
+        if bigDelimiter in line:
             break
 
-    if "___________________________________" in line:
+    if bigDelimiter in line:
         break
 
     line = f.readline()
