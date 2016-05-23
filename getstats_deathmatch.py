@@ -412,20 +412,14 @@ for i in xrange(len(headerRow)):
 htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
-BG_COLOR_GRAY  = "#bfbfbf"
-BG_COLOR_LIGHT_GRAY = "#e6e6e6"
-BG_COLOR_GREEN = "#00ff00"
-BG_COLOR_RED   = "#ff5c33"
-
-def htmlBold(s):
-    return "%s%s%s" % ("<b>",s,"</b>")
-
 for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
-    tableRow = HTML.TableRow(cells=[htmlBold(pl.name), htmlBold(pl.frags()), htmlBold(pl.kills)])
+    tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
+                                    ezstatslib.htmlBold(pl.frags()),
+                                    ezstatslib.htmlBold(pl.kills)])
         
     for plName in playersNames:
         if pl.name == plName:
-            tableRow.cells.append( HTML.TableCell(pl.suicides, bgcolor=BG_COLOR_GRAY) )
+            tableRow.cells.append( HTML.TableCell(pl.suicides, bgcolor=ezstatslib.BG_COLOR_GRAY) )
         else:            
             plKills = 0
             for val in headToHead[pl.name]:
@@ -437,16 +431,16 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
                 if val[0] == pl.name:
                     plDeaths = val[1]
             
-            cellVal = "%s / %s" % (htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
-                                   htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
+            cellVal = "%s / %s" % (ezstatslib.htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
+                                   ezstatslib.htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
             
             cellColor = ""
             if plKills == plDeaths:
-                cellColor = BG_COLOR_LIGHT_GRAY
+                cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
             elif plKills > plDeaths:
-                cellColor = BG_COLOR_GREEN
+                cellColor = ezstatslib.BG_COLOR_GREEN
             else:
-                cellColor = BG_COLOR_RED
+                cellColor = ezstatslib.BG_COLOR_RED
             
             tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
             

@@ -20,6 +20,14 @@ LOGS_INDEX_FILE_NAME = "logs.html"
 HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<body>\n<pre>"
 HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
+BG_COLOR_GRAY  = "#bfbfbf"
+BG_COLOR_LIGHT_GRAY = "#e6e6e6"
+BG_COLOR_GREEN = "#00ff00"
+BG_COLOR_RED   = "#ff5c33"
+
+def htmlBold(s):
+    return "%s%s%s" % ("<b>",s,"</b>")
+
 def readLineWithCheck(f, num):
     line = f.readline()
     num += 1
