@@ -15,6 +15,10 @@ import ezstatslib
 possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe", "tele"]
 
 READ_LINES_LIMIT = 10000
+LOGS_INDEX_FILE_NAME = "logs.html"
+
+HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<body>\n<pre>"
+HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
 def readLineWithCheck(f, num):
     line = f.readline()

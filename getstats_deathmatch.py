@@ -9,9 +9,13 @@ from operator import itemgetter, attrgetter, methodcaller
 from optparse import OptionParser,OptionValueError
 
 import fileinput
+import os.path
 
 import ezstatslib
 from ezstatslib import Team,Player
+
+# TODO error log
+# TODO skip lines separate log
 
 def fillH2H(who,whom):
     for elem in headToHead[who]:
@@ -400,3 +404,50 @@ if len(spectators) != 0:
     resultString += "Spectators: " + str(spectators) + "\n"
 
 print resultString
+
+# ============================================================================================================
+
+# check and write output file
+leaguePrefix = ""
+if "Premier" in options.leagueName:
+    leaguePrefix = "PL_"
+if "First" in options.leagueName:
+    leaguePrefix = "FD_"
+ 
+formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
+filePath     = leaguePrefix + mapName + "_" + formatedDateTime + ".html"
+filePathFull = "../" + filePath
+if not os.path.exists(filePathFull):
+    outf = open(filePathFull, "w")
+    outf.write(ezstatslib.HTML_HEADER_STR)
+    outf.write(resultString)
+    outf.write(ezstatslib.HTML_FOOTER_STR)
+    outf.close()
+    
+    newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
+    
+    # edit contents file
+    logsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
+    if not os.path.exists(logsIndexPath):
+        logsf = open(logsIndexPath, "w")
+        logsf.write(ezstatslib.HTML_HEADER_STR)
+        logsf.write("<a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "\n")
+        logsf.write(ezstatslib.HTML_FOOTER_STR)
+        logsf.close()
+    else:
+        logsf = open(logsIndexPath, "r")
+        tt = logsf.readlines()        
+        logsf.close()
+        
+        logsf = open(logsIndexPath, "w")
+                
+        tres = ""
+        for t in tt:
+            if newGifTag in t:
+                t = t.replace(newGifTag, "")
+            if "<pre>" in t:
+                t = t.replace("<pre>", "<pre><a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "<br>\n")
+            tres += t
+            
+        logsf.write(tres)
+        logsf.close()
