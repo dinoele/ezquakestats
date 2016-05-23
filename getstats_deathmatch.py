@@ -14,6 +14,8 @@ import os.path
 import ezstatslib
 from ezstatslib import Team,Player
 
+import HTML
+
 # TODO error log
 # TODO skip lines separate log
 
@@ -314,7 +316,8 @@ allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
 # fill final battle progress
 s = ""
 for pl in allplayersByFrags:    
-    s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")progressStr.append(s)
+    s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")    
+progressStr.append(s)
     
 # generate output string
 resultString = ""
@@ -391,6 +394,66 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
     resultString += "{0:10s} {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, resStr)
 resultString += "\n"
 
+# ============================================================================================================
+
+# Players duels table
+resultString += "\n"
+resultString += "Players duels:<br>"
+headerRow=['', 'Frags', 'Kills']
+playersNames = []
+for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+    headerRow.append(pl.name);
+    playersNames.append(pl.name)
+
+colAlign=[]
+for i in xrange(len(headerRow)):
+    colAlign.append("center")
+
+htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+
+BG_COLOR_GRAY  = "#bfbfbf"
+BG_COLOR_LIGHT_GRAY = "#e6e6e6"
+BG_COLOR_GREEN = "#00ff00"
+BG_COLOR_RED   = "#ff5c33"
+
+def htmlBold(s):
+    return "%s%s%s" % ("<b>",s,"</b>")
+
+for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+    tableRow = HTML.TableRow(cells=[htmlBold(pl.name), htmlBold(pl.frags()), htmlBold(pl.kills)])
+        
+    for plName in playersNames:
+        if pl.name == plName:
+            tableRow.cells.append( HTML.TableCell(pl.suicides, bgcolor=BG_COLOR_GRAY) )
+        else:            
+            plKills = 0
+            for val in headToHead[pl.name]:
+                if val[0] == plName:
+                    plKills = val[1]
+            
+            plDeaths = 0
+            for val in headToHead[plName]:
+                if val[0] == pl.name:
+                    plDeaths = val[1]
+            
+            cellVal = "%s / %s" % (htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
+                                   htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
+            
+            cellColor = ""
+            if plKills == plDeaths:
+                cellColor = BG_COLOR_LIGHT_GRAY
+            elif plKills > plDeaths:
+                cellColor = BG_COLOR_GREEN
+            else:
+                cellColor = BG_COLOR_RED
+            
+            tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+            
+    htmlTable.rows.append(tableRow)  
+
+resultString += str(htmlTable)
+    
 
 if len(dropedplayers) != 0:
     dropedStr = ""
