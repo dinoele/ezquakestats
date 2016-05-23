@@ -87,6 +87,11 @@ while not ezstatslib.isMatchEnd(line):
     if "Majority votes for mapchange" in line:
         print "Majority votes for mapchange"
         exit(1)
+        
+    # Match stopped by majority vote
+    if "Match stopped by majority vote" in line:
+        print "Match stopped by majority vote"
+        exit(1)
 
 while not "Player statistics" in line:
 #    line = f.readline()
