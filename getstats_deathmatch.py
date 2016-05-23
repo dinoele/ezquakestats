@@ -298,14 +298,19 @@ for logline in matchlog:
 
         continue
 
+# clear players with 0 kills and 0 deaths
+# TODO change progressSrt structure to be able to clean zero players in battle progress (source data: zero_player_in_stats)
+# TODO clear headToHead of zero player
+for pl in allplayers:
+    if pl.kills == 0 and pl.deaths == 0:
+        allplayers.remove(pl);
 
 allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
 
 # fill final battle progress
 s = ""
 for pl in allplayersByFrags:    
-    s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
-progressStr.append(s)
+    s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")progressStr.append(s)
     
 # generate output string
 resultString = ""
