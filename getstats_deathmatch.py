@@ -36,7 +36,12 @@ if len(restargs) != 0:
     exit(0)
 
 #f = open(options.inputFile, "r")
-f = fileinput.input(options.inputFile)
+#f = fileinput.input(options.inputFile)
+
+if options.inputFile:
+    f = fileinput.input(options.inputFile)
+else:
+    f = sys.stdin
 
 matchdate = ""
 matchlog = []
