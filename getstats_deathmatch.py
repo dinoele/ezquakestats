@@ -474,7 +474,31 @@ if "First" in options.leagueName:
 formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
 filePath     = leaguePrefix + mapName + "_" + formatedDateTime + ".html"
 filePathFull = "../" + filePath
-if not os.path.exists(filePathFull):
+
+if os.path.exists(filePathFull):
+    # temp file 
+    tmpFilePathFull = "../" + filePath + ".tmp"
+    if os.path.exists(tmpFilePathFull):
+       os.path.remove(tmpFilePathFull)
+    
+    tmpf = open(tmpFilePathFull, "w")
+    tmpf.write(ezstatslib.HTML_HEADER_STR)
+    tmpf.write(resultString)
+    tmpf.write(ezstatslib.HTML_FOOTER_STR)
+    tmpf.close()
+    
+    tmpinfo = os.stat(tmpFilePathFull)
+    finfo   = os.stat(filePathFull)
+    
+    isSizesEqual = tmpinfo.st_size == finfo.st_size
+    
+    if isSizesEqual:
+        os.remove(tmpFilePathFull)
+    else:
+        os.remove(filePathFull)
+        os.rename(tmpFilePathFull, filePathFull)
+
+else:  # not os.path.exists(filePathFull):
     outf = open(filePathFull, "w")
     outf.write(ezstatslib.HTML_HEADER_STR)
     outf.write(resultString)
