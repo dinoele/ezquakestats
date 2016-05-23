@@ -23,8 +23,12 @@ versionString = ""
 parser = OptionParser(usage=usageString, version=versionString)
 
 parser.add_option("-f",   action="store",       dest="inputFile",      type="str",  metavar="LOG_FILE", help="")
+parser.add_option("--league", action="store",   dest="leagueName",     type="str",  metavar="LEAGUE",   help="")
 
 (options, restargs) = parser.parse_args()
+
+if not options.leagueName:
+    options.leagueName = "";
 
 # check rest arguments
 if len(restargs) != 0:
@@ -39,10 +43,6 @@ matchlog = []
 isStart = False
 isEnd = False
 
-#teamNames = []
-
-#players1 = []
-#players2 = []
 allplayers = []
 disconnectedplayers = []
 dropedplayers = []
