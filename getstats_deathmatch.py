@@ -198,15 +198,6 @@ if len(allplayers) == 1:
     ezstatslib.logError("Only one player: %s\n" % (allplayers[0].name))
     exit(1)
 
-# check that there at least one kill
-killsSum = 0
-for pl in allplayers:
-    killsSum += pl.origScore;
-if killsSum == 0:
-    #print "There are no kills"
-    ezstatslib.logError("There are no kills\n")
-    exit(1)
-
 # head-to-head stats init
 headToHead = {}
 for pl1 in allplayers:
@@ -309,6 +300,17 @@ for logline in matchlog:
             exit(0)
 
         continue
+
+# check that there at least one kill
+killsSumOrig = 0
+killsSum     = 0
+for pl in allplayers:
+    killsSumOrig += pl.origScore;
+    killsSum     += pl.kills;
+if killsSumOrig == 0 and killsSum == 0:
+    #print "There are no kills"
+    ezstatslib.logError("There are no kills\n")
+    exit(1)
 
 # clear players with 0 kills and 0 deaths
 # TODO change progressSrt structure to be able to clean zero players in battle progress (source data: zero_player_in_stats)
