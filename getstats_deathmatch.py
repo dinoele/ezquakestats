@@ -16,9 +16,6 @@ from ezstatslib import Team,Player
 
 import HTML
 
-# TODO error log
-# TODO skip lines separate log
-
 def fillH2H(who,whom):
     for elem in headToHead[who]:
         if elem[0] == whom:
@@ -92,7 +89,7 @@ while not ezstatslib.isMatchEnd(line):
     if "left the game" in line:
         plname = line.split(" ")[0];
         pl = Player( "", plname, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
-        dropedplayers.append(pl); 
+        dropedplayers.append(pl);  # TODO record number of frags for final output
 
     # Majority votes for mapchange
     if "Majority votes for mapchange" in line:
@@ -410,7 +407,7 @@ resultString += "\n"
 resultString += "Players duels:<br>"
 headerRow=['', 'Frags', 'Kills']
 playersNames = []
-for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+for pl in sorted(allplayers, key=methodcaller("frags"), reverse=True):
     headerRow.append(pl.name);
     playersNames.append(pl.name)
 
@@ -428,7 +425,7 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
         
     for plName in playersNames:
         if pl.name == plName:
-            tableRow.cells.append( HTML.TableCell(pl.suicides, bgcolor=ezstatslib.BG_COLOR_GRAY) )
+            tableRow.cells.append( HTML.TableCell(str(pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY) )
         else:            
             plKills = 0
             for val in headToHead[pl.name]:
