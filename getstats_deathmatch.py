@@ -595,7 +595,7 @@ sorted_filesMap = sorted(filesMap.items(), key=itemgetter(0), reverse=True)
 
 for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], ['FD_[spinev2]_2016-05-05_16_12_52.html', 'FD_[skull]_2016-05-05_13_38_11.html']])
     formattedDate = el[0]
-    if el[0] != "undef":
+    if el[0] != zerodt:
         formattedDate = el[0].strftime("%Y-%m-%d")
     
     maxcnt = max(len(el[1][0]), len(el[1][1]))
