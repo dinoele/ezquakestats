@@ -17,6 +17,9 @@ possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe", "tele"]
 READ_LINES_LIMIT = 10000
 LOGS_INDEX_FILE_NAME = "logs.html"
 
+ERROR_LOG_FILE_NAME = "errors"
+SKIPED_LINES_FILE_NAME = "skiped_lines"
+
 HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<body>\n<pre>"
 HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
@@ -25,6 +28,16 @@ BG_COLOR_LIGHT_GRAY = "#e6e6e6"
 BG_COLOR_GREEN = "#00ff00"
 BG_COLOR_RED   = "#ff5c33"
 
+def logError(line):
+    ferr = open(ERROR_LOG_FILE_NAME, "a")
+    ferr.write(line)
+    ferr.close()
+
+def logSkipped(line):
+    ferr = open(SKIPED_LINES_FILE_NAME, "a")
+    ferr.write(line)
+    ferr.close()
+
 def htmlBold(s):
     return "%s%s%s" % ("<b>",s,"</b>")
 
@@ -32,7 +45,8 @@ def readLineWithCheck(f, num):
     line = f.readline()
     num += 1
     if (num > READ_LINES_LIMIT):
-        print "ERROR: too many lines, limit =", READ_LINES_LIMIT
+        #print "ERROR: too many lines, limit =", READ_LINES_LIMIT
+        logError("ERROR: too many lines, limit = %d" % (READ_LINES_LIMIT))
         exit(2)
     return line,num
 
@@ -101,7 +115,8 @@ def commonDetection(s):
                 isKnown = True
 
         if not isKnown:
-            print "!!!:", s ,
+            #print "!!!:", s ,
+            logSkipped(s)
         
         return False,"","",""
 
@@ -535,3 +550,4 @@ def getWeaponsCheck(allplayers):
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	DISCHARGE			" accepts "  "' discharge"
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	DISCHARGE			" drains "   "'s batteries"
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	DISCHARGE			" drains "   "' batteries"
+

@@ -96,12 +96,14 @@ while not ezstatslib.isMatchEnd(line):
 
     # Majority votes for mapchange
     if "Majority votes for mapchange" in line:
-        print "Majority votes for mapchange"
+        #print "Majority votes for mapchange"
+        ezstatslib.logError("Majority votes for mapchange\n")
         exit(1)
         
     # Match stopped by majority vote
     if "Match stopped by majority vote" in line:
-        print "Match stopped by majority vote"
+        #print "Match stopped by majority vote"
+        ezstatslib.logError("Match stopped by majority vote\n")
         exit(1)
 
 while not "Player statistics" in line:
@@ -190,11 +192,13 @@ f.close()
 
 # check that there are more than 1 players
 if len(allplayers) == 0:
-    print "No players at all"
+    #print "No players at all"
+    ezstatslib.logError("No players at all\n")
     exit(1)
 
 if len(allplayers) == 1:
-    print "Only one player:", allplayers[0].name
+    #print "Only one player:", allplayers[0].name
+    ezstatslib.logError("Only one player: %s\n" % (allplayers[0].name))
     exit(1)
 
 # check that there at least one kill
@@ -202,7 +206,8 @@ killsSum = 0
 for pl in allplayers:
     killsSum += pl.origScore;
 if killsSum == 0:
-    print "There are no kills"
+    #print "There are no kills"
+    ezstatslib.logError("There are no kills\n")
     exit(1)
 
 # head-to-head stats init
@@ -252,7 +257,8 @@ for logline in matchlog:
             fillH2H(who,whom)
 
         if not isFoundWho or not isFoundWhom:
-            print "ERROR: count telefrag", who, "-", whom, ":", logline
+            #print "ERROR: count telefrag", who, "-", whom, ":", logline
+            ezstatslib.logError("ERROR: count telefrag %s-%s: %s\n" % (who, whom, logline))
             exit(0)
 
         continue
@@ -266,7 +272,8 @@ for logline in matchlog:
                 isFound = True
                 break;
         if not isFound:
-            print "ERROR: count suicides"
+            #print "ERROR: count suicides"
+            ezstatslib.logError("ERROR: count suicides\n")
             exit(0)
 
         continue
@@ -280,7 +287,8 @@ for logline in matchlog:
 
     if cres:
         if not weap in ezstatslib.possibleWeapons:
-            print "ERROR: unknown weapon:", weap
+            #print "ERROR: unknown weapon:", weap
+            ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
             exit(0)
 
         isFoundWho = False
@@ -299,7 +307,8 @@ for logline in matchlog:
         fillH2H(who,whom)
 
         if not isFoundWho or not isFoundWhom:
-            print "ERROR: count common", who, "-", whom, ":", logline
+            #print "ERROR: count common", who, "-", whom, ":", logline
+            ezstatslib.logError("ERROR: count common %s-%s: %s\n" % (who, whom, logline))
             exit(0)
 
         continue
@@ -321,7 +330,7 @@ progressStr.append(s)
     
 # generate output string
 resultString = ""
-print
+
 resultString += "\n================== " + options.leagueName + " ==================\n"
 resultString += "matchdate: " + matchdate + "\n"
 resultString += "map: " + mapName + "\n"
