@@ -538,6 +538,18 @@ else:  # not os.path.exists(filePathFull):
 def htmlLink(fname, gifPath = ""):
     return "<a href=\"%s\">%s</a>%s<br>" % (fname, fname, gifPath)
 
+def checkNew(fileNew, workFilePath, pathForCheck):
+    isNew = (fileNew and workFilePath == pathForCheck)
+    if not isNew:
+        # check modification time
+        modTime = os.stat("../" + pathForCheck).st_mtime
+        modTimeDt = datetime.fromtimestamp(int(modTime))
+        timeDelta = datetime.today() - modTimeDt
+        if timeDelta.total_seconds() < 60*60*4: # 4 hours
+            isNew = True
+            
+    return isNew
+
 # update contents file
 logsIndexPath    = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
 tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
@@ -603,7 +615,7 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], ['FD
     
     maxcnt = max(len(el[1][0]), len(el[1][1]))
     attrs = {} # attribs
-    attrs['rowspan'] = maxcnt
+    attrs['rowspan'] = maxcnt        
     
     tableRow = HTML.TableRow(cells=[ HTML.TableCell(formattedDate, attribs=attrs) ])
     
@@ -613,12 +625,14 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], ['FD
             tableRow = HTML.TableRow(cells=[])
         
         if i < len(el[1][0]): # PLs
-            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][0][i]) ) )
+            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][0][i],
+                                                   newGifTag if checkNew(isFileNew, filePath, el[1][0][i]) else "") ) )
         else: # no PLs
             tableRow.cells.append( HTML.TableCell("") )
             
         if i < len(el[1][1]): # FDs
-            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][1][i]) ) )
+            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][1][i],
+                                                   newGifTag if checkNew(isFileNew, filePath, el[1][1][i]) else "") ) )
         else: # no FDs
             tableRow.cells.append( HTML.TableCell("") )
             
