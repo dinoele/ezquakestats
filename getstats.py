@@ -14,6 +14,13 @@ import os.path
 import ezstatslib
 from ezstatslib import Team,Player
 
+# TODO use ezstatslib.readLineWithCheck
+# TODO error log
+# TODO skip lines separate log
+# TODO remove all prints
+# TODO write htmls
+# TODO make index file
+
 COMMAND_LOG_LOCAL_SMALL_DELIM = "__________";
 COMMAND_LOG_LOCAL_BIG_DELIM   = "___________________________________";
 
@@ -91,7 +98,7 @@ disconnectedplayers = []
 smallDelimiter = COMMAND_LOG_NET_SMALL_DELIM if options.netLog else COMMAND_LOG_LOCAL_SMALL_DELIM;
 bigDelimiter   = COMMAND_LOG_NET_BIG_DELIM   if options.netLog else COMMAND_LOG_LOCAL_BIG_DELIM;
 
-line = f.readline()  # TODO use ezstatslib.readLineWithCheck
+line = f.readline() 
 #while not "matchdate" in line:
 #    line = f.readline()
 #matchdate = line.split("matchdate: ")[1].split("\n")[0]
