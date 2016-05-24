@@ -10,7 +10,6 @@ if [ $num -gt 0 ]
         let flag=1
         while [ $flag -eq 1 ]
         do
-            echo "num="$num
             wget <link_to_ezquake_log> -O - | tac | grep begun -m $num -A 1 -B 10000 | tac | python getstats_deathmatch.py
             if [[ $? -eq 0 || $? -eq 2 || $num -gt 100 ]]
                 then
