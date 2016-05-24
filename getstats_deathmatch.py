@@ -542,17 +542,85 @@ tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
 files = os.listdir("../")
 
 newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
-headerRow = ["Title"]
-filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3")
+headerRow = ["Date", "Premier League", "First Division"]
+filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
+filesMap = {}  # key: dt, value: [[PL1,PL2,..],[FD1, FD2,..]]
+
+zerodt = datetime(1970,1,1)
+filesMap[zerodt] = [[],[]]  # files with problems
 for fname in files:
-    if "html" in fname and ("PL" in fname or "FD" in fname):              
-        if isFileNew and filePath == fname:
-            tableRow = HTML.TableRow(cells=[ HTML.TableCell("<a href=\"" + fname + "\">" + fname + "</a>" + newGifTag + "<br>\n") ])
-        else:
-            tableRow = HTML.TableRow(cells=[ HTML.TableCell("<a href=\"" + fname + "\">" + fname + "</a>" + "<br>\n") ])
-        filesTable.rows.append(tableRow)
+    if "html" in fname and ("PL" in fname or "FD" in fname):
+                
+        #"PL_[dad2]_2016-05-23_18_45_16.html"
+        #nameSplit = fname.split("_")  # ['PL', '[dad2]', '2016-05-23', '18', '45', '16.html']
+        #dateSplit = nameSplit[2].split("-")        
+        
+        dateRes = re.search("(?<=]_).*(?=.html)", fname)
+                
+        if dateRes:
+            try:
+                dt = datetime.strptime(dateRes.group(0), "%Y-%m-%d_%H_%M_%S")
+                dateStruct = datetime.strptime(dateRes.group(0).split("_")[0], "%Y-%m-%d")
+            
+                if not dateStruct in filesMap.keys(): # key exist
+                    filesMap[dateStruct] = [[],[]]
+                    
+                if "PL" in fname:
+                    filesMap[dateStruct][0].append(fname)
+                else: # FD
+                    filesMap[dateStruct][1].append(fname)
+            except Exception, ex:
+                if "PL" in fname:
+                    filesMap[zerodt][0].append(fname)
+                else: # FD
+                    filesMap[zerodt][1].append(fname)
+                break;
+                
+        else: # date parse failed
+            if "PL" in fname:
+                filesMap[zerodt][0].append(fname)
+            else: # FD
+                filesMap[zerodt][1].append(fname)
+        
+        
+        # if isFileNew and filePath == fname:
+        #     tableRow = HTML.TableRow(cells=[ HTML.TableCell("<a href=\"" + fname + "\">" + fname + "</a>" + newGifTag + "<br>\n") ])
+        # else:
+        #     tableRow = HTML.TableRow(cells=[ HTML.TableCell("<a href=\"" + fname + "\">" + fname + "</a>" + "<br>\n") ])
+        # filesTable.rows.append(tableRow)
         # modTime = os.stat("../" + fname).st_mtime # TODO newGifTag <-> modTime
+
+sorted_filesMap = sorted(filesMap.items(), key=itemgetter(0), reverse=True)
+
+for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], ['FD_[spinev2]_2016-05-05_16_12_52.html', 'FD_[skull]_2016-05-05_13_38_11.html']])
+    formattedDate = el[0]
+    if el[0] != "undef":
+        formattedDate = el[0].strftime("%Y-%m-%d")
+    
+    maxcnt = max(len(el[1][0]), len(el[1][1]))
+    attrs = {} # attribs
+    attrs['rowspan'] = maxcnt
+    
+    tableRow = HTML.TableRow(cells=[ HTML.TableCell(formattedDate, attribs=attrs) ])
+    
+    i = 0
+    for i in xrange(maxcnt):
+        if i != 0:
+            tableRow = HTML.TableRow(cells=[])
+        
+        if i < len(el[1][0]): # PLs
+            tableRow.cells.append( HTML.TableCell("<a href=\"" + el[1][0][i] + "\">" + el[1][0][i] + "</a>" + "<br>") )
+        else: # no PLs
+            tableRow.cells.append( HTML.TableCell("") )
+            
+        if i < len(el[1][1]): # FDs
+            tableRow.cells.append( HTML.TableCell("<a href=\"" + el[1][1][i] + "\">" + el[1][1][i] + "</a>" + "<br>") )
+        else: # no FDs
+            tableRow.cells.append( HTML.TableCell("") )
+            
+        filesTable.rows.append(tableRow)
+        i += 1
 
 logsf = open(tmpLogsIndexPath, "w")
 logsf.write(ezstatslib.HTML_HEADER_STR)
