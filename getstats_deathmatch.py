@@ -535,6 +535,9 @@ else:  # not os.path.exists(filePathFull):
     #     logsf.write(tres)
     #     logsf.close()
     
+def htmlLink(fname, gifPath = ""):
+    return "<a href=\"%s\">%s</a>%s<br>" % (fname, fname, gifPath)
+
 # update contents file
 logsIndexPath    = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
 tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
@@ -610,12 +613,12 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], ['FD
             tableRow = HTML.TableRow(cells=[])
         
         if i < len(el[1][0]): # PLs
-            tableRow.cells.append( HTML.TableCell("<a href=\"" + el[1][0][i] + "\">" + el[1][0][i] + "</a>" + "<br>") )
+            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][0][i]) ) )
         else: # no PLs
             tableRow.cells.append( HTML.TableCell("") )
             
         if i < len(el[1][1]): # FDs
-            tableRow.cells.append( HTML.TableCell("<a href=\"" + el[1][1][i] + "\">" + el[1][1][i] + "</a>" + "<br>") )
+            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][1][i]) ) )
         else: # no FDs
             tableRow.cells.append( HTML.TableCell("") )
             
