@@ -475,6 +475,7 @@ formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime
 filePath     = leaguePrefix + mapName + "_" + formatedDateTime + ".html"
 filePathFull = "../" + filePath
 
+isFileNew = False
 if os.path.exists(filePathFull):
     # temp file 
     tmpFilePathFull = "../" + filePath + ".tmp"
@@ -504,31 +505,63 @@ else:  # not os.path.exists(filePathFull):
     outf.write(resultString)
     outf.write(ezstatslib.HTML_FOOTER_STR)
     outf.close()
+    isFileNew = True
     
-    newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
+    #newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
+    #
+    # # edit contents file
+    # logsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
+    # if not os.path.exists(logsIndexPath):
+    #     logsf = open(logsIndexPath, "w")
+    #     logsf.write(ezstatslib.HTML_HEADER_STR)
+    #     logsf.write("<a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "\n")
+    #     logsf.write(ezstatslib.HTML_FOOTER_STR)
+    #     logsf.close()
+    # else:
+    #     logsf = open(logsIndexPath, "r")
+    #     tt = logsf.readlines()        
+    #     logsf.close()
+    #     
+    #     logsf = open(logsIndexPath, "w")
+    #             
+    #     tres = ""
+    #     for t in tt:
+    #         if newGifTag in t:
+    #             t = t.replace(newGifTag, "")
+    #         if "<pre>" in t:
+    #             t = t.replace("<pre>", "<pre><a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "<br>\n")
+    #         tres += t
+    #         
+    #     logsf.write(tres)
+    #     logsf.close()
     
-    # edit contents file
-    logsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
-    if not os.path.exists(logsIndexPath):
-        logsf = open(logsIndexPath, "w")
-        logsf.write(ezstatslib.HTML_HEADER_STR)
-        logsf.write("<a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "\n")
-        logsf.write(ezstatslib.HTML_FOOTER_STR)
-        logsf.close()
-    else:
-        logsf = open(logsIndexPath, "r")
-        tt = logsf.readlines()        
-        logsf.close()
-        
-        logsf = open(logsIndexPath, "w")
-                
-        tres = ""
-        for t in tt:
-            if newGifTag in t:
-                t = t.replace(newGifTag, "")
-            if "<pre>" in t:
-                t = t.replace("<pre>", "<pre><a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "<br>\n")
-            tres += t
-            
-        logsf.write(tres)
-        logsf.close()
+# update contents file
+logsIndexPath    = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
+tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
+
+files = os.listdir("../")
+
+newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
+headerRow = ["Title"]
+filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3")
+
+for fname in files:
+    if "html" in fname and ("PL" in fname or "FD" in fname):              
+        if isFileNew and filePath == fname:
+            tableRow = HTML.TableRow(cells=[ HTML.TableCell("<a href=\"" + fname + "\">" + fname + "</a>" + newGifTag + "<br>\n") ])
+        else:
+            tableRow = HTML.TableRow(cells=[ HTML.TableCell("<a href=\"" + fname + "\">" + fname + "</a>" + "<br>\n") ])
+        filesTable.rows.append(tableRow)
+        # modTime = os.stat("../" + fname).st_mtime # TODO newGifTag <-> modTime
+
+logsf = open(tmpLogsIndexPath, "w")
+logsf.write(ezstatslib.HTML_HEADER_STR)
+logsf.write(str(filesTable))
+logsf.write(ezstatslib.HTML_FOOTER_STR)
+logsf.close()
+
+if os.path.exists(logsIndexPath):
+    os.remove(logsIndexPath)
+os.rename(tmpLogsIndexPath, logsIndexPath)
+
+    
