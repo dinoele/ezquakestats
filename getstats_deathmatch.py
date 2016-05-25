@@ -28,6 +28,8 @@ parser = OptionParser(usage=usageString, version=versionString)
 parser.add_option("-f",   action="store",       dest="inputFile",      type="str",  metavar="LOG_FILE", help="")
 parser.add_option("--league", action="store",   dest="leagueName",     type="str",  metavar="LEAGUE",   help="")
 
+# TODO add -q option: without output at all
+
 (options, restargs) = parser.parse_args()
 
 if not options.leagueName:
@@ -409,7 +411,7 @@ resultString += "\n"
 resultString += "Players duels:<br>"
 headerRow=['', 'Frags', 'Kills']
 playersNames = []
-for pl in sorted(allplayers, key=methodcaller("frags"), reverse=True):
+for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
     headerRow.append(pl.name);
     playersNames.append(pl.name)
 
@@ -569,6 +571,7 @@ headerRow = ["Date", "Premier League", "First Division"]
 filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
 filesMap = {}  # key: dt, value: [[PL1,PL2,..],[FD1, FD2,..]]
+# TODO make dicts instead of lists in order to sort elements before table creation
 
 zerodt = datetime(1970,1,1)
 filesMap[zerodt] = [[],[]]  # files with problems
