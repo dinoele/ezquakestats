@@ -409,7 +409,7 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
     resultString += "{0:10s} :: {1:100s}\n".format(pl.name, strkStr)
     
     if maxStrk != pl.streaks:
-        ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)" % (pl.name, maxStrk, pl.streaks))
+        ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
 resultString += "\n"
 
 # H2H stats
