@@ -16,7 +16,8 @@ from ezstatslib import Team,Player
 
 import HTML
 
-def fillH2H(who,whom):
+def fillH2H(who,whom):    
+    # TODO add checks for headToHead
     for elem in headToHead[who]:
         if elem[0] == whom:
             elem[1] += 1
@@ -234,12 +235,12 @@ for logline in matchlog:
         isFoundWhom = False
         for pl in allplayers:
             if who != "" and pl.name == who:
-                pl.kills += 1
+                pl.incKill()
                 pl.tele_kills += 1
                 isFoundWho = True
 
             if pl.name == whom:
-                pl.deaths += 1
+                pl.incDeath()
                 pl.tele_deaths += 1
                 isFoundWhom = True
 
@@ -257,8 +258,8 @@ for logline in matchlog:
     if checkres:
         isFound = False
         for pl in allplayers:
-            if pl.name == checkname:
-                pl.suicides += 1
+            if pl.name == checkname:                
+                pl.incSuicides()
                 isFound = True
                 break;
         if not isFound:
@@ -285,12 +286,12 @@ for logline in matchlog:
         isFoundWhom = False
         for pl in allplayers:
             if pl.name == who:
-                pl.kills += 1
+                pl.incKill();
                 exec("pl.%s_kills += 1" % (weap))
                 isFoundWho = True
             
             if pl.name == whom:
-                pl.deaths += 1
+                pl.incDeath();
                 exec("pl.%s_deaths += 1" % (weap))
                 isFoundWhom = True
 
@@ -302,6 +303,8 @@ for logline in matchlog:
             exit(0)
 
         continue
+
+# all log lines are processed
 
 # check that there at least one kill
 killsSumOrig = 0
@@ -328,6 +331,10 @@ s = ""
 for pl in allplayersByFrags:    
     s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")    
 progressStr.append(s)
+    
+# fill final element in calculatedStreaks
+for pl in allplayers:
+    pl.fillStreaks()
     
 # generate output string
 resultString = ""
@@ -393,6 +400,17 @@ resultString += "battle progress:\n"
 for p in progressStr:
     resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
     i += 1
+
+# calculated streaks
+resultString += "\n"
+resultString += "Players streaks:\n"
+for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+    strkStr,maxStrk = pl.getCalculatedStreaksStr()
+    resultString += "{0:10s} :: {1:100s}\n".format(pl.name, strkStr)
+    
+    if maxStrk != pl.streaks:
+        ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)" % (pl.name, maxStrk, pl.streaks))
+resultString += "\n"
 
 # H2H stats
 resultString += "\n"

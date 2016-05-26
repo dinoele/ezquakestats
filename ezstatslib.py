@@ -229,7 +229,39 @@ class Player:
         self.axe_deaths = 0
         self.tele_deaths = 0
         #self.TODO_deaths = 0
+        
+        self.calculatedStreaks = []
+        self.currentStreak = 0
 
+    def fillStreaks(self):
+        self.calculatedStreaks.append(self.currentStreak)
+        self.currentStreak = 0
+
+    def incKill(self):
+        self.kills += 1
+        self.currentStreak += 1
+    
+    def incDeath(self):
+        self.deaths += 1
+        self.fillStreaks()
+        
+    def incSuicides(self):
+        self.suicides += 1
+        self.fillStreaks()
+        
+    def getCalculatedStreaksStr(self, minCnt = 2):
+        maxStreak = 0
+        s = ""
+        for strk in self.calculatedStreaks:
+            if strk >= 2:                
+                s += "{0:3d} ".format(strk)
+            # resultString += "{0:10s} :: {1:100s}\n".format(pl.name, strkStr)
+            
+            if strk > maxStreak:
+                maxStreak = strk
+            
+        return s, maxStreak            
+    
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
 
