@@ -403,13 +403,55 @@ for p in progressStr:
 
 # calculated streaks
 resultString += "\n"
-resultString += "Players streaks:\n"
-for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
-    strkStr,maxStrk = pl.getCalculatedStreaksStr()
-    resultString += "{0:10s} :: {1:100s}\n".format(pl.name, strkStr)
-    
+resultString += "Players streaks (%d+):\n" % (ezstatslib.STREAK_MIN_VALUE)
+
+# text format:
+# for pl in sorted(allplayers, key=methodcaller("frags"), reverse=True):
+#     strkStr,maxStrk = pl.getCalculatedStreaksStr()
+#     resultString += "{0:10s} :: {1:100s}\n".format(pl.name, strkStr)
+#     
+#     if maxStrk != pl.streaks:
+#         ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+# resultString += "\n"
+
+streaksList = []  # [[name1,[s1,s2,..]]]
+maxCnt = 0
+for pl in sorted(allplayers, key=methodcaller("frags"), reverse=True):
+    strkRes,maxStrk = pl.getCalculatedStreaks()
+    #streaksList[pl.name] = strkRes
+    streaksList.append( [pl.name, strkRes] )
+    maxCnt = max(maxCnt,len(strkRes))
     if maxStrk != pl.streaks:
         ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+        
+# streaksTableHeaderRow = ["Players"]
+# for i in xrange(maxCnt):
+#     streaksTableHeaderRow.append("")
+
+cellWidth = "20px"
+streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+for strk in streaksList:
+    tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(strk[0]), align="center", width=cellWidth) ])
+    
+    maxVal = 0
+    if len(strk[1]) > 0:
+        maxVal = sorted(strk[1], reverse=True)[0]
+        
+    i = 0
+    for val in strk[1]:       
+        if val == maxVal:
+            tableRow.cells.append( HTML.TableCell(ezstatslib.htmlBold(str(val)), align="center", width=cellWidth, bgcolor=ezstatslib.BG_COLOR_GREEN) )
+        else:
+            tableRow.cells.append( HTML.TableCell(str(val), align="center", width=cellWidth) )            
+        i += 1
+    
+    for j in xrange(i,maxCnt):
+        tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
+        
+    streaksHtmlTable.rows.append(tableRow)  
+
+resultString += str(streaksHtmlTable)    
 resultString += "\n"
 
 # H2H stats

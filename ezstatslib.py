@@ -28,6 +28,8 @@ BG_COLOR_LIGHT_GRAY = "#e6e6e6"
 BG_COLOR_GREEN = "#00ff00"
 BG_COLOR_RED   = "#ff5c33"
 
+STREAK_MIN_VALUE = 3
+
 def logError(line):
     ferr = open(ERROR_LOG_FILE_NAME, "a")
     ferr.write(line)
@@ -247,20 +249,7 @@ class Player:
         
     def incSuicides(self):
         self.suicides += 1
-        self.fillStreaks()
-        
-    def getCalculatedStreaksStr(self, minCnt = 2):
-        maxStreak = 0
-        s = ""
-        for strk in self.calculatedStreaks:
-            if strk >= 2:                
-                s += "{0:3d} ".format(strk)
-            # resultString += "{0:10s} :: {1:100s}\n".format(pl.name, strkStr)
-            
-            if strk > maxStreak:
-                maxStreak = strk
-            
-        return s, maxStreak            
+        self.fillStreaks()            
     
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
@@ -281,6 +270,23 @@ class Player:
     
     def calcDelta(self):
         return (self.frags() - self.deaths)
+    
+    def getCalculatedStreaks(self, minCnt = STREAK_MIN_VALUE):
+        maxStreak = 0
+        res = []
+        for strk in self.calculatedStreaks:
+            if strk >= minCnt:                                
+                res.append(strk)            
+                maxStreak = max(maxStreak, strk)
+            
+        return res, maxStreak
+    
+    def getCalculatedStreaksStr(self, minCnt = STREAK_MIN_VALUE):
+        s = ""
+        res,cnt = self.getCalculatedStreaks(minCnt)
+        for val in res:
+            s += "{0:3d} ".format(val)            
+        return res, cnt
 
     def toString(self):
         return "[%s] %s: %d (%d) %d : kills:%d, deaths:%d, suicides:%d, teamkills:%d, delta:%d" % (self.teamname, self.name, self.origScore, self.origDelta, self.origTeamkills, self.kills, self.deaths, self.suicides, self.teamkills, self.calcDelta())
