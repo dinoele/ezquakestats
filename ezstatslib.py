@@ -30,6 +30,9 @@ BG_COLOR_RED   = "#ff5c33"
 
 STREAK_MIN_VALUE = 3
 
+def enum(**enums):
+    return type('Enum', (), enums)
+
 def logError(line):
     ferr = open(ERROR_LOG_FILE_NAME, "a")
     ferr.write(line)
