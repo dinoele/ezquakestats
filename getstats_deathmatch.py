@@ -444,26 +444,33 @@ def createStreaksHtmlTable(players, streakType):
     
     return streaksHtmlTable
 
-# calculated streaks
-resultString += "\n"
-resultString += "Players streaks (%d+):\n" % (ezstatslib.KILL_STREAK_MIN_VALUE)
-
-# text format:
-# for pl in sorted(allplayers, key=methodcaller("frags"), reverse=True):
-#     strkStr,maxStrk = pl.getCalculatedStreaksStr()
-#     resultString += "{0:10s} :: {1:100s}\n".format(pl.name, strkStr)
-#     
-#     if maxStrk != pl.streaks:
-#         ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+# # calculated streaks
+# resultString += "\n"
+# resultString += "Players streaks (%d+):\n" % (ezstatslib.KILL_STREAK_MIN_VALUE)
+# resultString += str( createStreaksHtmlTable(allplayers, StreakType.KILL_STREAK) )
+# resultString += "\n"
+# 
+# # death streaks
+# resultString += "\n"
+# resultString += "Players death streaks (%d+):\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)
+# resultString += str( createStreaksHtmlTable(allplayers, StreakType.DEATH_STREAK) )
 # resultString += "\n"
 
-resultString += str( createStreaksHtmlTable(allplayers, StreakType.KILL_STREAK) )
-resultString += "\n"
+totalStreaksHtmlTable = \
+    HTML.Table(header_row=["Kill streaks (%d+)\n" % (ezstatslib.KILL_STREAK_MIN_VALUE), "Death streaks (%d+)\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)],
+               rows=[ \
+                   HTML.TableRow(cells=[ \
+                                     HTML.TableCell( str( createStreaksHtmlTable(allplayers, StreakType.KILL_STREAK)) ),
+                                     HTML.TableCell( str( createStreaksHtmlTable(allplayers, StreakType.DEATH_STREAK)) ) \
+                                       ] \
+                                ) \
+                    ],               
+               border="1", 
+               style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
-# death streaks
 resultString += "\n"
-resultString += "Players death streaks (%d+):\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)
-resultString += str( createStreaksHtmlTable(allplayers, StreakType.DEATH_STREAK) )
+resultString += "Players streaks:\n"
+resultString += str(totalStreaksHtmlTable)
 resultString += "\n"
 
 # ============================================================================================================
