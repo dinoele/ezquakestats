@@ -13,6 +13,7 @@ import os.path
 
 import ezstatslib
 from ezstatslib import Team,Player
+from ezstatslib import enum
 
 import HTML
 
@@ -401,9 +402,51 @@ for p in progressStr:
     resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
     i += 1
 
+# ============================================================================================================
+
+StreakType = enum(KILL_STREAK=1, DEATH_STREAK=2)
+
+def createStreaksHtmlTable(players, streakType):
+    streaksList = []  # [[name1,[s1,s2,..]]]
+    maxCnt = 0
+    for pl in sorted(players, key=methodcaller("frags"), reverse=True):
+        strkRes,maxStrk = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()
+        streaksList.append( [pl.name, strkRes] )
+        maxCnt = max(maxCnt,len(strkRes))
+        if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
+            ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+            
+    cellWidth = "20px"
+    streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
+                           style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    for strk in streaksList:
+        tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(strk[0]), align="center", width=cellWidth) ])
+        
+        maxVal = 0
+        if len(strk[1]) > 0:
+            maxVal = sorted(strk[1], reverse=True)[0]
+            
+        i = 0
+        for val in strk[1]:       
+            if val == maxVal:
+                tableRow.cells.append( HTML.TableCell(ezstatslib.htmlBold(str(val)),
+                                                      align="center",
+                                                      width=cellWidth,
+                                                      bgcolor=ezstatslib.BG_COLOR_GREEN if streakType == StreakType.KILL_STREAK else ezstatslib.BG_COLOR_RED) )
+            else:
+                tableRow.cells.append( HTML.TableCell(str(val), align="center", width=cellWidth) )            
+            i += 1
+        
+        for j in xrange(i,maxCnt):
+            tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
+            
+        streaksHtmlTable.rows.append(tableRow)
+    
+    return streaksHtmlTable
+
 # calculated streaks
 resultString += "\n"
-resultString += "Players streaks (%d+):\n" % (ezstatslib.STREAK_MIN_VALUE)
+resultString += "Players streaks (%d+):\n" % (ezstatslib.KILL_STREAK_MIN_VALUE)
 
 # text format:
 # for pl in sorted(allplayers, key=methodcaller("frags"), reverse=True):
@@ -414,45 +457,16 @@ resultString += "Players streaks (%d+):\n" % (ezstatslib.STREAK_MIN_VALUE)
 #         ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
 # resultString += "\n"
 
-streaksList = []  # [[name1,[s1,s2,..]]]
-maxCnt = 0
-for pl in sorted(allplayers, key=methodcaller("frags"), reverse=True):
-    strkRes,maxStrk = pl.getCalculatedStreaks()
-    #streaksList[pl.name] = strkRes
-    streaksList.append( [pl.name, strkRes] )
-    maxCnt = max(maxCnt,len(strkRes))
-    if maxStrk != pl.streaks:
-        ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
-        
-# streaksTableHeaderRow = ["Players"]
-# for i in xrange(maxCnt):
-#     streaksTableHeaderRow.append("")
-
-cellWidth = "20px"
-streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
-                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
-for strk in streaksList:
-    tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(strk[0]), align="center", width=cellWidth) ])
-    
-    maxVal = 0
-    if len(strk[1]) > 0:
-        maxVal = sorted(strk[1], reverse=True)[0]
-        
-    i = 0
-    for val in strk[1]:       
-        if val == maxVal:
-            tableRow.cells.append( HTML.TableCell(ezstatslib.htmlBold(str(val)), align="center", width=cellWidth, bgcolor=ezstatslib.BG_COLOR_GREEN) )
-        else:
-            tableRow.cells.append( HTML.TableCell(str(val), align="center", width=cellWidth) )            
-        i += 1
-    
-    for j in xrange(i,maxCnt):
-        tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
-        
-    streaksHtmlTable.rows.append(tableRow)  
-
-resultString += str(streaksHtmlTable)    
+resultString += str( createStreaksHtmlTable(allplayers, StreakType.KILL_STREAK) )
 resultString += "\n"
+
+# death streaks
+resultString += "\n"
+resultString += "Players death streaks (%d+):\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)
+resultString += str( createStreaksHtmlTable(allplayers, StreakType.DEATH_STREAK) )
+resultString += "\n"
+
+# ============================================================================================================
 
 # H2H stats
 resultString += "\n"

@@ -28,7 +28,8 @@ BG_COLOR_LIGHT_GRAY = "#e6e6e6"
 BG_COLOR_GREEN = "#00ff00"
 BG_COLOR_RED   = "#ff5c33"
 
-STREAK_MIN_VALUE = 3
+KILL_STREAK_MIN_VALUE  = 3
+DEATH_STREAK_MIN_VALUE = 3
 
 def enum(**enums):
     return type('Enum', (), enums)
@@ -237,21 +238,33 @@ class Player:
         
         self.calculatedStreaks = []
         self.currentStreak = 0
+        
+        self.deathStreaks = []
+        self.currentDeathStreak = 0
 
     def fillStreaks(self):
-        self.calculatedStreaks.append(self.currentStreak)
-        self.currentStreak = 0
+        if self.currentStreak != 0:
+            self.calculatedStreaks.append(self.currentStreak)
+            self.currentStreak = 0
+
+    def fillDeathStreaks(self):
+        if self.currentDeathStreak != 0:
+            self.deathStreaks.append(self.currentDeathStreak)
+            self.currentDeathStreak = 0
 
     def incKill(self):
         self.kills += 1
         self.currentStreak += 1
+        self.fillDeathStreaks()
     
     def incDeath(self):
         self.deaths += 1
+        self.currentDeathStreak += 1
         self.fillStreaks()
         
     def incSuicides(self):
         self.suicides += 1
+        self.currentDeathStreak += 1
         self.fillStreaks()            
     
     def frags(self):
@@ -274,7 +287,7 @@ class Player:
     def calcDelta(self):
         return (self.frags() - self.deaths)
     
-    def getCalculatedStreaks(self, minCnt = STREAK_MIN_VALUE):
+    def getCalculatedStreaks(self, minCnt = KILL_STREAK_MIN_VALUE):
         maxStreak = 0
         res = []
         for strk in self.calculatedStreaks:
@@ -284,7 +297,17 @@ class Player:
             
         return res, maxStreak
     
-    def getCalculatedStreaksStr(self, minCnt = STREAK_MIN_VALUE):
+    def getDeatchStreaks(self, minCnt = DEATH_STREAK_MIN_VALUE):
+        maxStreak = 0
+        res = []
+        for strk in self.deathStreaks:
+            if strk >= minCnt:                                
+                res.append(strk)            
+                maxStreak = max(maxStreak, strk)
+            
+        return res, maxStreak
+    
+    def getCalculatedStreaksStr(self, minCnt = KILL_STREAK_MIN_VALUE):
         s = ""
         res,cnt = self.getCalculatedStreaks(minCnt)
         for val in res:
