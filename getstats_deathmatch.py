@@ -385,7 +385,7 @@ resultString += "\n"
 
 resultString += "Players weapons:\n"
 weaponsCheck = ezstatslib.getWeaponsCheck(allplayers)
-for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+for pl in allplayersByFrags:
     resultString += "{0:10s} kills  {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, pl.getWeaponsKills(pl.kills, weaponsCheck))
     resultString += "{0:10s} deaths {1:3d} :: {2:100s}\n".format("",      pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
     resultString += "\n"
@@ -406,10 +406,10 @@ for p in progressStr:
 
 StreakType = enum(KILL_STREAK=1, DEATH_STREAK=2)
 
-def createStreaksHtmlTable(players, streakType):
+def createStreaksHtmlTable(sortedPlayers, streakType):
     streaksList = []  # [[name1,[s1,s2,..]]]
     maxCnt = 0
-    for pl in sorted(players, key=methodcaller("frags"), reverse=True):
+    for pl in sortedPlayers:
         strkRes,maxStrk = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()
         streaksList.append( [pl.name, strkRes] )
         maxCnt = max(maxCnt,len(strkRes))
@@ -460,8 +460,8 @@ totalStreaksHtmlTable = \
     HTML.Table(header_row=["Kill streaks (%d+)\n" % (ezstatslib.KILL_STREAK_MIN_VALUE), "Death streaks (%d+)\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)],
                rows=[ \
                    HTML.TableRow(cells=[ \
-                                     HTML.TableCell( str( createStreaksHtmlTable(allplayers, StreakType.KILL_STREAK)) ),
-                                     HTML.TableCell( str( createStreaksHtmlTable(allplayers, StreakType.DEATH_STREAK)) ) \
+                                     HTML.TableCell( str( createStreaksHtmlTable(allplayersByFrags, StreakType.KILL_STREAK)) ),
+                                     HTML.TableCell( str( createStreaksHtmlTable(allplayersByFrags, StreakType.DEATH_STREAK)) ) \
                                        ] \
                                 ) \
                     ],               
@@ -478,7 +478,7 @@ resultString += "\n"
 # H2H stats
 resultString += "\n"
 resultString += "Head-to-Head stats (who :: whom)\n"
-for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+for pl in allplayersByFrags:
     resStr = ""
     for el in sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
@@ -492,7 +492,7 @@ resultString += "\n"
 resultString += "Players duels:<br>"
 headerRow=['', 'Frags', 'Kills']
 playersNames = []
-for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+for pl in allplayersByFrags:
     headerRow.append(pl.name);
     playersNames.append(pl.name)
 
@@ -503,7 +503,7 @@ for i in xrange(len(headerRow)):
 htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
-for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
+for pl in allplayersByFrags:
     tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
                                     ezstatslib.htmlBold(pl.frags()),
                                     ezstatslib.htmlBold(pl.kills)])
@@ -741,4 +741,4 @@ if os.path.exists(logsIndexPath):
     os.remove(logsIndexPath)
 os.rename(tmpLogsIndexPath, logsIndexPath)
 
-    
+print filePath    
