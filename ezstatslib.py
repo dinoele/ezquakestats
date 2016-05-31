@@ -356,9 +356,10 @@ class Player:
         ssgstr  = "" if not weaponsCheck.is_ssg  or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_kills,  (float(self.ssg_kills)  / float(totalValue) * 100));
         ngstr   = "" if not weaponsCheck.is_ng   or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_kills,   (float(self.ng_kills)   / float(totalValue) * 100));
         sngstr  = "" if not weaponsCheck.is_sng  or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_kills,  (float(self.sng_kills)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe  or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_kills,  (float(self.axe_kills)  / float(totalValue) * 100));
         telestr = "" if not weaponsCheck.is_tele or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_kills, (float(self.tele_kills) / float(totalValue) * 100));
 
-        resstr = "%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, telestr);
+        resstr = "%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr);
         if len(resstr) > 2:
             resstr = resstr[:-2]
         return resstr
@@ -393,9 +394,10 @@ class Player:
         ssgstr  = "" if not weaponsCheck.is_ssg  or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_deaths,  (float(self.ssg_deaths)  / float(totalValue) * 100));
         ngstr   = "" if not weaponsCheck.is_ng   or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_deaths,   (float(self.ng_deaths)   / float(totalValue) * 100));
         sngstr  = "" if not weaponsCheck.is_sng  or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_deaths,  (float(self.sng_deaths)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe  or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_deaths,  (float(self.axe_deaths)  / float(totalValue) * 100));
         telestr = "" if not weaponsCheck.is_tele or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_deaths, (float(self.tele_deaths) / float(totalValue) * 100));
 
-        resstr = "%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, telestr);
+        resstr = "%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr);
         if len(resstr) > 2:
             resstr = resstr[:-2]
         return resstr
