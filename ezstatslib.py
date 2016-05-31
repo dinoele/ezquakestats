@@ -23,6 +23,48 @@ SKIPED_LINES_FILE_NAME = "skiped_lines"
 HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<body>\n<pre>"
 HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
+HTML_HEADER_SCRIPT_SECTION = \
+    "<!DOCTYPE html>\n<html>\n<head>\n" \
+    "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
+    "<script type=\"text/javascript\">\n" \
+    "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
+    "google.charts.setOnLoadCallback(drawBattleProgress);\n"
+
+HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION = \
+    "function drawBattleProgress() {\n" \
+    "var data_options_battle_progress = new google.visualization.DataTable();\n" \
+    "data_options_battle_progress.addColumn('number', 'X');\n" \
+    "ADD_COLUMN_LINES" \
+    "data_options_battle_progress.addRows([\n" \
+    "ADD_ROWS_LINES" \
+    "]);\n" \
+    "var options_battle_progress = {\n" \
+	"chart: {\n" \
+    "      title: 'Battle progress'\n" \
+    "    },\n" \
+    "    hAxis: {\n" \
+    "      title: 'Time'\n" \
+    "    },\n" \
+    "    vAxis: {\n" \
+    "      title: 'Frags'\n" \
+    "    },\n" \
+    "    series: {\n" \
+    "      1: {curveType: 'function'}\n" \
+    "    },\n" \
+    "    pointSize: 7\n" \
+    " };\n" \
+    "var chart_battle_progress = new google.visualization.LineChart(document.getElementById('chart_battle_progress'));\n" \
+    "chart_battle_progress.draw(data_options_battle_progress, options_battle_progress);\n" \
+    "}\n"
+
+HTML_SCRIPT_BATTLE_PROGRESS_ADD_COLUMN_LINE = "data_options_battle_progress.addColumn('number', 'PLAYER_NAME');\n"
+
+HTML_SCRIPT_SECTION_FOOTER = "</script>\n</head>\n<body>\n<pre>"
+
+HTML_BATTLE_PROGRESS_DIV_TAG = "<div id=\"chart_battle_progress\" style=\"width: 1200px; height: 800px;\"></div>\n"
+
+HTML_FOOTER_NO_PRE = "</body>\n</html>"
+
 BG_COLOR_GRAY  = "#bfbfbf"
 BG_COLOR_LIGHT_GRAY = "#e6e6e6"
 BG_COLOR_GREEN = "#00ff00"

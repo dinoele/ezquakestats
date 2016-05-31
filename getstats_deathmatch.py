@@ -29,6 +29,7 @@ parser = OptionParser(usage=usageString, version=versionString)
 
 parser.add_option("-f",   action="store",       dest="inputFile",      type="str",  metavar="LOG_FILE", help="")
 parser.add_option("--league", action="store",   dest="leagueName",     type="str",  metavar="LEAGUE",   help="")
+parser.add_option("--scripts", action="store_false",   dest="withScripts", default=True,   help="")
 
 # TODO add -q option: without output at all
 
@@ -212,6 +213,7 @@ for pl1 in allplayers:
 
 progressStr = []
 matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
+matchProgressDict = []
 
 for logline in matchlog:
     if logline == "":
@@ -224,14 +226,17 @@ for logline in matchlog:
 #
     if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining
         allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
-        progressLine = [] 
+        progressLine = []
+        progressLineDict = {}
         s = ""
         for pl in allplayersByFrags:
             #s += "%s%s(%d)" % ("" if s == "" else ",", pl.name, pl.frags())
             s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
             progressLine.append([pl.name, pl.frags()]);
+            progressLineDict[pl.name] = pl.frags();
         progressStr.append(s)
         matchProgress.append(progressLine)
+        matchProgressDict.append(progressLineDict)
         continue
 
     # telefrag
@@ -335,11 +340,14 @@ allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
 # fill final battle progress
 s = ""
 progressLine = []
+progressLineDict = {}
 for pl in allplayersByFrags:    
     s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
     progressLine.append([pl.name, pl.frags()]);
+    progressLineDict[pl.name] = pl.frags();
 progressStr.append(s)
 matchProgress.append(progressLine)
+matchProgressDict.append(progressLineDict)
     
 # fill final element in calculatedStreaks
 for pl in allplayers:
@@ -402,13 +410,6 @@ if len(disconnectedplayers) != 0:
     resultString += "\n"
     resultString += "Disconnected players: " + str(disconnectedplayers) + "\n"
     resultString += "\n"
-
-i = 1
-resultString += "\n"
-resultString += "battle progress:\n"
-for p in progressStr:
-    resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
-    i += 1
     
 # ============================================================================================================
 
@@ -547,6 +548,15 @@ for pl in allplayersByFrags:
 
 resultString += str(htmlTable)
     
+i = 1
+resultString += "\n\n"
+resultString += "battle progress:\n"
+for p in progressStr:
+    resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
+    i += 1
+    
+if options.withScripts:
+    resultString += "\nBP_PLACE\n"
 
 if len(dropedplayers) != 0:
     dropedStr = ""
@@ -562,6 +572,41 @@ if len(spectators) != 0:
 print resultString
 
 # ============================================================================================================
+
+def writeHtmlWithScripts(f, sortedPlayers, resStr):
+    f.write(ezstatslib.HTML_HEADER_SCRIPT_SECTION)
+        
+    bpFunctionStr = ezstatslib.HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION
+    
+    columnLines = ""        
+    for pl in sortedPlayers:
+        columnLines += ezstatslib.HTML_SCRIPT_BATTLE_PROGRESS_ADD_COLUMN_LINE.replace("PLAYER_NAME", pl.name)
+    bpFunctionStr = bpFunctionStr.replace("ADD_COLUMN_LINES", columnLines)
+    
+    rowLines = "[0"
+    for k in xrange(len(sortedPlayers)):
+        rowLines += ",0"        
+    rowLines += "],\n"
+    
+    minuteNum = 1
+    for minEl in matchProgressDict:
+        rowLines += "[%d" % (minuteNum)
+        for pl in allplayersByFrags:
+            rowLines += ",%d" % (minEl[pl.name])
+        rowLines += "],"
+        minuteNum += 1
+        
+    rowLines = rowLines[:-1]
+     
+    bpFunctionStr = bpFunctionStr.replace("ADD_ROWS_LINES", rowLines)       
+                
+    f.write(bpFunctionStr)
+    f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
+    
+    resStr = resStr.replace("BP_PLACE", ezstatslib.HTML_BATTLE_PROGRESS_DIV_TAG)
+    
+    f.write(resStr)
+    f.write(ezstatslib.HTML_FOOTER_STR)      
 
 # check and write output file
 leaguePrefix = ""
@@ -582,9 +627,14 @@ if os.path.exists(filePathFull):
         os.remove(tmpFilePathFull)
     
     tmpf = open(tmpFilePathFull, "w")
-    tmpf.write(ezstatslib.HTML_HEADER_STR)
-    tmpf.write(resultString)
-    tmpf.write(ezstatslib.HTML_FOOTER_STR)
+    
+    if not options.withScripts:
+        tmpf.write(ezstatslib.HTML_HEADER_STR)
+        tmpf.write(resultString)
+        tmpf.write(ezstatslib.HTML_FOOTER_STR)
+    else:
+        writeHtmlWithScripts(tmpf, allplayersByFrags, resultString)  
+    
     tmpf.close()
     
     tmpinfo = os.stat(tmpFilePathFull)
@@ -600,9 +650,14 @@ if os.path.exists(filePathFull):
 
 else:  # not os.path.exists(filePathFull):
     outf = open(filePathFull, "w")
-    outf.write(ezstatslib.HTML_HEADER_STR)
-    outf.write(resultString)
-    outf.write(ezstatslib.HTML_FOOTER_STR)
+    
+    if not options.withScripts:
+        outf.write(ezstatslib.HTML_HEADER_STR)
+        outf.write(resultString)
+        outf.write(ezstatslib.HTML_FOOTER_STR)
+    else:    
+        writeHtmlWithScripts(outf, allplayersByFrags, resultString)
+    
     outf.close()
     isFileNew = True
     
