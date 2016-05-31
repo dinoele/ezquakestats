@@ -211,6 +211,8 @@ for pl1 in allplayers:
             headToHead[pl1.name].append([pl2.name,0])
 
 progressStr = []
+matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
+
 for logline in matchlog:
     if logline == "":
         continue
@@ -222,11 +224,14 @@ for logline in matchlog:
 #
     if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining
         allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+        progressLine = [] 
         s = ""
         for pl in allplayersByFrags:
             #s += "%s%s(%d)" % ("" if s == "" else ",", pl.name, pl.frags())
             s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
+            progressLine.append([pl.name, pl.frags()]);
         progressStr.append(s)
+        matchProgress.append(progressLine)
         continue
 
     # telefrag
@@ -329,9 +334,12 @@ allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
 
 # fill final battle progress
 s = ""
+progressLine = []
 for pl in allplayersByFrags:    
-    s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")    
+    s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
+    progressLine.append([pl.name, pl.frags()]);
 progressStr.append(s)
+matchProgress.append(progressLine)
     
 # fill final element in calculatedStreaks
 for pl in allplayers:
@@ -401,7 +409,7 @@ resultString += "battle progress:\n"
 for p in progressStr:
     resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
     i += 1
-
+    
 # ============================================================================================================
 
 StreakType = enum(KILL_STREAK=1, DEATH_STREAK=2)
@@ -652,8 +660,8 @@ headerRow = ["Date", "Premier League", "First Division"]
 filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
 filesMap = {}  # key: dt, value: [[PL1,PL2,..],[FD1, FD2,..]]
-# TODO make dicts instead of lists in order to sort elements before table creation
 
+# TODO make dicts instead of lists in order to sort elements before table creation
 zerodt = datetime(1970,1,1)
 filesMap[zerodt] = [[],[]]  # files with problems
 for fname in files:
