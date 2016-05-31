@@ -578,8 +578,8 @@ isFileNew = False
 if os.path.exists(filePathFull):
     # temp file 
     tmpFilePathFull = "../" + filePath + ".tmp"
-    if os.path.exists(tmpFilePathFull):
-       os.path.remove(tmpFilePathFull)
+    if os.path.exists(tmpFilePathFull):        
+        os.remove(tmpFilePathFull)
     
     tmpf = open(tmpFilePathFull, "w")
     tmpf.write(ezstatslib.HTML_HEADER_STR)
