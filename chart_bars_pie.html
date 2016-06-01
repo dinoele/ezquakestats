@@ -1,0 +1,116 @@
+<html>
+  <head>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+  
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});
+      
+      google.charts.setOnLoadCallback(drawChart);
+                  
+      function drawChart() {      
+        var data_frags = google.visualization.arrayToDataTable([
+          ['Name', 'Frags'],
+          ['rea[rbf]', 71],
+          ['Ilya',     51],
+          ['SHAROK',   46],
+          ['ss',       34]
+        ]);
+
+        var options_frags = {
+          title: 'Frags'
+        };
+
+        var chart_frags = new google.visualization.PieChart(document.getElementById('piechart_frags'));
+        chart_frags.draw(data_frags, options_frags);
+        
+        
+        var data_kills = google.visualization.arrayToDataTable([
+          ['Name', 'Kills'],
+          ['rea[rbf]', 74],
+          ['Ilya',     56],
+          ['SHAROK',   55],
+          ['ss',       43]
+        ]);
+
+        var options_kills = {
+          title: 'Kills'
+        };
+
+        var chart_kills = new google.visualization.PieChart(document.getElementById('piechart_kills'));
+        chart_kills.draw(data_kills, options_kills);
+        
+        
+        var data_deaths = google.visualization.arrayToDataTable([
+          ['Name', 'Deaths'],
+          ['rea[rbf]', 48],
+          ['Ilya',     55],
+          ['SHAROK',   51],
+          ['ss',       74]
+        ]);
+
+        var options_deaths = {
+          title: 'Deaths'
+        };
+
+        var chart_deaths = new google.visualization.PieChart(document.getElementById('piechart_deaths'));
+        chart_deaths.draw(data_deaths, options_deaths);
+        
+        var data_suicides = google.visualization.arrayToDataTable([
+          ['Name', 'Suicides'],
+          ['rea[rbf]', 3],
+          ['Ilya',     5],
+          ['SHAROK',   9],
+          ['ss',       9]
+        ]);
+
+        var options_suicides = {
+          title: 'Suicides'
+        };
+
+        var chart_suicides = new google.visualization.PieChart(document.getElementById('piechart_suicides'));
+        chart_suicides.draw(data_suicides, options_suicides);
+        
+        $("#main_stats").attr("class", "symple-toggle state-closed")
+      }         
+    </script>
+
+  <link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />
+  <link rel='stylesheet' id='style-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/themes/wpex-zero/style.css?ver=4.5.2' type='text/css' media='all' />
+
+  </head>
+  <body>     
+     
+     
+<div class="wpb_text_column wpb_content_element ">
+  <div class="wpb_wrapper">
+    <div class="symple-toggle state-open" id="main_stats"> 
+      <h3 class="symple-toggle-trigger ">
+        Main Stats
+      </h3>
+      <div class="symple-toggle-container symple-clearfix"> 
+        <table style="width: 100%;">
+          <tr>     
+            <td style="width: 25%">
+              <div id="piechart_frags"></div>
+            </td>
+            <td style="width: 25%">
+              <div id="piechart_kills"></div>
+            </td>      
+            <td style="width: 25%">
+              <div id="piechart_deaths"></div>
+            </td>
+            <td style="width: 25%">
+              <div id="piechart_suicides"></div>
+            </td>
+          </tr>
+        </table>     
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript' src='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/js/symple_toggle.js?ver=1.0'></script>
+          
+</body>
+</html>
