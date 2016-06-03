@@ -30,7 +30,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "<script type=\"text/javascript\">\n" \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
-    "google.charts.setOnLoadCallback(drawMainStats);\n"
+    "google.charts.setOnLoadCallback(drawMainStats);\n" \
+    "google.charts.setOnLoadCallback(drawMainStatsBars);\n"
 
 HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION = \
     "function drawBattleProgress() {\n" \
@@ -107,20 +108,11 @@ HTML_SCRIPT_MAIN_STATS_FUNCTION = \
     "$(\"#main_stats\").attr(\"class\", \"symple-toggle state-closed\");\n" \
     "}\n" 
 
-# =========================================================================================================================================================
-
-HTML_HEAD_FOLDING_LINKS = \
-  "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"  
-
-HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n<body>\n<pre>"
-
-HTML_BATTLE_PROGRESS_DIV_TAG = "<div id=\"chart_battle_progress\" style=\"width: 1200px; height: 800px;\"></div>\n"
-
 HTML_MAIN_STATS_DIAGRAMM_DIV_TAG = \
   "<div class=\"wpb_text_column wpb_content_element \">\n" \
   "<div class=\"wpb_wrapper\">\n" \
   "  <div class=\"symple-toggle state-open\" id=\"main_stats\">\n" \
-  "    <h3 class=\"symple-toggle-trigger \">Main Stats</h3>\n" \
+  "    <h3 class=\"symple-toggle-trigger \">Main Stats Diagrams</h3>\n" \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "      <table style=\"width: 100%;\">\n" \
   "        <tr>\n" \
@@ -142,6 +134,65 @@ HTML_MAIN_STATS_DIAGRAMM_DIV_TAG = \
   "  </div>\n" \
   "</div>\n" \
   "</div>\n";
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_MAIN_STATS_BARS_FUNCTION = \
+    "function drawMainStatsBars() {\n" \
+    "var data = google.visualization.arrayToDataTable([\n" \
+    "ADD_HEADER_ROW" \
+    "ADD_STATS_ROWS" \
+    "]);\n" \
+    "var options = {\n" \
+    "  chart: {\n" \
+    "    title: 'Main stats'\n" \
+    "  },\n" \
+    "  hAxis: {\n" \
+    "    title: 'Count',\n" \
+    "    minValue: 0,\n" \
+    "  },\n" \
+    "  vAxis: {\n" \
+    "    title: 'Name'\n" \
+    "  },\n" \
+    "  bars: 'horizontal',\n" \
+    "  annotations: {\n" \
+    "    alwaysOutside: false,\n" \
+    "      textStyle: {\n" \
+    "        fontSize: 11,\n" \
+    "        auraColor:   'none',\n" \
+    "        bold: true,\n" \
+    "    },\n" \
+    "    boxStyle: {\n" \
+    "      stroke: '#1B1B1B',\n" \
+    "      strokeWidth: 1\n" \
+    "    }\n" \
+    "  },\n" \
+    "};\n" \
+    "var barchart = new google.visualization.BarChart(document.getElementById('chart_main_stats'));\n" \
+    "barchart.draw(data, options);\n" \
+    "$(\"#main_stats_bars\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}\n"
+
+HTML_MAIN_STATS_BARS_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"main_stats_bars\">\n" \
+  "    <h3 class=\"symple-toggle-trigger \">Main Stats Bars</h3>\n" \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "      <div id=\"chart_main_stats\" style=\"width: 90%; height:  600px;\"></div>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
+
+# =========================================================================================================================================================
+
+HTML_HEAD_FOLDING_LINKS = \
+  "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"  
+
+HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n<body>\n<pre>"
+
+HTML_BATTLE_PROGRESS_DIV_TAG = "<div id=\"chart_battle_progress\" style=\"width: 1200px; height: 800px;\"></div>\n"
 
 HTML_FOOTER_NO_PRE = "</body>\n</html>"
 

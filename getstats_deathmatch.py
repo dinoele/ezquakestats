@@ -366,6 +366,9 @@ for pl in allplayersByFrags:
 
 if options.withScripts:
     resultString += "</pre>MAIN_STATS_PLACE\n<pre>"
+    
+if options.withScripts:
+    resultString += "</pre>MAIN_STATS_BARS_PLACE\n<pre>"
 
 resultString += "\n"
 resultString += "Power ups:\n"
@@ -620,11 +623,6 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         killsLines    += "['%s',%d],\n" % (pl.name, pl.kills)
         deathsLines   += "['%s',%d],\n" % (pl.name, pl.deaths)
         suicidesLines += "['%s',%d],\n" % (pl.name, pl.suicides)
-        
-    # fragsLines    = fragsLines[:-1]
-    # killsLines    = killsLines[:-1]
-    # deathsLines   = deathsLines[:-1]
-    # suicidesLines = suicidesLines[:-1]
     
     mainStatsStr = mainStatsStr.replace("ADD_FRAGS_ROWS",    fragsLines)
     mainStatsStr = mainStatsStr.replace("ADD_KILLS_ROWS",    killsLines)
@@ -634,11 +632,49 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(mainStatsStr)
     # <-- main stats
     
+    # main stats bars-->
+    isAnnotations = True
+    
+    mainStatsBarsStr = ezstatslib.HTML_SCRIPT_MAIN_STATS_BARS_FUNCTION
+    
+    namesLine    = "['Name'"
+    fragsLine    = "['Frags'"
+    killsLine    = "['Kills'"
+    deathsLine   = "['Deaths'"    
+    suicidesLine = "['Suicides'"
+    
+    for pl in sortedPlayers:
+        namesLine    += ", '%s'" % (pl.name)
+        fragsLine    += ", %d" % (pl.frags())
+        killsLine    += ", %d" % (pl.kills)
+        deathsLine   += ", %d" % (pl.deaths)
+        suicidesLine += ", %d" % (pl.suicides)
+        
+        if isAnnotations:
+            namesLine += ", {type: 'string', role: 'annotation'}"
+            fragsLine    += ", '%d'" % (pl.frags())
+            killsLine    += ", '%d'" % (pl.kills)
+            deathsLine   += ", '%d'" % (pl.deaths)
+            suicidesLine += ", '%d'" % (pl.suicides)
+                    
+    namesLine    += "],\n"
+    fragsLine    += "],\n"
+    killsLine    += "],\n"
+    deathsLine   += "],\n"
+    suicidesLine += "]\n"
+    
+    mainStatsBarsStr = mainStatsBarsStr.replace("ADD_HEADER_ROW", namesLine)
+    mainStatsBarsStr = mainStatsBarsStr.replace("ADD_STATS_ROWS", fragsLine + killsLine + deathsLine + suicidesLine)    
+
+    f.write(mainStatsBarsStr)
+    # <-- main stats bars
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
     resStr = resStr.replace("BP_PLACE", ezstatslib.HTML_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("MAIN_STATS_PLACE", ezstatslib.HTML_MAIN_STATS_DIAGRAMM_DIV_TAG)
+    resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)
     
     f.write(resStr)
     
