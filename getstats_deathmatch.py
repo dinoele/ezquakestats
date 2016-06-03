@@ -364,10 +364,14 @@ resultString += "\n"
 for pl in allplayersByFrags:
     resultString += "{0:10s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats_noTeamKills())
 
+# TODO add place for folded div with main stats diagrams
+
 resultString += "\n"
 resultString += "Power ups:\n"
 for pl in allplayersByFrags:
     resultString += "{0:10s}  {1:s}\n".format(pl.name, pl.getFormatedPowerUpsStats())
+
+# TODO add place for folded div with power ups diagrams
 
 # all players
 resultString += "\n"
@@ -593,7 +597,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         rowLines += "[%d" % (minuteNum)
         for pl in allplayersByFrags:
             rowLines += ",%d" % (minEl[pl.name])
-        rowLines += "],"
+        rowLines += "],\n"
         minuteNum += 1
         
     rowLines = rowLines[:-1]
