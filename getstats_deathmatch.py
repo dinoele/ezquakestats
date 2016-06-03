@@ -364,7 +364,8 @@ resultString += "\n"
 for pl in allplayersByFrags:
     resultString += "{0:10s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats_noTeamKills())
 
-# TODO add place for folded div with main stats diagrams
+if options.withScripts:
+    resultString += "</pre>MAIN_STATS_PLACE\n<pre>"
 
 resultString += "\n"
 resultString += "Power ups:\n"
@@ -580,6 +581,7 @@ print resultString
 def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(ezstatslib.HTML_HEADER_SCRIPT_SECTION)
         
+    # battle progress -->
     bpFunctionStr = ezstatslib.HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION
     
     columnLines = ""        
@@ -595,7 +597,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     minuteNum = 1
     for minEl in matchProgressDict:
         rowLines += "[%d" % (minuteNum)
-        for pl in allplayersByFrags:
+        for pl in sortedPlayers:
             rowLines += ",%d" % (minEl[pl.name])
         rowLines += "],\n"
         minuteNum += 1
@@ -605,12 +607,47 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     bpFunctionStr = bpFunctionStr.replace("ADD_ROWS_LINES", rowLines)       
                 
     f.write(bpFunctionStr)
+    # <-- battle progress
+    
+    # main stats -->
+    mainStatsStr = ezstatslib.HTML_SCRIPT_MAIN_STATS_FUNCTION
+    fragsLines    = ""
+    killsLines    = ""
+    deathsLines   = ""    
+    suicidesLines = ""
+    for pl in sortedPlayers:
+        fragsLines    += "['%s',%d],\n" % (pl.name, pl.frags())
+        killsLines    += "['%s',%d],\n" % (pl.name, pl.kills)
+        deathsLines   += "['%s',%d],\n" % (pl.name, pl.deaths)
+        suicidesLines += "['%s',%d],\n" % (pl.name, pl.suicides)
+        
+    # fragsLines    = fragsLines[:-1]
+    # killsLines    = killsLines[:-1]
+    # deathsLines   = deathsLines[:-1]
+    # suicidesLines = suicidesLines[:-1]
+    
+    mainStatsStr = mainStatsStr.replace("ADD_FRAGS_ROWS",    fragsLines)
+    mainStatsStr = mainStatsStr.replace("ADD_KILLS_ROWS",    killsLines)
+    mainStatsStr = mainStatsStr.replace("ADD_DEATHS_ROWS",   deathsLines)
+    mainStatsStr = mainStatsStr.replace("ADD_SUICIDES_ROWS", suicidesLines)
+
+    f.write(mainStatsStr)
+    # <-- main stats
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
+    # add divs
     resStr = resStr.replace("BP_PLACE", ezstatslib.HTML_BATTLE_PROGRESS_DIV_TAG)
+    resStr = resStr.replace("MAIN_STATS_PLACE", ezstatslib.HTML_MAIN_STATS_DIAGRAMM_DIV_TAG)
     
     f.write(resStr)
-    f.write(ezstatslib.HTML_FOOTER_STR)      
+    
+    f.write(ezstatslib.HTML_PRE_CLOSE_TAG)
+    
+    # add script section for folding
+    f.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)    
+    
+    f.write(ezstatslib.HTML_FOOTER_NO_PRE)
 
 # check and write output file
 leaguePrefix = ""

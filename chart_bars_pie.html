@@ -6,9 +6,9 @@
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});
       
-      google.charts.setOnLoadCallback(drawChart);
+      google.charts.setOnLoadCallback(drawMainStats);
                   
-      function drawChart() {      
+      function drawMainStats() {      
         var data_frags = google.visualization.arrayToDataTable([
           ['Name', 'Frags'],
           ['rea[rbf]', 71],

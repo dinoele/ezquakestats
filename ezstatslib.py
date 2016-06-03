@@ -25,10 +25,12 @@ HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
 HTML_HEADER_SCRIPT_SECTION = \
     "<!DOCTYPE html>\n<html>\n<head>\n" \
+    "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
     "<script type=\"text/javascript\">\n" \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
-    "google.charts.setOnLoadCallback(drawBattleProgress);\n"
+    "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
+    "google.charts.setOnLoadCallback(drawMainStats);\n"
 
 HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION = \
     "function drawBattleProgress() {\n" \
@@ -59,11 +61,93 @@ HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION = \
 
 HTML_SCRIPT_BATTLE_PROGRESS_ADD_COLUMN_LINE = "data_options_battle_progress.addColumn('number', 'PLAYER_NAME');\n"
 
-HTML_SCRIPT_SECTION_FOOTER = "</script>\n</head>\n<body>\n<pre>"
+# =========================================================================================================================================================
+
+HTML_SCRIPT_MAIN_STATS_FUNCTION = \
+    "function drawMainStats() {\n" \
+    "var data_frags = google.visualization.arrayToDataTable([\n" \
+    "['Name', 'Frags'],\n" \
+    "ADD_FRAGS_ROWS" \
+    "]);\n" \
+    "var options_frags = {\n" \
+    "  title: 'Frags'\n" \
+    "};\n" \
+    "var chart_frags = new google.visualization.PieChart(document.getElementById('piechart_frags'));\n" \
+    "chart_frags.draw(data_frags, options_frags);\n" \
+    "\n" \
+    "var data_kills = google.visualization.arrayToDataTable([\n" \
+    "['Name', 'Kills'],\n" \
+    "ADD_KILLS_ROWS" \
+    "]);\n" \
+    "var options_kills = {\n" \
+    "  title: 'Kills'\n" \
+    "};\n" \
+    "var chart_kills = new google.visualization.PieChart(document.getElementById('piechart_kills'));\n" \
+    "chart_kills.draw(data_kills, options_kills);\n" \
+    "\n" \
+    "var data_deaths = google.visualization.arrayToDataTable([\n" \
+    "['Name', 'Deaths'],\n" \
+    "ADD_DEATHS_ROWS" \
+    "]);\n" \
+    "var options_deaths = {\n" \
+    "  title: 'Deaths'\n" \
+    "};\n" \
+    "var chart_deaths = new google.visualization.PieChart(document.getElementById('piechart_deaths'));\n" \
+    "chart_deaths.draw(data_deaths, options_deaths);\n" \
+    "\n" \
+    "var data_suicides = google.visualization.arrayToDataTable([\n" \
+    "['Name', 'Suicides'],\n" \
+    "ADD_SUICIDES_ROWS" \
+    "]);\n" \
+    "var options_suicides = {\n" \
+    "  title: 'Suicides'\n" \
+    "};\n" \
+    "var chart_suicides = new google.visualization.PieChart(document.getElementById('piechart_suicides'));\n" \
+    "chart_suicides.draw(data_suicides, options_suicides);\n" \
+    "$(\"#main_stats\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}\n" 
+
+# =========================================================================================================================================================
+
+HTML_HEAD_FOLDING_LINKS = \
+  "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"  
+
+HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n<body>\n<pre>"
 
 HTML_BATTLE_PROGRESS_DIV_TAG = "<div id=\"chart_battle_progress\" style=\"width: 1200px; height: 800px;\"></div>\n"
 
+HTML_MAIN_STATS_DIAGRAMM_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"main_stats\">\n" \
+  "    <h3 class=\"symple-toggle-trigger \">Main Stats</h3>\n" \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 25%\">\n" \
+  "            <div id=\"piechart_frags\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 25%\">\n" \
+  "            <div id=\"piechart_kills\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 25%\">\n" \
+  "            <div id=\"piechart_deaths\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 25%\">\n" \
+  "            <div id=\"piechart_suicides\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
+
 HTML_FOOTER_NO_PRE = "</body>\n</html>"
+
+HTML_PRE_CLOSE_TAG = "</pre>\n"
+  
+HTML_BODY_FOLDING_SCRIPT = "<script type='text/javascript' src='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/js/symple_toggle.js?ver=1.0'></script>\n"
 
 BG_COLOR_GRAY  = "#bfbfbf"
 BG_COLOR_LIGHT_GRAY = "#e6e6e6"
