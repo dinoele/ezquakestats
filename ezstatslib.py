@@ -187,6 +187,42 @@ HTML_MAIN_STATS_BARS_DIV_TAG = \
 
 # =========================================================================================================================================================
 
+HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION =\
+    "google.charts.setOnLoadCallback(drawPLAYER_NAMEKillsByMinutes);\n" \
+    "function drawPLAYER_NAMEKillsByMinutes() {\n" \
+    "var data = google.visualization.arrayToDataTable([\n" \
+    "ADD_HEADER_ROW" \
+    "ADD_STATS_ROWS" \
+    "]);\n" \
+    "\n" \
+    "var options = {\n" \
+    "isStacked: true,\n" \
+    "  height: 300,\n" \
+    "  \n" \
+    "  vAxis: {minValue: 0},\n" \
+    "  title: \"PLAYER_NAME kills by minutes\"\n" \
+    "};\n" \
+    "\n" \
+    "var chart = new google.visualization.ColumnChart(document.getElementById('PLAYER_NAME_kills_div'));\n" \
+    "\n" \
+    "chart.draw(data, options);\n" \
+    "$(\"#PLAYER_NAME_kills_by_minutes\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}\n"
+
+HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"PLAYER_NAME_kills_by_minutes\">\n" \
+  "    <h3 class=\"symple-toggle-trigger \">PLAYER_NAME Kills by minutes</h3>\n" \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "      <div id=\"PLAYER_NAME_kills_div\" style=\"width: 90%; height:  300px;\"></div>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
+
+# =========================================================================================================================================================
+
 HTML_HEAD_FOLDING_LINKS = \
   "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"  
 

@@ -17,11 +17,12 @@ from ezstatslib import enum
 
 import HTML
 
-def fillH2H(who,whom):    
+def fillH2H(who,whom,minute):
     # TODO add checks for headToHead
     for elem in headToHead[who]:
         if elem[0] == whom:
-            elem[1] += 1
+            elem[1] += 1            
+            elem[2][minute] += 1
 
 usageString = "" 
 versionString = ""
@@ -82,6 +83,7 @@ while not ezstatslib.isMatchStart(line):
 #    readLinesNum += 1
     line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 
+matchMinutesCnt = 1
 line = f.readline()
 readLinesNum += 1
 while not ezstatslib.isMatchEnd(line):
@@ -107,6 +109,9 @@ while not ezstatslib.isMatchEnd(line):
         #print "Match stopped by majority vote"
         ezstatslib.logError("Match stopped by majority vote\n")
         exit(1)
+        
+    if "remaining" in line or "overtime" in line:  # [9] minutes remaining
+        matchMinutesCnt += 1
 
 while not "Player statistics" in line:
 #    line = f.readline()
@@ -204,16 +209,18 @@ if len(allplayers) == 1:
     exit(1)
 
 # head-to-head stats init
+# TODO make separate function
 headToHead = {}
 for pl1 in allplayers:
     headToHead[pl1.name] = []
     for pl2 in allplayers:
         if pl1.name != pl2.name:
-            headToHead[pl1.name].append([pl2.name,0])
+            headToHead[pl1.name].append([pl2.name,0,[0 for i in xrange(matchMinutesCnt+1)]])
 
 progressStr = []
 matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
 matchProgressDict = []
+currentMinute = 1
 
 for logline in matchlog:
     if logline == "":
@@ -225,6 +232,7 @@ for logline in matchlog:
 #        continue
 #
     if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining
+        currentMinute += 1
         allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
         progressLine = []
         progressLineDict = {}
@@ -256,7 +264,7 @@ for logline in matchlog:
                 isFoundWhom = True
 
         if who != "":
-            fillH2H(who,whom)
+            fillH2H(who,whom,currentMinute)
 
         if not isFoundWho or not isFoundWhom:
             #print "ERROR: count telefrag", who, "-", whom, ":", logline
@@ -306,7 +314,7 @@ for logline in matchlog:
                 exec("pl.%s_deaths += 1" % (weap))
                 isFoundWhom = True
 
-        fillH2H(who,whom)
+        fillH2H(who,whom,currentMinute)
 
         if not isFoundWho or not isFoundWhom:
             #print "ERROR: count common", who, "-", whom, ":", logline
@@ -565,6 +573,10 @@ for p in progressStr:
     
 if options.withScripts:
     resultString += "\nBP_PLACE\n"
+    
+if options.withScripts:
+    for pl in allplayersByFrags:
+        resultString += "</pre>%s_KILLS_BY_MINUTES_PLACE\n<pre>" % (pl.name.replace("[","_").replace("]","_"))    
 
 if len(dropedplayers) != 0:
     dropedStr = ""
@@ -576,6 +588,12 @@ if len(dropedplayers) != 0:
 
 if len(spectators) != 0:
     resultString += "Spectators: " + str(spectators) + "\n"
+
+print "currentMinute:", currentMinute
+print "matchMinutesCnt:", matchMinutesCnt
+for pl in allplayersByFrags:
+    for el in headToHead[pl.name]:
+        print pl.name, ":", el[0], " - ", el[1], " - ", el[2]
 
 print resultString
 
@@ -668,6 +686,40 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
 
     f.write(mainStatsBarsStr)
     # <-- main stats bars
+    
+    # players kills by minutes -->
+    for pl in allplayersByFrags:
+        plNameEscaped = pl.name.replace("[","_").replace("]","_")          
+        
+        playerKillsByMinutesStr = ezstatslib.HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION
+        playerKillsByMinutesStr = playerKillsByMinutesStr.replace("PLAYER_NAME", plNameEscaped)
+        
+        playerH2hElem = headToHead[pl.name]
+        
+        playerKillsByMinutesHeaderStr = "['Minute'"
+        for el in playerH2hElem:
+            playerKillsByMinutesHeaderStr += ",'%s'" % (el[0])    
+        playerKillsByMinutesHeaderStr += "],\n"
+        playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_HEADER_ROW", playerKillsByMinutesHeaderStr)
+        
+        playerKillsByMinutesRowsStr = ""
+        minut = 1        
+        while minut <= currentMinute:
+            playerKillsByMinutesRowsStr += "['%d'" % (minut)
+            for el in playerH2hElem:
+                playerKillsByMinutesRowsStr += ",%d" % (el[2][minut])
+            playerKillsByMinutesRowsStr += "],\n"
+            minut += 1
+        playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_STATS_ROWS", playerKillsByMinutesRowsStr)
+        
+        playerKillsByMinutesDivTag = ezstatslib.HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG
+        playerKillsByMinutesDivTag = playerKillsByMinutesDivTag.replace("PLAYER_NAME", plNameEscaped)
+        
+        f.write(playerKillsByMinutesStr)
+        
+        # add div
+        resStr = resStr.replace("%s_KILLS_BY_MINUTES_PLACE" % (plNameEscaped), playerKillsByMinutesDivTag)
+    # <-- players kills by minutes
     
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
