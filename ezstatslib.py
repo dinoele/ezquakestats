@@ -12,7 +12,20 @@ import fileinput
 
 import ezstatslib
 
+def enum(**enums):
+    return type('Enum', (), enums)
+
 possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe", "tele"]
+
+HtmlColor = enum( COLOR_RED  ="#ff3333",
+                  COLOR_GREEN="#009900",
+                  COLOR_GRAY ="#8c8c8c",
+                  COLOR_GOLD ="#e6c300",
+                  COLOR_BLUE ="#0000cc",
+                  COLOR_PURPLE = "#6600cc",
+                  COLOR_ORANGE = "#ff8000",
+                  COLOR_CYAN = "#00cccc",
+                  COLOR_MAGENTA = "#cc00cc" )
 
 READ_LINES_LIMIT = 10000
 LOGS_INDEX_FILE_NAME = "logs.html"
@@ -243,9 +256,6 @@ BG_COLOR_RED   = "#ff5c33"
 
 KILL_STREAK_MIN_VALUE  = 3
 DEATH_STREAK_MIN_VALUE = 3
-
-def enum(**enums):
-    return type('Enum', (), enums)
 
 def logError(line):
     ferr = open(ERROR_LOG_FILE_NAME, "a")
