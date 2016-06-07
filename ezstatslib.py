@@ -27,6 +27,15 @@ HtmlColor = enum( COLOR_RED  ="#ff3333",
                   COLOR_CYAN = "#00cccc",
                   COLOR_MAGENTA = "#cc00cc" )
 
+possibleColors = [HtmlColor.COLOR_RED,
+                  HtmlColor.COLOR_GREEN,
+                  HtmlColor.COLOR_GOLD,
+                  HtmlColor.COLOR_BLUE,
+                  HtmlColor.COLOR_PURPLE,
+                  HtmlColor.COLOR_ORANGE,
+                  HtmlColor.COLOR_CYAN,
+                  HtmlColor.COLOR_MAGENTA]
+
 READ_LINES_LIMIT = 10000
 LOGS_INDEX_FILE_NAME = "logs.html"
 
@@ -212,7 +221,7 @@ HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION =\
     "isStacked: true,\n" \
     "  height: 300,\n" \
     "  \n" \
-    "  vAxis: {minValue: 0},\n" \
+    "  vAxis: {minValue: MIN_VALUE, maxValue: MAX_VALUE},\n" \
     "  title: \"PLAYER_NAME kills by minutes\"\n" \
     "};\n" \
     "\n" \

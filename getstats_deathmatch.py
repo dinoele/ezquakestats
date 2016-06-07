@@ -214,8 +214,7 @@ headToHead = {}
 for pl1 in allplayers:
     headToHead[pl1.name] = []
     for pl2 in allplayers:
-        if pl1.name != pl2.name:
-            headToHead[pl1.name].append([pl2.name,0,[0 for i in xrange(matchMinutesCnt+1)]])
+        headToHead[pl1.name].append([pl2.name,0,[0 for i in xrange(matchMinutesCnt+1)]])
 
 progressStr = []
 matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
@@ -279,6 +278,7 @@ for logline in matchlog:
         for pl in allplayers:
             if pl.name == checkname:                
                 pl.incSuicides()
+                fillH2H(checkname,checkname,currentMinute)
                 isFound = True
                 break;
         if not isFound:
@@ -688,6 +688,9 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # <-- main stats bars
     
     # players kills by minutes -->
+    allPlayerKillsByMinutesStr = ""
+    maxValue = 0
+    minValue = 0
     for pl in allplayersByFrags:
         plNameEscaped = pl.name.replace("[","_").replace("]","_")          
         
@@ -698,27 +701,46 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         
         playerKillsByMinutesHeaderStr = "['Minute'"
         for el in playerH2hElem:
-            playerKillsByMinutesHeaderStr += ",'%s'" % (el[0])    
+            playerKillsByMinutesHeaderStr += ",'%s'" % (el[0] if el[0] != pl.name else "suicides")
         playerKillsByMinutesHeaderStr += "],\n"
         playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_HEADER_ROW", playerKillsByMinutesHeaderStr)
         
         playerKillsByMinutesRowsStr = ""
-        minut = 1        
+        minut = 1
+        plMaxValue = 0
+        plMinValue = 0
         while minut <= currentMinute:
             playerKillsByMinutesRowsStr += "['%d'" % (minut)
+            stackSum = 0
+            stackNegVal = 0
             for el in playerH2hElem:
-                playerKillsByMinutesRowsStr += ",%d" % (el[2][minut])
+                playerKillsByMinutesRowsStr += ",%d" % (el[2][minut] if el[0] != pl.name else -el[2][minut])
+                if el[0] != pl.name:
+                    stackSum += el[2][minut]
+                else:
+                    stackNegVal = min(stackNegVal, -el[2][minut])
             playerKillsByMinutesRowsStr += "],\n"
+            plMaxValue = max(plMaxValue, stackSum)
+            plMinValue = min(plMinValue, stackNegVal)
             minut += 1
         playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_STATS_ROWS", playerKillsByMinutesRowsStr)
         
         playerKillsByMinutesDivTag = ezstatslib.HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG
         playerKillsByMinutesDivTag = playerKillsByMinutesDivTag.replace("PLAYER_NAME", plNameEscaped)
         
-        f.write(playerKillsByMinutesStr)
+        allPlayerKillsByMinutesStr += playerKillsByMinutesStr
         
         # add div
         resStr = resStr.replace("%s_KILLS_BY_MINUTES_PLACE" % (plNameEscaped), playerKillsByMinutesDivTag)
+        
+        # max & min
+        maxValue = max(maxValue, plMaxValue)
+        minValue = min(minValue, plMinValue)
+        
+    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MIN_VALUE", str(maxValue))
+    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MAX_VALUE", str(minValue))
+    
+    f.write(allPlayerKillsByMinutesStr)
     # <-- players kills by minutes
     
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
