@@ -575,6 +575,7 @@ if options.withScripts:
     resultString += "\nBP_PLACE\n"
     
 if options.withScripts:
+    resultString += ezstatslib.HTML_EXPAND_CHECKBOX_TAG
     for pl in allplayersByFrags:
         resultString += "</pre>%s_KILLS_BY_MINUTES_PLACE\n<pre>" % (pl.name.replace("[","_").replace("]","_"))    
 
@@ -742,6 +743,9 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     f.write(allPlayerKillsByMinutesStr)
     # <-- players kills by minutes
+    
+    # write expand/collapse function
+    f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     

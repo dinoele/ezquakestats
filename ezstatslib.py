@@ -134,7 +134,7 @@ HTML_MAIN_STATS_DIAGRAMM_DIV_TAG = \
   "<div class=\"wpb_text_column wpb_content_element \">\n" \
   "<div class=\"wpb_wrapper\">\n" \
   "  <div class=\"symple-toggle state-open\" id=\"main_stats\">\n" \
-  "    <h3 class=\"symple-toggle-trigger \">Main Stats Diagrams</h3>\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Main Stats Diagrams</h2>\n" \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "      <table style=\"width: 100%;\">\n" \
   "        <tr>\n" \
@@ -199,7 +199,7 @@ HTML_MAIN_STATS_BARS_DIV_TAG = \
   "<div class=\"wpb_text_column wpb_content_element \">\n" \
   "<div class=\"wpb_wrapper\">\n" \
   "  <div class=\"symple-toggle state-open\" id=\"main_stats_bars\">\n" \
-  "    <h3 class=\"symple-toggle-trigger \">Main Stats Bars</h3>\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Main Stats Bars</h2>\n" \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "      <div id=\"chart_main_stats\" style=\"width: 90%; height:  600px;\"></div>\n" \
   "    </div>\n" \
@@ -245,8 +245,17 @@ HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG = \
 
 # =========================================================================================================================================================
 
+HTML_EXPAND_CHECKBOX_FUNCTION = \
+  "function expandCollapseKillsByMinutes() {\n" \
+  "$(\"h3.symple-toggle-trigger\").toggleClass(\"active\").next().slideToggle(\"fast\")\n" \
+  "}\n"
+
+HTML_EXPAND_CHECKBOX_TAG = "<input type=\"checkbox\" id=\"expandChBox\" onChange=\"expandCollapseKillsByMinutes()\"/>Expand/Collapse All\n"
+
+# =========================================================================================================================================================
+
 HTML_HEAD_FOLDING_LINKS = \
-  "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"  
+  "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"
 
 HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n<body>\n<pre>"
 
@@ -256,7 +265,11 @@ HTML_FOOTER_NO_PRE = "</body>\n</html>"
 
 HTML_PRE_CLOSE_TAG = "</pre>\n"
   
-HTML_BODY_FOLDING_SCRIPT = "<script type='text/javascript' src='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/js/symple_toggle.js?ver=1.0'></script>\n"
+HTML_BODY_FOLDING_SCRIPT = \
+  "<script type='text/javascript'>" \
+  "jQuery(function($){$(document).ready(function(){$(\"h2.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
+  "jQuery(function($){$(document).ready(function(){$(\"h3.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
+  "</script>\n"
 
 BG_COLOR_GRAY  = "#bfbfbf"
 BG_COLOR_LIGHT_GRAY = "#e6e6e6"
