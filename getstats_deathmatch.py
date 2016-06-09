@@ -705,6 +705,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
             playerKillsByMinutesHeaderStr += ",'%s'" % (el[0] if el[0] != pl.name else "suicides")
         playerKillsByMinutesHeaderStr += "],\n"
         playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_HEADER_ROW", playerKillsByMinutesHeaderStr)
+        playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_TOTAL_HEADER_ROW", playerKillsByMinutesHeaderStr)
         
         playerKillsByMinutesRowsStr = ""
         minut = 1
@@ -725,6 +726,12 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
             plMinValue = min(plMinValue, stackNegVal)
             minut += 1
         playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_STATS_ROWS", playerKillsByMinutesRowsStr)
+        
+        playerKillsTotalRowsStr = "[''"
+        for el in playerH2hElem:
+            playerKillsTotalRowsStr += ",%d" % (el[1] if el[0] != pl.name else -pl.suicides)
+        playerKillsTotalRowsStr += "],\n"
+        playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_TOTAL_STATS_ROWS", playerKillsTotalRowsStr)
         
         playerKillsByMinutesDivTag = ezstatslib.HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG
         playerKillsByMinutesDivTag = playerKillsByMinutesDivTag.replace("PLAYER_NAME", plNameEscaped)

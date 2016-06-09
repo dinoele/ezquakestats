@@ -216,18 +216,31 @@ HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION =\
     "ADD_HEADER_ROW" \
     "ADD_STATS_ROWS" \
     "]);\n" \
+    "var dataTotal = google.visualization.arrayToDataTable([\n" \
+    "ADD_HEADER_ROW" \
+    "ADD_TOTAL_STATS_ROWS" \
+    "]);\n" \
     "\n" \
     "var options = {\n" \
     "isStacked: true,\n" \
     "  height: 300,\n" \
     "  \n" \
     "  vAxis: {minValue: MIN_VALUE, maxValue: MAX_VALUE},\n" \
+    "  legend: { position: 'right', maxLines: 2 },\n" \
     "  title: \"PLAYER_NAME kills by minutes\"\n" \
     "};\n" \
+    "var optionsTotal = {\n" \
+    "isStacked: true,\n" \
+    "  height: 300,\n" \
+    "  legend: { position: \"none\" },\n" \
+    "  title: \"PLAYER_NAME total kills\"\n" \
+    "};\n" \
     "\n" \
-    "var chart = new google.visualization.ColumnChart(document.getElementById('PLAYER_NAME_kills_div'));\n" \
+    "var chart      = new google.visualization.ColumnChart(document.getElementById('PLAYER_NAME_kills_div'));\n" \
+    "var chartTotal = new google.visualization.ColumnChart(document.getElementById('PLAYER_NAME_total_kills_div'));\n" \
     "\n" \
     "chart.draw(data, options);\n" \
+    "chartTotal.draw(dataTotal, optionsTotal);\n" \
     "$(\"#PLAYER_NAME_kills_by_minutes\").attr(\"class\", \"symple-toggle state-closed\");\n" \
     "}\n"
 
@@ -237,7 +250,16 @@ HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG = \
   "  <div class=\"symple-toggle state-open\" id=\"PLAYER_NAME_kills_by_minutes\">\n" \
   "    <h3 class=\"symple-toggle-trigger \">PLAYER_NAME Kills by minutes</h3>\n" \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
-  "      <div id=\"PLAYER_NAME_kills_div\" style=\"width: 90%; height:  300px;\"></div>\n" \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 87%\">\n" \
+  "            <div id=\"PLAYER_NAME_kills_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 13%\">\n" \
+  "            <div id=\"PLAYER_NAME_total_kills_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
   "    </div>\n" \
   "  </div>\n" \
   "</div>\n" \
