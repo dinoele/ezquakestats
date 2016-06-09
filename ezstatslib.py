@@ -84,6 +84,9 @@ HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION = \
 
 HTML_SCRIPT_BATTLE_PROGRESS_ADD_COLUMN_LINE = "data_options_battle_progress.addColumn('number', 'PLAYER_NAME');\n"
 
+#HTML_BATTLE_PROGRESS_DIV_TAG = "<table style=\"width: 100%;\"><tr><td><div id=\"chart_battle_progress\" align=\"center\" style=\"width: 1200px; height: 800px;\"></div></td></tr></table>\n"
+HTML_BATTLE_PROGRESS_DIV_TAG = "<div id=\"chart_battle_progress\" align=\"center\" style=\"width: 100%; height: 800px;\"></div>\n"
+
 # =========================================================================================================================================================
 
 HTML_SCRIPT_MAIN_STATS_FUNCTION = \
@@ -280,8 +283,6 @@ HTML_HEAD_FOLDING_LINKS = \
   "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"
 
 HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n<body>\n<pre>"
-
-HTML_BATTLE_PROGRESS_DIV_TAG = "<div id=\"chart_battle_progress\" style=\"width: 1200px; height: 800px;\"></div>\n"
 
 HTML_FOOTER_NO_PRE = "</body>\n</html>"
 
