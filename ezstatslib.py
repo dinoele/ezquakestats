@@ -217,7 +217,7 @@ HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION =\
     "ADD_STATS_ROWS" \
     "]);\n" \
     "var dataTotal = google.visualization.arrayToDataTable([\n" \
-    "ADD_HEADER_ROW" \
+    "ADD_TOTAL_HEADER_ROW" \
     "ADD_TOTAL_STATS_ROWS" \
     "]);\n" \
     "\n" \
