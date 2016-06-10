@@ -53,7 +53,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
     "google.charts.setOnLoadCallback(drawMainStats);\n" \
-    "google.charts.setOnLoadCallback(drawMainStatsBars);\n"
+    "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
+    "google.charts.setOnLoadCallback(drawPowerUpsBars);\n"
 
 HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION = \
     "function drawBattleProgress() {\n" \
@@ -177,7 +178,7 @@ HTML_SCRIPT_MAIN_STATS_BARS_FUNCTION = \
     "    minValue: 0,\n" \
     "  },\n" \
     "  vAxis: {\n" \
-    "    title: 'Name'\n" \
+    "    title: ''\n" \
     "  },\n" \
     "  bars: 'horizontal',\n" \
     "  annotations: {\n" \
@@ -205,6 +206,56 @@ HTML_MAIN_STATS_BARS_DIV_TAG = \
   "    <h2 class=\"symple-toggle-trigger \">Main Stats Bars</h2>\n" \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "      <div id=\"chart_main_stats\" style=\"width: 90%; height:  600px;\"></div>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_POWER_UPS_BARS_FUNCTION = \
+    "function drawPowerUpsBars() {\n" \
+    "var data = google.visualization.arrayToDataTable([\n" \
+    "ADD_HEADER_ROW" \
+    "ADD_STATS_ROWS" \
+    "]);\n" \
+    "var options = {\n" \
+    "  chart: {\n" \
+    "    title: 'Power Ups'\n" \
+    "  },\n" \
+    "  hAxis: {\n" \
+    "    title: 'Count',\n" \
+    "    minValue: 0,\n" \
+    "  },\n" \
+    "  vAxis: {\n" \
+    "    title: ''\n" \
+    "  },\n" \
+    "  bars: 'horizontal',\n" \
+    "  annotations: {\n" \
+    "    alwaysOutside: false,\n" \
+    "      textStyle: {\n" \
+    "        fontSize: 11,\n" \
+    "        auraColor:   'none',\n" \
+    "        bold: true,\n" \
+    "    },\n" \
+    "    boxStyle: {\n" \
+    "      stroke: '#1B1B1B',\n" \
+    "      strokeWidth: 1\n" \
+    "    }\n" \
+    "  },\n" \
+    "};\n" \
+    "var barchart = new google.visualization.BarChart(document.getElementById('chart_power_ups'));\n" \
+    "barchart.draw(data, options);\n" \
+    "$(\"#power_ups_bars\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}\n"
+
+HTML_POWER_UPS_BARS_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"power_ups_bars\">\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Power Ups</h2>\n" \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "      <div id=\"chart_power_ups\" style=\"width: 90%; height:  600px;\"></div>\n" \
   "    </div>\n" \
   "  </div>\n" \
   "</div>\n" \

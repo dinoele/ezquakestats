@@ -383,7 +383,8 @@ resultString += "Power ups:\n"
 for pl in allplayersByFrags:
     resultString += "{0:10s}  {1:s}\n".format(pl.name, pl.getFormatedPowerUpsStats())
 
-# TODO add place for folded div with power ups diagrams
+if options.withScripts:
+    resultString += "</pre>POWER_UPS_BARS_PLACE\n<pre>"
 
 # all players
 resultString += "\n"
@@ -688,6 +689,43 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(mainStatsBarsStr)
     # <-- main stats bars
     
+    # power ups bars-->
+    isAnnotations = True
+    
+    powerUpsBarsStr = ezstatslib.HTML_SCRIPT_POWER_UPS_BARS_FUNCTION
+    
+    namesLine = "['Name'"
+    raLine    = "['Red Armor'"
+    yaLine    = "['Yellow Armor'"
+    gaLine    = "['Green Armor'"    
+    mhLine    = "['Mega Health'"
+    
+    for pl in sortedPlayers:
+        namesLine += ", '%s'" % (pl.name)
+        raLine    += ", %d" % (pl.ra)
+        yaLine    += ", %d" % (pl.ya)
+        gaLine    += ", %d" % (pl.ga)
+        mhLine    += ", %d" % (pl.mh)
+        
+        if isAnnotations:
+            namesLine += ", {type: 'string', role: 'annotation'}"
+            raLine    += ", '%d'" % (pl.ra)
+            yaLine    += ", '%d'" % (pl.ya)
+            gaLine    += ", '%d'" % (pl.ga)
+            mhLine    += ", '%d'" % (pl.mh)
+                    
+    namesLine += "],\n"
+    raLine    += "],\n"
+    yaLine    += "],\n"
+    gaLine    += "],\n"
+    mhLine    += "]\n"
+    
+    powerUpsBarsStr = powerUpsBarsStr.replace("ADD_HEADER_ROW", namesLine)
+    powerUpsBarsStr = powerUpsBarsStr.replace("ADD_STATS_ROWS", raLine + yaLine + gaLine + mhLine)    
+
+    f.write(powerUpsBarsStr)
+    # <-- power ups bars
+    
     # players kills by minutes -->
     allPlayerKillsByMinutesStr = ""
     maxValue = 0
@@ -760,6 +798,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("BP_PLACE", ezstatslib.HTML_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("MAIN_STATS_PLACE", ezstatslib.HTML_MAIN_STATS_DIAGRAMM_DIV_TAG)
     resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)
+    resStr = resStr.replace("POWER_UPS_BARS_PLACE", ezstatslib.HTML_POWER_UPS_BARS_DIV_TAG)
     
     f.write(resStr)
     
