@@ -204,7 +204,7 @@ HTML_MAIN_STATS_BARS_DIV_TAG = \
   "<div class=\"wpb_text_column wpb_content_element \">\n" \
   "<div class=\"wpb_wrapper\">\n" \
   "  <div class=\"symple-toggle state-open\" id=\"main_stats_bars\">\n" \
-  "    <h2 class=\"symple-toggle-trigger \">Main Stats Bars</h2>\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Main Stats</h2>\n" \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "      <div id=\"chart_main_stats\" style=\"width: 90%; height:  600px;\"></div>\n" \
   "    </div>\n" \
