@@ -372,8 +372,8 @@ resultString += "\n"
 for pl in allplayersByFrags:
     resultString += "{0:10s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats_noTeamKills())
 
-if options.withScripts:
-    resultString += "</pre>MAIN_STATS_PLACE\n<pre>"
+# if options.withScripts:
+#     resultString += "</pre>MAIN_STATS_PLACE\n<pre>"
     
 if options.withScripts:
     resultString += "</pre>MAIN_STATS_BARS_PLACE\n<pre>"
@@ -633,23 +633,23 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # <-- battle progress
     
     # main stats -->
-    mainStatsStr = ezstatslib.HTML_SCRIPT_MAIN_STATS_FUNCTION
-    fragsLines    = ""
-    killsLines    = ""
-    deathsLines   = ""    
-    suicidesLines = ""
-    for pl in sortedPlayers:
-        fragsLines    += "['%s',%d],\n" % (pl.name, pl.frags())
-        killsLines    += "['%s',%d],\n" % (pl.name, pl.kills)
-        deathsLines   += "['%s',%d],\n" % (pl.name, pl.deaths)
-        suicidesLines += "['%s',%d],\n" % (pl.name, pl.suicides)
-    
-    mainStatsStr = mainStatsStr.replace("ADD_FRAGS_ROWS",    fragsLines)
-    mainStatsStr = mainStatsStr.replace("ADD_KILLS_ROWS",    killsLines)
-    mainStatsStr = mainStatsStr.replace("ADD_DEATHS_ROWS",   deathsLines)
-    mainStatsStr = mainStatsStr.replace("ADD_SUICIDES_ROWS", suicidesLines)
-
-    f.write(mainStatsStr)
+    # mainStatsStr = ezstatslib.HTML_SCRIPT_MAIN_STATS_FUNCTION
+    # fragsLines    = ""
+    # killsLines    = ""
+    # deathsLines   = ""    
+    # suicidesLines = ""
+    # for pl in sortedPlayers:
+    #     fragsLines    += "['%s',%d],\n" % (pl.name, pl.frags())
+    #     killsLines    += "['%s',%d],\n" % (pl.name, pl.kills)
+    #     deathsLines   += "['%s',%d],\n" % (pl.name, pl.deaths)
+    #     suicidesLines += "['%s',%d],\n" % (pl.name, pl.suicides)
+    # 
+    # mainStatsStr = mainStatsStr.replace("ADD_FRAGS_ROWS",    fragsLines)
+    # mainStatsStr = mainStatsStr.replace("ADD_KILLS_ROWS",    killsLines)
+    # mainStatsStr = mainStatsStr.replace("ADD_DEATHS_ROWS",   deathsLines)
+    # mainStatsStr = mainStatsStr.replace("ADD_SUICIDES_ROWS", suicidesLines)
+    # 
+    # f.write(mainStatsStr)
     # <-- main stats
     
     # main stats bars-->
@@ -796,7 +796,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     # add divs
     resStr = resStr.replace("BP_PLACE", ezstatslib.HTML_BATTLE_PROGRESS_DIV_TAG)
-    resStr = resStr.replace("MAIN_STATS_PLACE", ezstatslib.HTML_MAIN_STATS_DIAGRAMM_DIV_TAG)
+    #resStr = resStr.replace("MAIN_STATS_PLACE", ezstatslib.HTML_MAIN_STATS_DIAGRAMM_DIV_TAG)
     resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)
     resStr = resStr.replace("POWER_UPS_BARS_PLACE", ezstatslib.HTML_POWER_UPS_BARS_DIV_TAG)
     

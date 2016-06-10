@@ -52,9 +52,10 @@ HTML_HEADER_SCRIPT_SECTION = \
     "<script type=\"text/javascript\">\n" \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
-    "google.charts.setOnLoadCallback(drawMainStats);\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n"
+
+# "google.charts.setOnLoadCallback(drawMainStats);\n" \
 
 HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION = \
     "function drawBattleProgress() {\n" \
