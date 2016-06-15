@@ -730,6 +730,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     allPlayerKillsByMinutesStr = ""
     maxValue = 0
     minValue = 0
+    maxTotalValue = 0
+    minTotalValue = 0
     for pl in allplayersByFrags:
         plNameEscaped = pl.name.replace("[","_").replace("]","_")          
         
@@ -782,9 +784,13 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         # max & min
         maxValue = max(maxValue, plMaxValue)
         minValue = min(minValue, plMinValue)
+        maxTotalValue = max(maxTotalValue, pl.frags())
+        minTotalValue = min(minTotalValue, pl.suicides)
         
-    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MIN_VALUE", str(maxValue))
-    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MAX_VALUE", str(minValue))
+    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MIN_VALUE", str(minValue))
+    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MAX_VALUE", str(maxValue))
+    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("TOTAL_MIN__VALUE", str(minTotalValue))
+    allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("TOTAL_MAX__VALUE", str(maxTotalValue))
     
     f.write(allPlayerKillsByMinutesStr)
     # <-- players kills by minutes

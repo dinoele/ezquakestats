@@ -277,7 +277,7 @@ HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION =\
     "]);\n" \
     "\n" \
     "var options = {\n" \
-    "isStacked: true,\n" \
+    "  isStacked: true,\n" \
     "  height: 300,\n" \
     "  \n" \
     "  vAxis: {minValue: MIN_VALUE, maxValue: MAX_VALUE},\n" \
@@ -285,8 +285,9 @@ HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION =\
     "  title: \"PLAYER_NAME kills by minutes\"\n" \
     "};\n" \
     "var optionsTotal = {\n" \
-    "isStacked: true,\n" \
+    "  isStacked: true,\n" \
     "  height: 300,\n" \
+    "  vAxis: {minValue: TOTAL_MIN__VALUE, maxValue: TOTAL_MAX__VALUE},\n" \
     "  legend: { position: \"none\" },\n" \
     "  title: \"PLAYER_NAME total kills\"\n" \
     "};\n" \
