@@ -921,9 +921,8 @@ newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\"
 headerRow = ["Date", "Premier League", "First Division"]
 filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
-filesMap = {}  # key: dt, value: [[PL1,PL2,..],[FD1, FD2,..]]
+filesMap = {}  # key: dt, value: [[ [PL1,dt],[PL2,dt],..],[ [FD1,dt], [FD2,dt],.. ]]
 
-# TODO make dicts instead of lists in order to sort elements before table creation
 zerodt = datetime(1970,1,1)
 filesMap[zerodt] = [[],[]]  # files with problems
 for fname in files:
@@ -943,22 +942,24 @@ for fname in files:
                 if not dateStruct in filesMap.keys(): # key exist
                     filesMap[dateStruct] = [[],[]]
                     
+                fnamePair = [fname,dt]
+                    
                 if "PL" in fname:
-                    filesMap[dateStruct][0].append(fname)
+                    filesMap[dateStruct][0].append(fnamePair)
                 else: # FD
-                    filesMap[dateStruct][1].append(fname)
+                    filesMap[dateStruct][1].append(fnamePair)
             except Exception, ex:
                 if "PL" in fname:
-                    filesMap[zerodt][0].append(fname)
+                    filesMap[zerodt][0].append(fnamePair)
                 else: # FD
-                    filesMap[zerodt][1].append(fname)
+                    filesMap[zerodt][1].append(fnamePair)
                 break;
                 
         else: # date parse failed
             if "PL" in fname:
-                filesMap[zerodt][0].append(fname)
+                filesMap[zerodt][0].append(fnamePair)
             else: # FD
-                filesMap[zerodt][1].append(fname)
+                filesMap[zerodt][1].append(fnamePair)
         
         
         # if isFileNew and filePath == fname:
@@ -970,12 +971,18 @@ for fname in files:
 
 sorted_filesMap = sorted(filesMap.items(), key=itemgetter(0), reverse=True)
 
-for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], ['FD_[spinev2]_2016-05-05_16_12_52.html', 'FD_[skull]_2016-05-05_13_38_11.html']])
+for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['FD_[spinev2]_2016-05-05_16_12_52.html',dt1], ['FD_[skull]_2016-05-05_13_38_11.html',dt2]]])
     formattedDate = el[0]
     if el[0] != zerodt:
         formattedDate = el[0].strftime("%Y-%m-%d")
     
-    maxcnt = max(len(el[1][0]), len(el[1][1]))
+    pls = el[1][0] # array, val: [str,dt]
+    fds = el[1][1] # array, val: [str,dt]
+    
+    pls = sorted(pls, key=lambda x: x[1], reverse=True)
+    fds = sorted(fds, key=lambda x: x[1], reverse=True)
+    
+    maxcnt = max(len(fds), len(pls))
     attrs = {} # attribs
     attrs['rowspan'] = maxcnt        
     
@@ -986,15 +993,15 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], ['FD
         if i != 0:
             tableRow = HTML.TableRow(cells=[])
         
-        if i < len(el[1][0]): # PLs
-            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][0][i],
-                                                   newGifTag if checkNew(isFileNew, filePath, el[1][0][i]) else "") ) )
+        if i < len(pls): # PLs
+            tableRow.cells.append( HTML.TableCell( htmlLink(pls[i][0],
+                                                   newGifTag if checkNew(isFileNew, filePath, pls[i][0]) else "") ) )
         else: # no PLs
             tableRow.cells.append( HTML.TableCell("") )
             
-        if i < len(el[1][1]): # FDs
-            tableRow.cells.append( HTML.TableCell( htmlLink(el[1][1][i],
-                                                   newGifTag if checkNew(isFileNew, filePath, el[1][1][i]) else "") ) )
+        if i < len(fds): # FDs
+            tableRow.cells.append( HTML.TableCell( htmlLink(fds[i][0],
+                                                   newGifTag if checkNew(isFileNew, filePath, fds[i][0]) else "") ) )            
         else: # no FDs
             tableRow.cells.append( HTML.TableCell("") )
             
