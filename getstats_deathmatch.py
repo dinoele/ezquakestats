@@ -784,8 +784,10 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         # max & min
         maxValue = max(maxValue, plMaxValue)
         minValue = min(minValue, plMinValue)
-        maxTotalValue = max(maxTotalValue, pl.kills)
-        minTotalValue = min(minTotalValue, pl.suicides)
+        
+        # maxTotalValue = max(maxTotalValue, pl.kills)
+        maxTotalValue = max(maxTotalValue, sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True)[0][1])
+        minTotalValue = min(minTotalValue, -pl.suicides)
         
     allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MIN_VALUE", str(minValue))
     allPlayerKillsByMinutesStr = allPlayerKillsByMinutesStr.replace("MAX_VALUE", str(maxValue))

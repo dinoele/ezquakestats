@@ -285,7 +285,7 @@ HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION =\
     "  title: \"PLAYER_NAME kills by minutes\"\n" \
     "};\n" \
     "var optionsTotal = {\n" \
-    "  isStacked: true,\n" \
+    "  isStacked: false,\n" \
     "  height: 300,\n" \
     "  vAxis: {minValue: TOTAL_MIN__VALUE, maxValue: TOTAL_MAX__VALUE},\n" \
     "  legend: { position: \"none\" },\n" \
@@ -308,10 +308,10 @@ HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG = \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "      <table style=\"width: 100%;\">\n" \
   "        <tr>\n" \
-  "          <td style=\"width: 87%\">\n" \
+  "          <td style=\"width: 83%\">\n" \
   "            <div id=\"PLAYER_NAME_kills_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
   "          </td>\n" \
-  "          <td style=\"width: 13%\">\n" \
+  "          <td style=\"width: 17%\">\n" \
   "            <div id=\"PLAYER_NAME_total_kills_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
   "          </td>\n" \
   "        </tr>\n" \
