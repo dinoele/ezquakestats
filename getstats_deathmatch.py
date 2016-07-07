@@ -577,6 +577,9 @@ resultString += "\n"
 
 if options.withScripts:
     resultString += "</pre>STREAK_TIMELINE_PLACE\n<pre>"
+    
+if options.withScripts:
+    resultString += "</pre>STREAK_ALL_TIMELINE_PLACE\n<pre>"
 
 # ============================================================================================================
 
@@ -921,6 +924,51 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(streaksTimelineFunctionStr)
     # <-- streaks timeline
     
+    # all streaks timeline -->
+    allStreaksTimelineFunctionStr = ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION
+    
+    rowLines = ""
+    colors = ""
+    for pl in allplayersByFrags:
+        strkRes,maxStrk           = pl.getCalculatedStreaksFull()
+        for strk in strkRes:
+            rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_kills" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
+            colors += "'#8d8',"
+            
+        if len(strkRes) == 0:
+            rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_kills" % (pl.name))  # empty element in order to add player
+            colors += "'#8d8',"
+        
+        # rowLines += "[ '%s', '', new Date(2016,1,1,0,10,0), new Date(2016,1,1,0,10,0) ],\n" % (pl.name) # TODO change options - need length
+        
+        deathStrkRes,deathMaxStrk = pl.getDeatchStreaksFull()
+        for strk in deathStrkRes:
+            rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_deaths" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
+            colors += "'red',"
+            
+        if len(deathStrkRes) == 0:
+            rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_deaths" % (pl.name))  # empty element in order to add player
+            colors += "'red',"
+    
+    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("ADD_STATS_ROWS", rowLines)
+    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("ADD_COLORS",     colors)    
+                
+    # TODO calculate height using players count
+    # var rowHeight = 41;
+    # var chartHeight = (dataTable.getNumberOfRows() + 1) * rowHeight;
+    # timeline: height: chartHeight,
+    
+    # TODO black text color for deaths
+    # TODO hints ??
+    # TODO correct last events end time (10:01 or 10:02)
+    # TODO check on 15 and 20 minutes
+    # TODO add finish event or events, the timeline should be full
+    # TODO bold players names
+    # TODO folding ??
+                
+    f.write(allStreaksTimelineFunctionStr)
+    # <-- all streaks timeline
+    
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     
@@ -932,6 +980,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)
     resStr = resStr.replace("POWER_UPS_BARS_PLACE", ezstatslib.HTML_POWER_UPS_BARS_DIV_TAG)
     resStr = resStr.replace("STREAK_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG)
+    resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG)
     
     f.write(resStr)
     

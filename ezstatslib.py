@@ -54,7 +54,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
-    "google.charts.setOnLoadCallback(drawStreakTimelines);\n"
+    "google.charts.setOnLoadCallback(drawStreakTimelines);\n" \
+    "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
 
 # "google.charts.setOnLoadCallback(drawMainStats);\n" \
 
@@ -365,6 +366,35 @@ HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG = \
   "          </td>\n" \
   "          <td style=\"width: 50%\">\n" \
   "            <div id=\"death_streak_chart_timeline_div\" style=\"width:  100%; height: 400px;\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION = \
+    "function drawAllStreakTimelines() {\n" \
+    "var container = document.getElementById('all_streak_chart_timeline_div');\n" \
+    "var chart = new google.visualization.Timeline(container);\n" \
+    "var dataTable = new google.visualization.DataTable();\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Position' });\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Name' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'Start' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'End' });\n" \
+    "dataTable.addRows([\n" \
+    "ADD_STATS_ROWS" \
+    "]);" \
+    "var options = { colors: ['#8d8', 'red'],\n" \
+    "                timeline: { colorByRowLabel: true, rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
+    "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
+    "chart.draw(dataTable, options) ;\n" \
+    "}"
+
+HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG = \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 100%\">\n" \
+  "            <div id=\"all_streak_chart_timeline_div\" style=\"width: 100%; height: 600px;\"></div>\n" \
   "          </td>\n" \
   "        </tr>\n" \
   "      </table>\n" \
