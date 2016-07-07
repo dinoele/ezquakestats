@@ -53,7 +53,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
-    "google.charts.setOnLoadCallback(drawPowerUpsBars);\n"
+    "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
+    "google.charts.setOnLoadCallback(drawStreakTimelines);\n"
 
 # "google.charts.setOnLoadCallback(drawMainStats);\n" \
 
@@ -111,7 +112,7 @@ HTML_SCRIPT_MAIN_STATS_FUNCTION = \
     "  title: 'Kills'\n" \
     "};\n" \
     "var chart_kills = new google.visualization.PieChart(document.getElementById('piechart_kills'));\n" \
-    "chart_kills.draw(data_kills, options_kills);\n" \
+    "chart_kills.draw(data_kills, options_kills); \n" \
     "\n" \
     "var data_deaths = google.visualization.arrayToDataTable([\n" \
     "['Name', 'Deaths'],\n" \
@@ -323,6 +324,53 @@ HTML_PLAYER_KILLS_BY_MINUTES_DIV_TAG = \
 
 # =========================================================================================================================================================
 
+HTML_SCRIPT_STREAK_TIMELINE_FUNCTION = \
+    "function drawStreakTimelines() {\n" \
+    "var container = document.getElementById('streak_chart_timeline_div');\n" \
+    "var chart = new google.visualization.Timeline(container);\n" \
+    "var dataTable = new google.visualization.DataTable();\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Position' });\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Name' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'Start' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'End' });\n" \
+    "dataTable.addRows([\n" \
+    "ADD_STATS_ROWS" \
+    "]);" \
+    "var options = { timeline: { singleColor: '#8d8' ,\n" \
+    "                            rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
+    "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
+    "chart.draw(dataTable, options) ;\n" \
+    "\n" \
+    "var deathcontainer = document.getElementById('death_streak_chart_timeline_div');\n" \
+    "var deathchart = new google.visualization.Timeline(deathcontainer);\n" \
+    "var deathdataTable = new google.visualization.DataTable();\n" \
+    "deathdataTable.addColumn({ type: 'string', id: 'Position' });\n" \
+    "deathdataTable.addColumn({ type: 'string', id: 'Name' });\n" \
+    "deathdataTable.addColumn({ type: 'date', id: 'Start' });\n" \
+    "deathdataTable.addColumn({ type: 'date', id: 'End' });\n" \
+    "deathdataTable.addRows([\n" \
+    "ADD_DEATH_STATS_ROWS" \
+    "]);" \
+    "var deathoptions = { timeline: { singleColor: 'red' ,\n" \
+    "                            rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
+    "                            barLabelStyle: { fontName: 'Garamond',  fontSize:  9, fontPosition: 'center'  } } };\n" \
+    "deathchart.draw(deathdataTable, deathoptions) ;\n" \
+    "}"
+
+HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG = \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 50%\">\n" \
+  "            <div id=\"streak_chart_timeline_div\" style=\"width:  100%; height: 400px;\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 50%\">\n" \
+  "            <div id=\"death_streak_chart_timeline_div\" style=\"width:  100%; height: 400px;\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
+
+# =========================================================================================================================================================
+
 HTML_EXPAND_CHECKBOX_FUNCTION = \
   "function expandCollapseKillsByMinutes() {\n" \
   "$(\"h3.symple-toggle-trigger\").toggleClass(\"active\").next().slideToggle(\"fast\")\n" \
@@ -502,6 +550,20 @@ def sortPlayersBy(players, param, fieldType="attr", units = ""):
 
     return (res if param == "damageDelta" or valsSum != 0 else "")
 
+class Streak:
+    def __init__(self, cnt = 0, _start = 0, _end = 0):
+        self.count = cnt
+        self.start = _start
+        self.end   = _end
+        
+    def clear(self):
+        self.count = 0
+        self.start = 0
+        self.end   = 0
+        
+    def toString(self):
+        return "%d [%d:%d]" % (self.count, self.start, self.end)
+
 class Player:
     def __init__(self, teamname, name, score, origDelta, teamkills):
         self.teamname = teamname
@@ -558,35 +620,42 @@ class Player:
         #self.TODO_deaths = 0
         
         self.calculatedStreaks = []
-        self.currentStreak = 0
+        self.currentStreak = Streak()
         
         self.deathStreaks = []
-        self.currentDeathStreak = 0
+        self.currentDeathStreak = Streak()
 
-    def fillStreaks(self):
-        if self.currentStreak != 0:
-            self.calculatedStreaks.append(self.currentStreak)
-            self.currentStreak = 0
+    def fillStreaks(self, time):
+        if self.currentStreak.count != 0:
+            self.currentStreak.end = time
+            # self.calculatedStreaks.append(self.currentStreak)
+            self.calculatedStreaks.append( Streak(self.currentStreak.count, self.currentStreak.start, self.currentStreak.end) )
+            self.currentStreak.clear()
 
-    def fillDeathStreaks(self):
-        if self.currentDeathStreak != 0:
-            self.deathStreaks.append(self.currentDeathStreak)
-            self.currentDeathStreak = 0
+    def fillDeathStreaks(self, time):
+        if self.currentDeathStreak.count != 0:
+            self.currentDeathStreak.end = time
+            # self.deathStreaks.append(self.currentDeathStreak)
+            self.deathStreaks.append( Streak(self.currentDeathStreak.count, self.currentDeathStreak.start, self.currentDeathStreak.end) )
+            self.currentDeathStreak.clear()
 
-    def incKill(self):
-        self.kills += 1
-        self.currentStreak += 1
-        self.fillDeathStreaks()
+    def incKill(self, time):
+        self.kills += 1        
+        self.currentStreak.count += 1
+        if self.currentStreak.start == 0: self.currentStreak.start = time            
+        self.fillDeathStreaks(time)
     
-    def incDeath(self):
+    def incDeath(self, time):
         self.deaths += 1
-        self.currentDeathStreak += 1
-        self.fillStreaks()
+        self.currentDeathStreak.count += 1
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+        self.fillStreaks(time)
         
-    def incSuicides(self):
+    def incSuicides(self, time):
         self.suicides += 1
-        self.currentDeathStreak += 1
-        self.fillStreaks()            
+        self.currentDeathStreak.count += 1
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+        self.fillStreaks(time)            
     
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
@@ -612,9 +681,19 @@ class Player:
         maxStreak = 0
         res = []
         for strk in self.calculatedStreaks:
-            if strk >= minCnt:                                
+            if strk.count >= minCnt:                                
+                res.append(strk.count)            
+                maxStreak = max(maxStreak, strk.count)
+            
+        return res, maxStreak
+    
+    def getCalculatedStreaksFull(self, minCnt = KILL_STREAK_MIN_VALUE):
+        maxStreak = 0
+        res = []
+        for strk in self.calculatedStreaks:
+            if strk.count >= minCnt:                                
                 res.append(strk)            
-                maxStreak = max(maxStreak, strk)
+                maxStreak = max(maxStreak, strk.count)
             
         return res, maxStreak
     
@@ -622,9 +701,19 @@ class Player:
         maxStreak = 0
         res = []
         for strk in self.deathStreaks:
-            if strk >= minCnt:                                
+            if strk.count >= minCnt:                                
+                res.append(strk.count)            
+                maxStreak = max(maxStreak, strk.count)
+            
+        return res, maxStreak
+    
+    def getDeatchStreaksFull(self, minCnt = DEATH_STREAK_MIN_VALUE):
+        maxStreak = 0
+        res = []
+        for strk in self.deathStreaks:
+            if strk.count >= minCnt:                                
                 res.append(strk)            
-                maxStreak = max(maxStreak, strk)
+                maxStreak = max(maxStreak, strk.count)
             
         return res, maxStreak
     

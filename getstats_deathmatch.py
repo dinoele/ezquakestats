@@ -53,7 +53,7 @@ else:
     f = sys.stdin
 
 matchdate = ""
-matchlog = []
+matchlog = [[]]
 isStart = False
 isEnd = False
 
@@ -74,7 +74,7 @@ line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 
 while not ezstatslib.isMatchStart(line):
     if "telefrag" in line and not "teammate" in line: # telefrags before match start
-        matchlog.append(line)
+        matchlog[0].append(line)
 
     if "matchdate" in line:    
         matchdate = line.split("matchdate: ")[1].split("\n")[0]
@@ -87,7 +87,8 @@ matchMinutesCnt = 1
 line = f.readline()
 readLinesNum += 1
 while not ezstatslib.isMatchEnd(line):
-    matchlog.append(line)
+    if line != "":
+        matchlog[ matchMinutesCnt - 1 ].append(line)
 #    line = f.readline()
 #    readLinesNum += 1
     line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
@@ -112,6 +113,7 @@ while not ezstatslib.isMatchEnd(line):
         
     if "remaining" in line or "overtime" in line:  # [9] minutes remaining
         matchMinutesCnt += 1
+        matchlog.append([])
 
 while not "Player statistics" in line:
 #    line = f.readline()
@@ -216,112 +218,125 @@ for pl1 in allplayers:
     for pl2 in allplayers:
         headToHead[pl1.name].append([pl2.name,0,[0 for i in xrange(matchMinutesCnt+1)]])
 
-progressStr = []
+def incTime():
+    pass
+
 matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
 matchProgressDict = []
 currentMinute = 1
+currentMatchTime = 0
 
-for logline in matchlog:
-    if logline == "":
-        continue
+ezstatslib.logError("EEE: len(matchlog) = %d\n" % (len(matchlog)))
 
-    # battle progress
-#    if "time over, the game is a draw" in logline: # time over, the game is a draw
-#        progressStr.append("tie (overtime)")
-#        continue
-#
-    if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining
-        currentMinute += 1
-        allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
-        progressLine = []
-        progressLineDict = {}
-        s = ""
-        for pl in allplayersByFrags:
-            #s += "%s%s(%d)" % ("" if s == "" else ",", pl.name, pl.frags())
-            s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
-            progressLine.append([pl.name, pl.frags()]);
-            progressLineDict[pl.name] = pl.frags();
-        progressStr.append(s)
-        matchProgress.append(progressLine)
-        matchProgressDict.append(progressLineDict)
-        continue
-
-    # telefrag
-    checkres,who,whom = ezstatslib.talefragDetection(logline, [])
-    if checkres:
-        isFoundWho = False if who != "" else True
-        isFoundWhom = False
-        for pl in allplayers:
-            if who != "" and pl.name == who:
-                pl.incKill()
-                pl.tele_kills += 1
-                isFoundWho = True
-
-            if pl.name == whom:
-                pl.incDeath()
-                pl.tele_deaths += 1
-                isFoundWhom = True
-
-        if who != "":
-            fillH2H(who,whom,currentMinute)
-
-        if not isFoundWho or not isFoundWhom:
-            #print "ERROR: count telefrag", who, "-", whom, ":", logline
-            ezstatslib.logError("ERROR: count telefrag %s-%s: %s\n" % (who, whom, logline))
-            exit(0)
-
-        continue
-
-    checkres,checkname = ezstatslib.suicideDetection(logline)
-    if checkres:
-        isFound = False
-        for pl in allplayers:
-            if pl.name == checkname:                
-                pl.incSuicides()
-                fillH2H(checkname,checkname,currentMinute)
-                isFound = True
-                break;
-        if not isFound:
-            #print "ERROR: count suicides"
-            ezstatslib.logError("ERROR: count suicides\n")
-            exit(0)
-
-        continue
-
-    # spectator detection
-    if "Spectator" in logline: # Spectator zrkn connected
-        spectators.append(logline.split(" ")[1])
-        continue
-
-    cres,who,whom,weap = ezstatslib.commonDetection(logline)
-
-    if cres:
-        if not weap in ezstatslib.possibleWeapons:
-            #print "ERROR: unknown weapon:", weap
-            ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
-            exit(0)
-
-        isFoundWho = False
-        isFoundWhom = False
-        for pl in allplayers:
-            if pl.name == who:
-                pl.incKill();
-                exec("pl.%s_kills += 1" % (weap))
-                isFoundWho = True
+for matchPart in matchlog:
+    partSize = len(matchPart) - 1  # line about minute change is substracted
+    currentPartNum = 0
+    timeMult = 0 if partSize == 0 else (60.0 / float(partSize))
+    
+    # ezstatslib.logError("EEE: currentMinute = %d, matchPart[0] = %s, partSize = %d\n" % (currentMinute, matchPart[0], partSize))
+    
+    for logline in matchPart:
+        if logline == "":
+            continue
+        
+        currentPartNum += 1            
+    
+        # battle progress
+        if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining
             
-            if pl.name == whom:
-                pl.incDeath();
-                exec("pl.%s_deaths += 1" % (weap))
-                isFoundWhom = True
-
-        fillH2H(who,whom,currentMinute)
-
-        if not isFoundWho or not isFoundWhom:
-            #print "ERROR: count common", who, "-", whom, ":", logline
-            ezstatslib.logError("ERROR: count common %s-%s: %s\n" % (who, whom, logline))
-            exit(0)
-
-        continue
+            # if partSize != currentPartNum + 1:
+            #     ezstatslib.logError("ERROR: partSize(%d) != currentPartNum(%d) + 1\n" % (partSize, currentPartNum))
+            
+            currentMinute += 1
+            allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+            progressLine = []
+            progressLineDict = {}
+            for pl in allplayersByFrags:
+                progressLine.append([pl.name, pl.frags()]);
+                progressLineDict[pl.name] = pl.frags();
+            matchProgress.append(progressLine)
+            matchProgressDict.append(progressLineDict)                
+            continue
+        
+        currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )
+        ezstatslib.logError("EEE: currentMatchTime = %d, logline = %s\n" % (currentMatchTime, logline))
+    
+        # telefrag
+        checkres,who,whom = ezstatslib.talefragDetection(logline, [])
+        if checkres:
+            isFoundWho = False if who != "" else True
+            isFoundWhom = False
+            for pl in allplayers:
+                if who != "" and pl.name == who:
+                    pl.incKill(currentMatchTime)
+                    pl.tele_kills += 1
+                    isFoundWho = True
+    
+                if pl.name == whom:
+                    pl.incDeath(currentMatchTime)
+                    pl.tele_deaths += 1
+                    isFoundWhom = True
+    
+            if who != "":
+                fillH2H(who,whom,currentMinute)
+    
+            if not isFoundWho or not isFoundWhom:
+                #print "ERROR: count telefrag", who, "-", whom, ":", logline
+                ezstatslib.logError("ERROR: count telefrag %s-%s: %s\n" % (who, whom, logline))
+                exit(0)
+    
+            continue
+    
+        checkres,checkname = ezstatslib.suicideDetection(logline)
+        if checkres:
+            isFound = False
+            for pl in allplayers:
+                if pl.name == checkname:                
+                    pl.incSuicides(currentMatchTime)
+                    fillH2H(checkname,checkname,currentMinute)
+                    isFound = True
+                    break;
+            if not isFound:
+                #print "ERROR: count suicides"
+                ezstatslib.logError("ERROR: count suicides\n")
+                exit(0)
+    
+            continue
+    
+        # spectator detection
+        if "Spectator" in logline: # Spectator zrkn connected
+            spectators.append(logline.split(" ")[1])
+            continue
+    
+        cres,who,whom,weap = ezstatslib.commonDetection(logline)
+    
+        if cres:
+            if not weap in ezstatslib.possibleWeapons:
+                #print "ERROR: unknown weapon:", weap
+                ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
+                exit(0)
+    
+            isFoundWho = False
+            isFoundWhom = False
+            for pl in allplayers:
+                if pl.name == who:
+                    pl.incKill(currentMatchTime);
+                    exec("pl.%s_kills += 1" % (weap))
+                    isFoundWho = True
+                
+                if pl.name == whom:
+                    pl.incDeath(currentMatchTime);
+                    exec("pl.%s_deaths += 1" % (weap))
+                    isFoundWhom = True
+    
+            fillH2H(who,whom,currentMinute)
+    
+            if not isFoundWho or not isFoundWhom:
+                #print "ERROR: count common", who, "-", whom, ":", logline
+                ezstatslib.logError("ERROR: count common %s-%s: %s\n" % (who, whom, logline))
+                exit(0)
+    
+            continue            
 
 # all log lines are processed
 
@@ -346,20 +361,18 @@ for pl in allplayers:
 allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
 
 # fill final battle progress
-s = ""
 progressLine = []
 progressLineDict = {}
 for pl in allplayersByFrags:    
-    s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
     progressLine.append([pl.name, pl.frags()]);
     progressLineDict[pl.name] = pl.frags();
-progressStr.append(s)
 matchProgress.append(progressLine)
 matchProgressDict.append(progressLineDict)
     
 # fill final element in calculatedStreaks
 for pl in allplayers:
-    pl.fillStreaks()
+    pl.fillStreaks(currentMatchTime)
+    pl.fillDeathStreaks(currentMatchTime)
     
 # generate output string
 resultString = ""
@@ -437,6 +450,9 @@ def createStreaksHtmlTable(sortedPlayers, streakType):
     maxCnt = 0
     for pl in sortedPlayers:
         strkRes,maxStrk = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()
+        
+        ezstatslib.logError("EEE: strkRes = %s, maxStrk = %d\n" % (str(strkRes), maxStrk))
+        
         streaksList.append( [pl.name, strkRes] )
         maxCnt = max(maxCnt,len(strkRes))
         if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
@@ -461,6 +477,48 @@ def createStreaksHtmlTable(sortedPlayers, streakType):
                                                       bgcolor=ezstatslib.BG_COLOR_GREEN if streakType == StreakType.KILL_STREAK else ezstatslib.BG_COLOR_RED) )
             else:
                 tableRow.cells.append( HTML.TableCell(str(val), align="center", width=cellWidth) )            
+            i += 1
+        
+        for j in xrange(i,maxCnt):
+            tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
+            
+        streaksHtmlTable.rows.append(tableRow)
+    
+    return streaksHtmlTable
+
+
+def createFullStreaksHtmlTable(sortedPlayers, streakType):
+    streaksList = []  # [[name1,[s1,s2,..]]]
+    maxCnt = 0
+    for pl in sortedPlayers:
+        
+        strkRes,maxStrk = pl.getCalculatedStreaksFull() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaksFull()
+        ezstatslib.logError("EEE: strkRes = %s, maxStrk = %d\n" % (str(strkRes), maxStrk))
+        
+        streaksList.append( [pl.name, strkRes] )
+        maxCnt = max(maxCnt,len(strkRes))
+        if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
+            ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+            
+    cellWidth = "20px"
+    streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
+                           style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    for strk in streaksList:
+        tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(strk[0]), align="center", width=cellWidth) ])
+        
+        maxVal = 0
+        if len(strk[1]) > 0:
+            maxVal = (sorted(strk[1], key=attrgetter("count"), reverse=True)[0]).count
+            
+        i = 0
+        for val in strk[1]:
+            if val.count == maxVal:
+                tableRow.cells.append( HTML.TableCell(ezstatslib.htmlBold(val.toString()),
+                                                      align="center",
+                                                      width=cellWidth,
+                                                      bgcolor=ezstatslib.BG_COLOR_GREEN if streakType == StreakType.KILL_STREAK else ezstatslib.BG_COLOR_RED) )
+            else:
+                tableRow.cells.append( HTML.TableCell(val.toString(), align="center", width=cellWidth) )            
             i += 1
         
         for j in xrange(i,maxCnt):
@@ -498,6 +556,27 @@ resultString += "\n"
 resultString += "Players streaks:\n"
 resultString += str(totalStreaksHtmlTable)
 resultString += "\n"
+
+
+fullTotalStreaksHtmlTable = \
+    HTML.Table(header_row=["Kill streaks (%d+)\n" % (ezstatslib.KILL_STREAK_MIN_VALUE), "Death streaks (%d+)\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)],
+               rows=[ \
+                   HTML.TableRow(cells=[ \
+                                     HTML.TableCell( str( createFullStreaksHtmlTable(allplayersByFrags, StreakType.KILL_STREAK)) ),
+                                     HTML.TableCell( str( createFullStreaksHtmlTable(allplayersByFrags, StreakType.DEATH_STREAK)) ) \
+                                       ] \
+                                ) \
+                    ],               
+               border="1", 
+               style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+
+resultString += "\n"
+resultString += "Players full streaks:\n"
+resultString += str(fullTotalStreaksHtmlTable)
+resultString += "\n"
+
+if options.withScripts:
+    resultString += "</pre>STREAK_TIMELINE_PLACE\n<pre>"
 
 # ============================================================================================================
 
@@ -568,8 +647,13 @@ resultString += str(htmlTable)
 i = 1
 resultString += "\n\n"
 resultString += "battle progress:\n"
-for p in progressStr:
-    resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
+
+for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]
+    s = ""
+    for mp in mpline:        # mp:     [pl1_name,pl1_frags]
+        s += "{0:14s}".format(mp[0] + "(" + str(mp[1]) + ")")
+    
+    resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  s)
     i += 1
     
 if options.withScripts:
@@ -797,6 +881,46 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(allPlayerKillsByMinutesStr)
     # <-- players kills by minutes
     
+    # streaks timeline -->
+    streaksTimelineFunctionStr = ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_FUNCTION
+    
+    rowLines = ""
+    for pl in allplayersByFrags:
+        strkRes,maxStrk = pl.getCalculatedStreaksFull()
+        for strk in strkRes:
+            rowLines += "[ '%s', '%d', new Date(0,0,0,0,%d,%d), new Date(0,0,0,0,%d,%d) ],\n" % (pl.name, strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
+            
+        if len(strkRes) == 0:
+            rowLines += "[ '%s', '', new Date(0,0,0,0,0,0), new Date(0,0,0,0,0,0) ],\n" % (pl.name)  # empty element in order to add player            
+        
+        # rowLines += "[ '%s', '', new Date(0,0,0,0,10,0), new Date(0,0,0,0,10,0) ],\n" % (pl.name) # TODO change options - need length        
+        
+    deathRowLines = ""
+    for pl in allplayersByFrags:
+        strkRes,maxStrk = pl.getDeatchStreaksFull()
+        for strk in strkRes:
+            deathRowLines += "[ '%s', '%d', new Date(0,0,0,0,%d,%d), new Date(0,0,0,0,%d,%d) ],\n" % (pl.name, strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))            
+            
+        if len(strkRes) == 0:
+            deathRowLines += "[ '%s', '', new Date(0,0,0,0,0,0), new Date(0,0,0,0,0,0) ],\n" % (pl.name)  # empty element in order to add player            
+        
+        # deathRowLines += "[ '%s', '', new Date(0,0,0,0,10,0), new Date(0,0,0,0,10,0) ],\n" % (pl.name) # TODO change options - need length
+    
+    streaksTimelineFunctionStr = streaksTimelineFunctionStr.replace("ADD_STATS_ROWS", rowLines)
+    streaksTimelineFunctionStr = streaksTimelineFunctionStr.replace("ADD_DEATH_STATS_ROWS", deathRowLines)       
+                
+    # TODO calculate height using players count
+    # TODO black text color for deaths
+    # TODO hints ??
+    # TODO correct last events end time (10:01 or 10:02)
+    # TODO check on 15 and 20 minutes
+    # TODO add finish event or events, the timeline should be full
+    # TODO bold players names
+    # TODO folding ??
+                
+    f.write(streaksTimelineFunctionStr)
+    # <-- streaks timeline
+    
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     
@@ -807,6 +931,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     #resStr = resStr.replace("MAIN_STATS_PLACE", ezstatslib.HTML_MAIN_STATS_DIAGRAMM_DIV_TAG)
     resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)
     resStr = resStr.replace("POWER_UPS_BARS_PLACE", ezstatslib.HTML_POWER_UPS_BARS_DIV_TAG)
+    resStr = resStr.replace("STREAK_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG)
     
     f.write(resStr)
     
