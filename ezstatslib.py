@@ -57,8 +57,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
-    "google.charts.setOnLoadCallback(drawStreakTimelines);\n" \
-    "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
+    # "google.charts.setOnLoadCallback(drawStreakTimelines);\n" \
+    # "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
 
 # "google.charts.setOnLoadCallback(drawMainStats);\n" \
 

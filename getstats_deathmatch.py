@@ -561,16 +561,18 @@ fullTotalStreaksHtmlTable = \
                border="1", 
                style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
-resultString += "\n"
-resultString += "Players full streaks:\n"
-resultString += str(fullTotalStreaksHtmlTable)
-resultString += "\n"
+# POINT: Players full streaks
+# resultString += "\n"
+# resultString += "Players full streaks:\n"
+# resultString += str(fullTotalStreaksHtmlTable)
+# resultString += "\n"
 
-if options.withScripts:
-    resultString += "</pre>STREAK_TIMELINE_PLACE\n<pre>"
-    
-if options.withScripts:
-    resultString += "</pre>STREAK_ALL_TIMELINE_PLACE\n<pre>"
+# POINT: streaks timelines place
+# if options.withScripts:
+#     resultString += "</pre>STREAK_TIMELINE_PLACE\n<pre>"
+#     
+# if options.withScripts:
+#     resultString += "</pre>STREAK_ALL_TIMELINE_PLACE\n<pre>"
 
 # ============================================================================================================
 
@@ -653,8 +655,9 @@ for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags
 if options.withScripts:
     resultString += "\nBP_PLACE\n"
     
-if options.withScripts:
-    resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
+# POINT: high chart battle progress place
+# if options.withScripts:
+#     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
     
 if options.withScripts:
     resultString += ezstatslib.HTML_EXPAND_CHECKBOX_TAG
@@ -919,7 +922,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # TODO bold players names
     # TODO folding ??
                 
-    f.write(streaksTimelineFunctionStr)
+    # POINT: streaksTimelineFunctionStr
+    # f.write(streaksTimelineFunctionStr)
     # <-- streaks timeline
     
     # all streaks timeline -->
@@ -964,14 +968,15 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # TODO bold players names
     # TODO folding ??
                 
-    f.write(allStreaksTimelineFunctionStr)
+    # POINT: allStreaksTimelineFunctionStr
+    # f.write(allStreaksTimelineFunctionStr)
     # <-- all streaks timeline
     
     # highcharts battle progress -->
     highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
             
-# " name: 'rea[rbf]',\n" \
-# " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
     
     hcDelim = "}, {\n"
     rowLines = ""        
@@ -989,7 +994,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
                 
-    f.write(highchartsBattleProgressFunctionStr)
+    # POINT: highchartsBattleProgressFunction
+    # f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle progress
     
     # write expand/collapse function
