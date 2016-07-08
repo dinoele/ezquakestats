@@ -1030,6 +1030,8 @@ if "Premier" in options.leagueName:
     leaguePrefix = "PL_"
 if "First" in options.leagueName:
     leaguePrefix = "FD_"
+if "Second" in options.leagueName:
+    leaguePrefix = "SD_"
  
 formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
 filePath     = leaguePrefix + mapName + "_" + formatedDateTime + ".html"
@@ -1127,15 +1129,15 @@ tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
 files = os.listdir("../")
 
 newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
-headerRow = ["Date", "Premier League", "First Division"]
+headerRow = ["Date", "Premier League", "First Division", "Second Division"]
 filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
-filesMap = {}  # key: dt, value: [[ [PL1,dt],[PL2,dt],..],[ [FD1,dt], [FD2,dt],.. ]]
+filesMap = {}  # key: dt, value: [[ [PL1,dt],[PL2,dt],..],[ [FD1,dt], [FD2,dt],.. ],[ [SD1,dt], [SD2,dt],.. ]]
 
 zerodt = datetime(1970,1,1)
-filesMap[zerodt] = [[],[]]  # files with problems
+filesMap[zerodt] = [[],[],[]]  # files with problems
 for fname in files:
-    if "html" in fname and ("PL" in fname or "FD" in fname):
+    if "html" in fname and ("PL" in fname or "FD" in fname or "SD" in fname):
                 
         #"PL_[dad2]_2016-05-23_18_45_16.html"
         #nameSplit = fname.split("_")  # ['PL', '[dad2]', '2016-05-23', '18', '45', '16.html']
@@ -1149,26 +1151,32 @@ for fname in files:
                 dateStruct = datetime.strptime(dateRes.group(0).split("_")[0], "%Y-%m-%d")
             
                 if not dateStruct in filesMap.keys(): # key exist
-                    filesMap[dateStruct] = [[],[]]
+                    filesMap[dateStruct] = [[],[],[]]
                     
                 fnamePair = [fname,dt]
                     
                 if "PL" in fname:
                     filesMap[dateStruct][0].append(fnamePair)
-                else: # FD
+                elif "FD" in fname:
                     filesMap[dateStruct][1].append(fnamePair)
+                else: # SD
+                    filesMap[dateStruct][2].append(fnamePair)
             except Exception, ex:
                 if "PL" in fname:
                     filesMap[zerodt][0].append(fnamePair)
-                else: # FD
+                elif "FD" in fname:
                     filesMap[zerodt][1].append(fnamePair)
+                else: # SD
+                    filesMap[zerodt][2].append(fnamePair)
                 break;
                 
         else: # date parse failed
             if "PL" in fname:
                 filesMap[zerodt][0].append(fnamePair)
-            else: # FD
+            if "FD" in fname:
                 filesMap[zerodt][1].append(fnamePair)
+            else: # SD
+                filesMap[zerodt][2].append(fnamePair)
         
         
         # if isFileNew and filePath == fname:
@@ -1187,11 +1195,13 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
     
     pls = el[1][0] # array, val: [str,dt]
     fds = el[1][1] # array, val: [str,dt]
+    sds = el[1][2] # array, val: [str,dt]
     
     pls = sorted(pls, key=lambda x: x[1], reverse=True)
     fds = sorted(fds, key=lambda x: x[1], reverse=True)
+    sds = sorted(sds, key=lambda x: x[1], reverse=True)
     
-    maxcnt = max(len(fds), len(pls))
+    maxcnt = max(len(fds), len(pls), len(sds))
     attrs = {} # attribs
     attrs['rowspan'] = maxcnt        
     
@@ -1212,6 +1222,12 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
             tableRow.cells.append( HTML.TableCell( htmlLink(fds[i][0],
                                                    newGifTag if checkNew(isFileNew, filePath, fds[i][0]) else "") ) )            
         else: # no FDs
+            tableRow.cells.append( HTML.TableCell("") )
+            
+        if i < len(sds): # SDs
+            tableRow.cells.append( HTML.TableCell( htmlLink(sds[i][0],
+                                                   newGifTag if checkNew(isFileNew, filePath, sds[i][0]) else "") ) )            
+        else: # no SDs
             tableRow.cells.append( HTML.TableCell("") )
             
         filesTable.rows.append(tableRow)
