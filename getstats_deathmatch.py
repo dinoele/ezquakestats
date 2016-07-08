@@ -663,6 +663,9 @@ if options.withScripts:
     resultString += "\nBP_PLACE\n"
     
 if options.withScripts:
+    resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
+    
+if options.withScripts:
     resultString += ezstatslib.HTML_EXPAND_CHECKBOX_TAG
     for pl in allplayersByFrags:
         resultString += "</pre>%s_KILLS_BY_MINUTES_PLACE\n<pre>" % (pl.name.replace("[","_").replace("]","_"))    
@@ -969,6 +972,31 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(allStreaksTimelineFunctionStr)
     # <-- all streaks timeline
     
+    # highcharts battle progress -->
+    highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
+            
+# " name: 'rea[rbf]',\n" \
+# " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
+    
+    hcDelim = "}, {\n"
+    rowLines = ""        
+    for pl in sortedPlayers:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (pl.name)
+        rowLines += "data: [0"
+        
+        for minEl in matchProgressDict:
+            rowLines += ",%d" % (minEl[pl.name])
+            
+        rowLines += "]\n"        
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
+                
+    f.write(highchartsBattleProgressFunctionStr)
+    # <-- highcharts battle progress
+    
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     
@@ -981,6 +1009,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("POWER_UPS_BARS_PLACE", ezstatslib.HTML_POWER_UPS_BARS_DIV_TAG)
     resStr = resStr.replace("STREAK_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG)
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG)
+    resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
     
     f.write(resStr)
     

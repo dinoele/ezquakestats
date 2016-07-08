@@ -49,6 +49,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "<!DOCTYPE html>\n<html>\n<head>\n" \
     "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
+    "<script src=\"https://code.highcharts.com/highcharts.js\"></script>\n" \
+    "<script src=\"https://code.highcharts.com/modules/exporting.js\"></script>\n" \
     "<script type=\"text/javascript\">\n" \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
@@ -398,6 +400,116 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG = \
   "          </td>\n" \
   "        </tr>\n" \
   "      </table>\n" \
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.theme = {\n" \
+"   chart: {\n" \
+"      backgroundColor: null,\n" \
+"      style: {\n" \
+"         fontFamily: \"Dosis, sans-serif\"\n" \
+"      }\n" \
+"   },\n" \
+"   title: {\n" \
+"      style: {\n" \
+"         fontSize: '16px',\n" \
+"         fontWeight: 'bold',\n" \
+"         textTransform: 'uppercase'\n" \
+"      }\n" \
+"   },\n" \
+"   tooltip: {\n" \
+"      borderWidth: 0,\n" \
+"      backgroundColor: 'rgba(219,219,216,0.8)',\n" \
+"      shadow: false\n" \
+"   },\n" \
+"   legend: {\n" \
+"      itemStyle: {\n" \
+"         fontWeight: 'bold',\n" \
+"         fontSize: '13px'\n" \
+"      }\n" \
+"   },\n" \
+"   xAxis: {\n" \
+"      \n" \
+"      gridLineWidth: 1,\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      }\n" \
+"   },\n" \
+"   yAxis: {\n" \
+"      minorTickInterval: 'auto',\n" \
+"      title: {\n" \
+"         style: {\n" \
+"            textTransform: 'uppercase'\n" \
+"         }\n" \
+"      },\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      }\n" \
+"   },\n" \
+"   plotOptions: {\n" \
+"      candlestick: {\n" \
+"         lineColor: '#404048'\n" \
+"      }\n" \
+"   },\n" \
+"\n" \
+"\n" \
+"   // General\n" \
+"   background2: '#F0F0EA'\n" \
+"\n" \
+"};\n" \
+"\n" \
+"// Apply the theme\n" \
+"Highcharts.setOptions(Highcharts.theme);\n" \
+"\n" \
+"    $('#highchart_battle_progress').highcharts({\n" \
+"        chart: {\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'Battle progress',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Frags'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"            valueSuffix: ''\n" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle',\n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS" \
+"        }]\n" \
+"    });\n" \
+"});\n" \
+
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG = "<div id=\"highchart_battle_progress\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
 
 # =========================================================================================================================================================
 
