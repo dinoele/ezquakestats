@@ -226,14 +226,11 @@ matchProgressDict = []
 currentMinute = 1
 currentMatchTime = 0
 
-ezstatslib.logError("EEE: len(matchlog) = %d\n" % (len(matchlog)))
-
 for matchPart in matchlog:
     partSize = len(matchPart) - 1  # line about minute change is substracted
     currentPartNum = 0
     timeMult = 0 if partSize == 0 else (60.0 / float(partSize))
     
-    # ezstatslib.logError("EEE: currentMinute = %d, matchPart[0] = %s, partSize = %d\n" % (currentMinute, matchPart[0], partSize))
     
     for logline in matchPart:
         if logline == "":
@@ -258,8 +255,7 @@ for matchPart in matchlog:
             matchProgressDict.append(progressLineDict)                
             continue
         
-        currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )
-        ezstatslib.logError("EEE: currentMatchTime = %d, logline = %s\n" % (currentMatchTime, logline))
+        currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )        
     
         # telefrag
         checkres,who,whom = ezstatslib.talefragDetection(logline, [])
@@ -449,10 +445,7 @@ def createStreaksHtmlTable(sortedPlayers, streakType):
     streaksList = []  # [[name1,[s1,s2,..]]]
     maxCnt = 0
     for pl in sortedPlayers:
-        strkRes,maxStrk = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()
-        
-        ezstatslib.logError("EEE: strkRes = %s, maxStrk = %d\n" % (str(strkRes), maxStrk))
-        
+        strkRes,maxStrk = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()                        
         streaksList.append( [pl.name, strkRes] )
         maxCnt = max(maxCnt,len(strkRes))
         if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
@@ -492,9 +485,7 @@ def createFullStreaksHtmlTable(sortedPlayers, streakType):
     maxCnt = 0
     for pl in sortedPlayers:
         
-        strkRes,maxStrk = pl.getCalculatedStreaksFull() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaksFull()
-        ezstatslib.logError("EEE: strkRes = %s, maxStrk = %d\n" % (str(strkRes), maxStrk))
-        
+        strkRes,maxStrk = pl.getCalculatedStreaksFull() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaksFull()        
         streaksList.append( [pl.name, strkRes] )
         maxCnt = max(maxCnt,len(strkRes))
         if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
