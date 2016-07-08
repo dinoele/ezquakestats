@@ -692,7 +692,11 @@ print resultString
 # ============================================================================================================
 
 def writeHtmlWithScripts(f, sortedPlayers, resStr):
-    f.write(ezstatslib.HTML_HEADER_SCRIPT_SECTION)
+    pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
+    pageTitle = "%s %s %s" % (options.leagueName, mapName, matchdate)  # global values
+    pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
+    
+    f.write(pageHeaderStr)
         
     # battle progress -->
     bpFunctionStr = ezstatslib.HTML_SCRIPT_BATTLE_PROGRESS_FUNCTION

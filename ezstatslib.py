@@ -47,6 +47,7 @@ HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
 HTML_HEADER_SCRIPT_SECTION = \
     "<!DOCTYPE html>\n<html>\n<head>\n" \
+    "<title>PAGE_TITLE</title>\n" \
     "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
     "<script src=\"https://code.highcharts.com/highcharts.js\"></script>\n" \
