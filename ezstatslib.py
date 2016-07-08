@@ -440,7 +440,6 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "      }\n" \
 "   },\n" \
 "   yAxis: {\n" \
-"      minorTickInterval: 'auto',\n" \
 "      title: {\n" \
 "         style: {\n" \
 "            textTransform: 'uppercase'\n" \
