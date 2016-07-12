@@ -254,8 +254,11 @@ for matchPart in matchlog:
             matchProgress.append(progressLine)
             matchProgressDict.append(progressLineDict)                
             continue
+        currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )            
         
-        currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )        
+        # final time correction
+        if currentMatchTime > matchMinutesCnt*60:
+            currentMatchTime = matchMinutesCnt*60;                
     
         # telefrag
         checkres,who,whom = ezstatslib.talefragDetection(logline, [])
@@ -930,30 +933,32 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     allStreaksTimelineFunctionStr = ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION
     
     rowLines = ""
-    colors = ""
+    currentRowsLines = ""
     for pl in allplayersByFrags:
-        strkRes,maxStrk           = pl.getCalculatedStreaksFull()
+        strkRes,maxStrk           = pl.getCalculatedStreaksFull(1)
         for strk in strkRes:
             rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_kills" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
-            colors += "'#8d8',"
             
-        if len(strkRes) == 0:
-            rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_kills" % (pl.name))  # empty element in order to add player
-            colors += "'#8d8',"
+        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_kills" % (pl.name))
+        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_kills" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+        
+        # if len(strkRes) == 0:
+        #     rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_kills" % (pl.name))  # empty element in order to add player
         
         # rowLines += "[ '%s', '', new Date(2016,1,1,0,10,0), new Date(2016,1,1,0,10,0) ],\n" % (pl.name) # TODO change options - need length
         
-        deathStrkRes,deathMaxStrk = pl.getDeatchStreaksFull()
+        deathStrkRes,deathMaxStrk = pl.getDeatchStreaksFull(1)
         for strk in deathStrkRes:
             rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_deaths" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
-            colors += "'red',"
             
-        if len(deathStrkRes) == 0:
-            rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_deaths" % (pl.name))  # empty element in order to add player
-            colors += "'red',"
+        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_deaths" % (pl.name))  
+        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_deaths" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+            
+        # if len(deathStrkRes) == 0:
+        #     rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_deaths" % (pl.name))  # empty element in order to add player
     
-    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("ADD_STATS_ROWS", rowLines)
-    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("ADD_COLORS",     colors)    
+    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("ALL_ROWS", rowLines)
+    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("CURRENT_ROWS", currentRowsLines)    
                 
     # TODO calculate height using players count
     # var rowHeight = 41;
@@ -961,10 +966,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # timeline: height: chartHeight,
     
     # TODO black text color for deaths
-    # TODO hints ??
-    # TODO correct last events end time (10:01 or 10:02)
-    # TODO check on 15 and 20 minutes
-    # TODO add finish event or events, the timeline should be full
+    # TODO hints ??    
     # TODO bold players names
     # TODO folding ??
                 
@@ -985,10 +987,14 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
             rowLines += hcDelim
         
         rowLines += "name: '%s',\n" % (pl.name)
-        rowLines += "data: [0"
+        # rowLines += "data: [0"
+        rowLines += "data: [[0,0]"
         
+        nn = 1.0
         for minEl in matchProgressDict:
-            rowLines += ",%d" % (minEl[pl.name])
+            # rowLines += ",%d" % (minEl[pl.name])
+            rowLines += ",[%f,%d]" % (nn, minEl[pl.name])  # TODO format, now is 0.500000
+            nn += 1.0
             
         rowLines += "]\n"        
     

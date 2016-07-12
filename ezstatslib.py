@@ -50,8 +50,27 @@ HTML_HEADER_SCRIPT_SECTION = \
     "<title>PAGE_TITLE</title>\n" \
     "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
-    "<script src=\"https://code.highcharts.com/highcharts.js\"></script>\n" \
-    "<script src=\"https://code.highcharts.com/modules/exporting.js\"></script>\n" \
+    "<style>\n" \
+    ".tooltip {position:absolute;z-index:1070;display:block;font-size:12px;line-height:1.4;visibility:visible;filter:alpha(opacity=0);opacity:0}\n" \
+    ".tooltip.in{filter:alpha(opacity=90);opacity:.9}\n" \
+    ".tooltip.top{padding:5px 0;margin-top:-3px}.\n" \
+    "tooltip.right{padding:0 5px;margin-left:3px}\n" \
+    ".tooltip.bottom{padding:5px 0;margin-top:3px}\n" \
+    ".tooltip.left{padding:0 5px;margin-left:-3px}\n" \
+    ".tooltip-inner{max-width:200px;padding:3px 8px;color:#fff;text-align:center;text-decoration:none;background-color:#000;border-radius:4px}\n" \
+    ".tooltip-arrow{position:absolute;width:0;height:0;border-color:transparent;border-style:solid}\n" \
+    ".tooltip.top \n" \
+    ".tooltip-arrow{bottom:0;left:50%;margin-left:-5px;border-width:5px 5px 0;border-top-color:#000}\n" \
+    ".tooltip.top-left \n" \
+    ".tooltip-arrow{bottom:0;left:5px;border-width:5px 5px 0;border-top-color:#000}\n" \
+    ".tooltip.top-right .tooltip-arrow{right:5px;bottom:0;border-width:5px 5px 0;border-top-color:#000}\n" \
+    ".tooltip.right .tooltip-arrow{top:50%;left:0;margin-top:-5px;border-width:5px 5px 5px 0;border-right-color:#000}\n" \
+    ".tooltip.left .tooltip-arrow{top:50%;right:0;margin-top:-5px;border-width:5px 0 5px 5px;border-left-color:#000}\n" \
+    ".tooltip.bottom .tooltip-arrow{top:0;left:50%;margin-left:-5px;border-width:0 5px 5px;border-bottom-color:#000}\n" \
+    ".tooltip.bottom-left .tooltip-arrow{top:0;left:5px;border-width:0 5px 5px;border-bottom-color:#000}\n" \
+    ".tooltip.bottom-right .tooltip-arrow{top:0;right:5px;border-width:0 5px 5px;border-bottom-color:#000}\n" \
+    "</style>\n" \
+    "<link href=\"http://seiyria.com/bootstrap-slider/css/bootstrap-slider.css\" rel=\"stylesheet\">\n"\
     "<script type=\"text/javascript\">\n" \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
@@ -341,8 +360,8 @@ HTML_SCRIPT_STREAK_TIMELINE_FUNCTION = \
     "ADD_STATS_ROWS" \
     "]);" \
     "var options = { timeline: { singleColor: '#8d8' ,\n" \
-    "                            rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
-    "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
+    "                            rowLabelStyle: { fontName: 'Helvetica', fontSize: 20 },\n" \
+    "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9 } } };\n" \
     "chart.draw(dataTable, options) ;\n" \
     "\n" \
     "var deathcontainer = document.getElementById('death_streak_chart_timeline_div');\n" \
@@ -376,7 +395,8 @@ HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG = \
 # =========================================================================================================================================================
 
 HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION = \
-    "function drawAllStreakTimelines() {\n" \
+    "function drawAllStreakTimelines(num) {\n" \
+    "if (num == undefined) { num = 3 }\n" \
     "var container = document.getElementById('all_streak_chart_timeline_div');\n" \
     "var chart = new google.visualization.Timeline(container);\n" \
     "var dataTable = new google.visualization.DataTable();\n" \
@@ -384,9 +404,19 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION = \
     "dataTable.addColumn({ type: 'string', id: 'Name' });\n" \
     "dataTable.addColumn({ type: 'date', id: 'Start' });\n" \
     "dataTable.addColumn({ type: 'date', id: 'End' });\n" \
-    "dataTable.addRows([\n" \
-    "ADD_STATS_ROWS" \
-    "]);" \
+    "var allRows = [\n"\
+    "ALL_ROWS" \
+    "];\n" \
+    "var currentRows = [\n"\
+    "CURRENT_ROWS" \
+    "];\n" \
+    "for (var i = 0; i < allRows.length; i++) {\n" \
+    "var vv = parseInt(allRows[i][1])\n" \
+    "if (vv >= num) {\n" \
+    "currentRows.push(allRows[i])\n" \
+    "}\n" \
+    "}\n" \
+    "dataTable.addRows(currentRows)   ;\n" \
     "var options = { colors: ['#8d8', 'red'],\n" \
     "                timeline: { colorByRowLabel: true, rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
     "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
@@ -396,8 +426,13 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION = \
 HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG = \
   "      <table style=\"width: 100%;\">\n" \
   "        <tr>\n" \
-  "          <td style=\"width: 100%\">\n" \
-  "            <div id=\"all_streak_chart_timeline_div\" style=\"width: 100%; height: 600px;\"></div>\n" \
+  "          <td style=\"width: 85%\">\n" \
+  "            <div id=\"all_streak_chart_timeline_div\" style=\"width: 100%; height: 400px;\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 5%\">\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 10%\">\n" \
+  "            <div id=\"timeline_slider\" data-slider-id='timeline_slider' style=\"width: 100%; height: 400px;\"/>\n" \
   "          </td>\n" \
   "        </tr>\n" \
   "      </table>\n" \
@@ -532,6 +567,23 @@ HTML_FOOTER_NO_PRE = "</body>\n</html>"
 HTML_PRE_CLOSE_TAG = "</pre>\n"
   
 HTML_BODY_FOLDING_SCRIPT = \
+  "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/dependencies/js/jquery.min.js\"></script>\n" \
+  "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/js/bootstrap-slider.js\"></script>\n" \
+  "<script src=\"https://code.highcharts.com/highcharts.js\"></script>\n" \
+  "<script src=\"https://code.highcharts.com/modules/exporting.js\"></script>\n" \
+  "<script type='text/javascript'>\n" \
+  "  var timelineSliderOnChange = function() { drawAllStreakTimelines(timelineSliderObj.getValue()); console.log(timelineSliderObj.getValue()) }\n" \
+  "  var timelineSliderObj = $('#timeline_slider').slider({\n" \
+  "   min  : 1,\n" \
+  "   max  : 25,\n" \
+  "  value: 3,\n" \
+  "  ticks: [1,5,10,15,20],\n" \
+  "  ticks_labels: ['1','5','10','15','20'],\n" \
+  "  orientation: 'vertical',\n" \
+  "  tooltip_position:'left',\n" \
+  "  tooltip: 'always'\n" \
+  "}).on('change', timelineSliderOnChange).data('slider');\n" \
+  "</script>" \
   "<script type='text/javascript'>" \
   "jQuery(function($){$(document).ready(function(){$(\"h2.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "jQuery(function($){$(document).ready(function(){$(\"h3.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
