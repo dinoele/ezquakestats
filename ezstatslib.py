@@ -76,8 +76,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
-    # "google.charts.setOnLoadCallback(drawStreakTimelines);\n" \
-    # "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
+    "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
+    # "google.charts.setOnLoadCallback(drawStreakTimelines);\n"
 
 # "google.charts.setOnLoadCallback(drawMainStats);\n" \
 
@@ -416,7 +416,7 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION = \
     "currentRows.push(allRows[i])\n" \
     "}\n" \
     "}\n" \
-    "dataTable.addRows(currentRows)   ;\n" \
+    "dataTable.addRows(currentRows);\n" \
     "var options = { colors: ['#8d8', 'red'],\n" \
     "                timeline: { colorByRowLabel: true, rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
     "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
@@ -426,16 +426,18 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION = \
 HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG = \
   "      <table style=\"width: 100%;\">\n" \
   "        <tr>\n" \
-  "          <td style=\"width: 85%\">\n" \
-  "            <div id=\"all_streak_chart_timeline_div\" style=\"width: 100%; height: 400px;\"></div>\n" \
+  "          <td rowspan=\"3\" style=\"width: 95%\">\n" \
+  "            <div id=\"all_streak_chart_timeline_div\" style=\"width: 100%; height: HEIGHT_IN_PXpx;\"></div>\n" \
   "          </td>\n" \
-  "          <td style=\"width: 5%\">\n" \
+  "          <td style=\"width: 2%\">\n" \
   "          </td>\n" \
-  "          <td style=\"width: 10%\">\n" \
-  "            <div id=\"timeline_slider\" data-slider-id='timeline_slider' style=\"width: 100%; height: 400px;\"/>\n" \
+  "          <td style=\"width: 3%\">\n" \
+  "            <div id=\"timeline_slider\" data-slider-id='timeline_slider' />\n" \
   "          </td>\n" \
   "        </tr>\n" \
-  "      </table>\n" \
+  "        <tr style=\"height: 30px;\"></tr>\n" \
+  "      </table>\n"
+#  "<input type=\"range\" min=\"1\" max=\"15\" step=\"1\" value=\"3\" size=\"100\" onchange=\"drawAllStreakTimelines(this.value)\">\n"
 
 # =========================================================================================================================================================
 

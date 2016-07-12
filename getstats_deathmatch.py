@@ -574,8 +574,8 @@ fullTotalStreaksHtmlTable = \
 # if options.withScripts:
 #     resultString += "</pre>STREAK_TIMELINE_PLACE\n<pre>"
 #     
-# if options.withScripts:
-#     resultString += "</pre>STREAK_ALL_TIMELINE_PLACE\n<pre>"
+if options.withScripts:
+    resultString += "</pre>STREAK_ALL_TIMELINE_PLACE\n<pre>"
 
 # ============================================================================================================
 
@@ -940,30 +940,21 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
             rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_kills" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
             
         currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_kills" % (pl.name))
-        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_kills" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
-        
-        # if len(strkRes) == 0:
-        #     rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_kills" % (pl.name))  # empty element in order to add player
-        
-        # rowLines += "[ '%s', '', new Date(2016,1,1,0,10,0), new Date(2016,1,1,0,10,0) ],\n" % (pl.name) # TODO change options - need length
+        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_kills" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt    
         
         deathStrkRes,deathMaxStrk = pl.getDeatchStreaksFull(1)
         for strk in deathStrkRes:
             rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_deaths" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
             
-        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_deaths" % (pl.name))  
-        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_deaths" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
-            
-        # if len(deathStrkRes) == 0:
-        #     rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0), new Date(2016,1,1,0,0,0) ],\n" % ("%s_deaths" % (pl.name))  # empty element in order to add player
+        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_deaths" % (pl.name))  
+        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_deaths" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt        
     
     allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("ALL_ROWS", rowLines)
-    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("CURRENT_ROWS", currentRowsLines)    
-                
-    # TODO calculate height using players count
-    # var rowHeight = 41;
-    # var chartHeight = (dataTable.getNumberOfRows() + 1) * rowHeight;
-    # timeline: height: chartHeight,
+    allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("CURRENT_ROWS", currentRowsLines)
+    
+    allStreaksTimelineDivStr = ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG
+    timelineChartHeight = (len(allplayersByFrags) * 2 + 1) * (33 if len(allplayersByFrags) >= 4 else 35)
+    allStreaksTimelineDivStr = allStreaksTimelineDivStr.replace("HEIGHT_IN_PX", str(timelineChartHeight))
     
     # TODO black text color for deaths
     # TODO hints ??    
@@ -971,7 +962,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # TODO folding ??
                 
     # POINT: allStreaksTimelineFunctionStr
-    # f.write(allStreaksTimelineFunctionStr)
+    f.write(allStreaksTimelineFunctionStr)
     # <-- all streaks timeline
     
     # highcharts battle progress -->
@@ -1015,7 +1006,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)
     resStr = resStr.replace("POWER_UPS_BARS_PLACE", ezstatslib.HTML_POWER_UPS_BARS_DIV_TAG)
     resStr = resStr.replace("STREAK_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG)
-    resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG)
+    resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
     resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
     
     f.write(resStr)
@@ -1188,6 +1179,9 @@ for fname in files:
         #     tableRow = HTML.TableRow(cells=[ HTML.TableCell("<a href=\"" + fname + "\">" + fname + "</a>" + "<br>\n") ])
         # filesTable.rows.append(tableRow)
         # modTime = os.stat("../" + fname).st_mtime # TODO newGifTag <-> modTime
+
+# IDEA: http://codepen.io/codyhouse/pen/FdkEf
+# IDEA: http://codepen.io/jenniferperrin/pen/xfwab
 
 sorted_filesMap = sorted(filesMap.items(), key=itemgetter(0), reverse=True)
 
