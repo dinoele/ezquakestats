@@ -548,6 +548,8 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 
 HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG = "<div id=\"highchart_battle_progress\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
 
+HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY = 4
+
 # =========================================================================================================================================================
 
 HTML_EXPAND_CHECKBOX_FUNCTION = \

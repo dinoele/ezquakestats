@@ -223,6 +223,7 @@ def incTime():
 
 matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
 matchProgressDict = []
+matchProgressDictEx = []
 currentMinute = 1
 currentMatchTime = 0
 
@@ -231,6 +232,9 @@ for matchPart in matchlog:
     currentPartNum = 0
     timeMult = 0 if partSize == 0 else (60.0 / float(partSize))
     
+    battleProgressExtendedPoints = [partSize     / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY,
+                                    partSize * 2 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY,
+                                    partSize * 3 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY]
     
     for logline in matchPart:
         if logline == "":
@@ -239,12 +243,8 @@ for matchPart in matchlog:
         currentPartNum += 1            
     
         # battle progress
-        if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining
-            
-            # if partSize != currentPartNum + 1:
-            #     ezstatslib.logError("ERROR: partSize(%d) != currentPartNum(%d) + 1\n" % (partSize, currentPartNum))
-            
-            currentMinute += 1
+        if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining                            
+            currentMinute += 1            
             allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
             progressLine = []
             progressLineDict = {}
@@ -252,8 +252,18 @@ for matchPart in matchlog:
                 progressLine.append([pl.name, pl.frags()]);
                 progressLineDict[pl.name] = pl.frags();
             matchProgress.append(progressLine)
-            matchProgressDict.append(progressLineDict)                
+            matchProgressDict.append(progressLineDict)
+            matchProgressDictEx.append(progressLineDict)
             continue
+        
+        # extended match progress
+        if currentPartNum in battleProgressExtendedPoints:            
+            allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+            progressLineDict = {}
+            for pl in allplayersByFrags:
+                progressLineDict[pl.name] = pl.frags();
+            matchProgressDictEx.append(progressLineDict)
+        
         currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )            
         
         # final time correction
@@ -367,6 +377,7 @@ for pl in allplayersByFrags:
     progressLineDict[pl.name] = pl.frags();
 matchProgress.append(progressLine)
 matchProgressDict.append(progressLineDict)
+matchProgressDictEx.append(progressLineDict)
     
 # fill final element in calculatedStreaks
 for pl in allplayers:
@@ -658,9 +669,8 @@ for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags
 if options.withScripts:
     resultString += "\nBP_PLACE\n"
     
-# POINT: high chart battle progress place
-# if options.withScripts:
-#     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
+if options.withScripts:
+    resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
     
 if options.withScripts:
     resultString += ezstatslib.HTML_EXPAND_CHECKBOX_TAG
@@ -960,8 +970,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # TODO hints ??    
     # TODO bold players names
     # TODO folding ??
-                
-    # POINT: allStreaksTimelineFunctionStr
+                    
     f.write(allStreaksTimelineFunctionStr)
     # <-- all streaks timeline
     
@@ -981,18 +990,17 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
         
-        nn = 1.0
-        for minEl in matchProgressDict:
+        graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        for minEl in matchProgressDictEx:
             # rowLines += ",%d" % (minEl[pl.name])
-            rowLines += ",[%f,%d]" % (nn, minEl[pl.name])  # TODO format, now is 0.500000
-            nn += 1.0
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name])  # TODO format, now is 0.500000
+            graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             
         rowLines += "]\n"        
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
                 
-    # POINT: highchartsBattleProgressFunction
-    # f.write(highchartsBattleProgressFunctionStr)
+    f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle progress
     
     # write expand/collapse function
