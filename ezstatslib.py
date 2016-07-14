@@ -73,11 +73,13 @@ HTML_HEADER_SCRIPT_SECTION = \
     "<link href=\"http://seiyria.com/bootstrap-slider/css/bootstrap-slider.css\" rel=\"stylesheet\">\n"\
     "<script type=\"text/javascript\">\n" \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
-    "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
     "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
     # "google.charts.setOnLoadCallback(drawStreakTimelines);\n"
+
+# POINT battle progress
+# "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
 
 # "google.charts.setOnLoadCallback(drawMainStats);\n" \
 

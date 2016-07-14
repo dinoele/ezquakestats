@@ -666,8 +666,9 @@ for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags
     resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  s)
     i += 1
     
-if options.withScripts:
-    resultString += "\nBP_PLACE\n"
+# POINT battle progress
+# if options.withScripts:
+#     resultString += "\nBP_PLACE\n"
     
 if options.withScripts:
     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
@@ -729,8 +730,9 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     rowLines = rowLines[:-1]
      
     bpFunctionStr = bpFunctionStr.replace("ADD_ROWS_LINES", rowLines)       
-                
-    f.write(bpFunctionStr)
+
+    # POINT battle progress
+    # f.write(bpFunctionStr)
     # <-- battle progress
     
     # main stats -->
