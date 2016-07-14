@@ -93,8 +93,13 @@ while not ezstatslib.isMatchEnd(line):
 #    readLinesNum += 1
     line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 
+    if " <-> " in line:  # TODO TIME
+        line = line.split(" <-> ")[1]
+
     # rea[rbf] left the game with 23 frags
     if "left the game" in line:
+        if " <-> " in line:  # TODO TIME
+            line = line.split(" <-> ")[1]
         plname = line.split(" ")[0];
         pl = Player( "", plname, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
         dropedplayers.append(pl);  # TODO record number of frags for final output
@@ -127,6 +132,9 @@ line = f.readline()
 readLinesNum += 3
 
 while not "top scorers" in line:
+    if " <-> " in line:  # TODO TIME
+        line = line.split(" <-> ")[1]
+    
     playerName = line.split(' ')[1].split(':')[0]  # zrkn:
 
     if playerName[0] == "_":
@@ -195,6 +203,10 @@ mapName = ""
 # map name
 #while not "top scorers" in line:
 #    line = f.readline()
+
+if " <-> " in line:  # TODO TIME
+    line = line.split(" <-> ")[1]
+
 mapName = line.split(" ")[0]
 
 f.close()
@@ -239,6 +251,9 @@ for matchPart in matchlog:
     for logline in matchPart:
         if logline == "":
             continue
+        
+        if " <-> " in logline:  # TODO TIME
+            line = line.split(" <-> ")[1]
         
         currentPartNum += 1            
     
