@@ -253,7 +253,8 @@ for matchPart in matchlog:
             continue
         
         if " <-> " in logline:  # TODO TIME
-            line = line.split(" <-> ")[1]
+            if len(line.split(" <-> ")) >= 2:
+                line = line.split(" <-> ")[1]
         
         currentPartNum += 1            
     
