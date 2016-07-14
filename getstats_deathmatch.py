@@ -242,6 +242,14 @@ for matchPart in matchlog:
         
         currentPartNum += 1            
     
+        # extended match progress
+        if currentPartNum in battleProgressExtendedPoints:
+            allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+            progressLineDict = {}
+            for pl in allplayersByFrags:
+                progressLineDict[pl.name] = pl.frags();
+            matchProgressDictEx.append(progressLineDict)
+    
         # battle progress
         if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining                            
             currentMinute += 1            
@@ -254,15 +262,7 @@ for matchPart in matchlog:
             matchProgress.append(progressLine)
             matchProgressDict.append(progressLineDict)
             matchProgressDictEx.append(progressLineDict)
-            continue
-        
-        # extended match progress
-        if currentPartNum in battleProgressExtendedPoints:            
-            allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
-            progressLineDict = {}
-            for pl in allplayersByFrags:
-                progressLineDict[pl.name] = pl.frags();
-            matchProgressDictEx.append(progressLineDict)
+            continue                
         
         currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )            
         
@@ -978,7 +978,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
             
     # " name: 'rea[rbf]',\n" \
-    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
     
     hcDelim = "}, {\n"
     rowLines = ""        
