@@ -737,6 +737,24 @@ def teamkillDetection(s):
             return True,s.split( )[0]
     return False,""
 
+def powerupDetection(s):  
+    if "picked up" in s:
+        spl = s.split(" ")
+    
+        if "megahealth" in s: # NAGIBATOR picked up megahealth
+            return True, spl[0], "mh"
+        elif "Yellow Armor" in s: # ss picked up Yellow Armor
+            return True, spl[0], "ya"
+        elif "Red Armor" in s: # ss picked up Red Armor
+            return True, spl[0], "ra"
+        elif "Green Armor" in s: # ss picked up Green Armor
+            return True, spl[0], "ga"
+        else:
+            logSkipped("powerupDetection: %s" % (s))
+        
+    else:
+        return False,"",""    
+
 def sortPlayersBy(players, param, fieldType="attr", units = ""):
     res = ""
     
@@ -827,6 +845,29 @@ class Player:
         
         self.deathStreaks = []
         self.currentDeathStreak = Streak()
+        
+        self.gaByMinutes = []
+        self.yaByMinutes = []
+        self.raByMinutes = []
+        self.mhByMinutes = []
+
+    def initPowerUpsByMinutes(self, minutesCnt):        
+        self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
+        self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
+        self.raByMinutes = [0 for i in xrange(minutesCnt+1)]
+        self.mhByMinutes = [0 for i in xrange(minutesCnt+1)]
+        
+    def incga(self, minuteNum):
+        self.gaByMinutes[minuteNum] += 1
+        
+    def incya(self, minuteNum):
+        self.yaByMinutes[minuteNum] += 1
+        
+    def incra(self, minuteNum):
+        self.raByMinutes[minuteNum] += 1
+    
+    def incmh(self, minuteNum):
+        self.mhByMinutes[minuteNum] += 1    
 
     def fillStreaks(self, time):
         if self.currentStreak.count != 0:

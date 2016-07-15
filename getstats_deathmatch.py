@@ -155,7 +155,8 @@ while not "top scorers" in line:
     stats = line.split(' ')
 
     pl = Player( "", playerName, int(stats[2]), int( stats[3].split('(')[1].split(')')[0]), 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
-        
+    pl.initPowerUpsByMinutes(matchMinutesCnt)
+            
     line = f.readline() # Wp: rl52.1% sg12.2%
     readLinesNum += 1
 
@@ -348,6 +349,21 @@ for matchPart in matchlog:
             if not isFound:
                 #print "ERROR: count suicides"
                 ezstatslib.logError("ERROR: count suicides\n")
+                exit(0)
+    
+            continue
+        
+        # power ups
+        checkres,checkname,pwr = ezstatslib.powerupDetection(logline)
+        if checkres:
+            isFound = False
+            for pl in allplayers:
+                if pl.name == checkname:
+                    exec("pl.inc%s(%d)" % (pwr, currentMinute))                    
+                    isFound = True
+                    break;
+            if not isFound:
+                ezstatslib.logError("ERROR: powerupDetection: no playername %s\n" % (checkname))
                 exit(0)
     
             continue
@@ -734,6 +750,11 @@ print "matchMinutesCnt:", matchMinutesCnt
 for pl in allplayersByFrags:
     for el in headToHead[pl.name]:
         print pl.name, ":", el[0], " - ", el[1], " - ", el[2]
+        
+    print "%s: ra[%d] %s" % (pl.name, pl.ra, str(pl.raByMinutes))
+    print "%s: ya[%d] %s" % (pl.name, pl.ya, str(pl.yaByMinutes))
+    print "%s: ga[%d] %s" % (pl.name, pl.ga, str(pl.gaByMinutes))
+    print "%s: mh[%d] %s" % (pl.name, pl.mh, str(pl.mhByMinutes))
 
 print resultString
 
@@ -832,7 +853,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(mainStatsBarsStr)
     # <-- main stats bars
     
-    # power ups bars-->
+    # power ups bars-->            
     isAnnotations = True
     
     powerUpsBarsStr = ezstatslib.HTML_SCRIPT_POWER_UPS_BARS_FUNCTION
