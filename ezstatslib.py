@@ -623,7 +623,7 @@ def readLineWithCheck(f, num):
     num += 1
     if (num > READ_LINES_LIMIT):
         #print "ERROR: too many lines, limit =", READ_LINES_LIMIT
-        logError("ERROR: too many lines, limit = %d" % (READ_LINES_LIMIT))
+        logError("ERROR: too many lines, limit = %d\n" % (READ_LINES_LIMIT))
         exit(2)
     return line,num
 
@@ -710,7 +710,8 @@ def suicideDetection(s):
                   "discharges into the water", \
                   "discharges into the slime", \
                   "can't exist on slime alone", \
-                  "gulped a load of slime"]
+                  "gulped a load of slime", \
+                  "burst into flames"]
     for det in detectStrs:
          if det in s:
             return True,s.split( )[0]
