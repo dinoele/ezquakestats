@@ -36,6 +36,8 @@ possibleColors = [HtmlColor.COLOR_RED,
                   HtmlColor.COLOR_CYAN,
                   HtmlColor.COLOR_MAGENTA]
 
+LOG_TIMESTAMP_DELIMITER = " <-> "
+
 READ_LINES_LIMIT = 10000
 LOGS_INDEX_FILE_NAME = "logs.html"
 

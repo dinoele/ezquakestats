@@ -64,6 +64,8 @@ spectators = []
 
 readLinesNum = 0
 
+newLogFormat = False # if at least one LOG_TIMESTAMP_DELIMITER in logs
+
 #line = f.readline()
 #readLinesNum += 1
 line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
@@ -76,8 +78,12 @@ while not ezstatslib.isMatchStart(line):
     if "telefrag" in line and not "teammate" in line: # telefrags before match start
         matchlog[0].append(line)
 
-    if "matchdate" in line:    
-        matchdate = line.split("matchdate: ")[1].split("\n")[0]
+    if "matchdate" in line:
+        if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
+            matchStartStamp = int( line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[0] )
+            line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+            
+        matchdate = line.split("matchdate: ")[1].split("\n")[0]            
 
 #    line = f.readline()
 #    readLinesNum += 1
@@ -92,14 +98,15 @@ while not ezstatslib.isMatchEnd(line):
 #    line = f.readline()
 #    readLinesNum += 1
     line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
-
-    if " <-> " in line:  # TODO TIME
-        line = line.split(" <-> ")[1]
-
+    
+    if not newLogFormat and ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
+        newLogFormat = True
+    
     # rea[rbf] left the game with 23 frags
     if "left the game" in line:
-        if " <-> " in line:  # TODO TIME
-            line = line.split(" <-> ")[1]
+        if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
+            line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+        
         plname = line.split(" ")[0];
         pl = Player( "", plname, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
         dropedplayers.append(pl);  # TODO record number of frags for final output
@@ -132,8 +139,8 @@ line = f.readline()
 readLinesNum += 3
 
 while not "top scorers" in line:
-    if " <-> " in line:  # TODO TIME
-        line = line.split(" <-> ")[1]
+    if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
+        line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
     
     playerName = line.split(' ')[1].split(':')[0]  # zrkn:
 
@@ -204,8 +211,8 @@ mapName = ""
 #while not "top scorers" in line:
 #    line = f.readline()
 
-if " <-> " in line:  # TODO TIME
-    line = line.split(" <-> ")[1]
+if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
+    line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
 
 mapName = line.split(" ")[0]
 
@@ -230,41 +237,50 @@ for pl1 in allplayers:
     for pl2 in allplayers:
         headToHead[pl1.name].append([pl2.name,0,[0 for i in xrange(matchMinutesCnt+1)]])
 
-def incTime():
-    pass
-
 matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
 matchProgressDict = []
 matchProgressDictEx = []
 currentMinute = 1
 currentMatchTime = 0
+battleProgressExtendedNextPoint = 15
 
 for matchPart in matchlog:
-    partSize = len(matchPart) - 1  # line about minute change is substracted
-    currentPartNum = 0
-    timeMult = 0 if partSize == 0 else (60.0 / float(partSize))
-    
-    battleProgressExtendedPoints = [partSize     / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY,
-                                    partSize * 2 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY,
-                                    partSize * 3 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY]
+    if not newLogFormat:
+        partSize = len(matchPart) - 1  # line about minute change is substracted
+        currentPartNum = 0
+        timeMult = 0 if partSize == 0 else (60.0 / float(partSize))
+         
+        battleProgressExtendedPoints = [partSize     / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY,
+                                        partSize * 2 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY,
+                                        partSize * 3 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY]
     
     for logline in matchPart:
         if logline == "":
-            continue
+            continue                
         
-        if " <-> " in logline:  # TODO TIME
-            if len(line.split(" <-> ")) >= 2:
-                line = line.split(" <-> ")[1]
+        if ezstatslib.LOG_TIMESTAMP_DELIMITER in logline:  # TODO TIME
+            if len(logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)) >= 2:
+                lineStamp = int( logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[0] )
+                logline = logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]                
+            else:
+                ezstatslib.logSkipped("problem with timestamp: " + logline)
+                continue
         
-        currentPartNum += 1            
-    
-        # extended match progress
-        if currentPartNum in battleProgressExtendedPoints:
-            allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
-            progressLineDict = {}
-            for pl in allplayersByFrags:
-                progressLineDict[pl.name] = pl.frags();
-            matchProgressDictEx.append(progressLineDict)
+            currentMatchTime = lineStamp - matchStartStamp
+        else:
+            currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )
+            
+
+        if not newLogFormat:            
+            currentPartNum += 1
+        
+            # extended match progress
+            if currentPartNum in battleProgressExtendedPoints:
+                allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+                progressLineDict = {}
+                for pl in allplayersByFrags:
+                    progressLineDict[pl.name] = pl.frags();
+                matchProgressDictEx.append(progressLineDict)        
     
         # battle progress
         if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining                            
@@ -278,13 +294,21 @@ for matchPart in matchlog:
             matchProgress.append(progressLine)
             matchProgressDict.append(progressLineDict)
             matchProgressDictEx.append(progressLineDict)
-            continue                
-        
-        currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )            
-        
-        # final time correction
-        if currentMatchTime > matchMinutesCnt*60:
-            currentMatchTime = matchMinutesCnt*60;                
+            battleProgressExtendedNextPoint += 15
+            continue
+        else:
+            if newLogFormat and currentMatchTime > battleProgressExtendedNextPoint:
+                battleProgressExtendedNextPoint += 15
+                allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+                progressLineDict = {}
+                for pl in allplayersByFrags:
+                    progressLineDict[pl.name] = pl.frags();
+                matchProgressDictEx.append(progressLineDict)
+                        
+        if not newLogFormat:
+            # final time correction
+            if currentMatchTime > matchMinutesCnt*60:
+                currentMatchTime = matchMinutesCnt*60;                
     
         # telefrag
         checkres,who,whom = ezstatslib.talefragDetection(logline, [])
