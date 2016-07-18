@@ -105,9 +105,9 @@ while not ezstatslib.isMatchEnd(line):
     # rea[rbf] left the game with 23 frags
     if "left the game" in line:
         if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
-            line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+            lineStriped = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
         
-        plname = line.split(" ")[0];
+        plname = lineStriped.split(" ")[0];
         pl = Player( "", plname, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
         dropedplayers.append(pl);  # TODO record number of frags for final output
 
@@ -257,7 +257,7 @@ for matchPart in matchlog:
     
     for logline in matchPart:
         if logline == "":
-            continue                
+            continue
         
         if ezstatslib.LOG_TIMESTAMP_DELIMITER in logline:  # TODO TIME
             if len(logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)) >= 2:
