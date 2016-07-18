@@ -722,7 +722,7 @@ resultString += "battle progress:\n"
 for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]
     s = ""
     for mp in mpline:        # mp:     [pl1_name,pl1_frags]
-        s += "{0:14s}".format(mp[0] + "(" + str(mp[1]) + ")")
+        s += ("{0:%ds}" % (plNameMaxLen+2)).format(mp[0] + "(" + str(mp[1]) + ")")
     
     resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  s)
     i += 1
