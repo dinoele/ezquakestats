@@ -462,8 +462,8 @@ resultString += "Power ups:\n"
 for pl in allplayersByFrags:
     resultString += "{0:10s}  {1:s}\n".format(pl.name, pl.getFormatedPowerUpsStats())
 
-if options.withScripts:
-    resultString += "</pre>POWER_UPS_BARS_PLACE\n<pre>"
+# if options.withScripts:
+#     resultString += "\nHIGHCHART_POWER_UP_PLACE\n"
 
 # all players
 resultString += "\n"
@@ -734,6 +734,15 @@ if options.withScripts:
     for pl in allplayersByFrags:
         resultString += "</pre>%s_KILLS_BY_MINUTES_PLACE\n<pre>" % (pl.name.replace("[","_").replace("]","_"))    
 
+if options.withScripts:
+    resultString += "<hr>\n"
+    resultString += ezstatslib.HTML_EXPAND_POWER_UPS_CHECKBOX_TAG
+    resultString += "</pre> POWER_UPS_BARS_PLACE\n<pre>"
+    resultString += "</pre>ra_BY_MINUTES_PLACE\n<pre>"
+    resultString += "</pre>ya_BY_MINUTES_PLACE\n<pre>"
+    resultString += "</pre>ga_BY_MINUTES_PLACE\n<pre>"
+    resultString += "</pre>mh_BY_MINUTES_PLACE\n<pre>"
+
 if len(dropedplayers) != 0:
     dropedStr = ""
     for pl in dropedplayers:
@@ -889,6 +898,111 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
 
     f.write(powerUpsBarsStr)
     # <-- power ups bars
+    
+    # power ups by minutes -->
+    powerUpsByMinutesStr = ""
+    maxValue = 0
+    minValue = 0
+    maxTotalValue = 0
+    minTotalValue = 0
+    
+    for powerUpName in ["RedArmor","YellowArmor","GreenArmor","MegaHealth"]:
+        
+        shortName = ""
+        if powerUpName == "RedArmor":
+            shortName = "ra"
+        elif powerUpName == "YellowArmor":
+            shortName = "ya"
+        elif powerUpName == "GreenArmor":
+            shortName = "ga"
+        elif powerUpName == "MegaHealth":
+            shortName = "mh"
+        
+        raByMinutesStr = ezstatslib.HTML_SCRIPT_POWER_UPS_BY_MINUTES_FUNCTION
+        raByMinutesStr = raByMinutesStr.replace("POWER_UP_NAME", powerUpName)
+        
+        powerUpByMinutesHeaderStr = "['Minute'"
+        for pl in allplayersByFrags:
+            powerUpByMinutesHeaderStr += ",'%s'" % (pl.name)
+        powerUpByMinutesHeaderStr += "],\n"
+        
+        raByMinutesStr = raByMinutesStr.replace("ADD_HEADER_ROW", powerUpByMinutesHeaderStr)
+        raByMinutesStr = raByMinutesStr.replace("ADD_TOTAL_HEADER_ROW", powerUpByMinutesHeaderStr)
+        
+        raByMinutesRowsStr = ""
+        minut = 1
+        #plMaxValue = 0
+        #plMinValue = 0
+        while minut <= currentMinute:
+            raByMinutesRowsStr += "['%d'" % (minut)
+            
+            for pl in sortedPlayers:
+                exec("val = pl.%sByMinutes[minut]" % (shortName))
+                raByMinutesRowsStr += ",%d" % (val)
+            raByMinutesRowsStr += "],\n"
+            
+            #plMaxValue = max(plMaxValue, stackSum)
+            #plMinValue = min(plMinValue, stackNegVal)
+            minut += 1
+            
+        raByMinutesStr = raByMinutesStr.replace("ADD_STATS_ROWS", raByMinutesRowsStr)
+        
+        raTotalRowsStr = "[''"
+        for pl in sortedPlayers:
+            exec("val = pl.%s" % (shortName))
+            raTotalRowsStr += ",%d" % (val)
+        raTotalRowsStr += "],\n"
+            
+        raByMinutesStr = raByMinutesStr.replace("ADD_TOTAL_STATS_ROWS", raTotalRowsStr)
+    
+        powerUpsByMinutesDivTag = ezstatslib.HTML_POWER_UPS_BY_MINUTES_DIV_TAG
+        powerUpsByMinutesDivTag = powerUpsByMinutesDivTag.replace("POWER_UP_NAME", powerUpName)
+        
+        powerUpsByMinutesStr += raByMinutesStr
+        
+        # powerUpsByMinutesStr = powerUpsByMinutesStr.replace("MIN_VALUE", str(minValue))
+        # powerUpsByMinutesStr = powerUpsByMinutesStr.replace("MAX_VALUE", str(maxValue))
+        # powerUpsByMinutesStr = powerUpsByMinutesStr.replace("TOTAL_MIN__VALUE", str(minTotalValue))
+        # powerUpsByMinutesStr = powerUpsByMinutesStr.replace("TOTAL_MAX__VALUE", str(maxTotalValue))
+        powerUpsByMinutesStr = powerUpsByMinutesStr.replace("MIN_VALUE", "0")
+        powerUpsByMinutesStr = powerUpsByMinutesStr.replace("MAX_VALUE", "10")
+        powerUpsByMinutesStr = powerUpsByMinutesStr.replace("TOTAL_MIN__VALUE", "0")
+        powerUpsByMinutesStr = powerUpsByMinutesStr.replace("TOTAL_MAX__VALUE", "10")
+        
+        # add div
+        resStr = resStr.replace("%s_BY_MINUTES_PLACE" % (shortName), powerUpsByMinutesDivTag)                
+    
+    f.write(powerUpsByMinutesStr)
+    # <-- power ups by minutes
+    
+    # highcharts power ups -->
+    highchartsPowerUpsFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_FUNCTION
+            
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
+    
+    hcDelim = "}, {\n"
+    rowLines = ""    
+    
+    for pl in sortedPlayers:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (pl.name)
+        rowLines += "data: [0"
+        # rowLines += "data: [[0,0]"
+        
+        cnt = 0
+        for minNum in xrange(1,matchMinutesCnt+1):  # global matchMinutesCnt
+            cnt += pl.raByMinutes[minNum]
+            rowLines += ",%d" % (cnt)
+        
+        rowLines += "]\n"        
+    
+    highchartsPowerUpsFunctionStr = highchartsPowerUpsFunctionStr.replace("ADD_STAT_ROWS", rowLines)
+                
+    f.write(highchartsPowerUpsFunctionStr)
+    # <-- highcharts power ups
     
     # players kills by minutes -->
     allPlayerKillsByMinutesStr = ""
@@ -1068,6 +1182,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
+    f.write(ezstatslib.HTML_EXPAND_POWER_UPS_CHECKBOX_FUNCTION)
     
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
@@ -1079,6 +1194,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("STREAK_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG)
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
     resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    #resStr = resStr.replace("HIGHCHART_POWER_UP_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIV_TAG)
     
     f.write(resStr)
     

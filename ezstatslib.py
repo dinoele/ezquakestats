@@ -232,7 +232,7 @@ HTML_MAIN_STATS_BARS_DIV_TAG = \
   "<div class=\"wpb_text_column wpb_content_element \">\n" \
   "<div class=\"wpb_wrapper\">\n" \
   "  <div class=\"symple-toggle state-open\" id=\"main_stats_bars\">\n" \
-  "    <h2 class=\"symple-toggle-trigger \">Main Stats</h2>\n" \
+  "    <h1 class=\"symple-toggle-trigger \">Main Stats</h2>\n "  \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "      <div id=\"chart_main_stats\" style=\"width: 90%; height:  600px;\"></div>\n" \
   "    </div>\n" \
@@ -289,6 +289,182 @@ HTML_POWER_UPS_BARS_DIV_TAG = \
   "  </div>\n" \
   "</div>\n" \
   "</div>\n";
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_POWER_UPS_BY_MINUTES_FUNCTION =\
+    "google.charts.setOnLoadCallback(drawPOWER_UP_NAMEByMinutes);\n" \
+    "function drawPOWER_UP_NAMEByMinutes() {\n" \
+    "var data = google.visualization.arrayToDataTable([\n" \
+    "ADD_HEADER_ROW" \
+    "ADD_STATS_ROWS" \
+    "]);\n" \
+    "var dataTotal = google.visualization.arrayToDataTable([\n" \
+    "ADD_TOTAL_HEADER_ROW" \
+    "ADD_TOTAL_STATS_ROWS" \
+    "]);\n" \
+    "\n" \
+    "var options = {\n" \
+    "  isStacked: false,\n" \
+    "  height: 300,\n" \
+    "  \n" \
+    "  legend: { position: 'right', maxLines: 2 },\n" \
+    "  title: \"POWER_UP_NAME by minutes\"\n" \
+    "};\n" \
+    "var optionsTotal = {\n" \
+    "  isStacked: false,\n" \
+    "  height: 300,\n" \
+    "  legend: { position: \"none\" },\n" \
+    "  title: \"POWER_UP_NAME total\"\n" \
+    "};\n" \
+    "\n" \
+    "var chart      = new google.visualization.ColumnChart(document.getElementById('POWER_UP_NAME_div'));\n" \
+    "var chartTotal = new google.visualization.ColumnChart(document.getElementById('POWER_UP_NAME_total_div'));\n" \
+    "\n" \
+    "chart.draw(data, options);\n" \
+    "chartTotal.draw(dataTotal, optionsTotal);\n" \
+    "$(\"#POWER_UP_NAME_by_minutes\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}\n"
+
+#options:
+#    "  vAxis: {minValue: MIN_VALUE, maxValue: MAX_VALUE},\n" \
+#    "  vAxis: {minValue: TOTAL_MIN__VALUE, maxValue: TOTAL_MAX__VALUE},\n" \
+
+HTML_POWER_UPS_BY_MINUTES_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"POWER_UP_NAME_by_minutes\">\n" \
+  "    <h2 class=\"symple-toggle-trigger \">POWER_UP_NAME by minutes</h3>\n " \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 83%\">\n" \
+  "            <div id=\"POWER_UP_NAME_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 17%\">\n" \
+  "            <div id=\"POWER_UP_NAME_total_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_HIGHCHARTS_POWER_UPS_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.theme = {\n" \
+"   chart: {\n" \
+"      backgroundColor: null,\n" \
+"      style: {\n" \
+"         fontFamily: \"Dosis, sans-serif\"\n" \
+"      }\n" \
+"   },\n" \
+"   title: {\n" \
+"      style: {\n" \
+"         fontSize: '16px',\n" \
+"         fontWeight: 'bold',\n" \
+"         textTransform: 'uppercase'\n" \
+"      }\n" \
+"   },\n" \
+"   tooltip: {\n" \
+"      borderWidth: 0,\n" \
+"      backgroundColor: 'rgba(219,219,216,0.8)',\n" \
+"      shadow: false\n" \
+"   },\n" \
+"   legend: {\n" \
+"      itemStyle: {\n" \
+"         fontWeight: 'bold',\n" \
+"         fontSize: '13px'\n" \
+"      }\n" \
+"   },\n" \
+"   xAxis: {\n" \
+"      \n" \
+"      gridLineWidth: 1,\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      }\n" \
+"   },\n" \
+"   yAxis: {\n" \
+"      title: {\n" \
+"         style: {\n" \
+"            textTransform: 'uppercase'\n" \
+"         }\n" \
+"      },\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      }\n" \
+"   },\n" \
+"   plotOptions: {\n" \
+"      candlestick: {\n" \
+"         lineColor: '#404048'\n" \
+"      }\n" \
+"   },\n" \
+"\n" \
+"\n" \
+"   // General\n" \
+"   background2: '#F0F0EA'\n" \
+"\n" \
+"};\n" \
+"\n" \
+"// Apply the theme\n" \
+"Highcharts.setOptions(Highcharts.theme);\n" \
+"\n" \
+"    $('#highchart_power_up').highcharts({\n" \
+"        chart: {\n" \
+"                type: 'area',\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'Power Ups',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Count'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"            valueSuffix: ''\n" \
+"        },\n" \
+"        plotOptions: {\n" \
+"            area: {\n" \
+"                stacking: 'normal',\n" \
+"            }\n" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle', \n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS" \
+"        }]\n" \
+"    });\n" \
+"});\n" \
+
+HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIV_TAG = "<div id=\"highchart_power_up\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
 
 # =========================================================================================================================================================
 
@@ -565,6 +741,15 @@ HTML_EXPAND_CHECKBOX_TAG = "<input type=\"checkbox\" id=\"expandChBox\" onChange
 
 # =========================================================================================================================================================
 
+HTML_EXPAND_POWER_UPS_CHECKBOX_FUNCTION = \
+  "function expandCollapsePowerUps() {\n" \
+  "$(\"h2.symple-toggle-trigger\").toggleClass(\"active\").next().slideToggle(\"fast\")\n" \
+  "}\n"
+
+HTML_EXPAND_POWER_UPS_CHECKBOX_TAG = "<input type=\"checkbox\" id=\"expandPowerUpsChBox\" onChange=\"expandCollapsePowerUps()\"/>Expand/Collapse PowerUps\n"
+
+# =========================================================================================================================================================
+
 HTML_HEAD_FOLDING_LINKS = \
   "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"
 
@@ -593,6 +778,7 @@ HTML_BODY_FOLDING_SCRIPT = \
   "}).on('change', timelineSliderOnChange).data('slider');\n" \
   "</script>" \
   "<script type='text/javascript'>" \
+  "jQuery(function($){$(document).ready(function(){$(\"h1.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "jQuery(function($){$(document).ready(function(){$(\"h2.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "jQuery(function($){$(document).ready(function(){$(\"h3.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "</script>\n"
