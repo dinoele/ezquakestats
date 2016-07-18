@@ -733,7 +733,7 @@ if options.withScripts:
 if options.withScripts:
     resultString += ezstatslib.HTML_EXPAND_CHECKBOX_TAG
     for pl in allplayersByFrags:
-        resultString += "</pre>%s_KILLS_BY_MINUTES_PLACE\n<pre>" % (pl.name.replace("[","_").replace("]","_"))    
+        resultString += "</pre>%s_KILLS_BY_MINUTES_PLACE\n<pre>" % (ezstatslib.escapePlayerName(pl.name))    
 
 if options.withScripts:
     resultString += "<hr>\n"
@@ -901,6 +901,9 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # <-- power ups bars
     
     # power ups by minutes -->
+    
+    # TODO ezstatslib.logError("WARNING: ...") check power ups sum and given value
+    
     powerUpsByMinutesStr = ""
     maxValue = 0
     minValue = 0
@@ -1012,7 +1015,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     maxTotalValue = 0
     minTotalValue = 0
     for pl in allplayersByFrags:
-        plNameEscaped = pl.name.replace("[","_").replace("]","_")          
+        plNameEscaped = ezstatslib.escapePlayerName(pl.name)
         
         playerKillsByMinutesStr = ezstatslib.HTML_SCRIPT_PLAYER_KILLS_BY_MINUTES_FUNCTION
         playerKillsByMinutesStr = playerKillsByMinutesStr.replace("PLAYER_NAME", plNameEscaped)

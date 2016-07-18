@@ -791,6 +791,12 @@ BG_COLOR_RED   = "#ff5c33"
 KILL_STREAK_MIN_VALUE  = 3
 DEATH_STREAK_MIN_VALUE = 3
 
+def escapePlayerName(s):
+    tokens = ["-", "[", "]", "\\", "^", "$", "*", "."]
+    for tkn in tokens:
+        s = s.replace(tkn, "_")
+    return s
+
 def logError(line):
     ferr = open(ERROR_LOG_FILE_NAME, "a")
     ferr.write(line)
