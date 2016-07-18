@@ -440,6 +440,10 @@ matchProgressDictEx.append(progressLineDict)
 for pl in allplayers:
     pl.fillStreaks(currentMatchTime)
     pl.fillDeathStreaks(currentMatchTime)
+
+plNameMaxLen = ezstatslib.DEFAULT_PLAYER_NAME_MAX_LEN
+for pl in allplayers:
+    plNameMaxLen = max(plNameMaxLen, len(pl.name))
     
 # generate output string
 resultString = ""
@@ -450,7 +454,7 @@ resultString += "map: " + mapName + "\n"
 resultString += "\n"
 
 for pl in allplayersByFrags:
-    resultString += "{0:10s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats_noTeamKills())
+    resultString += ("{0:%ds} {1:3d}    ({2:s})\n" % (plNameMaxLen)).format(pl.name, pl.calcDelta(), pl.getFormatedStats_noTeamKills())
 
 # if options.withScripts:
 #     resultString += "</pre>MAIN_STATS_PLACE\n<pre>"
@@ -461,7 +465,7 @@ if options.withScripts:
 resultString += "\n"
 resultString += "Power ups:\n"
 for pl in allplayersByFrags:
-    resultString += "{0:10s}  {1:s}\n".format(pl.name, pl.getFormatedPowerUpsStats())
+    resultString += ("{0:%ds}  {1:s}\n" % (plNameMaxLen)).format(pl.name, pl.getFormatedPowerUpsStats())
 
 # if options.withScripts:
 #     resultString += "\nHIGHCHART_POWER_UP_PLACE\n"
@@ -499,8 +503,8 @@ resultString += "\n"
 resultString += "Players weapons:\n"
 weaponsCheck = ezstatslib.getWeaponsCheck(allplayers)
 for pl in allplayersByFrags:
-    resultString += "{0:10s} kills  {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, pl.getWeaponsKills(pl.kills, weaponsCheck))
-    resultString += "{0:10s} deaths {1:3d} :: {2:100s}\n".format("",      pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
+    resultString += ("{0:%ds} kills  {1:3d} :: {2:100s}\n" % (plNameMaxLen)).format(pl.name, pl.kills, pl.getWeaponsKills(pl.kills, weaponsCheck))
+    resultString += ("{0:%ds} deaths {1:3d} :: {2:100s}\n" % (plNameMaxLen)).format("",      pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
     resultString += "\n"
 
 if len(disconnectedplayers) != 0:
@@ -654,7 +658,7 @@ for pl in allplayersByFrags:
     resStr = ""
     for el in sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
-    resultString += "{0:10s} {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, resStr)
+    resultString += ("{0:%ds} {1:3d} :: {2:100s}\n" % (plNameMaxLen)).format(pl.name, pl.kills, resStr)
 resultString += "\n"
 
 # ============================================================================================================
