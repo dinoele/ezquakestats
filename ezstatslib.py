@@ -910,8 +910,14 @@ def suicideDetection(s):
     return False,""
 
 def talefragDetection(s, teammateTelefrags):
+    spl = s.split(" ")
+    
+    # special case: random stomps Ilya
+    if "stomps" in s:
+        return True,spl[0],spl[2].split("\n")[0]
+    
     if "telefrag" in s:  # Ilya was telefragged by zrkn || Ilya was telefragged by his teammate
-        spl = s.split(" ")
+        
         if "teammate" in s:
             teammateTelefrags.append(spl[0])
             return True,"",spl[0]  # only death is increased
