@@ -104,6 +104,7 @@ while not ezstatslib.isMatchEnd(line):
     
     # rea[rbf] left the game with 23 frags
     if "left the game" in line:
+        lineStriped = line
         if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
             lineStriped = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
         
