@@ -206,6 +206,7 @@ for pl1 in dropedplayers:
         if pl1.name == pl2.name:
             exist = True
     if not exist:
+        pl1.initPowerUpsByMinutes(matchMinutesCnt)
         allplayers.append(pl1);
 
 mapName = ""
