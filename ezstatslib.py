@@ -355,7 +355,7 @@ HTML_POWER_UPS_BY_MINUTES_DIV_TAG = \
 
 # =========================================================================================================================================================
 
-HTML_SCRIPT_HIGHCHARTS_POWER_UPS_FUNCTION = \
+HTML_SCRIPT_HIGHCHARTS_POWER_UPS_FUNCTIONS = \
 "$(function () {\n" \
 "Highcharts.theme = {\n" \
 "   chart: {\n" \
@@ -418,13 +418,13 @@ HTML_SCRIPT_HIGHCHARTS_POWER_UPS_FUNCTION = \
 "// Apply the theme\n" \
 "Highcharts.setOptions(Highcharts.theme);\n" \
 "\n" \
-"    $('#highchart_power_up').highcharts({\n" \
+"    $('#highchart_power_up_ra').highcharts({\n" \
 "        chart: {\n" \
 "                type: 'area',\n" \
 "                zoomType: 'x'\n" \
 "            },\n" \
 "        title: {\n" \
-"            text: 'Power Ups',\n" \
+"            text: 'Red Armor',\n" \
 "            x: -20 //center\n" \
 "        },\n" \
 "        subtitle: {\n" \
@@ -461,12 +461,164 @@ HTML_SCRIPT_HIGHCHARTS_POWER_UPS_FUNCTION = \
 "            borderWidth: 0\n" \
 "        },\n" \
 "        series: [{\n" \
-"ADD_STAT_ROWS" \
+"ADD_STAT_ROWS_ra" \
 "        }]\n" \
 "    });\n" \
+"    $('#highchart_power_up_ya').highcharts({\n" \
+"        chart: {\n" \
+"                type: 'area',\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'Yellow Armor',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Count'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"            valueSuffix: ''\n" \
+"        },\n" \
+"        plotOptions: {\n" \
+"            area: {\n" \
+"                stacking: 'normal',\n" \
+"            }\n" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle', \n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS_ya" \
+"        }]\n" \
+"    });\n" \
+"    $('#highchart_power_up_ga').highcharts({\n" \
+"        chart: {\n" \
+"                type: 'area',\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'Green Armor',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Count'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"            valueSuffix: ''\n" \
+"        },\n" \
+"        plotOptions: {\n" \
+"            area: {\n" \
+"                stacking: 'normal',\n" \
+"            }\n" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle', \n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS_ga" \
+"        }]\n" \
+"    });\n" \
+"    $('#highchart_power_up_mh').highcharts({\n" \
+"        chart: {\n" \
+"                type: 'area',\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'Mega Health',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Count'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"            valueSuffix: ''\n" \
+"        },\n" \
+"        plotOptions: {\n" \
+"            area: {\n" \
+"                stacking: 'normal',\n" \
+"            }\n" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle', \n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS_mh" \
+"        }]\n" \
+"    });\n" \
+"$(\"#PowerUpsByMinutes\").attr(\"class\", \"symple-toggle state-closed\");\n" \
 "});\n" \
 
-HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIV_TAG = "<div id=\"highchart_power_up\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIVS_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"PowerUpsByMinutes\">\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Power Ups by minutes</h3>\n " \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "<div id=\"highchart_power_up_ra\" style=\"min-width: 30px;  height: 400px; margin: 0 auto\"></div>\n" \
+  "<div id=\"highchart_power_up_ya\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>\n" \
+  "<div id=\"highchart_power_up_ga\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>\n" \
+  "<div id=\"highchart_power_up_mh\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";                                            
 
 # =========================================================================================================================================================
 
