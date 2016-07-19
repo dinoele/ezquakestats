@@ -1315,7 +1315,7 @@ tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
 files = os.listdir("../")
 
 newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
-headerRow = ["Date", "Premier League", "First Division", "Second Division"]
+headerRow = ["Date", "Time", "Premier League", "First Division", "Second Division"]
 filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
 filesMap = {}  # key: dt, value: [[ [PL1,dt],[PL2,dt],..],[ [FD1,dt], [FD2,dt],.. ],[ [SD1,dt], [SD2,dt],.. ]]
@@ -1390,37 +1390,75 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
     fds = sorted(fds, key=lambda x: x[1], reverse=True)
     sds = sorted(sds, key=lambda x: x[1], reverse=True)
     
-    maxcnt = max(len(fds), len(pls), len(sds))
+    alllist = pls + fds + sds
+    alllist = sorted(alllist, key=lambda x: x[1], reverse=True)
+    
+    #maxcnt = max(len(fds), len(pls), len(sds))
+    sumcnt = len(fds) + len(pls) + len(sds)
     attrs = {} # attribs
     attrs['rowspan'] = maxcnt        
     
     tableRow = HTML.TableRow(cells=[ HTML.TableCell(formattedDate, attribs=attrs) ])
     
     i = 0
-    for i in xrange(maxcnt):
-        if i != 0:
-            tableRow = HTML.TableRow(cells=[])
+    for i in xrange(sumcnt):
+        formattedTime = alllist[i][1].strftime("%H-%M-%S")
         
-        if i < len(pls): # PLs
-            tableRow.cells.append( HTML.TableCell( htmlLink(pls[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, pls[i][0]) else "") ) )
-        else: # no PLs
+        if i != 0:        
+            tableRow = HTML.TableRow(cells=[formattedTime])
+        else:
+            tableRow.cells.append( HTML.TableCell(formattedTime) )
+        
+        isP = alllist[i][0][0] == "P"
+        isF = alllist[i][0][0] == "F"
+        isS = alllist[i][0][0] == "S"
+        
+        if isP:
+            tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
+                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else "") ) )
+            tableRow.cells.append( HTML.TableCell("") )
             tableRow.cells.append( HTML.TableCell("") )
             
-        if i < len(fds): # FDs
-            tableRow.cells.append( HTML.TableCell( htmlLink(fds[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, fds[i][0]) else "") ) )            
-        else: # no FDs
+        if isF:
             tableRow.cells.append( HTML.TableCell("") )
-            
-        if i < len(sds): # SDs
-            tableRow.cells.append( HTML.TableCell( htmlLink(sds[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, sds[i][0]) else "") ) )            
-        else: # no SDs
+            tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
+                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else "") ) )            
             tableRow.cells.append( HTML.TableCell("") )
+        
+        if isS:
+            tableRow.cells.append( HTML.TableCell("") )
+            tableRow.cells.append( HTML.TableCell("") )
+            tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
+                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else "") ) )                        
             
         filesTable.rows.append(tableRow)
         i += 1
+    
+    # i = 0
+    # for i in xrange(maxcnt):
+    #     if i != 0:
+    #         tableRow = HTML.TableRow(cells=[])
+    #     
+    #     if i < len(pls): # PLs
+    #         tableRow.cells.append( HTML.TableCell( htmlLink(pls[i][0],
+    #                                                newGifTag if checkNew(isFileNew, filePath, pls[i][0]) else "") ) )
+    #     else: # no PLs
+    #         tableRow.cells.append( HTML.TableCell("") )
+    #         
+    #     if i < len(fds): # FDs
+    #         tableRow.cells.append( HTML.TableCell( htmlLink(fds[i][0],
+    #                                                newGifTag if checkNew(isFileNew, filePath, fds[i][0]) else "") ) )            
+    #     else: # no FDs
+    #         tableRow.cells.append( HTML.TableCell("") )
+    #         
+    #     if i < len(sds): # SDs
+    #         tableRow.cells.append( HTML.TableCell( htmlLink(sds[i][0],
+    #                                                newGifTag if checkNew(isFileNew, filePath, sds[i][0]) else "") ) )            
+    #     else: # no SDs
+    #         tableRow.cells.append( HTML.TableCell("") )
+    #         
+    #     filesTable.rows.append(tableRow)
+    #     i += 1
 
 logsf = open(tmpLogsIndexPath, "w")
 logsf.write(ezstatslib.HTML_HEADER_STR)
