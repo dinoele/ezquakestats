@@ -1396,7 +1396,8 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
     #maxcnt = max(len(fds), len(pls), len(sds))
     sumcnt = len(fds) + len(pls) + len(sds)
     attrs = {} # attribs
-    attrs['rowspan'] = maxcnt        
+    #attrs['rowspan'] = maxcnt
+    attrs['rowspan'] = sumcnt
     
     tableRow = HTML.TableRow(cells=[ HTML.TableCell(formattedDate, attribs=attrs) ])
     
