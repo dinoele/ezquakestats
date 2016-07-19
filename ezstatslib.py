@@ -211,11 +211,10 @@ HTML_SCRIPT_MAIN_STATS_BARS_FUNCTION = \
     "  vAxis: {\n" \
     "    title: ''\n" \
     "  },\n" \
-    "  bars: 'horizontal',\n" \
     "  annotations: {\n" \
-    "    alwaysOutside: false,\n" \
+    "    alwaysOutside: true,\n" \
     "      textStyle: {\n" \
-    "        fontSize: 11,\n" \
+    "        fontSize: 16,\n" \
     "        auraColor:   'none',\n" \
     "        bold: true,\n" \
     "    },\n" \
@@ -225,7 +224,7 @@ HTML_SCRIPT_MAIN_STATS_BARS_FUNCTION = \
     "    }\n" \
     "  },\n" \
     "};\n" \
-    "var barchart = new google.visualization.BarChart(document.getElementById('chart_main_stats'));\n" \
+    "var barchart = new google.visualization.ColumnChart(document.getElementById('chart_main_stats'));\n" \
     "barchart.draw(data, options);\n" \
     "$(\"#main_stats_bars\").attr(\"class\", \"symple-toggle state-closed\");\n" \
     "}\n"
@@ -236,7 +235,7 @@ HTML_MAIN_STATS_BARS_DIV_TAG = \
   "  <div class=\"symple-toggle state-open\" id=\"main_stats_bars\">\n" \
   "    <h1 class=\"symple-toggle-trigger \">Main Stats</h2>\n "  \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
-  "      <div id=\"chart_main_stats\" style=\"width: 90%; height:  600px;\"></div>\n" \
+  "      <div id=\"chart_main_stats\" style=\"width: 90%; height:  500px;\"></div>\n" \
   "    </div>\n" \
   "  </div>\n" \
   "</div>\n" \
@@ -261,11 +260,10 @@ HTML_SCRIPT_POWER_UPS_BARS_FUNCTION = \
     "  vAxis: {\n" \
     "    title: ''\n" \
     "  },\n" \
-    "  bars: 'horizontal',\n" \
     "  annotations: {\n" \
-    "    alwaysOutside: false,\n" \
+    "    alwaysOutside: true,\n" \
     "      textStyle: {\n" \
-    "        fontSize: 11,\n" \
+    "        fontSize: 16,\n" \
     "        auraColor:   'none',\n" \
     "        bold: true,\n" \
     "    },\n" \
@@ -275,7 +273,7 @@ HTML_SCRIPT_POWER_UPS_BARS_FUNCTION = \
     "    }\n" \
     "  },\n" \
     "};\n" \
-    "var barchart = new google.visualization.BarChart(document.getElementById('chart_power_ups'));\n" \
+    "var barchart = new google.visualization.ColumnChart(document.getElementById('chart_power_ups'));\n" \
     "barchart.draw(data, options);\n" \
     "$(\"#power_ups_bars\").attr(\"class\", \"symple-toggle state-closed\");\n" \
     "}\n"
@@ -286,7 +284,7 @@ HTML_POWER_UPS_BARS_DIV_TAG = \
   "  <div class=\"symple-toggle state-open\" id=\"power_ups_bars\">\n" \
   "    <h2 class=\"symple-toggle-trigger \">Power Ups</h2>\n" \
   "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
-  "      <div id=\"chart_power_ups\" style=\"width: 90%; height:  600px;\"></div>\n" \
+  "      <div id=\"chart_power_ups\" style=\"width: 90%; height:  450px;\"></div>\n" \
   "    </div>\n" \
   "  </div>\n" \
   "</div>\n" \
