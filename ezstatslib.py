@@ -950,11 +950,13 @@ def escapePlayerName(s):
     return s
 
 def logError(line):
+    # TODO add timestamp
     ferr = open(ERROR_LOG_FILE_NAME, "a")
     ferr.write(line)
     ferr.close()
 
 def logSkipped(line):
+    # TODO add timestamp
     ferr = open(SKIPED_LINES_FILE_NAME, "a")
     ferr.write(line)
     ferr.close()

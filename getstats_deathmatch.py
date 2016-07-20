@@ -4,6 +4,7 @@ import time, sys
 from datetime import timedelta, date, datetime
 import time
 import re
+import subprocess
 from operator import itemgetter, attrgetter, methodcaller
 
 from optparse import OptionParser,OptionValueError
@@ -353,14 +354,14 @@ for matchPart in matchlog:
                 ezstatslib.logError("ERROR: count suicides\n")
                 exit(0)
     
-            continue
+            continue    
         
         # power ups
         checkres,checkname,pwr = ezstatslib.powerupDetection(logline)
         if checkres:
             isFound = False
             for pl in allplayers:
-                if pl.name == checkname:
+                if pl.name == checkname:                    
                     exec("pl.inc%s(%d)" % (pwr, currentMinute))                    
                     isFound = True
                     break;
@@ -445,6 +446,8 @@ for pl in allplayers:
 plNameMaxLen = ezstatslib.DEFAULT_PLAYER_NAME_MAX_LEN
 for pl in allplayers:
     plNameMaxLen = max(plNameMaxLen, len(pl.name))
+    
+# TODO move power stats for doroped players from power ups by minutes
     
 # generate output string
 resultString = ""
@@ -774,6 +777,13 @@ print resultString
 # ============================================================================================================
 
 def writeHtmlWithScripts(f, sortedPlayers, resStr):
+    plStr = ""
+    for pl in sortedPlayers:
+        plStr += "%s(%d) " % (pl.name, pl.frags())
+    plStr = plStr[:-1]
+    plStr += "\n"        
+    f.write("<!--\nGAME_PLAYERS\n" + plStr + "-->\n")        
+    
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % (options.leagueName, mapName, matchdate)  # global values
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
@@ -1316,7 +1326,18 @@ tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
 files = os.listdir("../")
 
 newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
-headerRow = ["Date", "Time", "Premier League", "First Division", "Second Division"]
+
+#headerRow = HTML.TableRow(["Date", "Time", "Premier League", "First Division", "Second Division"], header=True)
+
+headerRow = HTML.TableRow(cells=[], header=True)
+attrs = {} # attribs    
+attrs['colspan'] = 2
+headerRow.cells.append( HTML.TableCell("Date", header=True) )
+headerRow.cells.append( HTML.TableCell("Time", header=True) )
+headerRow.cells.append( HTML.TableCell("Premier League", attribs=attrs, header=True) )
+headerRow.cells.append( HTML.TableCell("First Division", attribs=attrs, header=True) )
+headerRow.cells.append( HTML.TableCell("Second Division", attribs=attrs, header=True) )
+
 filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
 filesMap = {}  # key: dt, value: [[ [PL1,dt],[PL2,dt],..],[ [FD1,dt], [FD2,dt],.. ],[ [SD1,dt], [SD2,dt],.. ]]
@@ -1376,6 +1397,16 @@ for fname in files:
 # IDEA: http://codepen.io/codyhouse/pen/FdkEf
 # IDEA: http://codepen.io/jenniferperrin/pen/xfwab
 
+def generateHtmlList(playersNames):
+    if len(playersNames) == 0:
+        return ""
+    
+    htmlList = "<select name=\"select\" size=\"%d\" multiple=\"multiple\" title=\"OLOLOLO\">\n" % (len(playersNames))
+    for pl in playersNames:
+        htmlList += "<option>%s</option>\n" % (pl)    
+    htmlList += "</select>\n"
+    return htmlList
+
 sorted_filesMap = sorted(filesMap.items(), key=itemgetter(0), reverse=True)
 
 for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['FD_[spinev2]_2016-05-05_16_12_52.html',dt1], ['FD_[skull]_2016-05-05_13_38_11.html',dt2]]])
@@ -1402,6 +1433,11 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
     
     tableRow = HTML.TableRow(cells=[ HTML.TableCell(formattedDate, attribs=attrs) ])
     
+    # TODO if logs time is near and/or map name is the same then write cells in one row
+    # TODO checkbox for hiding textareas with players
+    # TODO baloons instead of textareas
+    # TODO may be textareas are sensible only for several recent matches
+    
     i = 0
     for i in xrange(sumcnt):
         formattedTime = alllist[i][1].strftime("%H-%M-%S")
@@ -1415,23 +1451,60 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
         isF = alllist[i][0][0] == "F"
         isS = alllist[i][0][0] == "S"
         
+        # get log players        
+        playsStr = ""
+        # logf = open("../" + alllist[i][0], "r")
+        # linesCnt = 0        
+        
+        logHeadStr = subprocess.check_output(["head", "%s" % ("../" + alllist[i][0])])
+        if "GAME_PLAYERS" in logHeadStr:
+            playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
+        
+        # while True:
+        #     xx = logf.readline()
+        #     if "GAME_PLAYERS" in xx:
+        #         playsStr = logf.readline()
+        #         break;
+        #           
+        #     linesCnt += 1
+        #     if linesCnt > 20:                
+        #         break        
+        # logf.close()                
+                
+        plays = []
+        if playsStr != "":
+            playsStr = playsStr.replace("\n","")
+            plays = playsStr.split(" ")
+        
         if isP:
             tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else "") ) )
-            tableRow.cells.append( HTML.TableCell("") )
-            tableRow.cells.append( HTML.TableCell("") )
+                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
+                                                   style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
+            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
             
         if isF:
-            tableRow.cells.append( HTML.TableCell("") )
+            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
             tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else "") ) )            
-            tableRow.cells.append( HTML.TableCell("") )
+                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
+                                                   style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
+            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
         
         if isS:
-            tableRow.cells.append( HTML.TableCell("") )
-            tableRow.cells.append( HTML.TableCell("") )
+            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
             tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else "") ) )                        
+                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
+                                                   style="border-right-width:0") )
+            tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
             
         filesTable.rows.append(tableRow)
         i += 1
