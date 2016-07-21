@@ -1401,9 +1401,13 @@ def generateHtmlList(playersNames):
     if len(playersNames) == 0:
         return ""
     
-    htmlList = "<select name=\"select\" size=\"%d\" multiple=\"multiple\" title=\"OLOLOLO\">\n" % (len(playersNames))
+    htmlList = "<select style=\"font-family: Helvetica; font-size: 8pt;\" name=\"select\" size=\"%d\" multiple=\"multiple\" title=\"OLOLOLO\">\n" % (len(playersNames))
+    i = 0
     for pl in playersNames:
-        htmlList += "<option>%s</option>\n" % (pl)    
+        htmlList += "<option>%s</option>\n" % (pl)
+        #htmlList += "<option%s>%s</option>\n" % (" selected" if i < 2 else "", pl)
+        i += 1
+        
     htmlList += "</select>\n"
     return htmlList
 
@@ -1427,25 +1431,40 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
     
     #maxcnt = max(len(fds), len(pls), len(sds))
     sumcnt = len(fds) + len(pls) + len(sds)
-    attrs = {} # attribs
-    #attrs['rowspan'] = maxcnt
-    attrs['rowspan'] = sumcnt
     
-    tableRow = HTML.TableRow(cells=[ HTML.TableCell(formattedDate, attribs=attrs) ])
-    
-    # TODO if logs time is near and/or map name is the same then write cells in one row
+    tableRow = HTML.TableRow(cells=[ HTML.TableCell(formattedDate) ])
+    fullTimeRowIndex = len(filesTable.rows)
+        
     # TODO checkbox for hiding textareas with players
     # TODO baloons instead of textareas
     # TODO may be textareas are sensible only for several recent matches
     
     i = 0
+    TIME_DELTA = 15*60
+    isNewRow = True
+    rowspanVal = 0
+    rowMask = [0,0,0]
     for i in xrange(sumcnt):
         formattedTime = alllist[i][1].strftime("%H-%M-%S")
+        formattedTimeNoSec = alllist[i][1].strftime("%H-%M")
+        currentMapName = alllist[i][0].split("_")[1]        
         
-        if i != 0:        
-            tableRow = HTML.TableRow(cells=[formattedTime])
-        else:
-            tableRow.cells.append( HTML.TableCell(formattedTime) )
+        if isNewRow:
+            rowMask = [0,0,0]
+            minTime = alllist[i][1]
+            maxTime = alllist[i][1]
+                            
+            if i != 0:        
+                tableRow = HTML.TableRow(cells=[formattedTime])
+            else:
+                tableRow.cells.append( HTML.TableCell(formattedTime) )
+        
+            for j in xrange(3):
+                tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+                tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        
+        minTime = min(minTime, alllist[i][1])
+        maxTime = max(maxTime, alllist[i][1])
         
         isP = alllist[i][0][0] == "P"
         isF = alllist[i][0][0] == "F"
@@ -1475,39 +1494,90 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
         if playsStr != "":
             playsStr = playsStr.replace("\n","")
             plays = playsStr.split(" ")
+                
+        if isP: insertIndex = len(tableRow.cells) - 6
+        if isF: insertIndex = len(tableRow.cells) - 4
+        if isS: insertIndex = len(tableRow.cells) - 2
         
-        if isP:
-            tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
-                                                   style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
-            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
-            
-        if isF:
-            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
-            tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
-                                                   style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
-            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        if isP: rowMask[0] = 1
+        if isF: rowMask[1] = 1
+        if isS: rowMask[2] = 1
         
-        if isS:
-            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
-            tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
-                                                   newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
-                                                   style="border-right-width:0") )
-            tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
+        tableRow.cells[insertIndex] = HTML.TableCell( htmlLink(alllist[i][0],
+                                                     newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
+                                                     style="border-right-width:0")
+        tableRow.cells[insertIndex+1] = HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" )
+                        
+        # check next
+        if i+1 < sumcnt:
+            formattedTimeNoSecNext = alllist[i+1][1].strftime("%H-%M")
+            currentMapNameNext = alllist[i+1][0].split("_")[1]
             
-        filesTable.rows.append(tableRow)
-        i += 1
+            if currentMapNameNext == currentMapName \
+               and ( int(time.mktime(alllist[i][1].timetuple())) - int(time.mktime(alllist[i+1][1].timetuple())) ) < TIME_DELTA:
+                isNewRow = False
+            else:
+                isNewRow = True
+            
+            isPNext = alllist[i+1][0][0] == "P"
+            isFNext = alllist[i+1][0][0] == "F"
+            isSNext = alllist[i+1][0][0] == "S"
+                
+            if isPNext and rowMask[0] == 1: isNewRow = True
+            if isFNext and rowMask[1] == 1: isNewRow = True
+            if isSNext and rowMask[2] == 1: isNewRow = True
+        else:
+            isNewRow = True
+        
+        if isNewRow:
+            # correct time cell
+            if minTime != maxTime:
+                tableRow.cells[len(tableRow.cells)-7] = "%s\n    - \n%s" % (minTime.strftime("%H-%M-%S"), maxTime.strftime("%H-%M-%S"))
+            
+            filesTable.rows.append(tableRow)
+            rowspanVal += 1
+            
+        i += 1          
+    
+    # set rowspan attribute of full time cell
+    if rowspanVal != 0:
+        attrs = {} # attribs
+        attrs['rowspan'] = rowspanVal
+        filesTable.rows[fullTimeRowIndex].cells[0].attribs = attrs
+        
+            
+        # if isP:
+        #     tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
+        #                                            newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
+        #                                            style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        #     
+        # if isF:
+        #     tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        #     tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
+        #                                            newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
+        #                                            style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        # 
+        # if isS:
+        #     tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell("", style="border-left-width:0") )
+        #     tableRow.cells.append( HTML.TableCell( htmlLink(alllist[i][0],
+        #                                            newGifTag if checkNew(isFileNew, filePath, alllist[i][0]) else ""),
+        #                                            style="border-right-width:0") )
+        #     tableRow.cells.append( HTML.TableCell( generateHtmlList(plays), style="border-left-width:0" ) )
+        #     
+        # filesTable.rows.append(tableRow)
+        # i += 1
     
     # i = 0
     # for i in xrange(maxcnt):
