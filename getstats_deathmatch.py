@@ -362,7 +362,7 @@ for matchPart in matchlog:
             isFound = False
             for pl in allplayers:
                 if pl.name == checkname:                    
-                    exec("pl.inc%s(%d)" % (pwr, currentMinute))                    
+                    exec("pl.inc%s(%d,%d)" % (pwr, currentMinute, currentMatchTime))
                     isFound = True
                     break;
             if not isFound:
@@ -750,6 +750,9 @@ if options.withScripts:
     # resultString += "</pre>ga_BY_MINUTES_PLACE\n<pre>"
     # resultString += "</pre>mh_BY_MINUTES_PLACE\n<pre>"
 
+if options.withScripts:
+    resultString += "</pre>POWER_UPS_TIMELINE_PLACE\n<pre>"
+
 if len(dropedplayers) != 0:
     dropedStr = ""
     for pl in dropedplayers:
@@ -771,6 +774,11 @@ for pl in allplayersByFrags:
     print "%s: ya[%d] %s" % (pl.name, pl.ya, str(pl.yaByMinutes))
     print "%s: ga[%d] %s" % (pl.name, pl.ga, str(pl.gaByMinutes))
     print "%s: mh[%d] %s" % (pl.name, pl.mh, str(pl.mhByMinutes))
+    
+    puStr = ""
+    for pu in pl.powerUps:
+        puStr += "%s, " % (str(pu))
+    print "%s: powerUps: %s" % (pl.name, puStr)
 
 print resultString
 
@@ -1137,7 +1145,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     rowLines = ""
     currentRowsLines = ""
-    for pl in allplayersByFrags:
+    for pl in sortedPlayers:
         strkRes,maxStrk           = pl.getCalculatedStreaksFull(1)
         for strk in strkRes:
             rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_kills" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
@@ -1196,6 +1204,44 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle progress
     
+    # power ups timeline -->
+    powerUpsTimelineFunctionStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_FUNCTION
+    
+    rowLines = ""
+    colors = "'gray', "
+    for pl in sortedPlayers:
+        for pwrup in ["RA","YA","GA","MH"]:
+            rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_%s" % (pl.name, pwrup))
+            rowLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_%s" % (pl.name, pwrup), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+
+        for pu in pl.powerUps:
+            rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d),  new Date(2016,1,1,0,%d,%d) ],\n" % \
+                        ("%s_%s" % (pl.name, ezstatslib.powerUpTypeToString(pu.type)), "", ((pu.time-1) / 60), ((pu.time-1) % 60), ((pu.time+1) / 60), ((pu.time+1) % 60))
+            # rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % \
+            #             ("%s" % (pl.name), ezstatslib.powerUpTypeToString(pu.type), ((pu.time-1) / 60), ((pu.time-1) % 60), ((pu.time+1) / 60), ((pu.time+1) % 60))
+            # rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d),  new Date(2016,1,1,0,%d,%d) ],\n" % \
+            #             ("%s" % (pl.name), ezstatslib.powerUpTypeToString(pu.type), ((pu.time) / 60), ((pu.time) % 60), ((pu.time) / 60), ((pu.time) % 60))
+            
+            # if pu.type == ezstatslib.PowerUpType.RA: colors += "'%s', " % ("red")
+            # if pu.type == ezstatslib.PowerUpType.YA: colors += "'%s', " % ("yellow")
+            # if pu.type == ezstatslib.PowerUpType.GA: colors += "'%s', " % ("green")
+            # if pu.type == ezstatslib.PowerUpType.MH: colors += "'%s', " % ("#660066")
+                        
+        # rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s" % (pl.name))
+        # rowLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+        
+        # colors += "'gray'"
+    
+    powerUpsTimelineFunctionStr = powerUpsTimelineFunctionStr.replace("ALL_ROWS", rowLines)
+    # powerUpsTimelineFunctionStr = powerUpsTimelineFunctionStr.replace("COLORS", colors)    
+    
+    powerUpsTimelineDivStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_DIV_TAG
+    powerUpsTimelineChartHeight = (len(sortedPlayers) * 4 + 1) * (33 if len(sortedPlayers) >= 4 else 35)    
+    powerUpsTimelineDivStr = powerUpsTimelineDivStr.replace("HEIGHT_IN_PX", str(powerUpsTimelineChartHeight))        
+                    
+    f.write(powerUpsTimelineFunctionStr)
+    # <-- power upd timeline
+    
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     f.write(ezstatslib.HTML_EXPAND_POWER_UPS_CHECKBOX_FUNCTION)
@@ -1211,6 +1257,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
     resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("HIGHCHART_POWER_UPS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIVS_TAG)
+    resStr = resStr.replace("POWER_UPS_TIMELINE_PLACE", powerUpsTimelineDivStr)
     
     f.write(resStr)
     

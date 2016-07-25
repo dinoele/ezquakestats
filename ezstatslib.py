@@ -79,7 +79,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
-    "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
+    "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n" \
+    "google.charts.setOnLoadCallback(drawPowerUpsTimeline);\n"
     # "google.charts.setOnLoadCallback(drawStreakTimelines);\n"
 
 # POINT battle progress
@@ -773,6 +774,42 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG = \
 
 # =========================================================================================================================================================
 
+HTML_SCRIPT_POWER_UPS_TIMELINE_FUNCTION = \
+    "function drawPowerUpsTimeline() {\n" \
+    "var container = document.getElementById('power_ups_timeline_div');\n" \
+    "var chart = new google.visualization.Timeline(container);\n" \
+    "var dataTable = new google.visualization.DataTable();\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Position' });\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Name' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'Start' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'End' });\n" \
+    "var allRows = [\n"\
+    "ALL_ROWS" \
+    "];\n" \
+    "dataTable.addRows(allRows);\n" \
+    "var options = { colors: ['red','yellow','green','#660066'], \n" \
+    "                timeline: { colorByRowLabel: true, rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
+    "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
+    "chart.draw(dataTable, options) ;\n" \
+    "$(\"#PowerUpsTimeline\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}"
+
+# HTML_SCRIPT_POWER_UPS_TIMELINE_DIV_TAG = "<div id=\"power_ups_timeline_div\" style=\"width: 100%; height: HEIGHT_IN_PXpx;\"></div>\n"
+
+HTML_SCRIPT_POWER_UPS_TIMELINE_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"PowerUpsTimeline\">\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Power Ups timeline ver.1</h3>\n " \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "<div id=\"power_ups_timeline_div\" style=\"width: 100%; height: HEIGHT_IN_PXpx;\"></div>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";                                            
+
+# =========================================================================================================================================================
+
 HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "$(function () {\n" \
 "Highcharts.theme = {\n" \
@@ -1137,6 +1174,22 @@ class Streak:
     def toString(self):
         return "%d [%d:%d]" % (self.count, self.start, self.end)
 
+PowerUpType = enum(UNKNOWN=0, RA=1, YA=2, GA=3, MH=4)
+def powerUpTypeToString(pwrType):
+    if pwrType == PowerUpType.RA: return "RA"
+    if pwrType == PowerUpType.YA: return "YA"    
+    if pwrType == PowerUpType.GA: return "GA"
+    if pwrType == PowerUpType.MH: return "MH"
+    return "NA"
+
+class PowerUp:
+    def __init__(self, _type = PowerUpType.UNKNOWN, _time = 0):
+        self.type = _type
+        self.time = _time
+        
+    def __str__(self):
+        return "%s [%d]" % (powerUpTypeToString(self.type), self.time)
+
 class Player:
     def __init__(self, teamname, name, score, origDelta, teamkills):
         self.teamname = teamname
@@ -1202,6 +1255,8 @@ class Player:
         self.yaByMinutes = []
         self.raByMinutes = []
         self.mhByMinutes = []
+        
+        self.powerUps = []
 
     def initPowerUpsByMinutes(self, minutesCnt):        
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
@@ -1209,17 +1264,25 @@ class Player:
         self.raByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.mhByMinutes = [0 for i in xrange(minutesCnt+1)]
         
-    def incga(self, minuteNum):
+    def incga(self, minuteNum, time = 0):
         self.gaByMinutes[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.GA, time) )
         
-    def incya(self, minuteNum):
+    def incya(self, minuteNum, time = 0):
         self.yaByMinutes[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.YA, time) )
         
-    def incra(self, minuteNum):
+    def incra(self, minuteNum, time = 0):
         self.raByMinutes[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.RA, time) )
     
-    def incmh(self, minuteNum):
-        self.mhByMinutes[minuteNum] += 1    
+    def incmh(self, minuteNum, time = 0):
+        self.mhByMinutes[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.MH, time) )
 
     def fillStreaks(self, time):
         if self.currentStreak.count != 0:
