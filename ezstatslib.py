@@ -788,7 +788,7 @@ HTML_SCRIPT_POWER_UPS_TIMELINE_FUNCTION = \
     "ALL_ROWS" \
     "];\n" \
     "dataTable.addRows(allRows);\n" \
-    "var options = { colors: ['red','yellow','green','#660066'], \n" \
+    "var options = { colors: ['gray', 'red','yellow','green','#660066'], \n" \
     "                timeline: { colorByRowLabel: true, rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
     "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
     "chart.draw(dataTable, options) ;\n" \

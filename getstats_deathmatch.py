@@ -1213,9 +1213,12 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     rowLines = ""
     colors = "'gray', "
     for pl in sortedPlayers:
+        
+        rowLines += "[ '----> %s <----', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s" % (pl.name))
+        
         for pwrup in ["RA","YA","GA","MH"]:
             rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_%s" % (pl.name, pwrup))
-            rowLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_%s" % (pl.name, pwrup), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+            rowLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_%s" % (pl.name, pwrup), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt            
 
         for pu in pl.powerUps:
             rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d),  new Date(2016,1,1,0,%d,%d) ],\n" % \
@@ -1239,7 +1242,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # powerUpsTimelineFunctionStr = powerUpsTimelineFunctionStr.replace("COLORS", colors)    
     
     powerUpsTimelineDivStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_DIV_TAG
-    powerUpsTimelineChartHeight = (len(sortedPlayers) * 4 + 1) * (33 if len(sortedPlayers) >= 4 else 35)    
+    powerUpsTimelineChartHeight = (len(sortedPlayers) * 5 + 1) * (33 if len(sortedPlayers) >= 4 else 35)    
     powerUpsTimelineDivStr = powerUpsTimelineDivStr.replace("HEIGHT_IN_PX", str(powerUpsTimelineChartHeight))        
                     
     f.write(powerUpsTimelineFunctionStr)
