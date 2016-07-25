@@ -1249,7 +1249,14 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     powerUpsTimelineVer2FunctionStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_FUNCTION
     
     rowLines = ""
-    colors = "'gray', "
+    # colors = "'gray', "
+    colors = []
+    for col in ["red","yellow","green","#660066"]:
+        colors += [col for i in xrange(len(sortedPlayers))]
+    colStr = ""
+    for col in colors:
+        colStr += "'%s'," % (col)
+    colStr = colStr[:-1]
     
     for pwrup in ["RA","YA","GA","MH"]:
         for pl in sortedPlayers:
@@ -1280,7 +1287,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         # colors += "'gray'"
     
     powerUpsTimelineVer2FunctionStr = powerUpsTimelineVer2FunctionStr.replace("ALL_ROWS", rowLines)
-    # powerUpsTimelineFunctionStr = powerUpsTimelineFunctionStr.replace("COLORS", colors)    
+    powerUpsTimelineVer2FunctionStr = powerUpsTimelineVer2FunctionStr.replace("COLORS", colStr)    
     
     powerUpsTimelineVer2DivStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_DIV_TAG
     powerUpsTimelineVer2ChartHeight = (len(sortedPlayers) * 4 + 1) * (33 if len(sortedPlayers) >= 4 else 35)    
