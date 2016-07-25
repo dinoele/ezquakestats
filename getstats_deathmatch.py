@@ -752,6 +752,9 @@ if options.withScripts:
 
 if options.withScripts:
     resultString += "</pre>POWER_UPS_TIMELINE_PLACE\n<pre>"
+    
+if options.withScripts:
+    resultString += "</pre>POWER_UPS_TIMELINE_VER2_PLACE\n<pre>"
 
 if len(dropedplayers) != 0:
     dropedStr = ""
@@ -1240,7 +1243,51 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     powerUpsTimelineDivStr = powerUpsTimelineDivStr.replace("HEIGHT_IN_PX", str(powerUpsTimelineChartHeight))        
                     
     f.write(powerUpsTimelineFunctionStr)
-    # <-- power upd timeline
+    # <-- power ups timeline
+    
+    # power ups timeline ver2 -->
+    powerUpsTimelineVer2FunctionStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_FUNCTION
+    
+    rowLines = ""
+    colors = "'gray', "
+    
+    for pwrup in ["RA","YA","GA","MH"]:
+        for pl in sortedPlayers:
+            rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_%s" % (pl.name, pwrup))
+            rowLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_%s" % (pl.name, pwrup), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+    
+    for pl in sortedPlayers:
+        # for pwrup in ["RA","YA","GA","MH"]:
+        #     rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_%s" % (pl.name, pwrup))
+        #     rowLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_%s" % (pl.name, pwrup), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+
+        for pu in pl.powerUps:
+            rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % \
+                        ("%s_%s" % (pl.name, ezstatslib.powerUpTypeToString(pu.type)), "", ((pu.time-1) / 60), ((pu.time-1) % 60), ((pu.time+2) / 60), ((pu.time+2) % 60))
+            # rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % \
+            #             ("%s" % (pl.name), ezstatslib.powerUpTypeToString(pu.type), ((pu.time-1) / 60), ((pu.time-1) % 60), ((pu.time+1) / 60), ((pu.time+1) % 60))
+            # rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d),  new Date(2016,1,1,0,%d,%d) ],\n" % \
+            #             ("%s" % (pl.name), ezstatslib.powerUpTypeToString(pu.type), ((pu.time) / 60), ((pu.time) % 60), ((pu.time) / 60), ((pu.time) % 60))
+            
+            # if pu.type == ezstatslib.PowerUpType.RA: colors += "'%s', " % ("red")
+            # if pu.type == ezstatslib.PowerUpType.YA: colors += "'%s', " % ("yellow")
+            # if pu.type == ezstatslib.PowerUpType.GA: colors += "'%s', " % ("green")
+            # if pu.type == ezstatslib.PowerUpType.MH: colors += "'%s', " % ("#660066")
+                        
+        # rowLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s" % (pl.name))
+        # rowLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+        
+        # colors += "'gray'"
+    
+    powerUpsTimelineVer2FunctionStr = powerUpsTimelineVer2FunctionStr.replace("ALL_ROWS", rowLines)
+    # powerUpsTimelineFunctionStr = powerUpsTimelineFunctionStr.replace("COLORS", colors)    
+    
+    powerUpsTimelineVer2DivStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_DIV_TAG
+    powerUpsTimelineVer2ChartHeight = (len(sortedPlayers) * 4 + 1) * (33 if len(sortedPlayers) >= 4 else 35)    
+    powerUpsTimelineVer2DivStr = powerUpsTimelineVer2DivStr.replace("HEIGHT_IN_PX", str(powerUpsTimelineVer2ChartHeight))        
+                    
+    f.write(powerUpsTimelineVer2FunctionStr)
+    # <-- power ups timeline ver2
     
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
@@ -1258,6 +1305,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("HIGHCHART_POWER_UPS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIVS_TAG)
     resStr = resStr.replace("POWER_UPS_TIMELINE_PLACE", powerUpsTimelineDivStr)
+    resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)            
     
     f.write(resStr)
     

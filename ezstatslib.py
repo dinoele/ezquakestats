@@ -80,7 +80,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
     "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n" \
-    "google.charts.setOnLoadCallback(drawPowerUpsTimeline);\n"
+    "google.charts.setOnLoadCallback(drawPowerUpsTimeline);\n" \
+    "google.charts.setOnLoadCallback(drawPowerUpsTimelineVer2);\n"
     # "google.charts.setOnLoadCallback(drawStreakTimelines);\n"
 
 # POINT battle progress
@@ -806,7 +807,43 @@ HTML_SCRIPT_POWER_UPS_TIMELINE_DIV_TAG = \
   "    </div>\n" \
   "  </div>\n" \
   "</div>\n" \
-  "</div>\n";                                            
+  "</div>\n";
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_FUNCTION = \
+    "function drawPowerUpsTimelineVer2() {\n" \
+    "var container = document.getElementById('power_ups_timeline_ver2_div');\n" \
+    "var chart = new google.visualization.Timeline(container);\n" \
+    "var dataTable = new google.visualization.DataTable();\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Position' });\n" \
+    "dataTable.addColumn({ type: 'string', id: 'Name' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'Start' });\n" \
+    "dataTable.addColumn({ type: 'date', id: 'End' });\n" \
+    "var allRows = [\n"\
+    "ALL_ROWS" \
+    "];\n" \
+    "dataTable.addRows(allRows);\n" \
+    "var options = { colors: ['red','red','red','red','yellow','yellow','yellow','yellow','green','green','green','green','#660066','#660066','#660066','#660066'], \n" \
+    "                timeline: { colorByRowLabel: true, rowLabelStyle: { fontName: 'Helvetica', fontSize: 16 },\n" \
+    "                            barLabelStyle: { fontName: 'Garamond',  fontSize: 9, fontPosition: 'center'  } } };\n" \
+    "chart.draw(dataTable, options) ;\n" \
+    "$(\"#PowerUpsTimelineVer2\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}"
+
+# HTML_SCRIPT_POWER_UPS_TIMELINE_DIV_TAG = "<div id=\"power_ups_timeline_div\" style=\"width: 100%; height: HEIGHT_IN_PXpx;\"></div>\n"
+
+HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"PowerUpsTimelineVer2\">\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Power Ups timeline ver.2</h3>\n " \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "<div id=\"power_ups_timeline_ver2_div\" style=\"width: 100%; height: HEIGHT_IN_PXpx;\"></div>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
 
 # =========================================================================================================================================================
 
