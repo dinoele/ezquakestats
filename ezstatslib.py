@@ -782,6 +782,7 @@ HTML_SCRIPT_POWER_UPS_TIMELINE_FUNCTION = \
     "var dataTable = new google.visualization.DataTable();\n" \
     "dataTable.addColumn({ type: 'string', id: 'Position' });\n" \
     "dataTable.addColumn({ type: 'string', id: 'Name' });\n" \
+    "dataTable.addColumn({ type: 'string', role: 'tooltip' });\n" \
     "dataTable.addColumn({ type: 'date', id: 'Start' });\n" \
     "dataTable.addColumn({ type: 'date', id: 'End' });\n" \
     "var allRows = [\n"\
