@@ -271,9 +271,11 @@ for matchPart in matchlog:
                 continue
         
             currentMatchTime = lineStamp - matchStartStamp
-        else:
+        elif not newLogFormat:
             currentMatchTime = ((currentMinute - 1) * 60) + int( float(currentPartNum) * timeMult )
-            
+        else:
+            ezstatslib.logError("Strange line: " + logline);
+            continue            
 
         if not newLogFormat:            
             currentPartNum += 1
