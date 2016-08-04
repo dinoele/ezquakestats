@@ -960,6 +960,67 @@ HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY = 4
 
 # =========================================================================================================================================================
 
+HTML_SCRIPT_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_FUNCTION =\
+    "google.charts.setOnLoadCallback(drawPLAYER_NAMEPowerUpsByMinutes);\n" \
+    "function drawPLAYER_NAMEPowerUpsByMinutes() {\n" \
+    "var data = google.visualization.arrayToDataTable([\n " \
+    "['Minute','MH','GA','YA','RA'],\n" \
+    "ADD_STATS_ROWS" \
+    "]);\n" \
+    "var dataTotal = google.visualization.arrayToDataTable([\n" \
+    "['Minute','MH','GA','YA','RA'],\n" \
+    "ADD_TOTAL_STATS_ROWS" \
+    "]);\n" \
+    "\n" \
+    "var options = {\n" \
+    "  isStacked: true,\n" \
+    "  height: 300,\n" \
+    "  colors: ['#660066', 'green', 'yellow', 'red'],\n" \
+    "  \n" \
+    "  vAxis: {minValue: 0, maxValue: MAX_VALUE},\n" \
+    "  legend: { position: 'right', maxLines: 2 },\n" \
+    "  title: \"PLAYER_NAME power ups by minutes\"\n" \
+    "};\n" \
+    "var optionsTotal = {\n" \
+    "  isStacked: false,\n" \
+    "  height: 300,\n" \
+    "  colors: ['#660066', 'green', 'yellow', 'red'],\n" \
+    "  vAxis: {minValue: 0, maxValue: TOTAL_MAX__VALUE},\n" \
+    "  legend: { position: \"none\" },\n" \
+    "  title: \"PLAYER_NAME total power ups\"\n" \
+    "};\n" \
+    "\n" \
+    "var chart      = new google.visualization.ColumnChart(document.getElementById('PLAYER_NAME_power_ups_div'));\n" \
+    "var chartTotal = new google.visualization.ColumnChart(document.getElementById('PLAYER_NAME_total_power_ups_div'));\n" \
+    "\n" \
+    "chart.draw(data, options);\n" \
+    "chartTotal.draw(dataTotal, optionsTotal);\n" \
+    "$(\"#PLAYER_NAME_power_ups_by_minutes\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}\n"
+
+HTML_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"PLAYER_NAME_power_ups_by_minutes\">\n" \
+  "    <h2 class=\"symple-toggle-trigger \">PLAYER_NAME power ups by minutes</h2>\n" \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 83%\">\n" \
+  "            <div id=\"PLAYER_NAME_power_ups_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 17%\">\n" \
+  "            <div id=\"PLAYER_NAME_total_power_ups_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
+
+# =========================================================================================================================================================
+
 HTML_EXPAND_CHECKBOX_FUNCTION = \
   "function expandCollapseKillsByMinutes() {\n" \
   "$(\"h3.symple-toggle-trigger\").toggleClass(\"active\").next().slideToggle(\"fast\")\n" \

@@ -751,6 +751,8 @@ if options.withScripts:
     # resultString += "</pre>ya_BY_MINUTES_PLACE\n<pre>"
     # resultString += "</pre>ga_BY_MINUTES_PLACE\n<pre>"
     # resultString += "</pre>mh_BY_MINUTES_PLACE\n<pre>"
+    for pl in allplayersByFrags:
+        resultString += "</pre>%s_POWER_UPS_BY_MINUTES_PLACE\n<pre>" % (ezstatslib.escapePlayerName(pl.name))    
 
 if options.withScripts:
     resultString += "</pre>POWER_UPS_TIMELINE_PLACE\n<pre>"
@@ -1032,6 +1034,51 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
                 
     f.write(highchartsPowerUpsFunctionStr)
     # <-- highcharts power ups
+    
+    # players power ups by minutes by players -->
+    allPlayersPowerUpsByMinutesStr = ""
+    maxValue = 0    
+    maxTotalValue = 0    
+    for pl in allplayersByFrags:
+        plNameEscaped = ezstatslib.escapePlayerName(pl.name)
+        
+        playerPowerUpsByMinutesStr = ezstatslib.HTML_SCRIPT_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_FUNCTION
+        playerPowerUpsByMinutesStr = playerPowerUpsByMinutesStr.replace("PLAYER_NAME", plNameEscaped)
+        
+        playerPowerUpsByMinutesRowsStr = ""
+        minut = 1
+        plMaxValue = 0        
+        while minut <= currentMinute:
+            playerPowerUpsByMinutesRowsStr += "['%d',%d,%d,%d,%d],\n" % (minut, pl.mhByMinutes[minut], pl.gaByMinutes[minut], pl.yaByMinutes[minut], pl.raByMinutes[minut])
+            stackSum = pl.raByMinutes[minut] + pl.yaByMinutes[minut] + pl.gaByMinutes[minut] + pl.mhByMinutes[minut]
+            plMaxValue = max(plMaxValue, stackSum)
+            minut += 1
+            
+        playerPowerUpsByMinutesStr = playerPowerUpsByMinutesStr.replace("ADD_STATS_ROWS", playerPowerUpsByMinutesRowsStr)
+        
+        playerPowerUpsTotalRowsStr = "['',%d,%d,%d,%d],\n" % (pl.mh, pl.ga, pl.ya, pl.ra)
+        playerPowerUpsByMinutesStr = playerPowerUpsByMinutesStr.replace("ADD_TOTAL_STATS_ROWS", playerPowerUpsTotalRowsStr)
+        
+        playerPowerUpsByMinutesDivTag = ezstatslib.HTML_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_DIV_TAG
+        playerPowerUpsByMinutesDivTag = playerPowerUpsByMinutesDivTag.replace("PLAYER_NAME", plNameEscaped)
+        
+        allPlayersPowerUpsByMinutesStr += playerPowerUpsByMinutesStr
+        
+        # add div
+        resStr = resStr.replace("%s_POWER_UPS_BY_MINUTES_PLACE" % (plNameEscaped), playerPowerUpsByMinutesDivTag)
+        
+        # max & min
+        maxValue = max(maxValue, plMaxValue)
+        
+        # maxTotalValue = max(maxTotalValue, pl.kills)
+        #maxTotalValue = max(maxTotalValue, sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True)[0][1])
+        maxTotalValue = max(maxTotalValue, pl.mh, pl.ga, pl.ya, pl.ra)
+            
+    allPlayersPowerUpsByMinutesStr = allPlayersPowerUpsByMinutesStr.replace("MAX_VALUE", str(maxValue))    
+    allPlayersPowerUpsByMinutesStr = allPlayersPowerUpsByMinutesStr.replace("TOTAL_MAX__VALUE", str(maxTotalValue))
+    
+    f.write(allPlayersPowerUpsByMinutesStr)
+    # <-- players power ups by minutes by players
     
     # players kills by minutes -->
     allPlayerKillsByMinutesStr = ""
