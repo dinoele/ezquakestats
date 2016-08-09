@@ -721,11 +721,39 @@ resultString += str(htmlTable)
 i = 1
 resultString += "\n\n"
 resultString += "battle progress:\n"
+plPrevFragsDict = {}
 
+isFirstLine = True
 for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]
+    
+    if isFirstLine:        
+        for mp in mpline:
+            plPrevFragsDict[mp[0]] = mp[1]
+    
     s = ""
     for mp in mpline:        # mp:     [pl1_name,pl1_frags]
-        s += ("{0:%ds}" % (plNameMaxLen+6)).format( "%s(%d)" % (mp[0], mp[1]) )
+        if isFirstLine:
+            #s += ("{0:%ds}" % (plNameMaxLen+9)).format( "%s(%d)" % (mp[0], mp[1]) )
+            s += ("{0:%ds}" % (plNameMaxLen+9+11)).format( "%s(%d)<sup>0  </sup>" % (mp[0], mp[1]) )
+        else:
+            plFragsDelta = mp[1] - plPrevFragsDict[mp[0]]
+            plPrevFragsDict[mp[0]] = mp[1]
+            
+            deltaStr = "<sup>%s%d</sup>" % ("+" if plFragsDelta > 0 else "", plFragsDelta)
+                        
+            if plFragsDelta == 0:
+                deltaStr = "<sup>0  </sup>"
+            else:
+                if plFragsDelta > 0:
+                    deltaStr = "<sup>+%d%s</sup>" % (plFragsDelta, " " if plFragsDelta < 10 else "")
+                else:
+                    deltaStr = "<sup>%d%s</sup>"  % (plFragsDelta, " " if plFragsDelta < 10 else "")            
+            
+            s += ("{0:%ds}" % (plNameMaxLen+9+11)).format( "%s(%d)%s" % (mp[0], mp[1], deltaStr) )
+            #plFragsStr += "<sup>%s%d</sup>" % ("+" if plFragsDelta > 0 else "", plFragsDelta)
+            #s += plFragsStr
+    
+    if isFirstLine: isFirstLine = False
     
     resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  s)
     i += 1
@@ -1275,6 +1303,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         for pu in pl.powerUps:
             # rowLines += "[ '%s', '%s', new Date(2016,1,1,0,%d,%d),  new Date(2016,1,1,0,%d,%d) ],\n" % \
             #             ("%s_%s" % (pl.name, ezstatslib.powerUpTypeToString(pu.type)), "", ((pu.time-1) / 60), ((pu.time-1) % 60), ((pu.time+1) / 60), ((pu.time+1) % 60))
+            
+            # TODO check that previous entry is not intersected with the new one: need to store and check lastFinishDate (source data: power_ups_intersection_in_stats)
             
             rowLines += "[ '%s', '', '%s', new Date(2016,1,1,0,%d,%d),  new Date(2016,1,1,0,%d,%d) ],\n" % \
                          ("%s_%s" % (pl.name, ezstatslib.powerUpTypeToString(pu.type)), \
