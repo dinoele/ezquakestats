@@ -724,34 +724,27 @@ resultString += "battle progress:\n"
 plPrevFragsDict = {}
 
 isFirstLine = True
-for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]
-    
-    if isFirstLine:        
-        for mp in mpline:
-            plPrevFragsDict[mp[0]] = mp[1]
-    
+for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]       
     s = ""
     for mp in mpline:        # mp:     [pl1_name,pl1_frags]
         if isFirstLine:
-            #s += ("{0:%ds}" % (plNameMaxLen+9)).format( "%s(%d)" % (mp[0], mp[1]) )
-            s += ("{0:%ds}" % (plNameMaxLen+9+11)).format( "%s(%d)<sup>0  </sup>" % (mp[0], mp[1]) )
+            plFragsDelta = mp[1]
         else:
             plFragsDelta = mp[1] - plPrevFragsDict[mp[0]]
-            plPrevFragsDict[mp[0]] = mp[1]
-            
-            deltaStr = "<sup>%s%d</sup>" % ("+" if plFragsDelta > 0 else "", plFragsDelta)
-                        
-            if plFragsDelta == 0:
-                deltaStr = "<sup>0  </sup>"
+        
+        plPrevFragsDict[mp[0]] = mp[1]
+        
+        deltaStr = "<sup>%s%d</sup>" % ("+" if plFragsDelta > 0 else "", plFragsDelta)
+
+        if plFragsDelta == 0:
+            deltaStr = "<sup>0  </sup>"
+        else:
+            if plFragsDelta > 0:
+                deltaStr = "<sup>+%d%s</sup>" % (plFragsDelta, " " if plFragsDelta < 10 else "")
             else:
-                if plFragsDelta > 0:
-                    deltaStr = "<sup>+%d%s</sup>" % (plFragsDelta, " " if plFragsDelta < 10 else "")
-                else:
-                    deltaStr = "<sup>%d%s</sup>"  % (plFragsDelta, " " if plFragsDelta < 10 else "")            
-            
-            s += ("{0:%ds}" % (plNameMaxLen+9+11)).format( "%s(%d)%s" % (mp[0], mp[1], deltaStr) )
-            #plFragsStr += "<sup>%s%d</sup>" % ("+" if plFragsDelta > 0 else "", plFragsDelta)
-            #s += plFragsStr
+                deltaStr = "<sup>%d%s</sup>"  % (plFragsDelta, " " if plFragsDelta < 10 else "")
+        
+        s += ("{0:%ds}" % (plNameMaxLen+9+11)).format( "%s(%d)%s" % (mp[0], mp[1], deltaStr) )
     
     if isFirstLine: isFirstLine = False
     
