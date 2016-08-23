@@ -1194,7 +1194,8 @@ def suicideDetection(s):
                   "discharges into the slime", \
                   "can't exist on slime alone", \
                   "gulped a load of slime", \
-                  "burst into flames"]
+                  "burst into flames", \
+                  "heats up the water"]
     for det in detectStrs:
          if det in s:
             return True,s.split( )[0]
