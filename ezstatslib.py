@@ -1141,7 +1141,7 @@ def commonDetection(s):
     elif "rocket" in s and not "took" in s and not "{rockets}" in s: # zrkn rides EEE's rocket
         return True, spl[2].split("'")[0], spl[0], "rl"
         
-    elif "shaft" in s: # ss accepts Onanim's shaft
+    elif "shaft" in s and not "fakeshaft" in s: # ss accepts Onanim's shaft
         return True, spl[2].split("'")[0], spl[0], "lg"
         
     elif "punctured" in s: # EEE was punctured by zrkn
