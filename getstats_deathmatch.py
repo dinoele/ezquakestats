@@ -669,7 +669,7 @@ resultString += "\n"
 # Players duels table
 resultString += "\n"
 resultString += "Players duels:<br>"
-headerRow=['', 'Frags', 'Kills']
+headerRow=['', 'Frags', 'Kills', 'Deaths']
 playersNames = []
 for pl in allplayersByFrags:
     headerRow.append(pl.name);
@@ -685,7 +685,8 @@ htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_al
 for pl in allplayersByFrags:
     tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
                                     ezstatslib.htmlBold(pl.frags()),
-                                    ezstatslib.htmlBold(pl.kills)])
+                                    ezstatslib.htmlBold(pl.kills),
+                                    ezstatslib.htmlBold(pl.deaths)])
         
     for plName in playersNames:
         if pl.name == plName:
