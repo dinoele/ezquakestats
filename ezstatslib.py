@@ -736,6 +736,7 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION = \
     "var dataTable = new google.visualization.DataTable();\n" \
     "dataTable.addColumn({ type: 'string', id: 'Position' });\n" \
     "dataTable.addColumn({ type: 'string', id: 'Name' });\n" \
+    "dataTable.addColumn({ type: 'string', role: 'tooltip', 'p': {'html': true} });\n" \
     "dataTable.addColumn({ type: 'date', id: 'Start' });\n" \
     "dataTable.addColumn({ type: 'date', id: 'End' });\n" \
     "var allRows = [\n"\
@@ -1261,19 +1262,48 @@ def sortPlayersBy(players, param, fieldType="attr", units = ""):
 
     return (res if param == "damageDelta" or valsSum != 0 else "")
 
+StreakType = enum(UNKNOWN=0, KILL_STREAK=1, DEATH_STREAK=2)
 class Streak:
-    def __init__(self, cnt = 0, _start = 0, _end = 0):
+    def __init__(self, _type = StreakType.UNKNOWN, cnt = 0, _start = 0, _end = 0, _names = ""):
+        self.type  = _type
         self.count = cnt
         self.start = _start
         self.end   = _end
+        self.names = _names
+        self.finalName = ""
         
     def clear(self):
         self.count = 0
         self.start = 0
-        self.end   = 0
+        self.end   = 0        
+        # del self.names[:]
+        self.names = ""
+        self.finalName = ""
         
     def toString(self):
         return "%d [%d:%d]" % (self.count, self.start, self.end)
+    
+    def duration(self):
+        return (self.end - self.start)
+    
+    def formattedNames(self):
+        res = []
+        self.names = self.names[:-1]
+        namesSpl = self.names.split(",")
+        i = -1
+        for spl in namesSpl:
+            if i == -1 or res[i][0] != spl:
+                res.append([spl,1])
+                i += 1
+            else:
+                res[i][1] += 1        
+        
+        resStr = ""
+        for el in res:
+            resStr += "%s(%d), " % (el[0], el[1])
+        resStr = resStr[:-2]
+        
+        return resStr
 
 PowerUpType = enum(UNKNOWN=0, RA=1, YA=2, GA=3, MH=4)
 def powerUpTypeToString(pwrType):
@@ -1347,10 +1377,10 @@ class Player:
         #self.TODO_deaths = 0
         
         self.calculatedStreaks = []
-        self.currentStreak = Streak()
+        self.currentStreak = Streak(StreakType.KILL_STREAK)
         
         self.deathStreaks = []
-        self.currentDeathStreak = Streak()
+        self.currentDeathStreak = Streak(StreakType.DEATH_STREAK)
         
         self.gaByMinutes = []
         self.yaByMinutes = []
@@ -1387,33 +1417,45 @@ class Player:
 
     def fillStreaks(self, time):
         if self.currentStreak.count != 0:
-            self.currentStreak.end = time
+            self.currentStreak.end = time        
             # self.calculatedStreaks.append(self.currentStreak)
-            self.calculatedStreaks.append( Streak(self.currentStreak.count, self.currentStreak.start, self.currentStreak.end) )
+            self.calculatedStreaks.append( Streak(StreakType.KILL_STREAK, self.currentStreak.count, self.currentStreak.start, self.currentStreak.end, self.currentStreak.names) )
             self.currentStreak.clear()
 
     def fillDeathStreaks(self, time):
         if self.currentDeathStreak.count != 0:
             self.currentDeathStreak.end = time
             # self.deathStreaks.append(self.currentDeathStreak)
-            self.deathStreaks.append( Streak(self.currentDeathStreak.count, self.currentDeathStreak.start, self.currentDeathStreak.end) )
+            self.deathStreaks.append( Streak(StreakType.DEATH_STREAK, self.currentDeathStreak.count, self.currentDeathStreak.start, self.currentDeathStreak.end, self.currentDeathStreak.names) )
             self.currentDeathStreak.clear()
 
-    def incKill(self, time):
-        self.kills += 1        
+    def incKill(self, time, who, whom):
+        self.kills += 1
         self.currentStreak.count += 1
+        
+        # self.currentStreak.names.append(whom)
+        self.currentStreak.names += "%s," % (whom)
+        
         if self.currentStreak.start == 0: self.currentStreak.start = time            
         self.fillDeathStreaks(time)
     
-    def incDeath(self, time):
+    def incDeath(self, time, who, whom):
         self.deaths += 1
         self.currentDeathStreak.count += 1
+        
+        # self.currentDeathStreak.names.append(who)
+        self.currentDeathStreak.names += "%s," % (who)
+        
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
         self.fillStreaks(time)
         
     def incSuicides(self, time):
         self.suicides += 1
         self.currentDeathStreak.count += 1
+        
+        # self.currentDeathStreak.names.append("SELF")
+        self.currentDeathStreak.names += "SELF,"
+        
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
         self.fillStreaks(time)            
     
@@ -1440,12 +1482,14 @@ class Player:
     def getCalculatedStreaks(self, minCnt = KILL_STREAK_MIN_VALUE):
         maxStreak = 0
         res = []
+        resNames = []
         for strk in self.calculatedStreaks:
             if strk.count >= minCnt:                                
-                res.append(strk.count)            
+                res.append(strk.count)
+                resNames.append(strk.names)
                 maxStreak = max(maxStreak, strk.count)
             
-        return res, maxStreak
+        return res, maxStreak, resNames
     
     def getCalculatedStreaksFull(self, minCnt = KILL_STREAK_MIN_VALUE):
         maxStreak = 0
@@ -1460,12 +1504,14 @@ class Player:
     def getDeatchStreaks(self, minCnt = DEATH_STREAK_MIN_VALUE):
         maxStreak = 0
         res = []
+        resNames = []
         for strk in self.deathStreaks:
             if strk.count >= minCnt:                                
-                res.append(strk.count)            
+                res.append(strk.count)
+                resNames.append(strk.names)
                 maxStreak = max(maxStreak, strk.count)
             
-        return res, maxStreak
+        return res, maxStreak, resNames
     
     def getDeatchStreaksFull(self, minCnt = DEATH_STREAK_MIN_VALUE):
         maxStreak = 0

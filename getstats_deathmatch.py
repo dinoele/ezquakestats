@@ -323,12 +323,12 @@ for matchPart in matchlog:
             isFoundWhom = False
             for pl in allplayers:
                 if who != "" and pl.name == who:
-                    pl.incKill(currentMatchTime)
+                    pl.incKill(currentMatchTime, who, whom)
                     pl.tele_kills += 1
                     isFoundWho = True
     
                 if pl.name == whom:
-                    pl.incDeath(currentMatchTime)
+                    pl.incDeath(currentMatchTime, who, whom)
                     pl.tele_deaths += 1
                     isFoundWhom = True
     
@@ -390,15 +390,15 @@ for matchPart in matchlog:
             isFoundWhom = False
             for pl in allplayers:
                 if pl.name == who:
-                    pl.incKill(currentMatchTime);
+                    pl.incKill(currentMatchTime, who, whom);
                     exec("pl.%s_kills += 1" % (weap))
                     isFoundWho = True
                 
                 if pl.name == whom:
-                    pl.incDeath(currentMatchTime);
+                    pl.incDeath(currentMatchTime, who, whom);
                     exec("pl.%s_deaths += 1" % (weap))
                     isFoundWhom = True
-    
+            
             fillH2H(who,whom,currentMinute)
     
             if not isFoundWho or not isFoundWhom:
@@ -523,8 +523,8 @@ def createStreaksHtmlTable(sortedPlayers, streakType):
     streaksList = []  # [[name1,[s1,s2,..]]]
     maxCnt = 0
     for pl in sortedPlayers:
-        strkRes,maxStrk = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()                        
-        streaksList.append( [pl.name, strkRes] )
+        strkRes,maxStrk,strkNames = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()                        
+        streaksList.append( [pl.name, strkRes, strkNames] )
         maxCnt = max(maxCnt,len(strkRes))
         if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
             ezstatslib.logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
@@ -808,6 +808,13 @@ for pl in allplayersByFrags:
     for pu in pl.powerUps:
         puStr += "%s, " % (str(pu))
     print "%s: powerUps: %s" % (pl.name, puStr)
+    
+    # streaks
+    strkStr = ""
+    for strk in pl.calculatedStreaks:
+        strkStr += "%s [%s], " % (strk.toString(), str(strk.names))
+        
+    print "%s: streaks: %s" % (pl.name, strkStr)
 
 print resultString
 
@@ -1222,17 +1229,21 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     for pl in sortedPlayers:
         strkRes,maxStrk           = pl.getCalculatedStreaksFull(1)
         for strk in strkRes:
-            rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_kills" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
+            hintStr = "<p>&nbsp&nbsp&nbsp<b>%s</b>&nbsp&nbsp&nbsp</p><hr>&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br><b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.formattedNames(), (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
+            #hintStr = "<p>&nbsp&nbsp&nbsp<b>%s</b>&nbsp&nbsp&nbsp</p><hr>&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br><b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.names, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
+            rowLines += "[ '%s', '%d', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_kills" % (pl.name), strk.count, hintStr, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
             
-        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_kills" % (pl.name))
-        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_kills" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt    
+        currentRowsLines += "[ '%s', '', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_kills" % (pl.name))
+        currentRowsLines += "[ '%s', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_kills" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt    
         
         deathStrkRes,deathMaxStrk = pl.getDeatchStreaksFull(1)
         for strk in deathStrkRes:
-            rowLines += "[ '%s', '%d', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_deaths" % (pl.name), strk.count, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
+            hintStr = "<p>&nbsp&nbsp&nbsp<b>%s</b>&nbsp&nbsp&nbsp</p><hr>&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br><b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.formattedNames(), (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
+            #hintStr = "<p>&nbsp&nbsp&nbsp<b>%s</b>&nbsp&nbsp&nbsp</p><hr>&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br><b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.names, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
+            rowLines += "[ '%s', '%d', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("%s_deaths" % (pl.name), strk.count, hintStr, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
             
-        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_deaths" % (pl.name))  
-        currentRowsLines += "[ '%s', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_deaths" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt        
+        currentRowsLines += "[ '%s', '', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_deaths" % (pl.name))  
+        currentRowsLines += "[ '%s', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_deaths" % (pl.name), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt        
     
     allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("ALL_ROWS", rowLines)
     allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("CURRENT_ROWS", currentRowsLines)
