@@ -1288,8 +1288,8 @@ class Streak:
     
     def formattedNames(self):
         res = []
-        self.names = self.names[:-1]
-        namesSpl = self.names.split(",")
+        names = self.names[:-1]
+        namesSpl = names.split(",")
         i = -1
         for spl in namesSpl:
             if i == -1 or res[i][0] != spl:
@@ -1300,6 +1300,25 @@ class Streak:
         
         resStr = ""
         for el in res:
+            resStr += "%s(%d), " % (el[0], el[1])
+        resStr = resStr[:-2]
+        
+        return resStr
+    
+    def formattedNamesSum(self):
+        res = {}
+        names = self.names[:-1]
+        namesSpl = names.split(",")        
+        for spl in namesSpl:
+            if res.has_key(spl):
+                res[spl] += 1
+            else:
+                res[spl] = 1
+        
+        sortedRes = sorted(res.items(), key=itemgetter(1), reverse=True)
+        
+        resStr = ""
+        for el in sortedRes:
             resStr += "%s(%d), " % (el[0], el[1])
         resStr = resStr[:-2]
         
