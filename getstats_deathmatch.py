@@ -24,6 +24,18 @@ def fillH2H(who,whom,minute):
         if elem[0] == whom:
             elem[1] += 1            
             elem[2][minute] += 1
+            
+def clearZeroPlayer(pl):
+    # TODO remove from headToHead
+    
+    # clear battle progress
+    for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]
+        for mp in mpline:        # mp:     [pl1_name,pl1_frags]
+            if pl.name == mp[0]:
+                mpline.remove(mp)       # TODO REMOVE
+                                        # (n for n in n_list if n !=3)  # ifilter
+                                        # https://docs.python.org/2.7/library/stdtypes.html#mutable-sequence-types
+        
 
 usageString = "" 
 versionString = ""
@@ -424,9 +436,12 @@ if killsSumOrig == 0 and killsSum == 0:
 # clear players with 0 kills and 0 deaths
 # TODO change progressSrt structure to be able to clean zero players in battle progress (source data: zero_player_in_stats)
 # TODO clear headToHead of zero player
+zeroPlayers = []
 for pl in allplayers:
     if pl.kills == 0 and pl.deaths == 0:
-        allplayers.remove(pl);
+        allplayers.remove(pl);  # TODO REMOVE
+        zeroPlayers.append(pl)
+        clearZeroPlayer(pl)
 
 allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
 
@@ -449,6 +464,10 @@ plNameMaxLen = ezstatslib.DEFAULT_PLAYER_NAME_MAX_LEN
 for pl in allplayers:
     plNameMaxLen = max(plNameMaxLen, len(pl.name))
     
+# achievements
+for pl in allplayers:
+    pl.calculateAchievements(matchProgress)
+    
 # TODO move power stats for doroped players from power ups by minutes
     
 # generate output string
@@ -467,6 +486,9 @@ for pl in allplayersByFrags:
     
 if options.withScripts:
     resultString += "</pre>MAIN_STATS_BARS_PLACE\n<pre>"
+    
+if options.withScripts:
+    resultString += "</pre>PLAYERS_ACHIEVEMENTS_PLACE\n<pre>"
 
 resultString += "\n"
 resultString += "Power ups:\n"
@@ -1411,6 +1433,24 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(powerUpsTimelineVer2FunctionStr)
     # <-- power ups timeline ver2
     
+    # players achievements -->
+    playersAchievementsStr = ezstatslib.HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG
+    # TODO replace PLAYERS_ACHIEVEMENTS_TABLE with table
+    cellWidth = "20px"
+    achievementsHtmlTable = HTML.Table(border="0", cellspacing="0",
+                                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    
+    for pl in sortedPlayers:
+        if len(pl.achievements) != 0:
+            tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(pl.name), align="center", width=cellWidth) ])  # TODO player name cell width
+            for ach in pl.achievements:
+                tableRow.cells.append( HTML.TableCell(ach.generateHtml(), align="center" ) )
+            
+            achievementsHtmlTable.rows.append(tableRow)
+        
+    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable))    
+    # <-- players achievements
+    
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     f.write(ezstatslib.HTML_EXPAND_POWER_UPS_CHECKBOX_FUNCTION)
@@ -1420,7 +1460,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # add divs
     resStr = resStr.replace("BP_PLACE", ezstatslib.HTML_BATTLE_PROGRESS_DIV_TAG)
     #resStr = resStr.replace("MAIN_STATS_PLACE", ezstatslib.HTML_MAIN_STATS_DIAGRAMM_DIV_TAG)
-    resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)
+    resStr = resStr.replace("MAIN_STATS_BARS_PLACE", ezstatslib.HTML_MAIN_STATS_BARS_DIV_TAG)    
+    resStr = resStr.replace("PLAYERS_ACHIEVEMENTS_PLACE", playersAchievementsStr)
     resStr = resStr.replace("POWER_UPS_BARS_PLACE", ezstatslib.HTML_POWER_UPS_BARS_DIV_TAG)
     resStr = resStr.replace("STREAK_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG)
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)

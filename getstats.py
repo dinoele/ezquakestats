@@ -45,7 +45,7 @@ def fillExtendedBattleProgress():
     s += " {0:3d}: ".format(fragsSum)
 
     for pl in players1ByFrags:
-        s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
+        s += "{0:20s}".format(pl.name + "(" + str(pl.frags()) + ")")
         #s += "%s(%d)," % (pl.name, pl.frags())
     s = s[:-1]
     
@@ -58,7 +58,7 @@ def fillExtendedBattleProgress():
     s += " vs. [%s]" % (players2[0].teamname)
     s += " {0:3d}: ".format(fragsSum)
     for pl in players2ByFrags:
-        s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
+        s += "{0:20s}".format(pl.name + "(" + str(pl.frags()) + ")")
         #s += "%s(%d)," % (pl.name, pl.frags())
     s = s[:-1]
 
