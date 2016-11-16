@@ -1022,20 +1022,6 @@ HTML_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_DIV_TAG = \
 
 # =========================================================================================================================================================
 
-HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG = \
-  "<div class=\"wpb_text_column wpb_content_element \">\n" \
-  "<div class=\"wpb_wrapper\">\n" \
-  "  <div class=\"symple-toggle state-closed\" id=\"achievements\">\n" \
-  "  <h2 class=\"symple-toggle-trigger \">Achievements</h2>\n" \
-  "  <div class=\"symple-toggle-container symple-clearfix\">\n" \
-  "PLAYERS_ACHIEVEMENTS_TABLE" \
-  "  </div>\n" \
-  "  </div>\n" \
-  "</div>\n" \
-  "</div>\n"
-
-# =========================================================================================================================================================
-
 HTML_EXPAND_CHECKBOX_FUNCTION = \
   "function expandCollapseKillsByMinutes() {\n" \
   "$(\"h3.symple-toggle-trigger\").toggleClass(\"active\").next().slideToggle(\"fast\")\n" \
@@ -1300,7 +1286,7 @@ class Streak:
     def duration(self):
         return (self.end - self.start)
     
-    def parseNames(self):
+    def formattedNames(self):
         res = []
         names = self.names[:-1]
         namesSpl = names.split(",")
@@ -1311,11 +1297,6 @@ class Streak:
                 i += 1
             else:
                 res[i][1] += 1        
-        
-        return res
-    
-    def formattedNames(self):
-        res = self.parseNames()
         
         resStr = ""
         for el in res:
@@ -1426,8 +1407,6 @@ class Player:
         self.mhByMinutes = []
         
         self.powerUps = []
-        
-        self.achievements = []
 
     def initPowerUpsByMinutes(self, minutesCnt):        
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
@@ -1670,79 +1649,6 @@ class Player:
             else:
                 val = float(spl[1].split("%")[0])
             exec("self.w_%s = val" % (weap))
-            
-    def calculateAchievements(self, matchProgress):
-        # LONG_LIVER
-        if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= 30): # TODO check connected players - log player connection time
-            self.achievements.append( Achievement(AchievementType.LONG_LIVER, "first time is killed on second %d" % (self.deathStreaks[0].start)) )
-            
-        for strk in self.deathStreaks:
-            # SUICIDE_MASTER
-            strkParsedNames = strk.parseNames()
-            for el in strkParsedNames:
-                if el[0] == "SELF" and el[1] >= 2:  # TODO replace with ==
-                    self.achievements.append( Achievement(AchievementType.SUICIDE_MASTER, "%d suicides in a row" % (el[1])) )
-                    
-            # DEATH_STREAK_PAIN
-            if strk.count >= 10:
-                self.achievements.append( Achievement(AchievementType.DEATH_STREAK_PAIN, "%d deaths in a row during %d seconds" % (strk.count, strk.duration())) )
-            
-        # HORRIBLE_FINISH            
-        if len(matchProgress) >= 2:
-            pos1 = 1
-            for el in matchProgress[len(matchProgress)-2]:
-                if el[0] == self.name:
-                    break
-                else:
-                    pos1 +=1
-            
-            pos2 = 1
-            for el in matchProgress[len(matchProgress)-1]:
-                if el[0] == self.name:
-                    break
-                else:
-                    pos2 +=1
-            
-            if pos2 - pos1 >= 2:
-                self.achievements.append( Achievement(AchievementType.HORRIBLE_FINISH, "before the last minute place was %d but finished on place %d" % (pos1, pos2)) )
-            
-
-AchievementType = enum( LONG_LIVER  = "Long Liver",  # the 1st 30 seconds without deaths  DONE
-                        SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
-                        SUICIDE_KING = "Suicide King",   # 3++ suicides in a row
-                        DEATH_STREAK_PAIN = "What do you know about the pain?...", # 10++ death streak  DONE
-                        GREAT_FINISH = "Great Finish", # 2+ places up during the last minute
-                        LAST_CHANCE_WINNER = "Finish Guru", # 2+ places up during the last minute and win
-                        HORRIBLE_FINISH = "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
-                        ALWAYS_THE_FIRST = "Always the 1st", # the 1st place from the 1st minute until the finish
-                        OVERTIME_REASON = "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
-                        SECOND_OVERTIME_REASON = "The 2nd overtime!",  # one of who didn't want to give up once more time
-                        HUNDRED_KILLS = "More than 100 kills", # 100++ kills
-                        HUNDRED_DEATHS = "More than 100 deaths", # 100++ deaths
-                        HUNDRED_FRAGS = "More than 100 frags", # 100++ frags
-                                            )
-
-class Achievement:
-    def __init__(self, achtype, extra_info = ""):
-        self.achtype = achtype
-        self.extra_info = extra_info
-        self.count = 1
-
-    def generateHtml(self, size = 150):
-        return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(self.achtype), self.achtype, self.achtype, self.extra_info, size, size)
-    
-    def getImgSrc(self, achtype):
-        if self.achtype == AchievementType.LONG_LIVER:
-            return "img/ach_long_liver.jpg"        
-        if self.achtype == AchievementType.SUICIDE_MASTER:
-            return "img/ach_suicide_master.jpg"
-        if self.achtype == AchievementType.DEATH_STREAK_PAIN:
-            return "img/ach_death_pain.jpg"
-        if self.achtype == AchievementType.HORRIBLE_FINISH:
-            return "img/ach_horrible_finish.jpg"
-        
-        return "NotImplemented"
-    
 
 class Team:
     def __init__(self, teamname):
