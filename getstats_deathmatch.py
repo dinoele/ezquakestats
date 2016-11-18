@@ -106,11 +106,16 @@ while not ezstatslib.isMatchEnd(line):
     # rea[rbf] left the game with 23 frags
     if "left the game" in line:
         lineStriped = line
+        lineStamp = -1
         if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
-            lineStriped = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+            lineStriped    = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+            lineStamp = int( line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[0] )
         
         plname = lineStriped.split(" ")[0];
         pl = Player( "", plname, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
+        pl.isDropped = True
+        if lineStamp != -1:
+            pl.disconnectTime = lineStamp - matchStartStamp
         dropedplayers.append(pl);  # TODO record number of frags for final output
 
     # Majority votes for mapchange
@@ -792,7 +797,7 @@ if options.withScripts:
 if len(dropedplayers) != 0:
     dropedStr = ""
     for pl in dropedplayers:
-        dropedStr += "%s," % (pl.name)
+        dropedStr += "%s(drop time: %d)," % (pl.name, pl.disconnectTime)
 
     dropedStr = dropedStr[:-1]
     resultString += "Droped players: " + dropedStr + "\n"

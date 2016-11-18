@@ -1428,6 +1428,10 @@ class Player:
         self.powerUps = []
         
         self.achievements = []
+        
+        self.connectTime = 0
+        self.disconnectTime = 0
+        self.isDropped = 0
 
     def initPowerUpsByMinutes(self, minutesCnt):        
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
