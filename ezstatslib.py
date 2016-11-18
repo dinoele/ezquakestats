@@ -1705,7 +1705,32 @@ class Player:
             
             if pos2 - pos1 >= 2:
                 self.achievements.append( Achievement(AchievementType.HORRIBLE_FINISH, "before the last minute place was %d but finished on place %d" % (pos1, pos2)) )
+                
+        # HUNDRED_KILLS
+        if self.kills >= 100:
+            self.achievements.append( Achievement(AchievementType.HUNDRED_KILLS, "mega killer killed %d enemies" % (self.kills)) )
+        
+        # HUNDRED_DEATHS
+        if self.deaths >= 100:
+            self.achievements.append( Achievement(AchievementType.HUNDRED_DEATHS, "was killed %d times" % (self.deaths)) )
+        
+        # HUNDRED_FRAGS
+        if self.frags() >= 100:
+            self.achievements.append( Achievement(AchievementType.HUNDRED_FRAGS, "%d frags" % (self.frags())) )
             
+        # ALWAYS_THE_FIRST
+        isFirst = True
+        alwaysTheFirst = True
+        for el in matchProgress:
+            if isFirst:
+                isFirst = False
+            else:
+                if not el[0][0] == self.name:
+                    alwaysTheFirst = False
+                    break
+                
+        if alwaysTheFirst:
+            self.achievements.append( Achievement(AchievementType.ALWAYS_THE_FIRST, "the 1st place from the 1st minute until the finish") )
 
 AchievementType = enum( LONG_LIVER  = "Long Liver",  # the 1st 30 seconds without deaths  DONE
                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
@@ -1714,12 +1739,16 @@ AchievementType = enum( LONG_LIVER  = "Long Liver",  # the 1st 30 seconds withou
                         GREAT_FINISH = "Great Finish", # 2+ places up during the last minute
                         LAST_CHANCE_WINNER = "Finish Guru", # 2+ places up during the last minute and win
                         HORRIBLE_FINISH = "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
-                        ALWAYS_THE_FIRST = "Always the 1st", # the 1st place from the 1st minute until the finish
+                        ALWAYS_THE_FIRST = "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
                         OVERTIME_REASON = "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
                         SECOND_OVERTIME_REASON = "The 2nd overtime!",  # one of who didn't want to give up once more time
-                        HUNDRED_KILLS = "More than 100 kills", # 100++ kills
-                        HUNDRED_DEATHS = "More than 100 deaths", # 100++ deaths
-                        HUNDRED_FRAGS = "More than 100 frags", # 100++ frags
+                        HUNDRED_KILLS = "More than 100 kills", # 100++ kills  DONE tmp img
+                        HUNDRED_DEATHS = "More than 100 deaths", # 100++ deaths  DONE tmp img
+                        HUNDRED_FRAGS = "More than 100 frags", # 100++ frags  DONE tmp img
+                        RED_ARMOR_EATER = "More that 10 red armors", # 10+ red armors
+                        GREEN_ARMOR_EATER = "More that 10 green armors", # 10+ green armors
+                        YELLOW_ARMOR_EATER = "More that 10 yellow armors", # 10+ yellow armors
+                        MEGA_HEALTH_EATER = "More that 10 mega healths", # 10+ mega healths
                                             )
 
 class Achievement:
@@ -1740,6 +1769,18 @@ class Achievement:
             return "img/ach_death_pain.jpg"
         if self.achtype == AchievementType.HORRIBLE_FINISH:
             return "img/ach_horrible_finish.jpg"
+        
+        # temp images
+        if self.achtype == AchievementType.ALWAYS_THE_FIRST:
+            return "img/ach_always_the_first.jpg"
+        if self.achtype == AchievementType.HUNDRED_KILLS:
+            return "img/ach_100_kills_TMP.jpg"
+        if self.achtype == AchievementType.HUNDRED_DEATHS:
+            return "img/ach_100_deaths_TMP.jpg"
+        if self.achtype == AchievementType.HUNDRED_FRAGS:
+            return "img/ach_100_frags_TMP.jpg"
+        if self.achtype == AchievementType.OVERTIME_REASON:
+            return "img/ach_overtime.jpg"
         
         return "NotImplemented"
     
