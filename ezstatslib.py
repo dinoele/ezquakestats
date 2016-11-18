@@ -1693,11 +1693,14 @@ class Player:
             self.achievements.append( Achievement(AchievementType.LONG_LIVER, "first time is killed on second %d" % (self.deathStreaks[0].start)) )
             
         for strk in self.deathStreaks:
-            # SUICIDE_MASTER
+            # SUICIDE_MASTER & SUICIDE_KING
             strkParsedNames = strk.parseNames()
             for el in strkParsedNames:
-                if el[0] == "SELF" and el[1] >= 2:  # TODO replace with ==
-                    self.achievements.append( Achievement(AchievementType.SUICIDE_MASTER, "%d suicides in a row" % (el[1])) )
+                if el[0] == "SELF":
+                    if el[1] == 2:
+                        self.achievements.append( Achievement(AchievementType.SUICIDE_MASTER, "%d suicides in a row" % (el[1])) )
+                    elif el[1] >= 3:
+                        self.achievements.append( Achievement(AchievementType.SUICIDE_KING, "%d suicides in a row!" % (el[1])) )
                     
             # DEATH_STREAK_PAIN
             if strk.count >= 10:
@@ -1750,7 +1753,7 @@ class Player:
 
 AchievementType = enum( LONG_LIVER  = "Long Liver",  # the 1st 30 seconds without deaths  DONE
                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
-                        SUICIDE_KING = "Suicide King",   # 3++ suicides in a row
+                        SUICIDE_KING = "Suicide King",   # 3++ suicides in a row  DONE
                         DEATH_STREAK_PAIN = "What do you know about the pain?...", # 10++ death streak  DONE
                         GREAT_FINISH = "Great Finish", # 2+ places up during the last minute
                         LAST_CHANCE_WINNER = "Finish Guru", # 2+ places up during the last minute and win
@@ -1781,6 +1784,8 @@ class Achievement:
             return "img/ach_long_liver.jpg"        
         if self.achtype == AchievementType.SUICIDE_MASTER:
             return "img/ach_suicide_master.jpg"
+        if self.achtype == AchievementType.SUICIDE_KING:
+            return "img/ach_suicide_king.jpg"
         if self.achtype == AchievementType.DEATH_STREAK_PAIN:
             return "img/ach_death_pain.jpg"
         if self.achtype == AchievementType.HORRIBLE_FINISH:
