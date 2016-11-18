@@ -1461,14 +1461,26 @@ class Player:
 
     def fillStreaks(self, time):
         if self.currentStreak.count != 0:
-            self.currentStreak.end = time        
+            if self.isDropped and \
+               self.disconnectTime != 0 and \
+               self.disconnectTime > self.currentStreak.start and \
+               self.disconnectTime < time:
+                self.currentStreak.end = self.disconnectTime
+            else:
+                self.currentStreak.end = time
             # self.calculatedStreaks.append(self.currentStreak)
             self.calculatedStreaks.append( Streak(StreakType.KILL_STREAK, self.currentStreak.count, self.currentStreak.start, self.currentStreak.end, self.currentStreak.names) )
             self.currentStreak.clear()
 
     def fillDeathStreaks(self, time):
         if self.currentDeathStreak.count != 0:
-            self.currentDeathStreak.end = time
+            if self.isDropped and \
+               self.disconnectTime != 0 and \
+               self.disconnectTime > self.currentDeathStreak.start and \
+               self.disconnectTime < time:
+                self.currentDeathStreak.end = self.disconnectTime                
+            else:
+                self.currentDeathStreak.end = time
             # self.deathStreaks.append(self.currentDeathStreak)
             self.deathStreaks.append( Streak(StreakType.DEATH_STREAK, self.currentDeathStreak.count, self.currentDeathStreak.start, self.currentDeathStreak.end, self.currentDeathStreak.names) )
             self.currentDeathStreak.clear()
