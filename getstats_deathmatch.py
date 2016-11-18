@@ -293,6 +293,16 @@ for matchPart in matchlog:
                     progressLineDict[pl.name] = pl.frags();
                 matchProgressDictEx.append(progressLineDict)        
     
+        # connected after the match start players
+        # 1479137838 <-> Onanim entered the game
+        if "entered the game" in logline:
+            connectedPlName = logline.split(" ")[0]
+            for pl in allplayers:
+                if pl.name == connectedPlName and \
+                   not pl.isDropped and \
+                   pl.kills == 0 and pl.deaths == 0:
+                    pl.connectTime = currentMatchTime
+    
         # battle progress
         if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining                            
             currentMinute += 1            
@@ -520,11 +530,6 @@ weaponsCheck = ezstatslib.getWeaponsCheck(allplayers)
 for pl in allplayersByFrags:
     resultString += ("{0:%ds} kills  {1:3d} :: {2:100s}\n" % (plNameMaxLen)).format(pl.name, pl.kills, pl.getWeaponsKills(pl.kills, weaponsCheck))
     resultString += ("{0:%ds} deaths {1:3d} :: {2:100s}\n" % (plNameMaxLen)).format("",      pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
-    resultString += "\n"
-
-if len(disconnectedplayers) != 0:
-    resultString += "\n"
-    resultString += "Disconnected players: " + str(disconnectedplayers) + "\n"
     resultString += "\n"
     
 # ============================================================================================================
@@ -804,6 +809,22 @@ if len(dropedplayers) != 0:
 
 if len(spectators) != 0:
     resultString += "Spectators: " + str(spectators) + "\n"
+
+if len(disconnectedplayers) != 0:
+    resultString += "\n"
+    resultString += "Disconnected players: " + str(disconnectedplayers) + "\n"
+    resultString += "\n"
+    
+connectedPlayersStr = ""
+for pl in allplayersByFrags:
+    if pl.connectTime != 0:
+        connectedPlayersStr = "%s(connect time: %d), " % (pl.name, pl.connectTime)
+    
+if connectedPlayersStr != "":
+    connectedPlayersStr = connectedPlayersStr[:-1]
+    resultString += "\n"
+    resultString += "Connected players: " + connectedPlayersStr[:-1] + "\n"
+    resultString += "\n"
 
 print "currentMinute:", currentMinute
 print "matchMinutesCnt:", matchMinutesCnt

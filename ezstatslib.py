@@ -1431,7 +1431,7 @@ class Player:
         
         self.connectTime = 0
         self.disconnectTime = 0
-        self.isDropped = 0
+        self.isDropped = False
 
     def initPowerUpsByMinutes(self, minutesCnt):        
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
@@ -1689,7 +1689,7 @@ class Player:
             
     def calculateAchievements(self, matchProgress):
         # LONG_LIVER
-        if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= 30): # TODO check connected players - log player connection time
+        if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
             self.achievements.append( Achievement(AchievementType.LONG_LIVER, "first time is killed on second %d" % (self.deathStreaks[0].start)) )
             
         for strk in self.deathStreaks:
