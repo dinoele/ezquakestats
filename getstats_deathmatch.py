@@ -295,11 +295,11 @@ for matchPart in matchlog:
     
         # connected after the match start players
         # 1479137838 <-> Onanim entered the game
-        if "entered the game" in logline:
+        if "entered the game" in logline:            
             connectedPlName = logline.split(" ")[0]
             for pl in allplayers:
                 if pl.name == connectedPlName and \
-                   not pl.isDropped and \
+                   pl.connectTime == 0 and \
                    pl.kills == 0 and pl.deaths == 0:
                     pl.connectTime = currentMatchTime
     
