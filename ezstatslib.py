@@ -1688,9 +1688,9 @@ class Player:
             exec("self.w_%s = val" % (weap))
             
     def calculateAchievements(self, matchProgress):
-        # LONG_LIVER
+        # LONG_LIVE
         if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
-            self.achievements.append( Achievement(AchievementType.LONG_LIVER, "first time is killed on second %d" % (self.deathStreaks[0].start)) )
+            self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d" % (self.deathStreaks[0].start)) )
             
         for strk in self.deathStreaks:
             # SUICIDE_MASTER & SUICIDE_KING
@@ -1751,7 +1751,7 @@ class Player:
         if alwaysTheFirst:
             self.achievements.append( Achievement(AchievementType.ALWAYS_THE_FIRST, "the 1st place from the 1st minute until the finish") )
 
-AchievementType = enum( LONG_LIVER  = "Long Liver",  # the 1st 30 seconds without deaths  DONE
+AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
                         SUICIDE_KING = "Suicide King",   # 3++ suicides in a row  DONE
                         DEATH_STREAK_PAIN = "What do you know about the pain?...", # 10++ death streak  DONE
@@ -1780,7 +1780,7 @@ class Achievement:
         return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(self.achtype), self.achtype, self.achtype, self.extra_info, size, size)
     
     def getImgSrc(self, achtype):
-        if self.achtype == AchievementType.LONG_LIVER:
+        if self.achtype == AchievementType.LONG_LIVE:
             return "ezquakestats/img/ach_long_liver.jpg"        
         if self.achtype == AchievementType.SUICIDE_MASTER:
             return "ezquakestats/img/ach_suicide_master.jpg"
