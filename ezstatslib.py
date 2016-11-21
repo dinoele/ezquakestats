@@ -1781,27 +1781,27 @@ class Achievement:
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVER:
-            return "img/ach_long_liver.jpg"        
+            return "ezquakestats/img/ach_long_liver.jpg"        
         if self.achtype == AchievementType.SUICIDE_MASTER:
-            return "img/ach_suicide_master.jpg"
+            return "ezquakestats/img/ach_suicide_master.jpg"
         if self.achtype == AchievementType.SUICIDE_KING:
-            return "img/ach_suicide_king.jpg"
+            return "ezquakestats/img/ach_suicide_king.jpg"
         if self.achtype == AchievementType.DEATH_STREAK_PAIN:
-            return "img/ach_death_pain.jpg"
+            return "ezquakestats/img/ach_death_pain.jpg"
         if self.achtype == AchievementType.HORRIBLE_FINISH:
-            return "img/ach_horrible_finish.jpg"
+            return "ezquakestats/img/ach_horrible_finish.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
-            return "img/ach_always_the_first.jpg"
+            return "ezquakestats/img/ach_always_the_first.jpg"
         if self.achtype == AchievementType.HUNDRED_KILLS:
-            return "img/ach_100_kills_TMP.jpg"
+            return "ezquakestats/img/ach_100_kills_TMP.jpg"
         if self.achtype == AchievementType.HUNDRED_DEATHS:
-            return "img/ach_100_deaths_TMP.jpg"
+            return "ezquakestats/img/ach_100_deaths_TMP.jpg"
         if self.achtype == AchievementType.HUNDRED_FRAGS:
-            return "img/ach_100_frags_TMP.jpg"
+            return "ezquakestats/img/ach_100_frags_TMP.jpg"
         if self.achtype == AchievementType.OVERTIME_REASON:
-            return "img/ach_overtime.jpg"
+            return "ezquakestats/img/ach_overtime.jpg"
         
         return "NotImplemented"
     
