@@ -468,7 +468,9 @@ for pl in allplayers:
 for pl in allplayers:
     pl.calculateAchievements(matchProgress)
     
-# TODO move power stats for doroped players from power ups by minutes
+# move power stats for doroped players from power ups by minutes
+for pl in allplayers:    
+    pl.recoverArmorStats()
     
 # generate output string
 resultString = ""

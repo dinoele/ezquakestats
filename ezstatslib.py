@@ -1458,6 +1458,17 @@ class Player:
         self.mhByMinutes[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.MH, time) )
+            
+    def recoverArmorStats(self):
+        if self.ga == 0 and self.ya == 0 and self.ra == 0 and self.mh == 0 and self.isDropped:
+            for ga in self.gaByMinutes:
+                self.ga += ga
+            for ya in self.yaByMinutes:
+                self.ya += ya
+            for ra in self.raByMinutes:
+                self.ra += ra
+            for mh in self.mhByMinutes:
+                self.mh += mh
 
     def fillStreaks(self, time):
         if self.currentStreak.count != 0:
