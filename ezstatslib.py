@@ -1748,6 +1748,22 @@ class Player:
         if self.frags() >= 100:
             self.achievements.append( Achievement(AchievementType.HUNDRED_FRAGS, "%d frags" % (self.frags())) )
             
+        # RED_ARMOR_EATER
+        if self.ra >= 10:
+            self.achievements.append( Achievement(AchievementType.RED_ARMOR_EATER, "%d red armors%s" % (self.ra, "" if self.ra < 15 else ". %d CARL!!" % (self.ra))) )
+            
+        # YELLOW_ARMOR_EATER
+        if self.ya >= 10:
+            self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_EATER, "%d yellow armors" % (self.ya, "" if self.ya < 15 else ". %d CARL!!" % (self.ya))) )
+            
+        # GREEN_ARMOR_EATER
+        if self.ga >= 10:
+            self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_EATER, "%d green armors" % (self.ga, "" if self.ga < 15 else ". %d CARL!!" % (self.ga))) )
+            
+        # MEGA_HEALTH_EATER
+        if self.mh >= 10:
+            self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
+            
         # ALWAYS_THE_FIRST
         isFirst = True
         alwaysTheFirst = True
@@ -1775,10 +1791,10 @@ AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seco
                         HUNDRED_KILLS = "More than 100 kills", # 100++ kills  DONE tmp img
                         HUNDRED_DEATHS = "More than 100 deaths", # 100++ deaths  DONE tmp img
                         HUNDRED_FRAGS = "More than 100 frags", # 100++ frags  DONE tmp img
-                        RED_ARMOR_EATER = "More that 10 red armors", # 10+ red armors
-                        GREEN_ARMOR_EATER = "More that 10 green armors", # 10+ green armors
-                        YELLOW_ARMOR_EATER = "More that 10 yellow armors", # 10+ yellow armors
-                        MEGA_HEALTH_EATER = "More that 10 mega healths", # 10+ mega healths
+                        RED_ARMOR_EATER = "Red armor eater", # 10+ red armors  DONE
+                        GREEN_ARMOR_EATER = "Green armor eater", # 10+ green armors  DONE
+                        YELLOW_ARMOR_EATER = "Yellow armor eater", # 10+ yellow armors  DONE
+                        MEGA_HEALTH_EATER = "Mega healths eater", # 10+ mega healths  DONE
                                             )
 
 class Achievement:
@@ -1801,6 +1817,14 @@ class Achievement:
             return "ezquakestats/img/ach_death_pain.jpg"
         if self.achtype == AchievementType.HORRIBLE_FINISH:
             return "ezquakestats/img/ach_horrible_finish.jpg"
+        if self.achtype == AchievementType.RED_ARMOR_EATER:
+            return "ezquakestats/img/ach_ra_eater.jpg"
+        if self.achtype == AchievementType.GREEN_ARMOR_EATER:
+            return "ezquakestats/img/ach_ga_eater.jpg"
+        if self.achtype == AchievementType.YELLOW_ARMOR_EATER:
+            return "ezquakestats/img/ach_ya_eater.jpg"
+        if self.achtype == AchievementType.MEGA_HEALTH_EATER:
+            return "ezquakestats/img/ach_mh_eater.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
