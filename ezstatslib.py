@@ -1754,15 +1754,15 @@ class Player:
             
         # YELLOW_ARMOR_EATER
         if self.ya >= 10:
-            self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_EATER, "%d yellow armors" % (self.ya, "" if self.ya < 15 else ". %d CARL!!" % (self.ya))) )
+            self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_EATER, "%d yellow armors%s" % (self.ya, "" if self.ya < 15 else ". %d CARL!!" % (self.ya))) )
             
         # GREEN_ARMOR_EATER
         if self.ga >= 10:
-            self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_EATER, "%d green armors" % (self.ga, "" if self.ga < 15 else ". %d CARL!!" % (self.ga))) )
+            self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_EATER, "%d green armors%s" % (self.ga, "" if self.ga < 15 else ". %d CARL!!" % (self.ga))) )
             
         # MEGA_HEALTH_EATER
         if self.mh >= 10:
-            self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
+            self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths%s" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
             
         # ALWAYS_THE_FIRST
         isFirst = True
