@@ -1774,6 +1774,10 @@ class Player:
         if self.mh >= 10:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths%s" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
             
+        # CHILD_KILLER
+        if self.spawnfrags >= 10:
+            self.achievements.append( Achievement(AchievementType.CHILD_KILLER, "%d spawn frags%s" % (self.spawnfrags, "" if self.spawnfrags < 15 else ". %d CARL!!" % (self.spawnfrags))) )
+            
         # ALWAYS_THE_FIRST
         isFirst = True
         alwaysTheFirst = True
@@ -1823,7 +1827,12 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         RED_ARMOR_EATER = 14, # "Red armor eater", # 10+ red armors  DONE
                         GREEN_ARMOR_EATER = 15, # "Green armor eater", # 10+ green armors  DONE
                         YELLOW_ARMOR_EATER = 16, # "Yellow armor eater", # 10+ yellow armors  DONE
-                        MEGA_HEALTH_EATER = 17 # "Mega healths eater", # 10+ mega healths  DONE
+                        MEGA_HEALTH_EATER = 17, # "Mega healths eater", # 10+ mega healths  DONE                        
+                        RED_ARMOR_ALLERGY = 18, # "Red armor allergy", # No red armors
+                        GREEN_ARMOR_ALLERGY = 19, # "Green armor allergy", # No green armors
+                        YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors
+                        MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths
+                        CHILD_KILLER = 22 # "Child killer", # 10+ spawn frags
                                             )
 
 class Achievement:
@@ -1873,6 +1882,16 @@ class Achievement:
             return "Yellow armor eater"
         if self.achtype == AchievementType.MEGA_HEALTH_EATER:
             return "Mega healths eater"
+        if self.achtype == AchievementType.RED_ARMOR_ALLERGY:
+            return "Red armor allergy - no red armors"
+        if self.achtype == AchievementType.GREEN_ARMOR_ALLERGY:
+            return "Green armor allergy - no green armors"
+        if self.achtype == AchievementType.YELLOW_ARMOR_ALLERGY:
+            return "Yellow armor allergy - no yellow armors"
+        if self.achtype == AchievementType.MEGA_HEALTH_ALLERGY:
+            return "Mega healths allergy - no mega healths armors"
+        if self.achtype == AchievementType.CHILD_KILLER:
+            return "Child killer"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -1893,6 +1912,8 @@ class Achievement:
             return "ezquakestats/img/ach_ya_eater.jpg"
         if self.achtype == AchievementType.MEGA_HEALTH_EATER:
             return "ezquakestats/img/ach_mh_eater.jpg"
+        if self.achtype == AchievementType.CHILD_KILLER:
+            return "ezquakestats/img/ach_child_killer.png"        
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
