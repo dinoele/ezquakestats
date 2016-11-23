@@ -1698,6 +1698,16 @@ class Player:
                 val = float(spl[1].split("%")[0])
             exec("self.w_%s = val" % (weap))
             
+    def achievementsToString(self):
+        res = ""
+        for ach in self.achievements:
+            res += "%s," % (ach.toString())
+            
+        if res != "":
+            res = res[:-1]
+        
+        return res    
+            
     def calculateAchievements(self, matchProgress):
         # LONG_LIVE
         if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
@@ -1778,23 +1788,42 @@ class Player:
         if alwaysTheFirst:
             self.achievements.append( Achievement(AchievementType.ALWAYS_THE_FIRST, "the 1st place from the 1st minute until the finish") )
 
-AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
-                        SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
-                        SUICIDE_KING = "Suicide King",   # 3++ suicides in a row  DONE
-                        DEATH_STREAK_PAIN = "What do you know about the pain?...", # 10++ death streak  DONE
-                        GREAT_FINISH = "Great Finish", # 2+ places up during the last minute
-                        LAST_CHANCE_WINNER = "Finish Guru", # 2+ places up during the last minute and win
-                        HORRIBLE_FINISH = "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
-                        ALWAYS_THE_FIRST = "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
-                        OVERTIME_REASON = "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
-                        SECOND_OVERTIME_REASON = "The 2nd overtime!",  # one of who didn't want to give up once more time
-                        HUNDRED_KILLS = "More than 100 kills", # 100++ kills  DONE tmp img
-                        HUNDRED_DEATHS = "More than 100 deaths", # 100++ deaths  DONE tmp img
-                        HUNDRED_FRAGS = "More than 100 frags", # 100++ frags  DONE tmp img
-                        RED_ARMOR_EATER = "Red armor eater", # 10+ red armors  DONE
-                        GREEN_ARMOR_EATER = "Green armor eater", # 10+ green armors  DONE
-                        YELLOW_ARMOR_EATER = "Yellow armor eater", # 10+ yellow armors  DONE
-                        MEGA_HEALTH_EATER = "Mega healths eater", # 10+ mega healths  DONE
+# AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
+#                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
+#                         SUICIDE_KING = "Suicide King",   # 3++ suicides in a row  DONE
+#                         DEATH_STREAK_PAIN = "What do you know about the pain?...", # 10++ death streak  DONE
+#                         GREAT_FINISH = "Great Finish", # 2+ places up during the last minute
+#                         LAST_CHANCE_WINNER = "Finish Guru", # 2+ places up during the last minute and win
+#                         HORRIBLE_FINISH = "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
+#                         ALWAYS_THE_FIRST = "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
+#                         OVERTIME_REASON = "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
+#                         SECOND_OVERTIME_REASON = "The 2nd overtime!",  # one of who didn't want to give up once more time
+#                         HUNDRED_KILLS = "More than 100 kills", # 100++ kills  DONE tmp img
+#                         HUNDRED_DEATHS = "More than 100 deaths", # 100++ deaths  DONE tmp img
+#                         HUNDRED_FRAGS = "More than 100 frags", # 100++ frags  DONE tmp img
+#                         RED_ARMOR_EATER = "Red armor eater", # 10+ red armors  DONE
+#                         GREEN_ARMOR_EATER = "Green armor eater", # 10+ green armors  DONE
+#                         YELLOW_ARMOR_EATER = "Yellow armor eater", # 10+ yellow armors  DONE
+#                         MEGA_HEALTH_EATER = "Mega healths eater", # 10+ mega healths  DONE
+
+# DO NOT FORGET TO ADD NEW ITEMS TO description() METHOD
+AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
+                        SUICIDE_MASTER = 2, # "Suicide Master",   # 2 suicides in a row  DONE
+                        SUICIDE_KING = 3, # "Suicide King",   # 3++ suicides in a row  DONE
+                        DEATH_STREAK_PAIN = 4, # "What do you know about the pain?...", # 10++ death streak  DONE
+                        GREAT_FINISH = 5, # "Great Finish", # 2+ places up during the last minute
+                        LAST_CHANCE_WINNER = 6, # "Finish Guru", # 2+ places up during the last minute and win
+                        HORRIBLE_FINISH = 7, # "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
+                        ALWAYS_THE_FIRST = 8, # "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
+                        OVERTIME_REASON = 9, # "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
+                        SECOND_OVERTIME_REASON = 10, # "The 2nd overtime!",  # one of who didn't want to give up once more time
+                        HUNDRED_KILLS = 11, # "More than 100 kills", # 100++ kills  DONE tmp img
+                        HUNDRED_DEATHS = 12, # "More than 100 deaths", # 100++ deaths  DONE tmp img
+                        HUNDRED_FRAGS = 13, # "More than 100 frags", # 100++ frags  DONE tmp img
+                        RED_ARMOR_EATER = 14, # "Red armor eater", # 10+ red armors  DONE
+                        GREEN_ARMOR_EATER = 15, # "Green armor eater", # 10+ green armors  DONE
+                        YELLOW_ARMOR_EATER = 16, # "Yellow armor eater", # 10+ yellow armors  DONE
+                        MEGA_HEALTH_EATER = 17 # "Mega healths eater", # 10+ mega healths  DONE
                                             )
 
 class Achievement:
@@ -1803,8 +1832,47 @@ class Achievement:
         self.extra_info = extra_info
         self.count = 1
 
+    def toString(self):
+        return "%s" % (self.achtype)
+
     def generateHtml(self, size = 150):
-        return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(self.achtype), self.achtype, self.achtype, self.extra_info, size, size)
+        return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(self.achtype), self.description(), self.description(), self.extra_info, size, size)
+    
+    def description(self):
+        if self.achtype == AchievementType.LONG_LIVE:
+            return "Long Live and Prosper"
+        if self.achtype == AchievementType.SUICIDE_MASTER:
+            return "Suicide Master"
+        if self.achtype == AchievementType.SUICIDE_KING:
+            return "Suicide King"
+        if self.achtype == AchievementType.DEATH_STREAK_PAIN:
+            return "What do you know about the pain?..."
+        if self.achtype == AchievementType.GREAT_FINISH:
+            return "Great Finish"
+        if self.achtype == AchievementType.LAST_CHANCE_WINNER:
+            return "Finish Guru"
+        if self.achtype == AchievementType.HORRIBLE_FINISH:
+            return "Horrible Finish - finished to play too early"
+        if self.achtype == AchievementType.ALWAYS_THE_FIRST:
+            return "Always the 1st"
+        if self.achtype == AchievementType.OVERTIME_REASON:
+            return "Overtime - 5 minutes of fight more"
+        if self.achtype == AchievementType.SECOND_OVERTIME_REASON:
+            return "The 2nd overtime!"
+        if self.achtype == AchievementType.HUNDRED_KILLS:
+            return "More than 100 kills"
+        if self.achtype == AchievementType.HUNDRED_DEATHS:
+            return "More than 100 deaths"
+        if self.achtype == AchievementType.HUNDRED_FRAGS:
+            return "More than 100 frags"
+        if self.achtype == AchievementType.RED_ARMOR_EATER:
+            return "Red armor eater"
+        if self.achtype == AchievementType.GREEN_ARMOR_EATER:
+            return "Green armor eater"
+        if self.achtype == AchievementType.YELLOW_ARMOR_EATER:
+            return "Yellow armor eater"
+        if self.achtype == AchievementType.MEGA_HEALTH_EATER:
+            return "Mega healths eater"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
