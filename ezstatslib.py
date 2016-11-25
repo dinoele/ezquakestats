@@ -1708,10 +1708,11 @@ class Player:
         
         return res    
             
-    def calculateAchievements(self, matchProgress):
+    # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
+    def calculateAchievements(self, matchProgress, powerUpsStatus):
         # LONG_LIVE
         if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
-            self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d" % (self.deathStreaks[0].start)) )
+            self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
             
         for strk in self.deathStreaks:
             # SUICIDE_MASTER & SUICIDE_KING
@@ -1773,7 +1774,23 @@ class Player:
         # MEGA_HEALTH_EATER
         if self.mh >= 10:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths%s" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
+        
+        # RED_ARMOR_ALLERGY
+        if powerUpsStatus["ra"] and self.ra == 0:
+            self.achievements.append( Achievement(AchievementType.RED_ARMOR_ALLERGY) )
             
+        # YELLOW_ARMOR_ALLERGY
+        if powerUpsStatus["ya"] and self.ya == 0:
+            self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_ALLERGY) )
+            
+        # GREEN_ARMOR_ALLERGY
+        if powerUpsStatus["ga"] and self.ga == 0:
+            self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_ALLERGY) )
+            
+        # MEGA_HEALTH_ALLERGY
+        if powerUpsStatus["mh"] and self.mh == 0:
+            self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_ALLERGY) )
+        
         # CHILD_KILLER
         if self.spawnfrags >= 10:
             self.achievements.append( Achievement(AchievementType.CHILD_KILLER, "%d spawn frags%s" % (self.spawnfrags, "" if self.spawnfrags < 15 else ". %d CARL!!" % (self.spawnfrags))) )
@@ -1905,7 +1922,7 @@ class Achievement:
         if self.achtype == AchievementType.YELLOW_ARMOR_ALLERGY:
             return "Yellow armor allergy - no yellow armors"
         if self.achtype == AchievementType.MEGA_HEALTH_ALLERGY:
-            return "Mega healths allergy - no mega healths armors"
+            return "Mega healths allergy - no mega healths"
         if self.achtype == AchievementType.CHILD_KILLER:
             return "Child killer"
         if self.achtype == AchievementType.ALWAYS_THE_LAST:
@@ -1934,6 +1951,14 @@ class Achievement:
             return "ezquakestats/img/ach_child_killer.png"
         if self.achtype == AchievementType.ALWAYS_THE_LAST:
             return "ezquakestats/img/ach_always_the_last.jpg"
+        if self.achtype == AchievementType.RED_ARMOR_ALLERGY:
+            return "ezquakestats/img/ach_ra_allergy.jpg"
+        if self.achtype == AchievementType.GREEN_ARMOR_ALLERGY:
+            return "ezquakestats/img/ach_ga_allergy.jpg"
+        if self.achtype == AchievementType.YELLOW_ARMOR_ALLERGY:
+            return "ezquakestats/img/ach_ya_allergy.jpg"
+        if self.achtype == AchievementType.MEGA_HEALTH_ALLERGY:
+            return "ezquakestats/img/ach_mh_allergy.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:

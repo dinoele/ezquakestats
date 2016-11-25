@@ -299,6 +299,7 @@ for matchPart in matchlog:
             connectedPlName = logline.split(" ")[0]
             for pl in allplayers:
                 if pl.name == connectedPlName and \
+                   not pl.isDropped and \
                    pl.connectTime == 0 and \
                    pl.kills == 0 and pl.deaths == 0:
                     pl.connectTime = currentMatchTime
@@ -463,14 +464,21 @@ for pl in allplayers:
 plNameMaxLen = ezstatslib.DEFAULT_PLAYER_NAME_MAX_LEN
 for pl in allplayers:
     plNameMaxLen = max(plNameMaxLen, len(pl.name))
+
+powerUpsStatus = {}
+for pwrup in ["ra","ya","ga","mh"]:
+    exec("powerUpsStatus[\"%s\"] = False" % (pwrup))
+
+# move power stats for doroped players from power ups by minutes and get power ups status
+for pl in allplayers:
+    pl.recoverArmorStats()
+
+    for pwrup in ["ra","ya","ga","mh"]:
+        exec("if pl.%s != 0:\n    powerUpsStatus[\"%s\"] = True" % (pwrup, pwrup))
     
 # achievements
 for pl in allplayers:
-    pl.calculateAchievements(matchProgress)
-    
-# move power stats for doroped players from power ups by minutes
-for pl in allplayers:    
-    pl.recoverArmorStats()
+    pl.calculateAchievements(matchProgress, powerUpsStatus)
     
 # generate output string
 resultString = ""
