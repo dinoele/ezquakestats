@@ -1791,6 +1791,21 @@ class Player:
                 
         if alwaysTheFirst:
             self.achievements.append( Achievement(AchievementType.ALWAYS_THE_FIRST, "the 1st place from the 1st minute until the finish") )
+            
+        # ALWAYS_THE_LAST
+        if self.connectTime == 0:
+            isFirst = True
+            alwaysTheLast = True
+            for el in matchProgress:
+                if isFirst:
+                    isFirst = False
+                else:
+                    if not el[ len(el)-1 ][0] == self.name:
+                        alwaysTheLast = False
+                        break
+                    
+            if alwaysTheLast:
+                self.achievements.append( Achievement(AchievementType.ALWAYS_THE_LAST, "the last place from the 1st minute until the finish") )
 
 # AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
 #                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
@@ -1832,7 +1847,8 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         GREEN_ARMOR_ALLERGY = 19, # "Green armor allergy", # No green armors
                         YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors
                         MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths
-                        CHILD_KILLER = 22 # "Child killer", # 10+ spawn frags
+                        CHILD_KILLER = 22, # "Child killer", # 10+ spawn frags  DONE
+                        ALWAYS_THE_LAST = 23 # "Always the last", # the last place from the 1st minute until the finish
                                             )
 
 class Achievement:
@@ -1892,6 +1908,8 @@ class Achievement:
             return "Mega healths allergy - no mega healths armors"
         if self.achtype == AchievementType.CHILD_KILLER:
             return "Child killer"
+        if self.achtype == AchievementType.ALWAYS_THE_LAST:
+            return "Always the last"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -1913,7 +1931,9 @@ class Achievement:
         if self.achtype == AchievementType.MEGA_HEALTH_EATER:
             return "ezquakestats/img/ach_mh_eater.jpg"
         if self.achtype == AchievementType.CHILD_KILLER:
-            return "ezquakestats/img/ach_child_killer.png"        
+            return "ezquakestats/img/ach_child_killer.png"
+        if self.achtype == AchievementType.ALWAYS_THE_LAST:
+            return "ezquakestats/img/ach_always_the_last.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
