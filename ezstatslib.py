@@ -1823,6 +1823,10 @@ class Player:
                     
             if alwaysTheLast:
                 self.achievements.append( Achievement(AchievementType.ALWAYS_THE_LAST, "the last place from the 1st minute until the finish") )
+                
+        # ROCKETS_LOVER
+        if self.kills != 0 and self.kills == self.rl_kills:
+            self.achievements.append( Achievement(AchievementType.ROCKETS_LOVER, "all %d kills made via rocket launcher" % (self.rl_kills)) )
 
 # AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
 #                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
@@ -1865,7 +1869,8 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors
                         MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths
                         CHILD_KILLER = 22, # "Child killer", # 10+ spawn frags  DONE
-                        ALWAYS_THE_LAST = 23 # "Always the last", # the last place from the 1st minute until the finish
+                        ALWAYS_THE_LAST = 23, # "Always the last", # the last place from the 1st minute until the finish
+                        ROCKETS_LOVER = 24 # "Rockets lover", # all kills made via rocket launcher
                                             )
 
 class Achievement:
@@ -1927,6 +1932,8 @@ class Achievement:
             return "Child killer"
         if self.achtype == AchievementType.ALWAYS_THE_LAST:
             return "Always the last"
+        if self.achtype == AchievementType.ROCKETS_LOVER:
+            return "Rockets lover"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -1959,6 +1966,8 @@ class Achievement:
             return "ezquakestats/img/ach_ya_allergy.jpg"
         if self.achtype == AchievementType.MEGA_HEALTH_ALLERGY:
             return "ezquakestats/img/ach_mh_allergy.jpg"
+        if self.achtype == AchievementType.ROCKETS_LOVER:
+            return "ezquakestats/img/ach_rockets_lover.png"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -2177,3 +2186,8 @@ def getWeaponsCheck(allplayers):
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	DISCHARGE			" drains "   "'s batteries"
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	DISCHARGE			" drains "   "' batteries"
 
+
+
+# TODO  telefrag after kill
+# 1480090073 <-> Onanim was perforated by SHAROK
+# 1480090074 <-> SHAROK was telefragged by Onanim
