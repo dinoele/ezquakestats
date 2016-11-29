@@ -46,12 +46,13 @@ LOGS_INDEX_FILE_NAME = "logs.html"
 ERROR_LOG_FILE_NAME = "errors"
 SKIPED_LINES_FILE_NAME = "skiped_lines"
 
-HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<body>\n<pre>"
+HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\"/></head>\n<body>\n<pre>"
 HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
 HTML_HEADER_SCRIPT_SECTION = \
     "<!DOCTYPE html>\n<html>\n<head>\n" \
     "<title>PAGE_TITLE</title>\n" \
+    "<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\" />" \
     "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
     "<style>\n" \
