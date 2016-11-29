@@ -1832,6 +1832,10 @@ class Player:
         # ROCKETS_LOVER
         if self.kills != 0 and self.kills == self.rl_kills:
             self.achievements.append( Achievement(AchievementType.ROCKETS_LOVER, "all %d kills made via rocket launcher" % (self.rl_kills)) )
+            
+        # DUEL_WINNER
+        if len(matchProgress) != 0 and len(matchProgress[0]) == 2 and matchProgress[len(matchProgress)-1][0][0] == self.name:
+                self.achievements.append( Achievement(AchievementType.DUEL_WINNER, "") )
 
 # AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
 #                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
@@ -1875,7 +1879,8 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths  DONE
                         CHILD_KILLER = 22, # "Child killer", # 10+ spawn frags  DONE
                         ALWAYS_THE_LAST = 23, # "Always the last", # the last place from the 1st minute until the finish  DONE
-                        ROCKETS_LOVER = 24 # "Rockets lover", # all kills made via rocket launcher  DONE
+                        ROCKETS_LOVER = 24, # "Rockets lover", # all kills made via rocket launcher  DONE
+                        DUEL_WINNER = 25 # Duel winner, # duel winner  DONE
                                             )
 
 class Achievement:
@@ -1939,6 +1944,8 @@ class Achievement:
             return "Always the last"
         if self.achtype == AchievementType.ROCKETS_LOVER:
             return "Rockets lover"
+        if self.achtype == AchievementType.DUEL_WINNER:
+            return "Duel winner"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -1973,6 +1980,8 @@ class Achievement:
             return "ezquakestats/img/ach_mh_allergy.jpg"
         if self.achtype == AchievementType.ROCKETS_LOVER:
             return "ezquakestats/img/ach_rockets_lover.png"
+        if self.achtype == AchievementType.DUEL_WINNER:
+            return "ezquakestats/img/ach_duel_winner.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
