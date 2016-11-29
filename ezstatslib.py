@@ -1796,7 +1796,11 @@ class Player:
         # MEGA_HEALTH_ALLERGY
         if powerUpsStatus["mh"] and self.mh == 0:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_ALLERGY) )
-        
+            
+        # RAINBOW_FLAG
+        if self.ra >= 10 and self.ya >= 10 and self.ga >= 10:
+            self.achievements.append( Achievement(AchievementType.RAINBOW_FLAG, "10+ each of armors") )
+            
         # CHILD_KILLER
         if self.spawnfrags >= 10:
             self.achievements.append( Achievement(AchievementType.CHILD_KILLER, "%d spawn frags%s" % (self.spawnfrags, "" if self.spawnfrags < 15 else ". %d CARL!!" % (self.spawnfrags))) )
@@ -1885,8 +1889,9 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         CHILD_KILLER = 22, # "Child killer", # 10+ spawn frags  DONE
                         ALWAYS_THE_LAST = 23, # "Always the last", # the last place from the 1st minute until the finish  DONE
                         ROCKETS_LOVER = 24, # "Rockets lover", # all kills made via rocket launcher  DONE
-                        DUEL_WINNER = 25, # Duel winner, # duel winner  DONE
-                        SNIPER = 26 # Sniper, # direct hit > 40  DONE
+                        DUEL_WINNER = 25, # "Duel winner", # duel winner  DONE
+                        SNIPER = 26, # "Sniper", # direct hit > 40  DONE
+                        RAINBOW_FLAG = 27 # "Like rainbow flag - I hope today is not Aug 2",  # 10+ each of armors
                                             )
 
 class Achievement:
@@ -1954,6 +1959,9 @@ class Achievement:
             return "Duel winner"
         if self.achtype == AchievementType.SNIPER:
             return "Sniper"
+        if self.achtype == AchievementType.RAINBOW_FLAG:
+            return "Like rainbow flag - I hope today is not Aug 2"
+        
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -1991,7 +1999,9 @@ class Achievement:
         if self.achtype == AchievementType.DUEL_WINNER:
             return "ezquakestats/img/ach_duel_winner.jpg"
         if self.achtype == AchievementType.SNIPER:
-            return "ezquakestats/img/ach_sniper.jpg "
+            return "ezquakestats/img/ach_sniper.jpg"
+        if self.achtype == AchievementType.RAINBOW_FLAG:
+            return "ezquakestats/img/ach_rainbow_flag.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
