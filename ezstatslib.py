@@ -15,7 +15,7 @@ import ezstatslib
 def enum(**enums):
     return type('Enum', (), enums)
 
-possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe", "tele"]
+possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe", "tele", "other"]
 
 HtmlColor = enum( COLOR_RED  ="#ff3333",
                   COLOR_GREEN="#009900",
@@ -1137,7 +1137,6 @@ def isMatchEnd(s):
 
 def commonDetection(s):
     knownSkipLines = ["not enough ammo", "second", "no weapon", "Couldn't download"]
-#possibleWeapons = ["lg", "gl", "rl", "sg", "ssg", "ng", "sng", "axe"]
 
     spl = s.split(" ")
     
@@ -1182,6 +1181,9 @@ def commonDetection(s):
 
     elif "ax-murdered" in s: # EEE was ax-murdered by Onanim
         return True, spl[4].split("\n")[0], spl[0], "axe"
+    
+    elif "squishes" in s: # SHAROK squishes EEE
+        return True, spl[0], spl[2].split("\n")[0], "other"
  
     else:
         isKnown = False
@@ -1190,7 +1192,6 @@ def commonDetection(s):
                 isKnown = True
 
         if not isKnown:
-            #print "!!!:", s ,
             logSkipped(s)
         
         return False,"","",""
@@ -1401,6 +1402,7 @@ class Player:
         self.sng_kills = 0
         self.axe_kills = 0
         self.tele_kills = 0
+        self.other_kills = 0
         #self.TODO_kills = 0
         
         self.rl_deaths = 0
@@ -1412,6 +1414,7 @@ class Player:
         self.sng_deaths = 0
         self.axe_deaths = 0
         self.tele_deaths = 0
+        self.other_deaths = 0
         #self.TODO_deaths = 0
         
         self.calculatedStreaks = []
@@ -1632,17 +1635,18 @@ class Player:
                                                                                                                                                              (float(self.tele_kills) / float(totalValue) * 100))
 
     def getWeaponsKills(self, totalValue, weaponsCheck):
-        rlstr   = "" if not weaponsCheck.is_rl   or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_kills,   (float(self.rl_kills)   / float(totalValue) * 100));
-        lgstr   = "" if not weaponsCheck.is_lg   or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_kills,   (float(self.lg_kills)   / float(totalValue) * 100));
-        glstr   = "" if not weaponsCheck.is_gl   or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_kills,   (float(self.gl_kills)   / float(totalValue) * 100));
-        sgstr   = "" if not weaponsCheck.is_sg   or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_kills,   (float(self.sg_kills)   / float(totalValue) * 100));
-        ssgstr  = "" if not weaponsCheck.is_ssg  or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_kills,  (float(self.ssg_kills)  / float(totalValue) * 100));
-        ngstr   = "" if not weaponsCheck.is_ng   or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_kills,   (float(self.ng_kills)   / float(totalValue) * 100));
-        sngstr  = "" if not weaponsCheck.is_sng  or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_kills,  (float(self.sng_kills)  / float(totalValue) * 100));
-        axestr  = "" if not weaponsCheck.is_axe  or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_kills,  (float(self.axe_kills)  / float(totalValue) * 100));
-        telestr = "" if not weaponsCheck.is_tele or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_kills, (float(self.tele_kills) / float(totalValue) * 100));
+        rlstr   = "" if not weaponsCheck.is_rl    or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_kills,   (float(self.rl_kills)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg    or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_kills,   (float(self.lg_kills)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl    or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_kills,   (float(self.gl_kills)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg    or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_kills,   (float(self.sg_kills)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg   or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_kills,  (float(self.ssg_kills)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng    or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_kills,   (float(self.ng_kills)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng   or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_kills,  (float(self.sng_kills)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe   or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_kills,  (float(self.axe_kills)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele  or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_kills, (float(self.tele_kills) / float(totalValue) * 100));
+        otherstr= "" if not weaponsCheck.is_other or totalValue == 0 else "other:{0:3d}({1:6.3}%), ".format( self.other_kills,  (float(self.other_kills)  / float(totalValue) * 100));
 
-        resstr = "%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr);
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
         if len(resstr) > 2:
             resstr = resstr[:-2]
         return resstr
@@ -1670,17 +1674,18 @@ class Player:
                                                                                                                                                              (float(self.tele_deaths) / float(totalValue) * 100))
 
     def getWeaponsDeaths(self, totalValue, weaponsCheck):
-        rlstr   = "" if not weaponsCheck.is_rl   or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_deaths,   (float(self.rl_deaths)   / float(totalValue) * 100));
-        lgstr   = "" if not weaponsCheck.is_lg   or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_deaths,   (float(self.lg_deaths)   / float(totalValue) * 100));
-        glstr   = "" if not weaponsCheck.is_gl   or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_deaths,   (float(self.gl_deaths)   / float(totalValue) * 100));
-        sgstr   = "" if not weaponsCheck.is_sg   or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_deaths,   (float(self.sg_deaths)   / float(totalValue) * 100));
-        ssgstr  = "" if not weaponsCheck.is_ssg  or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_deaths,  (float(self.ssg_deaths)  / float(totalValue) * 100));
-        ngstr   = "" if not weaponsCheck.is_ng   or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_deaths,   (float(self.ng_deaths)   / float(totalValue) * 100));
-        sngstr  = "" if not weaponsCheck.is_sng  or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_deaths,  (float(self.sng_deaths)  / float(totalValue) * 100));
-        axestr  = "" if not weaponsCheck.is_axe  or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_deaths,  (float(self.axe_deaths)  / float(totalValue) * 100));
-        telestr = "" if not weaponsCheck.is_tele or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_deaths, (float(self.tele_deaths) / float(totalValue) * 100));
+        rlstr   = "" if not weaponsCheck.is_rl    or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_deaths,   (float(self.rl_deaths)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg    or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_deaths,   (float(self.lg_deaths)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl    or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_deaths,   (float(self.gl_deaths)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg    or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_deaths,   (float(self.sg_deaths)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg   or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_deaths,  (float(self.ssg_deaths)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng    or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_deaths,   (float(self.ng_deaths)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng   or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_deaths,  (float(self.sng_deaths)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe   or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_deaths,  (float(self.axe_deaths)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele  or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_deaths, (float(self.tele_deaths) / float(totalValue) * 100));
+        otherstr= "" if not weaponsCheck.is_other or totalValue == 0 else "other:{0:3d}({1:6.3}%), ".format( self.other_deaths,  (float(self.other_deaths)  / float(totalValue) * 100));
 
-        resstr = "%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr);
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
         if len(resstr) > 2:
             resstr = resstr[:-2]
         return resstr
