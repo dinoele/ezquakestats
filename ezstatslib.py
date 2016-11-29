@@ -1864,13 +1864,13 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         GREEN_ARMOR_EATER = 15, # "Green armor eater", # 10+ green armors  DONE
                         YELLOW_ARMOR_EATER = 16, # "Yellow armor eater", # 10+ yellow armors  DONE
                         MEGA_HEALTH_EATER = 17, # "Mega healths eater", # 10+ mega healths  DONE                        
-                        RED_ARMOR_ALLERGY = 18, # "Red armor allergy", # No red armors
-                        GREEN_ARMOR_ALLERGY = 19, # "Green armor allergy", # No green armors
-                        YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors
-                        MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths
+                        RED_ARMOR_ALLERGY = 18, # "Red armor allergy", # No red armors  DONE
+                        GREEN_ARMOR_ALLERGY = 19, # "Green armor allergy", # No green armors  DONE
+                        YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors  DONE
+                        MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths  DONE
                         CHILD_KILLER = 22, # "Child killer", # 10+ spawn frags  DONE
-                        ALWAYS_THE_LAST = 23, # "Always the last", # the last place from the 1st minute until the finish
-                        ROCKETS_LOVER = 24 # "Rockets lover", # all kills made via rocket launcher
+                        ALWAYS_THE_LAST = 23, # "Always the last", # the last place from the 1st minute until the finish  DONE
+                        ROCKETS_LOVER = 24 # "Rockets lover", # all kills made via rocket launcher  DONE
                                             )
 
 class Achievement:

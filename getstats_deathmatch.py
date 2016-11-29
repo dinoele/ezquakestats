@@ -287,7 +287,7 @@ for matchPart in matchlog:
         
             # extended match progress
             if currentPartNum in battleProgressExtendedPoints:
-                allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+                allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
                 progressLineDict = {}
                 for pl in allplayersByFrags:
                     progressLineDict[pl.name] = pl.frags();
@@ -307,7 +307,8 @@ for matchPart in matchlog:
         # battle progress
         if "remaining" in logline or "overtime" in logline:  # [9] minutes remaining                            
             currentMinute += 1            
-            allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+            #allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+            allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
             progressLine = []
             progressLineDict = {}
             for pl in allplayersByFrags:
@@ -321,7 +322,7 @@ for matchPart in matchlog:
         else:
             if newLogFormat and currentMatchTime > battleProgressExtendedNextPoint:
                 battleProgressExtendedNextPoint += 15
-                allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+                allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
                 progressLineDict = {}
                 for pl in allplayersByFrags:
                     progressLineDict[pl.name] = pl.frags();
@@ -433,7 +434,6 @@ for pl in allplayers:
     killsSumOrig += pl.origScore;
     killsSum     += pl.kills;
 if killsSumOrig == 0 and killsSum == 0:
-    #print "There are no kills"
     ezstatslib.logError("There are no kills\n")
     exit(1)
 
@@ -444,7 +444,7 @@ for pl in allplayers:
     if pl.kills == 0 and pl.deaths == 0:
         allplayers.remove(pl);
 
-allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 
 # fill final battle progress
 progressLine = []
