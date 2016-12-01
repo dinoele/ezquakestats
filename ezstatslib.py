@@ -1715,7 +1715,7 @@ class Player:
         return res    
             
     # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
-    def calculateAchievements(self, matchProgress, powerUpsStatus):
+    def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead):
         # LONG_LIVE
         if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
             self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
@@ -1845,6 +1845,12 @@ class Player:
         # SNIPER
         if self.rlskill_dh >= 40:
             self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
+            
+        # PERSONAL_STALKER
+        sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
+        if sortedHeadToHead[0][1] >= (self.kills / 2):
+            self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
+        
 
 # AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
 #                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
@@ -1891,7 +1897,8 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         ROCKETS_LOVER = 24, # "Rockets lover", # all kills made via rocket launcher  DONE
                         DUEL_WINNER = 25, # "Duel winner", # duel winner  DONE
                         SNIPER = 26, # "Sniper", # direct hit > 40  DONE
-                        RAINBOW_FLAG = 27 # "Like rainbow flag - I hope today is not Aug 2",  # 10+ each of armors
+                        RAINBOW_FLAG = 27, # "Like rainbow flag - I hope today is not Aug 2",  # 10+ each of armors  DONE
+                        PERSONAL_STALKER = 28, # "Personal stalker", # killed one player more than all others taken together DONE
                                             )
 
 class Achievement:
@@ -1961,6 +1968,8 @@ class Achievement:
             return "Sniper"
         if self.achtype == AchievementType.RAINBOW_FLAG:
             return "Like rainbow flag - I hope today is not Aug 2"
+        if self.achtype == AchievementType.PERSONAL_STALKER:
+            return "Personal stalker"
         
     
     def getImgSrc(self, achtype):
@@ -2002,6 +2011,8 @@ class Achievement:
             return "ezquakestats/img/ach_sniper.jpg"
         if self.achtype == AchievementType.RAINBOW_FLAG:
             return "ezquakestats/img/ach_rainbow_flag.jpg"
+        if self.achtype == AchievementType.PERSONAL_STALKER:
+            return "ezquakestats/img/ach_personal_stalker.jpg "
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:

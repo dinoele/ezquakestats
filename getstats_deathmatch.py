@@ -478,7 +478,7 @@ for pl in allplayers:
     
 # achievements
 for pl in allplayers:
-    pl.calculateAchievements(matchProgress, powerUpsStatus)
+    pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead)
     
 # generate output string
 resultString = ""
