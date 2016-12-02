@@ -1455,8 +1455,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # <-- power ups timeline ver2
     
     # players achievements -->
-    playersAchievementsStr = ezstatslib.HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG
-    # TODO replace PLAYERS_ACHIEVEMENTS_TABLE with table
+    playersAchievementsStr = ezstatslib.HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG    
     cellWidth = "20px"
     achievementsHtmlTable = HTML.Table(border="0", cellspacing="0",
                                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
@@ -1600,6 +1599,7 @@ def checkNew(fileNew, workFilePath, pathForCheck):
 
 # update contents file
 logsIndexPath    = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
+logsByMapPath    = "../" + ezstatslib.LOGS_BY_MAP_FILE_NAME
 tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
 
 files = os.listdir("../")
@@ -1692,6 +1692,8 @@ def generateHtmlList(playersNames):
 
 sorted_filesMap = sorted(filesMap.items(), key=itemgetter(0), reverse=True)
 
+filesByMapDict = {} # key: mapname, value: [ [legue, date, players], ..]
+
 for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['FD_[spinev2]_2016-05-05_16_12_52.html',dt1], ['FD_[skull]_2016-05-05_13_38_11.html',dt2]]])
     formattedDate = el[0]
     if el[0] != zerodt:
@@ -1757,22 +1759,16 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
         logHeadStr = subprocess.check_output(["head", "%s" % ("../" + alllist[i][0])])
         if "GAME_PLAYERS" in logHeadStr:
             playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
-        
-        # while True:
-        #     xx = logf.readline()
-        #     if "GAME_PLAYERS" in xx:
-        #         playsStr = logf.readline()
-        #         break;
-        #           
-        #     linesCnt += 1
-        #     if linesCnt > 20:                
-        #         break        
-        # logf.close()                
                 
         plays = []
         if playsStr != "":
             playsStr = playsStr.replace("\n","")
             plays = playsStr.split(" ")
+        
+        if not filesByMapDict.has_key(currentMapName):
+            filesByMapDict[currentMapName] = []
+            
+        filesByMapDict[currentMapName].append([alllist[i][0][0], str(alllist[i][1]), plays, playsStr, alllist[i][0]] )
                 
         if isP: insertIndex = len(tableRow.cells) - 6
         if isF: insertIndex = len(tableRow.cells) - 4
@@ -1884,8 +1880,40 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
     #     filesTable.rows.append(tableRow)
     #     i += 1
 
+filesByMapTable = HTML.Table(border="1", cellspacing="1", style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;")
+
+for filemap in filesByMapDict.keys():
+    maxCnt = 0
+    
+    tableRow = HTML.TableRow(cells=[])
+        
+    tableRow.cells.append( HTML.TableCell("%s(%d)" % (filemap, len(filesByMapDict[filemap])), align="center") )
+        
+    for el in filesByMapDict[filemap]:
+        maxCnt = max(maxCnt, len(el[2]))    
+        tableRow.cells.append( HTML.TableCell("<a href=\"%s\">%s %s</a>" % (el[4], ezstatslib.htmlBold(el[0]), el[1]), align="center") )
+    
+    filesByMapTable.rows.append( tableRow )
+        
+    for cnt in xrange(maxCnt):
+        tRow = HTML.TableRow(cells=[""])
+                
+        for el in filesByMapDict[filemap]:
+            tRow.cells.append( HTML.TableCell("%s" % (el[2][cnt] if len(el[2]) > cnt else ""), align="center") )
+        
+        filesByMapTable.rows.append( tRow )
+
+logsf = open(logsByMapPath, "w")
+logsf.write(ezstatslib.HTML_HEADER_STR)
+logsf.write(str(filesByMapTable))
+logsf.write(ezstatslib.HTML_FOOTER_STR)
+logsf.close()
+
+
 logsf = open(tmpLogsIndexPath, "w")
 logsf.write(ezstatslib.HTML_HEADER_STR)
+logsf.write(htmlLink(ezstatslib.LOGS_BY_MAP_FILE_NAME))
+logsf.write("<hr>")
 logsf.write(str(filesTable))
 logsf.write(ezstatslib.HTML_FOOTER_STR)
 logsf.close()
