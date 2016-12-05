@@ -1849,7 +1849,7 @@ class Player:
             
         # PERSONAL_STALKER
         sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
-        if sortedHeadToHead[0][1] >= (self.kills / 2):
+        if sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
             self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
         
 
@@ -1900,6 +1900,9 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         SNIPER = 26, # "Sniper", # direct hit > 40  DONE
                         RAINBOW_FLAG = 27, # "Like rainbow flag - I hope today is not Aug 2",  # 10+ each of armors  DONE
                         PERSONAL_STALKER = 28, # "Personal stalker", # killed one player more than all others taken together DONE
+                        SELF_DESTRUCTOR = 29, # "Self destructor - the main your enemy is yourself", # suicided more than killed any other player  image with hearth in the hand
+                        OVERTIME_LOOSERS = 30, # "Looooooosers go home", # both the 1st and the 2nd places before overtime are finally below the 2nd place
+                        PHENIX_BIRD = 31, # "Like a phenix bird", # won after the last place on the 4th minute
                                             )
 
 class Achievement:
