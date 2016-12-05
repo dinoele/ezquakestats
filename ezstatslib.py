@@ -1783,19 +1783,19 @@ class Player:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths%s" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
         
         # RED_ARMOR_ALLERGY
-        if powerUpsStatus["ra"] and self.ra == 0:
+        if powerUpsStatus["ra"] and self.ra == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.RED_ARMOR_ALLERGY) )
             
         # YELLOW_ARMOR_ALLERGY
-        if powerUpsStatus["ya"] and self.ya == 0:
+        if powerUpsStatus["ya"] and self.ya == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_ALLERGY) )
             
         # GREEN_ARMOR_ALLERGY
-        if powerUpsStatus["ga"] and self.ga == 0:
+        if powerUpsStatus["ga"] and self.ga == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_ALLERGY) )
             
         # MEGA_HEALTH_ALLERGY
-        if powerUpsStatus["mh"] and self.mh == 0:
+        if powerUpsStatus["mh"] and self.mh == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_ALLERGY) )
             
         # RAINBOW_FLAG
