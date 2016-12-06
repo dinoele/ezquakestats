@@ -1736,7 +1736,7 @@ class Player:
             if strk.count >= 10:
                 self.achievements.append( Achievement(AchievementType.DEATH_STREAK_PAIN, "%d deaths in a row during %d seconds" % (strk.count, strk.duration())) )
             
-        # HORRIBLE_FINISH            
+        # HORRIBLE_FINISH, FINISH_GURU
         if len(matchProgress) >= 2:
             pos1 = 1
             for el in matchProgress[len(matchProgress)-2]:
@@ -1754,6 +1754,9 @@ class Player:
             
             if pos2 - pos1 >= 2:
                 self.achievements.append( Achievement(AchievementType.HORRIBLE_FINISH, "before the last minute place was %d but finished on place %d" % (pos1, pos2)) )
+                
+            if pos2 == 1 and pos1 > 2:
+                self.achievements.append( Achievement(AchievementType.FINISH_GURU, "before the last minute place was %d but win the game!!" % (pos1)) )
                 
         # HUNDRED_KILLS
         if self.kills >= 100:
@@ -1852,6 +1855,7 @@ class Player:
         sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
         if sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
             self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
+                
         
 
 # AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
@@ -1859,7 +1863,7 @@ class Player:
 #                         SUICIDE_KING = "Suicide King",   # 3++ suicides in a row  DONE
 #                         DEATH_STREAK_PAIN = "What do you know about the pain?...", # 10++ death streak  DONE
 #                         GREAT_FINISH = "Great Finish", # 2+ places up during the last minute
-#                         LAST_CHANCE_WINNER = "Finish Guru", # 2+ places up during the last minute and win
+#                         FINISH_GURU = "Finish Guru", # 2+ places up during the last minute and win
 #                         HORRIBLE_FINISH = "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
 #                         ALWAYS_THE_FIRST = "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
 #                         OVERTIME_REASON = "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
@@ -1878,7 +1882,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         SUICIDE_KING = 3, # "Suicide King",   # 3++ suicides in a row  DONE
                         DEATH_STREAK_PAIN = 4, # "What do you know about the pain?...", # 10++ death streak  DONE
                         GREAT_FINISH = 5, # "Great Finish", # 2+ places up during the last minute
-                        LAST_CHANCE_WINNER = 6, # "Finish Guru", # 2+ places up during the last minute and win
+                        FINISH_GURU = 6, # "Finish Guru", # 2+ places up during the last minute and win  DONE
                         HORRIBLE_FINISH = 7, # "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
                         ALWAYS_THE_FIRST = 8, # "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
                         OVERTIME_REASON = 9, # "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
@@ -1929,8 +1933,6 @@ class Achievement:
             return "What do you know about the pain?..."
         if self.achtype == AchievementType.GREAT_FINISH:
             return "Great Finish"
-        if self.achtype == AchievementType.LAST_CHANCE_WINNER:
-            return "Finish Guru"
         if self.achtype == AchievementType.HORRIBLE_FINISH:
             return "Horrible Finish - finished to play too early"
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -1975,6 +1977,8 @@ class Achievement:
             return "Like rainbow flag - I hope today is not Aug 2"
         if self.achtype == AchievementType.PERSONAL_STALKER:
             return "Personal stalker"
+        if self.achtype == AchievementType.FINISH_GURU:
+            return "Finish Guru"
         
     
     def getImgSrc(self, achtype):
@@ -2017,7 +2021,9 @@ class Achievement:
         if self.achtype == AchievementType.RAINBOW_FLAG:
             return "ezquakestats/img/ach_rainbow_flag.jpg"
         if self.achtype == AchievementType.PERSONAL_STALKER:
-            return "ezquakestats/img/ach_personal_stalker.jpg "
+            return "ezquakestats/img/ach_personal_stalker.jpg"
+        if self.achtype == AchievementType.FINISH_GURU:
+            return "ezquakestats/img/ach_finish_guru.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
