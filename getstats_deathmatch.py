@@ -1582,8 +1582,8 @@ else:  # not os.path.exists(filePathFull):
     #     logsf.write(tres)
     #     logsf.close()
     
-def htmlLink(fname, gifPath = ""):
-    return "<a href=\"%s\">%s</a>%s<br>" % (fname, fname, gifPath)
+def htmlLink(fname, gifPath = "", linkText = ""):
+    return "<a href=\"%s\">%s</a>%s<br>" % (fname, fname if linkText == "" else linkText, gifPath)
 
 def checkNew(fileNew, workFilePath, pathForCheck):
     isNew = (fileNew and workFilePath == pathForCheck)
@@ -1912,7 +1912,9 @@ logsf.close()
 
 logsf = open(tmpLogsIndexPath, "w")
 logsf.write(ezstatslib.HTML_HEADER_STR)
-logsf.write(htmlLink(ezstatslib.LOGS_BY_MAP_FILE_NAME))
+logsf.write(htmlLink(ezstatslib.TOURNAMENT_TABLE_FILE_NAME, linkText = "AdRiver Quake tournament 2016"))
+logsf.write("<hr>")
+logsf.write(htmlLink(ezstatslib.LOGS_BY_MAP_FILE_NAME, linkText = "Match results by maps"))
 logsf.write("<hr>")
 logsf.write(str(filesTable))
 logsf.write(ezstatslib.HTML_FOOTER_STR)
