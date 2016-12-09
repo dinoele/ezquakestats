@@ -206,7 +206,11 @@ def generateGroupDiv(yy, groupName, pointsAlg = 1, isDescription = False):
                     pnt += 1
             elif pointsAlg == 3:
                 pnt += 1
-    
+            elif pointsAlg == 4:
+                if i == 0 or i == 1:
+                    pnt += 2
+                else:
+                    pnt += 1
     
     tt = ""    
     for k in pointsD.keys():
@@ -231,12 +235,14 @@ def generateGroupDiv(yy, groupName, pointsAlg = 1, isDescription = False):
     yy = yy.replace("GROUP_%s_LOGS" % (groupName), ff)
     
     pointsDescr = ""
-    if pointsAlg == 1:
+    if pointsAlg == 1: # 1+1+..+2
         pointsDescr = "  (1->2->3->4->6)" if groupName == "A" else "  (1->2->3->4->5->7)"
-    elif pointsAlg == 2:
+    elif pointsAlg == 2: # 1+1..+2+3
         pointsDescr = "  (1->2->3->5->8)" if groupName == "A" else "  (1->2->3->4->6->9)"
-    elif pointsAlg == 3:
+    elif pointsAlg == 3: # 1+1
         pointsDescr = "  (1->2->3->4->5)" if groupName == "A" else "  (1->2->3->4->5->6)"
+    elif pointsAlg == 4: # 1+1..+2+2
+        pointsDescr = "  (1->2->3->5->7)" if groupName == "A" else "  (1->2->3->4->6->8)"
 
     yy = yy.replace("POINT_ALGORITHM_PLACE", pointsDescr if isDescription else "")
     
@@ -244,5 +250,5 @@ def generateGroupDiv(yy, groupName, pointsAlg = 1, isDescription = False):
 
 # print T_HEADER + T_MAIN_HEADER + generateGroupDiv(T_GROUP_A, "A") + generateGroupDiv(T_GROUP_B, "B") + T_MAIN_FOOTER
 
-print T_HEADER + T_MAIN_HEADER + generateGroupDiv(T_GROUP_A, "A", 1, True) + generateGroupDiv(T_GROUP_A, "A", 2, True) + generateGroupDiv(T_GROUP_A, "A", 3, True) + \
-                                 generateGroupDiv(T_GROUP_B, "B", 1, True) + generateGroupDiv(T_GROUP_B, "B", 2, True) + generateGroupDiv(T_GROUP_B, "B", 3, True) + T_MAIN_FOOTER
+print T_HEADER + T_MAIN_HEADER + generateGroupDiv(T_GROUP_A, "A", 1, True) + generateGroupDiv(T_GROUP_A, "A", 2, True) + generateGroupDiv(T_GROUP_A, "A", 3, True) + generateGroupDiv(T_GROUP_A, "A", 4, True) + \
+                                 generateGroupDiv(T_GROUP_B, "B", 1, True) + generateGroupDiv(T_GROUP_B, "B", 2, True) + generateGroupDiv(T_GROUP_B, "B", 3, True) + generateGroupDiv(T_GROUP_B, "B", 4, True) + T_MAIN_FOOTER
