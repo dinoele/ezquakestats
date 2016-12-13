@@ -1756,7 +1756,7 @@ class Player:
                 self.achievements.append( Achievement(AchievementType.HORRIBLE_FINISH, "before the last minute place was %d but finished on place %d" % (pos1, pos2)) )
                 
             if pos2 == 1 and pos1 > 2:
-                self.achievements.append( Achievement(AchievementType.FINISH_GURU, "before the last minute place was %d but win the game!!" % (pos1)) )
+                self.achievements.append( Achievement(AchievementType.FINISH_GURU, "before the last minute place was %d but won the game!!" % (pos1)) )
                 
         # HUNDRED_KILLS
         if self.kills >= 100:
@@ -1855,7 +1855,10 @@ class Player:
         sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
         if sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
             self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
-                
+            
+        # SELF_DESTRUCTOR
+        if sortedHeadToHead[0][0] == self.name:
+            self.achievements.append( Achievement(AchievementType.SELF_DESTRUCTOR, "suicided %d times which more than killed any other player" % (self.suicides)) )
         
 
 # AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
@@ -1905,7 +1908,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         SNIPER = 26, # "Sniper", # direct hit > 40  DONE
                         RAINBOW_FLAG = 27, # "Like rainbow flag - I hope today is not Aug 2",  # 10+ each of armors  DONE
                         PERSONAL_STALKER = 28, # "Personal stalker", # killed one player more than all others taken together DONE
-                        SELF_DESTRUCTOR = 29, # "Self destructor - the main your enemy is yourself", # suicided more than killed any other player  image with hearth in the hand
+                        SELF_DESTRUCTOR = 29, # "Self destructor - the main your enemy is yourself", # suicided more than killed any other player  DONE
                         OVERTIME_LOOSERS = 30, # "Looooooosers go home", # both the 1st and the 2nd places before overtime are finally below the 2nd place
                         PHENIX_BIRD = 31, # "Like a phenix bird", # won after the last place on the 4th minute
                                             )
@@ -1979,6 +1982,8 @@ class Achievement:
             return "Personal stalker"
         if self.achtype == AchievementType.FINISH_GURU:
             return "Finish Guru"
+        if self.achtype == AchievementType.SELF_DESTRUCTOR:
+            return "Self destructor - the main your enemy is yourself"
         
     
     def getImgSrc(self, achtype):
@@ -2024,6 +2029,8 @@ class Achievement:
             return "ezquakestats/img/ach_personal_stalker.jpg"
         if self.achtype == AchievementType.FINISH_GURU:
             return "ezquakestats/img/ach_finish_guru.jpg"
+        if self.achtype == AchievementType.SELF_DESTRUCTOR:
+            return "ezquakestats/img/ach_self_destructor.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
