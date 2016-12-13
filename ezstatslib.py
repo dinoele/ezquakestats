@@ -944,7 +944,18 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "            }]\n" \
 "        },\n" \
 "        tooltip: {\n" \
-"            valueSuffix: ''\n" \
+"            valueSuffix: '',\n" \
+"            shared: true,\n" \
+"            formatter: function() {\n" \
+"            var s = '<strong>'+ this.x +'</strong>';\n" \
+"            var sortedPoints = this.points.sort(function(a, b){\n" \
+"                  return ((a.y < b.y) ? 1 : ((a.y > b.y) ? -1 : 0));\n  " \
+"              });\n" \
+"            $.each(sortedPoints , function(i, point) {\n" \
+"            s += '<br/>'+ point.series.name +': '+ point.y;\n" \
+"            });\n" \
+"            return s;\n" \
+"            },\n" \
 "        },\n" \
 "        legend: {\n" \
 "            layout: 'vertical',\n" \
