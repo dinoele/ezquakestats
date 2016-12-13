@@ -1,5 +1,8 @@
 #!/usr/bin/python
 import subprocess
+import pdb
+
+OPTION_WITH_RANK = False
 
 groupALogs = [              
               "PL_[blizz]_2016-12-06_11_35_38.html",
@@ -232,66 +235,23 @@ T_MAIN_HEADER = \
 "<body>\n" \
 "<div id=\"main\">\n"
 
-T_GROUP_A = \
+T_GROUP = \
 "	<div>\n" \
-"		<h1>Group APOINT_ALGORITHM_PLACE</h1>\n" \
+"		<h1>Group GROUP_NAME POINT_ALGORITHM_PLACE</h1>\n" \
 "		<table cellspacing=\"1\" class=\"tablesorter\">\n" \
 "		<thead>\n" \
 "				<tr>\n" \
-"					<th width=12%>Player Name</th>\n" \
-"					<th width=8%>Total points</th>\n" \
-"					<th width=8%>warfare</th>                \n" \
-"					<th width=8%>travelert6</th>\n" \
-"					<th width=8%>dad2</th>\n" \
-"					<th width=8%>skull</th>                \n" \
-"					<th width=8%>blizz</th>\n" \
-"					<th width=8%>aerowalk</th>\n" \
-"					<th width=8%>baldm7</th>\n" \
-"					<th width=8%>spinev2</th>\n" \
-"					<th width=8%>baldm6</th>\n" \
-"					<th width=8%>utressor</th>\n" \
+"GROUP_HEADER" \
 "				</tr>\n" \
 "			</thead>\n" \
 "			<tbody>\n" \
-"GROUP_A_MAIN" \
+"GROUP_MAIN" \
 "			</tbody>\n" \
 "		</table>\n" \
 "		\n" \
 "		<table cellspacing=\"1\" class=\"tablesorter\" border=\"0\">\n" \
 "			<tbody>\n" \
-"GROUP_A_LOGS" \
-"			</tbody>\n" \
-"		</table>\n" \
-"	</div>\n"
-
-
-T_GROUP_B = \
-"	<div>\n" \
-"		<h1>Group BPOINT_ALGORITHM_PLACE</h1>\n" \
-"		<table cellspacing=\"1\" class=\"tablesorter\">\n" \
-"		<thead>\n" \
-"				<tr>\n" \
-"					<th width=12%>Player Name</th>\n" \
-"					<th width=8%>Total points</th>\n" \
-"					<th width=8%>warfare</th>                \n" \
-"					<th width=8%>travelert6</th>\n" \
-"					<th width=8%>dad2</th>\n" \
-"					<th width=8%>skull</th>                \n" \
-"					<th width=8%>blizz</th>\n" \
-"					<th width=8%>aerowalk</th>\n" \
-"					<th width=8%>baldm7</th>\n" \
-"					<th width=8%>spinev2</th>\n" \
-"					<th width=8%>baldm6</th>\n" \
-"					<th width=8%>utressor</th>\n" \
-"				</tr>\n" \
-"			</thead>\n" \
-"			<tbody>\n" \
-"GROUP_B_MAIN" \
-"			</tbody>\n" \
-"		</table>\n" \
-"				<table cellspacing=\"1\" class=\"tablesorter\" border=\"0\">\n" \
-"			<tbody>\n" \
-"GROUP_B_LOGS" \
+"GROUP_LOGS" \
 "			</tbody>\n" \
 "		</table>\n" \
 "	</div>\n"
@@ -307,6 +267,7 @@ PLAYER_TR = \
 "				<tr>\n" \
 "					<td>PLAYER_NAME_PLACE</td>\n" \
 "					<td>PLAYER_TOTAL_POINTS_PLACE</td>  <!-- Total -->\n" \
+"PLAYER_RANK_TD" \
 "PLAYER_MAPS_PLACE" \
 "				</tr>\n"
 
@@ -314,13 +275,12 @@ MAP_TD = "					<td>POINTS</td>\n"
 
 MATCH_LOGS_TR = \
 "				<tr>\n" \
-"					<td width=12%></td>\n" \
-"					<td width=8%></td>\n" \
+"WWWWWW" \
 "PPPPPP" \
 "				</tr>\n" \
 
-MATCH_LOGS_EMPTY_TD  = "					<td width=8%>MatchLog</td>\n"
-MATCH_LOGS_FILLED_TD = "					<td width=8%><a href=\"../LOG_NAME\">MatchLog</a></td>\n"
+MATCH_LOGS_EMPTY_TD  = "					<td width=WIDTH_PLACE%>MatchLog</td>\n"
+MATCH_LOGS_FILLED_TD = "					<td width=WIDTH_PLACE%><a href=\"../LOG_NAME\">MatchLog</a></td>\n"
 
 allMaps = ["warfare", "travelert6", "dad2", "skull", "blizz", "aerowalk", "baldm7", "spinev2", "baldm6", "utressor"]
 groupA = ["zrkn", "Onanim", "SHAROK", "EEE", "random"]
@@ -330,15 +290,18 @@ def generatePlayerTR(plName, pointsDict):
     res = PLAYER_TR
     res = res.replace("PLAYER_NAME_PLACE", plName)
     totalPoints = 0
+    totalRank = 0
     mapsSection = ""
     for mapName in allMaps:
         if pointsDict.has_key(mapName):
-            mapsSection += MAP_TD.replace("POINTS", str(pointsDict[mapName]))
-            totalPoints += pointsDict[mapName]
+            mapsSection += MAP_TD.replace("POINTS", str(pointsDict[mapName][0]))
+            totalPoints += pointsDict[mapName][0]
+            totalRank   += pointsDict[mapName][1]
         else:
             mapsSection += MAP_TD.replace("POINTS", "-")
     res = res.replace("PLAYER_MAPS_PLACE", mapsSection)
     res = res.replace("PLAYER_TOTAL_POINTS_PLACE", str(totalPoints))
+    res = res.replace("PLAYER_RANK_TD", "					<td>%s</td>\n" % (str(totalRank)) if OPTION_WITH_RANK else "")
     
     return res
 
@@ -357,7 +320,8 @@ def generateGroupDiv(yy, groupName, pointsAlg = 1, isDescription = False):
         mapName = log.split("_")[1].replace("[","").replace("]","")
         playedMaps.append([mapName, log])
         
-        logHeadStr = subprocess.check_output(["head", "%s" % ("../" + log)])
+        logHeadStr = subprocess.check_output(["head", "%s" % ("../" + log), "-n 20"])
+        playsStr = ""
         if "GAME_PLAYERS" in logHeadStr:
             playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
                 
@@ -366,16 +330,26 @@ def generateGroupDiv(yy, groupName, pointsAlg = 1, isDescription = False):
             playsStr = playsStr.replace("\n","")
             plays = playsStr.split(" ")
         
+        rankStr = ""
+        if "PLAYERS_RANK" in logHeadStr:
+            rankStr = logHeadStr.split("PLAYERS_RANK")[1].split("-->")[0]
+                
+        ranks = []
+        if rankStr != "":
+            rankStr = rankStr.replace("\n","")
+            ranks = rankStr.split(" ")
+        
         plCount = len(plays)
         i = len(plays) - 1
         pnt = 1
         while i >= 0:
             name = plays[i].split("(")[0]
+            plRank = int( ranks[i].split("(")[1].split(")")[0] )
             
             if not pointsD.has_key(name):
                 pointsD[name] = {}
             
-            pointsD[name][mapName] = pnt
+            pointsD[name][mapName] = [pnt,plRank]
             
             i -= 1
             
@@ -400,6 +374,33 @@ def generateGroupDiv(yy, groupName, pointsAlg = 1, isDescription = False):
     for k in pointsD.keys():
         tt += generatePlayerTR(k, pointsD[k])
     
+    # header
+# "					<th width=12%>Player Name</th>\n" \
+# "					<th width=8%>Total points</th>\n" \
+# "					<th width=8%>warfare</th>\n" \
+# "					<th width=8%>travelert6</th>\n" \
+# "					<th width=8%>dad2</th>\n" \
+# "					<th width=8%>skull</th>\n" \
+# "					<th width=8%>blizz</th>\n" \
+# "					<th width=8%>aerowalk</th>\n" \
+# "					<th width=8%>baldm7</th>\n" \
+# "					<th width=8%>spinev2</th>\n" \
+# "					<th width=8%>baldm6</th>\n" \
+# "					<th width=8%>utressor</th>\n" \
+    headerStr = ""
+    headerCnt = len(allMaps) + (3 if OPTION_WITH_RANK else 2) # name,total,rank
+    delim = 100 / headerCnt
+    nameWidth = 100 - ( delim * (headerCnt - 1) )
+    
+    headerStr  = "					<th width=%s%s>Player Name</th>\n" % (nameWidth, "%")
+    headerStr += "					<th width=%s%s>Total points</th>\n" % (delim, "%")
+    
+    if OPTION_WITH_RANK:
+        headerStr += "					<th width=%s%s>Total rank</th>\n" % (delim, "%")
+        
+    for m in allMaps:
+        headerStr += "					<th width=%s%s>%s</th>\n" % (delim, "%", m)
+    
     uu = ""
     for m in allMaps:
             
@@ -409,14 +410,25 @@ def generateGroupDiv(yy, groupName, pointsAlg = 1, isDescription = False):
                 logN = xx[1]
         
         if logN != "":
-            uu += MATCH_LOGS_FILLED_TD.replace("LOG_NAME", logN)
+            uu += MATCH_LOGS_FILLED_TD.replace("LOG_NAME", logN).replace("WIDTH_PLACE", str(delim))
         else:
-            uu += MATCH_LOGS_EMPTY_TD
+            uu += MATCH_LOGS_EMPTY_TD.replace("WIDTH_PLACE", str(delim))
     
     ff = MATCH_LOGS_TR.replace("PPPPPP", uu)
     
-    yy = yy.replace("GROUP_%s_MAIN" % (groupName), tt)
-    yy = yy.replace("GROUP_%s_LOGS" % (groupName), ff)
+    ggg  = "					<td width=%s%s></td>\n" % (nameWidth, "%")
+    
+    if OPTION_WITH_RANK:
+        ggg += "					<td width=%s%s></td>\n" % (delim, "%")
+        
+    ggg += "					<td width=%s%s></td>\n" % (delim, "%")
+    
+    ff = ff.replace("WWWWWW", ggg)
+    
+    yy = yy.replace("GROUP_NAME", groupName)
+    yy = yy.replace("GROUP_MAIN", tt)
+    yy = yy.replace("GROUP_LOGS", ff)
+    yy = yy.replace("GROUP_HEADER", headerStr)
     
     pointsDescr = ""
     if pointsAlg == 1:   # 1+1+..+2
@@ -462,7 +474,7 @@ def generateGraph(pointsD, groupName, funcStr):
         
         totalPoints = 0
         for m in playedMaps:
-            totalPoints += pointsD[pl][m] if pointsD[pl].has_key(m) else 0
+            totalPoints += pointsD[pl][m][0] if pointsD[pl].has_key(m) else 0
             rowLines += "%d," % (totalPoints)            
         rowLines = rowLines[:-1]
             
@@ -472,8 +484,10 @@ def generateGraph(pointsD, groupName, funcStr):
     
     return highchartsProgressFunctionStr
 
-resA, pointsA = generateGroupDiv(T_GROUP_A, "A")
-resB, pointsB = generateGroupDiv(T_GROUP_B, "B")
+# resA, pointsA = generateGroupDiv(T_GROUP_A, "A")
+# resB, pointsB = generateGroupDiv(T_GROUP_B, "B")
+resA, pointsA = generateGroupDiv(T_GROUP, "A")
+resB, pointsB = generateGroupDiv(T_GROUP, "B")
 
 chartStr = generateGraph(pointsA, "A", HTML_SCRIPT_HIGHCHARTS_GAMES_PROGRESS_FUNCTION)
 chartStr = generateGraph(pointsB, "B", chartStr)
