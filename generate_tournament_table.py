@@ -2,7 +2,7 @@
 import subprocess
 import pdb
 
-OPTION_WITH_RANK = False
+OPTION_WITH_RANK = True
 
 groupALogs = [              
               "PL_[blizz]_2016-12-06_11_35_38.html",
@@ -14,16 +14,20 @@ groupALogs = [
               "PL_[skull]_2016-12-09_10_46_06.html",
               "PL_[aerowalk]_2016-12-12_10_44_35.html",
               "PL_[baldm7]_2016-12-13_11_28_00.html",
+              "PL_[spinev2]_2016-12-14_12_11_03.html",
              ]
 
-groupBLogs = [
-              "FD_[warfare]_2016-12-06_13_11_29.html",
-              "FD_[travelert6]_2016-12-06_11_35_15.html",
+groupBLogs = [                            
               "FD_[dad2]_2016-12-07_10_36_10.html",
               "FD_[skull]_2016-12-07_12_53_46.html",
               "FD_[blizz]_2016-12-08_11_31_18.html",
               "FD_[aerowalk]_2016-12-08_13_24_12.html",
               "FD_[baldm7]_2016-12-12_14_24_10.html",
+              "FD_[spinev2]_2016-12-13_13_40_31.html",
+              "FD_[baldm6]_2016-12-14_09_34_44.html",
+              "FD_[utressor]_2016-12-14_10_38_40.html",
+              "FD_[warfare]_2016-12-14_12_13_26.html",
+              "FD_[travelert6]_2016-12-15_10_55_40.html",
              ]
 
 HTML_SCRIPT_HIGHCHARTS_GAMES_PROGRESS_FUNCTION = \
@@ -233,7 +237,9 @@ T_HEADER = \
 
 T_MAIN_HEADER = \
 "<body>\n" \
-"<div id=\"main\">\n"
+"<div id=\"main\">\n" \
+"<h1><a href=\"http://challonge.com/adriverquake2016\">PlayOff Brackets</a></h1>\n"
+
 
 T_GROUP = \
 "	<div>\n" \
@@ -499,5 +505,5 @@ print T_HEADER.replace("HIGHCHART_SCRIPT_PLACE", chartStr) + T_MAIN_HEADER + res
 # print T_HEADER.replace("HIGHCHART_SCRIPT_PLACE", "") + T_MAIN_HEADER + generateGroupDiv(T_GROUP_A, "A")[0]+ generateGroupDiv(T_GROUP_B, "B")[0] + T_MAIN_FOOTER
 
 # print T_HEADER.replace("HIGHCHART_SCRIPT_PLACE", "") + T_MAIN_HEADER + \
-#                        generateGroupDiv(T_GROUP_A, "A", 1, True)[0] + generateGroupDiv(T_GROUP_A, "A", 2, True)[0] + generateGroupDiv(T_GROUP_A, "A", 3, True)[0] + generateGroupDiv(T_GROUP_A, "A", 4, True)[0] + \
-#                        generateGroupDiv(T_GROUP_B, "B", 1, True)[0] + generateGroupDiv(T_GROUP_B, "B", 2, True)[0] + generateGroupDiv(T_GROUP_B, "B", 3, True)[0] + generateGroupDiv(T_GROUP_B, "B", 4, True)[0] + T_MAIN_FOOTER
+#                        generateGroupDiv(T_GROUP, "A", 1, True)[0] + generateGroupDiv(T_GROUP, "A", 2, True)[0] + generateGroupDiv(T_GROUP, "A", 3, True)[0] + generateGroupDiv(T_GROUP, "A", 4, True)[0] + \
+#                        generateGroupDiv(T_GROUP, "B", 1, True)[0] + generateGroupDiv(T_GROUP, "B", 2, True)[0] + generateGroupDiv(T_GROUP, "B", 3, True)[0] + generateGroupDiv(T_GROUP, "B", 4, True)[0] + T_MAIN_FOOTER
