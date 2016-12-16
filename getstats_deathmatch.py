@@ -1514,6 +1514,8 @@ if "First" in options.leagueName:
     leaguePrefix = "FD_"
 if "Second" in options.leagueName:
     leaguePrefix = "SD_"
+if "Number" in options.leagueName:    
+    leaguePrefix = "N%s_" % (options.leagueName.split(" ")[1])
  
 formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
 filePath     = leaguePrefix + mapName + "_" + formatedDateTime + ".html"
@@ -1630,8 +1632,14 @@ filesMap = {}  # key: dt, value: [[ [PL1,dt],[PL2,dt],..],[ [FD1,dt], [FD2,dt],.
 
 zerodt = datetime(1970,1,1)
 filesMap[zerodt] = [[],[],[]]  # files with problems
+
+otherFiles = []
+
 for fname in files:
-    if "html" in fname and ("PL" in fname or "FD" in fname or "SD" in fname):
+    if "html" in fname and len(fname) != 0 and fname[0] == "N":
+        otherFiles.append(fname)    
+    
+    elif "html" in fname and ("PL" in fname or "FD" in fname or "SD" in fname):
                 
         #"PL_[dad2]_2016-05-23_18_45_16.html"
         #nameSplit = fname.split("_")  # ['PL', '[dad2]', '2016-05-23', '18', '45', '16.html']
@@ -1923,6 +1931,12 @@ logsf.write(htmlLink(ezstatslib.TOURNAMENT_TABLE_FILE_NAME, linkText = "AdRiver 
 logsf.write("<hr>")
 logsf.write(htmlLink(ezstatslib.LOGS_BY_MAP_FILE_NAME, linkText = "Match results by maps"))
 logsf.write("<hr>")
+
+logsf.write("<h1>Duels</h1>")
+for fileName in otherFiles:
+    logsf.write(htmlLink(fileName))
+logsf.write("<hr>")
+
 logsf.write(str(filesTable))
 logsf.write(ezstatslib.HTML_FOOTER_STR)
 logsf.close()
