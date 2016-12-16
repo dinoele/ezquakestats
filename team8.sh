@@ -12,7 +12,7 @@ if [ $num -gt 0 ]
         while [ $flag -eq 1 ]
         do
             echo "num="$num
-            cat /home/random/qwserver/quaketeam8.log -O - | tac | grep begun -m $num -A 5 -B 10000 | tac | python getstats_deathmatch.py --league "Number 8"
+            cat /home/random/qwserver/quaketeam8.log | tac | grep begun -m $num -A 5 -B 10000 | tac | python getstats_deathmatch.py --league "Number 8"
             if [[ $? -eq 0 || $? -eq 2 || $triesCnt -gt 100 ]]
                 then
                     let flag=0
