@@ -205,6 +205,11 @@ while not "top scorers" in line and not "Running" in line:
 
     line = f.readline() # SpawnFrags: 4
     readLinesNum += 1
+    
+    if "OverTime" in line:
+        line = f.readline()
+        readLinesNum += 1
+    
     pl.spawnfrags = int(line.split("SpawnFrags: ")[1].split(" ")[0])
 
     allplayers.append(pl)
