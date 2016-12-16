@@ -1211,7 +1211,8 @@ def commonDetection(s):
         return False,"","",""
 
 def suicideDetection(s):
-    detectStrs = ["tries to put the pin back in", \
+    detectStrs = [
+                  "tries to put the pin back in", \
                   "discovers blast radius", \
                   "becomes bored with life", \
                   "fell to his death", \
@@ -1222,10 +1223,12 @@ def suicideDetection(s):
                   "died", \
                   "discharges into the water", \
                   "discharges into the slime", \
+                  "discharges into the lava", \
                   "can't exist on slime alone", \
                   "gulped a load of slime", \
                   "burst into flames", \
-                  "heats up the water"]
+                  "heats up the water",
+                 ]
     for det in detectStrs:
          if det in s:
             return True,s.split( )[0]
