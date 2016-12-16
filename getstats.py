@@ -41,12 +41,10 @@ def fillExtendedBattleProgress():
     fragsSum = 0
     for pl in players1ByFrags:
         fragsSum += pl.frags()
-    #s += " %d: " % (fragsSum)
     s += " {0:3d}: ".format(fragsSum)
 
     for pl in players1ByFrags:
-        s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
-        #s += "%s(%d)," % (pl.name, pl.frags())
+        s += "{0:20s}".format(pl.name + "(" + str(pl.frags()) + ")")
     s = s[:-1]
     
     players2ByFrags = sorted(players2, key=methodcaller("frags"), reverse=True)
@@ -58,8 +56,7 @@ def fillExtendedBattleProgress():
     s += " vs. [%s]" % (players2[0].teamname)
     s += " {0:3d}: ".format(fragsSum)
     for pl in players2ByFrags:
-        s += "{0:14s}".format(pl.name + "(" + str(pl.frags()) + ")")
-        #s += "%s(%d)," % (pl.name, pl.frags())
+        s += "{0:20s}".format(pl.name + "(" + str(pl.frags()) + ")")
     s = s[:-1]
 
     extendedProgressStr.append(s)
@@ -106,9 +103,13 @@ line = f.readline()
 while not ezstatslib.isMatchStart(line):
     if "telefrag" in line and not "teammate" in line: # telefrags before match start
         matchlog.append(line)
-
-    if "matchdate" in line:    
-        matchdate = line.split("matchdate: ")[1].split("\n")[0]
+        
+    if "matchdate" in line:
+        if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:
+            matchStartStamp = int( line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[0] )
+            line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+            
+        matchdate = line.split("matchdate: ")[1].split("\n")[0]            
 
     line = f.readline()
 
@@ -135,13 +136,19 @@ while not "Team [" in line:
         break
 
     line = f.readline()
+    
+    if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:
+        line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+    
     playerName = line.split(' ')[1].split(':')[0]
     
-    if playerName[0] == "_":
+    if playerName[0] == "_" or playerName[0] == "#":
         playerName = playerName[1:]
         disconnectedplayers.append(playerName)
 
     line = f.readline()
+    if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:
+        line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
 
     #"  24 (-25) 10 32.9%"
     stats = line.split(' ')
@@ -198,6 +205,9 @@ while not bigDelimiter in line:
         break
 
     line = f.readline()
+    if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:
+        line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+    
     playerName = line.split(' ')[1].split(':')[0]
 
     if playerName[0] == "_":
@@ -205,6 +215,8 @@ while not bigDelimiter in line:
         disconnectedplayers.append(playerName)
 
     line = f.readline()
+    if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:
+        line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
 
     #"  24 (-25) 10 32.9%"
     stats = line.split(' ')
@@ -287,6 +299,10 @@ mapName = ""
 # map name
 while not "top scorers" in line:
     line = f.readline()
+    
+if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:
+    line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+    
 mapName = line.split(" ")[0]
 
 
@@ -297,17 +313,18 @@ while not "Team scores" in line:
 line = f.readline()
 line = f.readline()
 
-if "+" in line and "=" in line:
-    totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split("= ")[1].split(" ")[0])] )
-else:
-    totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split(" ")[1])] )
-
-line = f.readline()
-
-if "+" in line and "=" in line:
-    totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split("= ")[1].split(" ")[0])] )
-else:
-    totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split(" ")[1])] )
+if not ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO incorrect dates in netlog 
+    if "+" in line and "=" in line:
+        totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split("= ")[1].split(" ")[0])] )
+    else:
+        totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split(" ")[1])] )
+    
+    line = f.readline()
+    
+    if "+" in line and "=" in line:
+        totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split("= ")[1].split(" ")[0])] )
+    else:
+        totalScore.append( [line.split(":")[0].split("[")[1].split("]")[0], int(line.split(" ")[1])] )
 
 f.close()
 
@@ -325,6 +342,9 @@ isProgressLine = False
 for logline in matchlog:
     if logline == "":
         continue
+
+    if ezstatslib.LOG_TIMESTAMP_DELIMITER in logline:
+        logline = logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
 
     # battle progress
     if "time over, the game is a draw" in logline: # time over, the game is a draw
@@ -345,7 +365,7 @@ for logline in matchlog:
         else:
             if not "leads" in logline:
                 print "ERROR: progress"
-                exit(0)
+                exit(0)                
             sp = logline.split(" ")
             progressStr.append("%s%s" % (sp[1], sp[4]))
             fillExtendedBattleProgress()
@@ -441,16 +461,20 @@ fragsSum2 = 0
 for pl in players2:
     fragsSum2 += pl.frags()
 
-if players1[0].teamname == totalScore[0][0]:
-   if fragsSum1 != totalScore[0][1]:
-        print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players1[0].teamname, totalScore[0][1])
-   if fragsSum2 != totalScore[1][1]:
-        print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players2[0].teamname, totalScore[1][1])
+if len(totalScore) != 0:
+    if players1[0].teamname == totalScore[0][0]:
+       if fragsSum1 != totalScore[0][1]:
+            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players1[0].teamname, totalScore[0][1])
+       if fragsSum2 != totalScore[1][1]:
+            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players2[0].teamname, totalScore[1][1])
+    else:
+       if fragsSum2 != totalScore[0][1]:
+            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players1[0].teamname, totalScore[0][1])
+       if fragsSum1 != totalScore[1][1]:
+            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players2[0].teamname, totalScore[1][1])
 else:
-   if fragsSum2 != totalScore[0][1]:
-        print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players1[0].teamname, totalScore[0][1])
-   if fragsSum1 != totalScore[1][1]:
-        print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players2[0].teamname, totalScore[1][1])
+    totalScore.append( [players1[0].teamname, fragsSum1] )
+    totalScore.append( [players2[0].teamname, fragsSum2] )
     
 
 # fill team kills/deaths/teamkills/suicides
@@ -502,11 +526,11 @@ players1ByFrags = sorted(players1, key=methodcaller("frags"), reverse=True)
 for pl in players1ByFrags:
     if s1 == "":
         s1 = "[%s]:\n" % (pl.teamname)
-    s1 +=  "{0:10s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats())
+    s1 +=  "{0:20s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats())
 print s1
 
 for pl in players1ByFrags:
-    print "{0:10s}  {1:s}".format(pl.name, pl.getFormatedPowerUpsStats())
+    print "{0:20s}  {1:s}".format(pl.name, pl.getFormatedPowerUpsStats())
 print
 
 s2 = ""
@@ -514,11 +538,11 @@ players2ByFrags = sorted(players2, key=methodcaller("frags"), reverse=True)
 for pl in players2ByFrags:
     if s2 == "":
         s2 = "[%s]:\n" % (pl.teamname)
-    s2 +=  "{0:10s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats())
+    s2 +=  "{0:20s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats())
 print s2
 
 for pl in players2ByFrags:
-    print "{0:10s}  {1:s}".format(pl.name, pl.getFormatedPowerUpsStats())
+    print "{0:20s}  {1:s}".format(pl.name, pl.getFormatedPowerUpsStats())
 print
 
 i = 1
@@ -542,8 +566,8 @@ for p in extendedProgressStr:
     i += 1
 
 sortedByDelta = sorted(allplayers, key=methodcaller("calcDelta"))
-print
-print "next captains: %s(%d) and %s(%d)" % (sortedByDelta[0].name, sortedByDelta[0].calcDelta(), sortedByDelta[1].name, sortedByDelta[1].calcDelta())
+# print
+# print "next captains: %s(%d) and %s(%d)" % (sortedByDelta[0].name, sortedByDelta[0].calcDelta(), sortedByDelta[1].name, sortedByDelta[1].calcDelta())
 
 print 
 print "==============================================="
@@ -625,8 +649,8 @@ print
 print "Players weapons:"
 weaponsCheck = ezstatslib.getWeaponsCheck(allplayers)
 for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
-    print "{0:15s} kills  {1:3d} :: {2:100s}".format("[%s]%s" % (pl.teamname, pl.name), pl.kills,  pl.getWeaponsKills(pl.kills,   weaponsCheck))
-    print "{0:15s} deaths {1:3d} :: {2:100s}".format("",                                pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
+    print "{0:23s} kills  {1:3d} :: {2:100s}".format("[%s]%s" % (pl.teamname, pl.name), pl.kills,  pl.getWeaponsKills(pl.kills,   weaponsCheck))
+    print "{0:23s} deaths {1:3d} :: {2:100s}".format("",                                pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
     print
 
 if len(disconnectedplayers) != 0:
@@ -641,11 +665,11 @@ for pl in sorted(players1, key=attrgetter("kills"), reverse=True):
     resStr = ""
     for el in sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
-    print "{0:10s} {1:3d} :: {2:100s}".format(pl.name, pl.kills, resStr)
+    print "{0:20s} {1:3d} :: {2:100s}".format(pl.name, pl.kills, resStr)
 print
 print "[%s]" % (team2.name)
 for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
     resStr = ""
     for el in sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
-    print "{0:10s} {1:3d} :: {2:100s}".format(pl.name, pl.kills, resStr)
+    print "{0:20s} {1:3d} :: {2:100s}".format(pl.name, pl.kills, resStr)
