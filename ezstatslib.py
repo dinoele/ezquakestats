@@ -1866,11 +1866,13 @@ class Player:
             self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
             
         # PERSONAL_STALKER
-        sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
-        if sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
-            self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
+        if len(matchProgress) != 0 and len(matchProgress[0]) > 2: # not duel match
+            sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
+            if sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
+                self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
             
         # SELF_DESTRUCTOR
+        sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
         if sortedHeadToHead[0][0] == self.name:
             self.achievements.append( Achievement(AchievementType.SELF_DESTRUCTOR, "suicided %d times which more than killed any other player" % (self.suicides)) )
         
