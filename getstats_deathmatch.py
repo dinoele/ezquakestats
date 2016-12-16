@@ -91,8 +91,8 @@ while not ezstatslib.isMatchStart(line):
     line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 
 matchMinutesCnt = 1
-line = f.readline()
-readLinesNum += 1
+# line = f.readline()
+# readLinesNum += 1
 while not ezstatslib.isMatchEnd(line):
     if line != "":
         matchlog[ matchMinutesCnt - 1 ].append(line)
@@ -145,7 +145,7 @@ line = f.readline()  # Frags (rank) . efficiency
 line = f.readline()
 readLinesNum += 3
 
-while not "top scorers" in line:
+while not "top scorers" in line and not "Running tour.qws" in line:
     if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
         line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
     
@@ -176,6 +176,11 @@ while not "top scorers" in line:
 
     line = f.readline() # Armr&mhs: ga:0 ya:4 ra:1 mh:1
     readLinesNum += 1
+    
+    if not "Armr&mhs" in line:
+        line = f.readline()
+        readLinesNum += 1
+    
     pl.ga = int(line.split("ga:")[1].split(" ")[0])
     pl.ya = int(line.split("ya:")[1].split(" ")[0])
     pl.ra = int(line.split("ra:")[1].split(" ")[0])
@@ -189,7 +194,9 @@ while not "top scorers" in line:
 
     line = f.readline() # Streaks: Frags:3 QuadRun:0
     readLinesNum += 1
-    pl.streaks = int(line.split("Streaks: Frags:")[1].split(" ")[0])
+    
+    if "Streaks" in line:
+        pl.streaks = int(line.split("Streaks: Frags:")[1].split(" ")[0])
 
     line = f.readline() # SpawnFrags: 4
     readLinesNum += 1
@@ -198,7 +205,7 @@ while not "top scorers" in line:
     allplayers.append(pl)
 
     while not "#" in line:
-        if "top scorers" in line:
+        if "top scorers" in line or "Running tour.qws" in line:
             break;
         else:
             #line = f.readline()
