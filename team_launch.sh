@@ -11,7 +11,7 @@ if [ $num -gt 0 ]
         let triesCnt=0
         while [ $flag -eq 1 ]
         do
-            wget <link_to_team_ezquake_log> -O - | tac | grep begun -m $num -A 1 -B 10000 | tac | python getstats.py --net-log
+            wget <link_to_team_ezquake_log> -O - | tac | grep begun -m $num -A 5 -B 10000 | tac | python getstats.py --net-log
             if [[ $? -eq 0 || $? -eq 2 || $triesCnt -gt 100 ]]
                 then
                     let flag=0
