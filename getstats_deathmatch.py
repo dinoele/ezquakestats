@@ -54,6 +54,7 @@ else:
     f = sys.stdin
 
 matchdate = ""
+mapName = ""
 matchlog = [[]]
 isStart = False
 isEnd = False
@@ -76,6 +77,10 @@ line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
 #matchdate = line.split("matchdate: ")[1].split("\n")[0]
 
 while not ezstatslib.isMatchStart(line):
+    if ".mvd" in line:
+        mapName = line.split("]")[0]
+        mapName += "]"
+    
     if "telefrag" in line and not "teammate" in line: # telefrags before match start
         matchlog[0].append(line)
 
@@ -145,7 +150,7 @@ line = f.readline()  # Frags (rank) . efficiency
 line = f.readline()
 readLinesNum += 3
 
-while not "top scorers" in line and not "Running tour.qws" in line:
+while not "top scorers" in line and not "Running" in line:
     if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
         line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
     
@@ -205,7 +210,7 @@ while not "top scorers" in line and not "Running tour.qws" in line:
     allplayers.append(pl)
 
     while not "#" in line:
-        if "top scorers" in line or "Running tour.qws" in line:
+        if "top scorers" in line or "Running" in line:
             break;
         else:
             #line = f.readline()
@@ -222,7 +227,7 @@ for pl1 in dropedplayers:
         pl1.initPowerUpsByMinutes(matchMinutesCnt)
         allplayers.append(pl1);
 
-mapName = ""
+
 # map name
 #while not "top scorers" in line:
 #    line = f.readline()
@@ -230,7 +235,8 @@ mapName = ""
 if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
     line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
 
-mapName = line.split(" ")[0]
+if mapName == "":
+    mapName = line.split(" ")[0]
 
 f.close()
 
