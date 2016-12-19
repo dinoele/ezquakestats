@@ -1574,36 +1574,9 @@ else:  # not os.path.exists(filePathFull):
     outf.close()
     isFileNew = True
     
-    #newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
-    #
-    # # edit contents file
-    # logsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
-    # if not os.path.exists(logsIndexPath):
-    #     logsf = open(logsIndexPath, "w")
-    #     logsf.write(ezstatslib.HTML_HEADER_STR)
-    #     logsf.write("<a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "\n")
-    #     logsf.write(ezstatslib.HTML_FOOTER_STR)
-    #     logsf.close()
-    # else:
-    #     logsf = open(logsIndexPath, "r")
-    #     tt = logsf.readlines()        
-    #     logsf.close()
-    #     
-    #     logsf = open(logsIndexPath, "w")
-    #             
-    #     tres = ""
-    #     for t in tt:
-    #         if newGifTag in t:
-    #             t = t.replace(newGifTag, "")
-    #         if "<pre>" in t:
-    #             t = t.replace("<pre>", "<pre><a href=\"" + filePath + "\">" + filePath + "</a>" + newGifTag + "<br>\n")
-    #         tres += t
-    #         
-    #     logsf.write(tres)
-    #     logsf.close()
-    
-def htmlLink(fname, gifPath = "", linkText = ""):
-    return "<a href=\"%s\">%s</a>%s<br>" % (fname, fname if linkText == "" else linkText, gifPath)
+       
+def htmlLink(fname, gifPath = "", linkText = "", isBreak = True):
+    return "<a href=\"%s\">%s</a>%s%s" % (fname, fname if linkText == "" else linkText, gifPath, "<br>" if isBreak else "")
 
 def checkNew(fileNew, workFilePath, pathForCheck):
     isNew = (fileNew and workFilePath == pathForCheck)
@@ -1648,7 +1621,17 @@ otherFiles = []
 
 for fname in files:
     if "html" in fname and len(fname) != 0 and fname[0] == "N":
-        otherFiles.append(fname)    
+        logHeadStr = subprocess.check_output(["head", "%s" % ("../" + fname)])
+        if "GAME_PLAYERS" in logHeadStr:
+            playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
+                
+        plays = []
+        if playsStr != "":
+            playsStr = playsStr.replace("\n","")
+            plays = playsStr.split(" ")
+        
+        otherFiles.append([fname, plays])
+        
     
     elif "html" in fname and ("PL" in fname or "FD" in fname or "SD" in fname):
                 
@@ -1706,7 +1689,13 @@ def generateHtmlList(playersNames):
     if len(playersNames) == 0:
         return ""
     
-    htmlList = "<select style=\"font-family: Helvetica; font-size: 8pt;\" name=\"select\" size=\"%d\" multiple=\"multiple\" title=\"OLOLOLO\">\n" % (len(playersNames))
+    fontSize = 8
+    styleHeightStr = ""
+    # workaround for web kit bug with select tag size - size less than 4 is ignored
+    if len(playersNames) < 4:
+        styleHeightStr = "; height:%dpt" % (fontSize*len(playersNames) + 6)    
+    
+    htmlList = "<select style=\"font-family: Helvetica; font-size: %dpt%s\" name=\"select\" size=\"%d\" multiple=\"multiple\" title=\"OLOLOLO\">\n" % (fontSize, styleHeightStr, len(playersNames))
     i = 0
     for pl in playersNames:
         htmlList += "<option>%s</option>\n" % (pl)
@@ -1945,7 +1934,8 @@ logsf.write("<hr>")
 
 logsf.write("<h1>Duels</h1>")
 for fileName in otherFiles:
-    logsf.write(htmlLink(fileName))
+    logsf.write( htmlLink(fileName[0], isBreak = False) )
+    logsf.write( generateHtmlList(fileName[1]) )
 logsf.write("<hr>")
 
 logsf.write(str(filesTable))
