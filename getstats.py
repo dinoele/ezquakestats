@@ -364,7 +364,7 @@ for logline in matchlog:
             continue
         else:
             if not "leads" in logline:
-                print "ERROR: progress"
+                # print "ERROR: progress"
                 exit(0)                
             sp = logline.split(" ")
             progressStr.append("%s%s" % (sp[1], sp[4]))
@@ -380,7 +380,7 @@ for logline in matchlog:
                 isFound = True
                 break;
         if not isFound:
-            print "ERROR: count teamkills"
+            # print "ERROR: count teamkills"
             exit(0)
 
         continue
@@ -405,7 +405,7 @@ for logline in matchlog:
             fillH2H(who,whom)
 
         if not isFoundWho or not isFoundWhom:
-            print "ERROR: count telefrag", who, "-", whom, ":", logline
+            # print "ERROR: count telefrag", who, "-", whom, ":", logline
             exit(0)
 
         continue
@@ -419,7 +419,7 @@ for logline in matchlog:
                 isFound = True
                 break;
         if not isFound:
-            print "ERROR: count suicides"
+            # print "ERROR: count suicides"
             exit(0)
 
         continue
@@ -427,7 +427,7 @@ for logline in matchlog:
     cres,who,whom,weap = ezstatslib.commonDetection(logline)
     if cres:
         if not weap in ezstatslib.possibleWeapons:
-            print "ERROR: unknown weapon:", weap
+            # print "ERROR: unknown weapon:", weap
             exit(0)
 
         isFoundWho = False
@@ -446,12 +446,12 @@ for logline in matchlog:
         fillH2H(who,whom)
 
         if not isFoundWho or not isFoundWhom:
-            print "ERROR: count common", who, "-", whom, ":", logline
+            # print "ERROR: count common", who, "-", whom, ":", logline
             exit(0)
 
         continue
 
-print
+
 # validate score
 fragsSum1 = 0
 for pl in players1:
@@ -464,14 +464,18 @@ for pl in players2:
 if len(totalScore) != 0:
     if players1[0].teamname == totalScore[0][0]:
        if fragsSum1 != totalScore[0][1]:
-            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players1[0].teamname, totalScore[0][1])
+            # print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players1[0].teamname, totalScore[0][1])
+            pass
        if fragsSum2 != totalScore[1][1]:
-            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players2[0].teamname, totalScore[1][1])
+            # print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players2[0].teamname, totalScore[1][1])
+            pass
     else:
        if fragsSum2 != totalScore[0][1]:
-            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players1[0].teamname, totalScore[0][1])
+            # print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum2, players1[0].teamname, totalScore[0][1])
+            pass
        if fragsSum1 != totalScore[1][1]:
-            print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players2[0].teamname, totalScore[1][1])
+            # print "WARNING: frags sum(%d) for team [%s] is NOT equal to score(%d)" % (fragsSum1, players2[0].teamname, totalScore[1][1])
+            pass
 else:
     totalScore.append( [players1[0].teamname, fragsSum1] )
     totalScore.append( [players2[0].teamname, fragsSum2] )
@@ -490,16 +494,18 @@ for pl in players2:
     team2.teamkills += pl.teamkills
     team2.suicides += pl.suicides
 
-print "teammateTelefrags:", teammateTelefrags
+# TODO add teammateTelefrags to team score
+# print "teammateTelefrags:", teammateTelefrags
 
-# output
-print
-print "=================="
-print "matchdate:", matchdate
-print "map:", mapName
-print
+# generate output string
+resultString = ""
 
-print "teams:"
+resultString += "==================\n"
+resultString += "matchdate:" + matchdate + "\n"
+resultString += "map:" + mapName + "\n"
+resultString += "\n"
+
+resultString += "teams:\n"
 
 s1 = ""
 for pl in players1:
@@ -507,7 +513,7 @@ for pl in players1:
     if s1 == "":
         s1 = "[%s]: " % (pl.teamname)
     s1 += "%s%s" % (sign, pl.name)
-print s1
+resultString += s1 + "\n"
 
 s2 = ""
 for pl in players2:
@@ -515,11 +521,11 @@ for pl in players2:
     if s2 == "":
         s2 = "[%s]: " % (pl.teamname)
     s2 += "%s%s" % (sign, pl.name)
-print s2
+resultString += s2 + "\n"
 
-print
-print "%s[%d] x %s[%d]" % (totalScore[0][0], totalScore[0][1], totalScore[1][0], totalScore[1][1])
-print
+resultString += "\n"
+resultString += "%s[%d] x %s[%d]\n" % (totalScore[0][0], totalScore[0][1], totalScore[1][0], totalScore[1][1])
+resultString += "\n"
 
 s1 = ""
 players1ByFrags = sorted(players1, key=methodcaller("frags"), reverse=True)
@@ -527,11 +533,12 @@ for pl in players1ByFrags:
     if s1 == "":
         s1 = "[%s]:\n" % (pl.teamname)
     s1 +=  "{0:20s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats())
-print s1
+resultString += s1
+resultString += "\n"
 
 for pl in players1ByFrags:
-    print "{0:20s}  {1:s}".format(pl.name, pl.getFormatedPowerUpsStats())
-print
+    resultString += "{0:20s}  {1:s}\n".format(pl.name, pl.getFormatedPowerUpsStats())
+resultString += "\n"
 
 s2 = ""
 players2ByFrags = sorted(players2, key=methodcaller("frags"), reverse=True)
@@ -539,137 +546,180 @@ for pl in players2ByFrags:
     if s2 == "":
         s2 = "[%s]:\n" % (pl.teamname)
     s2 +=  "{0:20s} {1:3d}    ({2:s})\n".format(pl.name, pl.calcDelta(), pl.getFormatedStats())
-print s2
+resultString += s2
+resultString += "\n"
 
 for pl in players2ByFrags:
-    print "{0:20s}  {1:s}".format(pl.name, pl.getFormatedPowerUpsStats())
-print
+    resultString += "{0:20s}  {1:s}\n".format(pl.name, pl.getFormatedPowerUpsStats())
+resultString += "\n"
 
 i = 1
-print "battle progress:"
+resultString += "battle progress:\n"
 for p in progressStr:
-    print "%d:%s %s" % (i, "" if i >= 10 else " ",  p)
+    resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
     i += 1
 
 if totalScore[0][1] > totalScore[1][1]:
-    print "%d: [%s]%d" % (i, totalScore[0][0], (totalScore[0][1] - totalScore[1][1]))
+    resultString += "%d: [%s]%d\n" % (i, totalScore[0][0], (totalScore[0][1] - totalScore[1][1]))
 else:
-    print "%d: [%s]%d" % (i, totalScore[1][0], (totalScore[1][1] - totalScore[0][1]))
+    resultString += "%d: [%s]%d\n" % (i, totalScore[1][0], (totalScore[1][1] - totalScore[0][1]))
 
 fillExtendedBattleProgress()
 # extended battle progress
 i = 1
-print
-print "extended battle progress:"
+resultString += "\n"
+resultString += "extended battle progress:\n"
 for p in extendedProgressStr:
-    print "%d:%s %s" % (i, "" if i >= 10 else " ",  p)
+    resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
     i += 1
 
 sortedByDelta = sorted(allplayers, key=methodcaller("calcDelta"))
 # print
 # print "next captains: %s(%d) and %s(%d)" % (sortedByDelta[0].name, sortedByDelta[0].calcDelta(), sortedByDelta[1].name, sortedByDelta[1].calcDelta())
 
-print 
-print "==============================================="
+resultString += "\n" 
+resultString += "===============================================\n"
 
 # team stats output
-print
-print "Team stats:"
-print "[%s]" % (team1.name)
-print "GreenArm:   ", "{0:3d}".format(team1.ga), "  [", ezstatslib.sortPlayersBy(players1, "ga"), "]"
-print "YellowArm:  ", "{0:3d}".format(team1.ya), "  [", ezstatslib.sortPlayersBy(players1, "ya"), "]"
-print "RedArm:     ", "{0:3d}".format(team1.ra), "  [", ezstatslib.sortPlayersBy(players1, "ra"), "]"
-print "MegaHealth: ", "{0:3d}".format(team1.mh), "  [", ezstatslib.sortPlayersBy(players1, "mh"), "]"
-print
-print "TakenDam: ", "{0:5d}".format(team1.tkn), "  [", ezstatslib.sortPlayersBy(players1, "tkn"), "]"
-print "GivenDam: ", "{0:5d}".format(team1.gvn), "  [", ezstatslib.sortPlayersBy(players1, "gvn"), "]"
-print "TeamDam:  ", "{0:5d}".format(team1.tm) , "  [", ezstatslib.sortPlayersBy(players1, "tm"), "]"
-print "DeltaDam: ", "{0:5d}".format(team1.damageDelta()), "  [", ezstatslib.sortPlayersBy(players1,"damageDelta", fieldType="method"), "]"
-print
-print "Kills:    ", "{0:3d}".format(team1.kills),    "  [", ezstatslib.sortPlayersBy(players1, "kills"), "]"
-print "Deaths:   ", "{0:3d}".format(team1.deaths),   "  [", ezstatslib.sortPlayersBy(players1, "deaths"), "]"
-print "Teamkills:", "{0:3d}".format(team1.teamkills),"  [", ezstatslib.sortPlayersBy(players1, "teamkills"), "]"
-print "Suicides: ", "{0:3d}".format(team1.suicides), "  [", ezstatslib.sortPlayersBy(players1, "suicides"), "]"
-print
-print "Streaks:    ", " [", ezstatslib.sortPlayersBy(players1,"streaks"), "]"
-print "SpawnFrags: ", " [", ezstatslib.sortPlayersBy(players1,"spawnfrags"), "]"
+resultString += "\n"
+resultString += "Team stats:\n"
+resultString += "[%s]\n" % (team1.name)
+resultString += "GreenArm:   " + "{0:3d}".format(team1.ga) + "  [" +  ezstatslib.sortPlayersBy(players1, "ga") + "]\n"
+resultString += "YellowArm:  " + "{0:3d}".format(team1.ya) + "  [" +  ezstatslib.sortPlayersBy(players1, "ya") + "]\n"
+resultString += "RedArm:     " + "{0:3d}".format(team1.ra) + "  [" +  ezstatslib.sortPlayersBy(players1, "ra") + "]\n"
+resultString += "MegaHealth: " + "{0:3d}".format(team1.mh) + "  [" +  ezstatslib.sortPlayersBy(players1, "mh") + "]\n"
+resultString += "\n"
+resultString += "TakenDam: " + "{0:5d}".format(team1.tkn) + "  [" +  ezstatslib.sortPlayersBy(players1, "tkn") + "]\n"
+resultString += "GivenDam: " + "{0:5d}".format(team1.gvn) + "  [" +  ezstatslib.sortPlayersBy(players1, "gvn") + "]\n"
+resultString += "TeamDam:  " + "{0:5d}".format(team1.tm)  + "  [" +  ezstatslib.sortPlayersBy(players1, "tm") + "]\n"
+resultString += "DeltaDam: " + "{0:5d}".format(team1.damageDelta()) + "  [" +  ezstatslib.sortPlayersBy(players1,"damageDelta", fieldType="method") + "]\n"
+resultString += "\n"
+resultString += "Kills:    " + "{0:3d}".format(team1.kills) +   "  [" +  ezstatslib.sortPlayersBy(players1, "kills") + "]\n"
+resultString += "Deaths:   " + "{0:3d}".format(team1.deaths) +  "  [" +  ezstatslib.sortPlayersBy(players1, "deaths") + "]\n"
+resultString += "Teamkills:" + "{0:3d}".format(team1.teamkills)+"  [" +  ezstatslib.sortPlayersBy(players1, "teamkills") + "]\n"
+resultString += "Suicides: " + "{0:3d}".format(team1.suicides) + "  [" +  ezstatslib.sortPlayersBy(players1, "suicides") + "]\n"
+resultString += "\n"
+resultString += "Streaks:    " + " [" + ezstatslib.sortPlayersBy(players1,"streaks") + "]\n"
+resultString += "SpawnFrags: " + " [" + ezstatslib.sortPlayersBy(players1,"spawnfrags") + "]\n"
 
-print
-print "[%s]" % (team2.name)
-print "GreenArm:   ", "{0:3d}".format(team2.ga), "  [", ezstatslib.sortPlayersBy(players2, "ga"), "]"
-print "YellowArm:  ", "{0:3d}".format(team2.ya), "  [", ezstatslib.sortPlayersBy(players2, "ya"), "]"
-print "RedArm:     ", "{0:3d}".format(team2.ra), "  [", ezstatslib.sortPlayersBy(players2, "ra"), "]"
-print "MegaHealth: ", "{0:3d}".format(team2.mh), "  [", ezstatslib.sortPlayersBy(players2, "mh"), "]"
-print
-print "TakenDam: ", "{0:5d}".format(team2.tkn), "  [", ezstatslib.sortPlayersBy(players2, "tkn"), "]"
-print "GivenDam: ", "{0:5d}".format(team2.gvn), "  [", ezstatslib.sortPlayersBy(players2, "gvn"), "]"
-print "TeamDam:  ", "{0:5d}".format(team2.tm) , "  [", ezstatslib.sortPlayersBy(players2, "tm"), "]"
-print "DeltaDam: ", "{0:5d}".format(team2.damageDelta()), "  [", ezstatslib.sortPlayersBy(players2,"damageDelta", fieldType="method"), "]"
-print
-print "Kills:    ", "{0:3d}".format(team2.kills),    "  [", ezstatslib.sortPlayersBy(players2, "kills"), "]"
-print "Deaths:   ", "{0:3d}".format(team2.deaths),   "  [", ezstatslib.sortPlayersBy(players2, "deaths"), "]"
-print "Teamkills:", "{0:3d}".format(team2.teamkills),"  [", ezstatslib.sortPlayersBy(players2, "teamkills"), "]"
-print "Suicides: ", "{0:3d}".format(team2.suicides), "  [", ezstatslib.sortPlayersBy(players2, "suicides"), "]"
-print
-print "Streaks:    ", " [", ezstatslib.sortPlayersBy(players2,"streaks"), "]"
-print "SpawnFrags: ", " [", ezstatslib.sortPlayersBy(players2,"spawnfrags"), "]"
+resultString += "\n"
+resultString += "[%s]\n" % (team2.name)
+resultString += "GreenArm:   " + "{0:3d}".format(team2.ga) + "  [" +  ezstatslib.sortPlayersBy(players2, "ga") + "]\n"
+resultString += "YellowArm:  " + "{0:3d}".format(team2.ya) + "  [" +  ezstatslib.sortPlayersBy(players2, "ya") + "]\n"
+resultString += "RedArm:     " + "{0:3d}".format(team2.ra) + "  [" +  ezstatslib.sortPlayersBy(players2, "ra") + "]\n"
+resultString += "MegaHealth: " + "{0:3d}".format(team2.mh) + "  [" +  ezstatslib.sortPlayersBy(players2, "mh") + "]\n"
+resultString += "\n"
+resultString += "TakenDam: " + "{0:5d}".format(team2.tkn) + "  [" +  ezstatslib.sortPlayersBy(players2, "tkn") + "]\n"
+resultString += "GivenDam: " + "{0:5d}".format(team2.gvn) + "  [" +  ezstatslib.sortPlayersBy(players2, "gvn") + "]\n"
+resultString += "TeamDam:  " + "{0:5d}".format(team2.tm)  + "  [" +  ezstatslib.sortPlayersBy(players2, "tm") + "]\n"
+resultString += "DeltaDam: " + "{0:5d}".format(team2.damageDelta()) + "  [" +  ezstatslib.sortPlayersBy(players2,"damageDelta", fieldType="method") + "]\n"
+resultString += "\n"
+resultString += "Kills:    " + "{0:3d}".format(team2.kills) +   "  [" +  ezstatslib.sortPlayersBy(players2, "kills") + "]\n"
+resultString += "Deaths:   " + "{0:3d}".format(team2.deaths) +  "  [" +  ezstatslib.sortPlayersBy(players2, "deaths") + "]\n"
+resultString += "Teamkills:" + "{0:3d}".format(team2.teamkills)+"  [" +  ezstatslib.sortPlayersBy(players2, "teamkills") + "]\n"
+resultString += "Suicides: " + "{0:3d}".format(team2.suicides) + "  [" +  ezstatslib.sortPlayersBy(players2, "suicides") + "]\n"
+resultString += "\n"
+resultString += "Streaks:    " + " [" + ezstatslib.sortPlayersBy(players2,"streaks") + "]\n"
+resultString += "SpawnFrags: " + " [" + ezstatslib.sortPlayersBy(players2,"spawnfrags") + "]\n"
 
 # all players
-print 
-print 
-print "All players:"
-print "GreenArm:   ", " [", ezstatslib.sortPlayersBy(allplayers, "ga"), "]"
-print "YellowArm:  ", " [", ezstatslib.sortPlayersBy(allplayers, "ya"), "]"
-print "RedArm:     ", " [", ezstatslib.sortPlayersBy(allplayers, "ra"), "]"
-print "MegaHealth: ", " [", ezstatslib.sortPlayersBy(allplayers, "mh"), "]"
-print
-print "TakenDam:   ", " [", ezstatslib.sortPlayersBy(allplayers, "tkn"), "]"
-print "GivenDam:   ", " [", ezstatslib.sortPlayersBy(allplayers, "gvn"), "]"
-print "TeamDam:    ", " [", ezstatslib.sortPlayersBy(allplayers, "tm"), "]"
-print "DeltaDam:   ", " [", ezstatslib.sortPlayersBy(allplayers,"damageDelta", fieldType="method"), "]"
-print
-print "Kills:      ", " [", ezstatslib.sortPlayersBy(allplayers, "kills"), "]"
-print "Deaths:     ", " [", ezstatslib.sortPlayersBy(allplayers, "deaths"), "]"
-print "Teamkills:  ", " [", ezstatslib.sortPlayersBy(allplayers, "teamkills"), "]"
-print "Suicides:   ", " [", ezstatslib.sortPlayersBy(allplayers, "suicides"), "]"
-print
-print "Streaks:    ", " [", ezstatslib.sortPlayersBy(allplayers,"streaks"), "]"
-print "SpawnFrags: ", " [", ezstatslib.sortPlayersBy(allplayers,"spawnfrags"), "]"
-print
-print "RL skill DH:", " [", ezstatslib.sortPlayersBy(allplayers, "rlskill_dh"), "]"
-print "RL skill AD:", " [", ezstatslib.sortPlayersBy(allplayers, "rlskill_ad"), "]"
-print 
-print "Weapons:"
-print "RL:         ", " [", ezstatslib.sortPlayersBy(allplayers, "w_rl", units="%"), "]"
-print "LG:         ", " [", ezstatslib.sortPlayersBy(allplayers, "w_lg", units="%"), "]"
-print "GL:         ", " [", ezstatslib.sortPlayersBy(allplayers, "w_gl", units="%"), "]"
-print "SG:         ", " [", ezstatslib.sortPlayersBy(allplayers, "w_sg", units="%"), "]"
-print "SSG:        ", " [", ezstatslib.sortPlayersBy(allplayers, "w_ssg", units="%"), "]"
-print
-print "Players weapons:"
+resultString += "\n"
+resultString += "All players:\n"
+resultString += "GreenArm:   " + " [" +  ezstatslib.sortPlayersBy(allplayers, "ga") + "]\n"
+resultString += "YellowArm:  " + " [" +  ezstatslib.sortPlayersBy(allplayers, "ya") + "]\n"
+resultString += "RedArm:     " + " [" +  ezstatslib.sortPlayersBy(allplayers, "ra") + "]\n"
+resultString += "MegaHealth: " + " [" +  ezstatslib.sortPlayersBy(allplayers, "mh") + "]\n"
+resultString += "\n"
+resultString += "TakenDam:   " + " [" +  ezstatslib.sortPlayersBy(allplayers, "tkn") + "]\n"
+resultString += "GivenDam:   " + " [" +  ezstatslib.sortPlayersBy(allplayers, "gvn") + "]\n"
+resultString += "TeamDam:    " + " [" +  ezstatslib.sortPlayersBy(allplayers, "tm") + "]\n"
+resultString += "DeltaDam:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"damageDelta", fieldType="method") + "]\n"
+resultString += "\n"
+resultString += "Kills:      " + " [" +  ezstatslib.sortPlayersBy(allplayers, "kills") + "]\n"
+resultString += "Deaths:     " + " [" +  ezstatslib.sortPlayersBy(allplayers, "deaths") + "]\n"
+resultString += "Teamkills:  " + " [" +  ezstatslib.sortPlayersBy(allplayers, "teamkills") + "]\n"
+resultString += "Suicides:   " + " [" +  ezstatslib.sortPlayersBy(allplayers, "suicides") + "]\n"
+resultString += "\n"
+resultString += "Streaks:    " + " [" +  ezstatslib.sortPlayersBy(allplayers,"streaks") + "]\n"
+resultString += "SpawnFrags: " + " [" +  ezstatslib.sortPlayersBy(allplayers,"spawnfrags") + "]\n"
+resultString += "\n"
+resultString += "RL skill DH:" + " [" +  ezstatslib.sortPlayersBy(allplayers, "rlskill_dh") + "]\n"
+resultString += "RL skill AD:" + " [" +  ezstatslib.sortPlayersBy(allplayers, "rlskill_ad") + "]\n"
+resultString += "\n"
+resultString += "Weapons:\n"
+resultString += "RL:         " + " [" +  ezstatslib.sortPlayersBy(allplayers, "w_rl", units="%") + "]\n"
+resultString += "LG:         " + " [" +  ezstatslib.sortPlayersBy(allplayers, "w_lg", units="%") + "]\n"
+resultString += "GL:         " + " [" +  ezstatslib.sortPlayersBy(allplayers, "w_gl", units="%") + "]\n"
+resultString += "SG:         " + " [" +  ezstatslib.sortPlayersBy(allplayers, "w_sg", units="%") + "]\n"
+resultString += "SSG:        " + " [" +  ezstatslib.sortPlayersBy(allplayers, "w_ssg", units="%") + "]\n"
+resultString += "\n"
+
+resultString += "Players weapons:\n"
 weaponsCheck = ezstatslib.getWeaponsCheck(allplayers)
 for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
-    print "{0:23s} kills  {1:3d} :: {2:100s}".format("[%s]%s" % (pl.teamname, pl.name), pl.kills,  pl.getWeaponsKills(pl.kills,   weaponsCheck))
-    print "{0:23s} deaths {1:3d} :: {2:100s}".format("",                                pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
-    print
+    resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]%s" % (pl.teamname, pl.name), pl.kills,  pl.getWeaponsKills(pl.kills,   weaponsCheck))
+    resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                                pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
+    resultString += "\n"
 
 if len(disconnectedplayers) != 0:
-    print
-    print "Disconnected players:", disconnectedplayers
+    resultString += "\n"
+    resultString += "Disconnected players:" + disconnectedplayers + "\n"
 
 # H2H stats
-print
-print "Head-to-Head stats (who :: whom)"
-print "[%s]" % (team1.name)
+resultString += "\n"
+resultString += "Head-to-Head stats (who :: whom)\n"
+resultString += "[%s]\n" % (team1.name)
 for pl in sorted(players1, key=attrgetter("kills"), reverse=True):
     resStr = ""
     for el in sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
-    print "{0:20s} {1:3d} :: {2:100s}".format(pl.name, pl.kills, resStr)
-print
-print "[%s]" % (team2.name)
+    resultString += "{0:20s} {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, resStr)
+resultString += "\n"
+resultString += "[%s]\n" % (team2.name)
 for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
     resStr = ""
     for el in sorted(headToHead[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
-    print "{0:20s} {1:3d} :: {2:100s}".format(pl.name, pl.kills, resStr)
+    resultString += "{0:20s} {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, resStr)
+
+print resultString
+
+# formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
+# filePath     = mapName + "_" + formatedDateTime + ".html"
+# filePathFull = "../" + filePath
+# 
+# isFileNew = False
+# if os.path.exists(filePathFull):
+#     # temp file 
+#     tmpFilePathFull = "../" + filePath + ".tmp"
+#     if os.path.exists(tmpFilePathFull):        
+#         os.remove(tmpFilePathFull)
+#     
+#     tmpf = open(tmpFilePathFull, "w")
+#         
+#     tmpf.write(ezstatslib.HTML_HEADER_STR)
+#     tmpf.write(resultString)
+#     tmpf.write(ezstatslib.HTML_FOOTER_STR)
+#     
+#     tmpf.close()
+#     
+#     tmpinfo = os.stat(tmpFilePathFull)
+#     finfo   = os.stat(filePathFull)
+#     
+#     isSizesEqual = tmpinfo.st_size == finfo.st_size
+#     
+#     if isSizesEqual:
+#         os.remove(tmpFilePathFull)
+#     else:
+#         os.remove(filePathFull)
+#         os.rename(tmpFilePathFull, filePathFull)
+# 
+# else:  # not os.path.exists(filePathFull):
+#     outf = open(filePathFull, "w")
+#     
+#     outf.write(ezstatslib.HTML_HEADER_STR)
+#     outf.write(resultString)
+#     outf.write(ezstatslib.HTML_FOOTER_STR)
+#     
+#     outf.close()
+#     isFileNew = True
