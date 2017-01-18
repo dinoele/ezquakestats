@@ -684,42 +684,43 @@ for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
 
 print resultString
 
-# formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
-# filePath     = mapName + "_" + formatedDateTime + ".html"
-# filePathFull = "../" + filePath
-# 
-# isFileNew = False
-# if os.path.exists(filePathFull):
-#     # temp file 
-#     tmpFilePathFull = "../" + filePath + ".tmp"
-#     if os.path.exists(tmpFilePathFull):        
-#         os.remove(tmpFilePathFull)
-#     
-#     tmpf = open(tmpFilePathFull, "w")
-#         
-#     tmpf.write(ezstatslib.HTML_HEADER_STR)
-#     tmpf.write(resultString)
-#     tmpf.write(ezstatslib.HTML_FOOTER_STR)
-#     
-#     tmpf.close()
-#     
-#     tmpinfo = os.stat(tmpFilePathFull)
-#     finfo   = os.stat(filePathFull)
-#     
-#     isSizesEqual = tmpinfo.st_size == finfo.st_size
-#     
-#     if isSizesEqual:
-#         os.remove(tmpFilePathFull)
-#     else:
-#         os.remove(filePathFull)
-#         os.rename(tmpFilePathFull, filePathFull)
-# 
-# else:  # not os.path.exists(filePathFull):
-#     outf = open(filePathFull, "w")
-#     
-#     outf.write(ezstatslib.HTML_HEADER_STR)
-#     outf.write(resultString)
-#     outf.write(ezstatslib.HTML_FOOTER_STR)
-#     
-#     outf.close()
-#     isFileNew = True
+
+formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
+filePath     = "TEAM_" + mapName + "_" + formatedDateTime + ".html"
+filePathFull = "../" + filePath
+
+isFileNew = False
+if os.path.exists(filePathFull):
+    # temp file 
+    tmpFilePathFull = "../" + filePath + ".tmp"
+    if os.path.exists(tmpFilePathFull):        
+        os.remove(tmpFilePathFull)
+    
+    tmpf = open(tmpFilePathFull, "w")
+        
+    tmpf.write(ezstatslib.HTML_HEADER_STR)
+    tmpf.write(resultString)
+    tmpf.write(ezstatslib.HTML_FOOTER_STR)
+    
+    tmpf.close()
+    
+    tmpinfo = os.stat(tmpFilePathFull)
+    finfo   = os.stat(filePathFull)
+    
+    isSizesEqual = tmpinfo.st_size == finfo.st_size
+    
+    if isSizesEqual:
+        os.remove(tmpFilePathFull)
+    else:
+        os.remove(filePathFull)
+        os.rename(tmpFilePathFull, filePathFull)
+
+else:  # not os.path.exists(filePathFull):
+    outf = open(filePathFull, "w")
+    
+    outf.write(ezstatslib.HTML_HEADER_STR)
+    outf.write(resultString)
+    outf.write(ezstatslib.HTML_FOOTER_STR)
+    
+    outf.close()
+    isFileNew = True
