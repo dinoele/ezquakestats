@@ -724,3 +724,35 @@ else:  # not os.path.exists(filePathFull):
     
     outf.close()
     isFileNew = True
+
+# TODO move to lib
+def htmlLink(fname, gifPath = "", linkText = "", isBreak = True):
+    return "<a href=\"%s\">%s</a>%s%s" % (fname, fname if linkText == "" else linkText, gifPath, "<br>" if isBreak else "")
+
+# index file
+logsIndexPath    = "../" + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME
+tmpLogsIndexPath = "../" + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME + ".tmp"
+
+files = os.listdir("../")
+
+teamFiles = []
+
+for fname in files:
+    if "html" in fname and "TEAM" in fname:     
+        teamFiles.append(fname)
+        
+
+logsf = open(tmpLogsIndexPath, "w")
+logsf.write(ezstatslib.HTML_HEADER_STR)
+
+logsf.write("<h1>Team logs</h1>")
+for fileName in teamFiles:
+    logsf.write( htmlLink(fileName) )
+logsf.write(ezstatslib.HTML_FOOTER_STR)
+logsf.close()
+
+if os.path.exists(logsIndexPath):
+    os.remove(logsIndexPath)
+os.rename(tmpLogsIndexPath, logsIndexPath)
+
+print filePath

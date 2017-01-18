@@ -42,6 +42,7 @@ DEFAULT_PLAYER_NAME_MAX_LEN = 10
 
 READ_LINES_LIMIT = 10000
 LOGS_INDEX_FILE_NAME = "logs.html"
+TEAM_LOGS_INDEX_FILE_NAME = "teamlogs.html"
 LOGS_BY_MAP_FILE_NAME = "logs_by_maps.html"
 TOURNAMENT_TABLE_FILE_NAME = "ezquakestats/tournament_table.html"
 
