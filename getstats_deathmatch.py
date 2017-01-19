@@ -892,6 +892,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % (options.leagueName, mapName, matchdate)  # global values
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
+    pageHeaderStr += ezstatslib.HTML_HEADER_SCRIPT_GOOGLE_CHARTS_LOAD
     
     f.write(pageHeaderStr)
         
@@ -1352,6 +1353,9 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         rowLines += "]\n"        
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
+    
+    # tooltip style
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
                 
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle progress
@@ -1574,7 +1578,7 @@ else:  # not os.path.exists(filePathFull):
     outf.close()
     isFileNew = True
     
-       
+# TODO move to lib
 def htmlLink(fname, gifPath = "", linkText = "", isBreak = True):
     return "<a href=\"%s\">%s</a>%s%s" % (fname, fname if linkText == "" else linkText, gifPath, "<br>" if isBreak else "")
 

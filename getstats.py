@@ -69,6 +69,7 @@ parser = OptionParser(usage=usageString, version=versionString)
 
 parser.add_option("-f",        action="store",       dest="inputFile",      type="str",  metavar="LOG_FILE", help="")
 parser.add_option("--net-log", action="store_true",  dest="netLog",         default=False,                   help="")
+parser.add_option("--scripts", action="store_false",   dest="withScripts", default=True,   help="")
 
 (options, restargs) = parser.parse_args()
 
@@ -88,6 +89,7 @@ isStart = False
 isEnd = False
 
 teamNames = []
+matchProgressDict = []
 
 players1 = []
 players2 = []
@@ -360,6 +362,21 @@ for logline in matchlog:
 
     if isProgressLine: # Team [red] leads by 4 frags || tie
         isProgressLine = False
+        
+        # TODO replace with frags when teams stats are updated on each increment
+        progressLineDict = {}
+        
+        fr1 = 0
+        for pl in players1:
+            fr1 += pl.frags()
+        fr2 = 0
+        for pl in players2:
+            fr2 += pl.frags()        
+        
+        progressLineDict[team1.name] = fr1;  # team1.frags()
+        progressLineDict[team2.name] = fr2; # team2.frags()
+        matchProgressDict.append(progressLineDict)
+        
         if "tie" in logline:
             progressStr.append("tie")
             fillExtendedBattleProgress()
@@ -566,6 +583,11 @@ if totalScore[0][1] > totalScore[1][1]:
 else:
     resultString += "%d: [%s]%d\n" % (i, totalScore[1][0], (totalScore[1][1] - totalScore[0][1]))
 
+progressLineDict = {}
+progressLineDict[team1.name] = team1.frags();
+progressLineDict[team2.name] = team2.frags();
+matchProgressDict.append(progressLineDict)
+
 fillExtendedBattleProgress()
 # extended battle progress
 i = 1
@@ -574,6 +596,9 @@ resultString += "extended battle progress:\n"
 for p in extendedProgressStr:
     resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
     i += 1
+
+if options.withScripts:
+    resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
 
 sortedByDelta = sorted(allplayers, key=methodcaller("calcDelta"))
 # print
@@ -686,6 +711,59 @@ for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
 
 print resultString
 
+def writeHtmlWithScripts(f, teams, resStr):    
+    pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
+    pageTitle = "%s %s %s" % ("TEAM", mapName, matchdate)  # global values
+    pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
+    
+    f.write(pageHeaderStr)
+    
+    # highcharts battle progress -->
+    highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
+            
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
+    
+    hcDelim = "}, {\n"
+    rowLines = ""        
+    for tt in teams:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (tt.name)
+        # rowLines += "data: [0"
+        rowLines += "data: [[0,0]"
+        
+        # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        graphGranularity = 1.0
+        for minEl in matchProgressDict:
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[tt.name])  # TODO format, now is 0.500000
+            graphGranularity += 1.0
+            
+        rowLines += "]\n"        
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
+    
+    # tooltip style
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SIMPLE)
+                
+    f.write(highchartsBattleProgressFunctionStr)
+    # <-- highcharts battle progress
+    
+    f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
+    
+    # add divs
+    resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    
+    f.write(resStr)
+    
+    f.write(ezstatslib.HTML_PRE_CLOSE_TAG)
+    
+    # add script section for folding
+    f.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)  
+       
+    f.write(ezstatslib.HTML_FOOTER_NO_PRE)
+
 
 formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
 filePath     = "TEAM_" + mapName + "_" + formatedDateTime + ".html"
@@ -700,9 +778,12 @@ if os.path.exists(filePathFull):
     
     tmpf = open(tmpFilePathFull, "w")
         
-    tmpf.write(ezstatslib.HTML_HEADER_STR)
-    tmpf.write(resultString)
-    tmpf.write(ezstatslib.HTML_FOOTER_STR)
+    if not options.withScripts:
+        tmpf.write(ezstatslib.HTML_HEADER_STR)
+        tmpf.write(resultString)
+        tmpf.write(ezstatslib.HTML_FOOTER_STR)
+    else:
+        writeHtmlWithScripts(tmpf, [team1,team2], resultString)
     
     tmpf.close()
     
@@ -720,9 +801,12 @@ if os.path.exists(filePathFull):
 else:  # not os.path.exists(filePathFull):
     outf = open(filePathFull, "w")
     
-    outf.write(ezstatslib.HTML_HEADER_STR)
-    outf.write(resultString)
-    outf.write(ezstatslib.HTML_FOOTER_STR)
+    if not options.withScripts:
+        outf.write(ezstatslib.HTML_HEADER_STR)
+        outf.write(resultString)
+        outf.write(ezstatslib.HTML_FOOTER_STR)
+    else:    
+        writeHtmlWithScripts(outf, [team1,team2], resultString)
     
     outf.close()
     isFileNew = True

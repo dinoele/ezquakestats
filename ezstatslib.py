@@ -79,7 +79,9 @@ HTML_HEADER_SCRIPT_SECTION = \
     ".tooltip.bottom-right .tooltip-arrow{top:0;right:5px;border-width:0 5px 5px;border-bottom-color:#000}\n" \
     "</style>\n" \
     "<link href=\"http://seiyria.com/bootstrap-slider/css/bootstrap-slider.css\" rel=\"stylesheet\">\n"\
-    "<script type=\"text/javascript\">\n" \
+    "<script type=\"text/javascript\">\n"
+
+HTML_HEADER_SCRIPT_GOOGLE_CHARTS_LOAD = \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
     "google.charts.setOnLoadCallback(drawMainStatsBars);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsBars);\n" \
@@ -87,6 +89,7 @@ HTML_HEADER_SCRIPT_SECTION = \
     "google.charts.setOnLoadCallback(drawPowerUpsTimeline);\n" \
     "google.charts.setOnLoadCallback(drawPowerUpsTimelineVer2);\n"
     # "google.charts.setOnLoadCallback(drawStreakTimelines);\n"
+
 
 # POINT battle progress
 # "google.charts.setOnLoadCallback(drawBattleProgress);\n" \
@@ -945,18 +948,7 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "            }]\n" \
 "        },\n" \
 "        tooltip: {\n" \
-"            valueSuffix: '',\n" \
-"            shared: true,\n" \
-"            formatter: function() {\n" \
-"            var s = '<strong>'+ this.x +'</strong>';\n" \
-"            var sortedPoints = this.points.sort(function(a, b){\n" \
-"                  return ((a.y < b.y) ? 1 : ((a.y > b.y) ? -1 : 0));\n  " \
-"              });\n" \
-"            $.each(sortedPoints , function(i, point) {\n" \
-"            s += '<br/>'+ point.series.name +': '+ point.y;\n" \
-"            });\n" \
-"            return s;\n" \
-"            },\n" \
+"TOOLTIP_STYLE" \
 "        },\n" \
 "        legend: {\n" \
 "            layout: 'vertical',\n" \
@@ -969,6 +961,24 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "        }]\n" \
 "    });\n" \
 "});\n" \
+
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SIMPLE = \
+"             shared: false,\n " \
+"	          formatter: null,\n"
+
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED = \
+"            valueSuffix: '',\n" \
+"            shared: true,\n" \
+"            formatter: function() {\n" \
+"            var s = '<strong>'+ this.x +'</strong>';\n" \
+"            var sortedPoints = this.points.sort(function(a, b){\n" \
+"                  return ((a.y < b.y) ? 1 : ((a.y > b.y) ? -1 : 0));\n  " \
+"              });\n" \
+"            $.each(sortedPoints , function(i, point) {\n" \
+"            s += '<br/>'+ point.series.name +': '+ point.y;\n" \
+"            });\n" \
+"            return s;\n" \
+"            },\n"
 
 HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG = "<div id=\"highchart_battle_progress\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
 
