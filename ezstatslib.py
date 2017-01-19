@@ -2092,6 +2092,9 @@ class Team:
     
     def damageDelta(self):
         return (self.gvn - self.tkn)
+    
+    def frags(self):
+        return (self.kills - self.teamkills - self.suicides);
 
 
 class WeaponsCheckRes:
