@@ -14,6 +14,8 @@ import os.path
 import ezstatslib
 from ezstatslib import Team,Player
 
+import HTML
+
 # TODO use ezstatslib.readLineWithCheck
 # TODO error log
 # TODO skip lines separate log
@@ -737,17 +739,74 @@ files = os.listdir("../")
 
 teamFiles = []
 
+headerRow = HTML.TableRow(cells=[], header=True)
+attrs = {} # attribs    
+attrs['colspan'] = 2
+headerRow.cells.append( HTML.TableCell("Date", header=True) )
+headerRow.cells.append( HTML.TableCell("Time", header=True) )
+headerRow.cells.append( HTML.TableCell("Matches", attribs=attrs, header=True) )
+
+filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
+
+filesMap = {}  # key: dt, value: [[ [PL1,dt],[PL2,dt],..],[ [FD1,dt], [FD2,dt],.. ],[ [SD1,dt], [SD2,dt],.. ]]
+zerodt = datetime(1970,1,1)
+filesMap[zerodt] = []  # files with problems
+
 for fname in files:
     if "html" in fname and "TEAM" in fname:     
         teamFiles.append(fname)
         
+        dateRes = re.search("(?<=]_).*(?=.html)", fname)
+                
+        if dateRes:
+            try:
+                dt = datetime.strptime(dateRes.group(0), "%Y-%m-%d_%H_%M_%S")
+                dateStruct = datetime.strptime(dateRes.group(0).split("_")[0], "%Y-%m-%d")
+            
+                if not dateStruct in filesMap.keys(): # key exist
+                    filesMap[dateStruct] = []
+                    
+                fnamePair = [fname,dt]
+                    
+                filesMap[dateStruct].append(fnamePair)
+                                    
+            except Exception, ex:
+                filesMap[zerodt].append(fnamePair)                                
+                break;
+                
+        else: # date parse failed
+            filesMap[zerodt].append(fnamePair)
+
+sorted_filesMap = sorted(filesMap.items(), key=itemgetter(0), reverse=True)
+
+for el in sorted_filesMap:   
+    formattedDate = el[0]
+    if el[0] != zerodt:
+        formattedDate = el[0].strftime("%Y-%m-%d")
+    
+    pls = el[1] # array, val: [str,dt]
+    
+    
+    pls = sorted(pls, key=lambda x: x[1], reverse=True)
+        
+    for gg in pls:
+        formattedTime = gg[1].strftime("%H-%M-%S")        
+        
+        tableRow = HTML.TableRow(cells=[formattedDate,formattedTime])        
+        tableRow.cells.append( HTML.TableCell( htmlLink(gg[0]) ) )
+        
+        filesTable.rows.append(tableRow)
+
 
 logsf = open(tmpLogsIndexPath, "w")
 logsf.write(ezstatslib.HTML_HEADER_STR)
 
 logsf.write("<h1>Team logs</h1>")
-for fileName in teamFiles:
-    logsf.write( htmlLink(fileName) )
+# for fileName in teamFiles:
+#     logsf.write( htmlLink(fileName) )
+    
+logsf.write(str(filesTable))
+    
 logsf.write(ezstatslib.HTML_FOOTER_STR)
 logsf.close()
 
