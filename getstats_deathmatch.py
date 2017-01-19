@@ -1931,14 +1931,15 @@ logsf.write(htmlLink(ezstatslib.TOURNAMENT_TABLE_FILE_NAME, linkText = "AdRiver 
 logsf.write("<hr>")
 logsf.write(htmlLink(ezstatslib.LOGS_BY_MAP_FILE_NAME, linkText = "Match results by maps"))
 logsf.write("<hr>")
+logsf.write(str(filesTable))
 
+logsf.write("<hr>")
 logsf.write("<h1>Duels</h1>")
 for fileName in otherFiles:
     logsf.write( htmlLink(fileName[0], isBreak = False) )
     logsf.write( generateHtmlList(fileName[1]) )
 logsf.write("<hr>")
 
-logsf.write(str(filesTable))
 logsf.write(ezstatslib.HTML_FOOTER_STR)
 logsf.close()
 
