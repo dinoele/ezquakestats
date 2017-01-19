@@ -1931,6 +1931,8 @@ logsf.write(htmlLink(ezstatslib.TOURNAMENT_TABLE_FILE_NAME, linkText = "AdRiver 
 logsf.write("<hr>")
 logsf.write(htmlLink(ezstatslib.LOGS_BY_MAP_FILE_NAME, linkText = "Match results by maps"))
 logsf.write("<hr>")
+logsf.write(htmlLink(ezstatslib.TEAM_LOGS_INDEX_FILE_NAME, linkText = "Team matches logs"))
+logsf.write("<hr>")
 logsf.write(str(filesTable))
 
 logsf.write("<hr>")
