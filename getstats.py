@@ -725,13 +725,29 @@ def writeHtmlWithScripts(f, teams, resStr):
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
     
     hcDelim = "}, {\n"
-    rowLines = ""        
+    rowLines = ""
+
+    isRed = False
+    if len(teams) == 2:
+        for tt in teams:
+            if "red" == tt.name:
+                isRed = True
+                break        
+    
     for tt in teams:
         if rowLines != "":
             rowLines += hcDelim
         
         rowLines += "name: '%s',\n" % (tt.name)
         # rowLines += "data: [0"
+        
+        # add color if one of the two teams is 'red'
+        if isRed:
+            if tt.name == "red":
+                rowLines += "color: 'red',\n"
+            else:
+                rowLines += "color: 'blue',\n"
+        
         rowLines += "data: [[0,0]"
         
         # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
