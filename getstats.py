@@ -709,6 +709,164 @@ for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
     resultString += "{0:20s} {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, resStr)
 
+# Players duels table
+# allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+# resultString += "\n"
+# resultString += "Players duels:<br>"
+# headerRow=['', 'Frags', 'Kills', 'Deaths']
+# playersNames = []
+# for pl in allplayersByFrags:
+#     headerRow.append(pl.name);
+#     playersNames.append(pl.name)
+# 
+# colAlign=[]
+# for i in xrange(len(headerRow)):
+#     colAlign.append("center")
+# 
+# htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
+#                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+# 
+# for pl in allplayersByFrags:
+#     tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
+#                                     ezstatslib.htmlBold(pl.frags()),
+#                                     ezstatslib.htmlBold(pl.kills),
+#                                     ezstatslib.htmlBold(pl.deaths)])
+#         
+#     for plName in playersNames:
+#         if pl.name == plName:
+#             tableRow.cells.append( HTML.TableCell(str(pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY) )
+#         else:            
+#             plKills = 0
+#             for val in headToHead[pl.name]:
+#                 if val[0] == plName:
+#                     plKills = val[1]
+#             
+#             plDeaths = 0
+#             for val in headToHead[plName]:
+#                 if val[0] == pl.name:
+#                     plDeaths = val[1]
+#             
+#             cellVal = "%s / %s" % (ezstatslib.htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
+#                                    ezstatslib.htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
+#             
+#             cellColor = ""
+#             if plKills == plDeaths:
+#                 cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
+#             elif plKills > plDeaths:
+#                 cellColor = ezstatslib.BG_COLOR_GREEN
+#             else:
+#                 cellColor = ezstatslib.BG_COLOR_RED
+#             
+#             tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+#             
+#     htmlTable.rows.append(tableRow)  
+# 
+# resultString += str(htmlTable)
+
+resultString += "\n"
+resultString += "Players duels:<br>"
+
+# team1
+headerRow=["[" + team2.name + "]", 'Frags', 'Kills', 'Deaths']
+playersNames = []
+for pl in players1ByFrags:
+    headerRow.append(pl.name);
+    playersNames.append(pl.name)
+
+colAlign=[]
+for i in xrange(len(headerRow)):
+    colAlign.append("center")
+
+htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+
+for pl in players2ByFrags:
+    tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
+                                    ezstatslib.htmlBold(pl.frags()),
+                                    ezstatslib.htmlBold(pl.kills),
+                                    ezstatslib.htmlBold(pl.deaths)])
+        
+    for pll in players1ByFrags:
+        plName = pll.name
+        plKills = 0
+        for val in headToHead[pl.name]:
+            if val[0] == plName:
+                plKills = val[1]
+        
+        plDeaths = 0
+        for val in headToHead[plName]:
+            if val[0] == pl.name:
+                plDeaths = val[1]
+        
+        cellVal = "%s / %s" % (ezstatslib.htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
+                               ezstatslib.htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
+        
+        cellColor = ""
+        if plKills == plDeaths:
+            cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
+        elif plKills > plDeaths:
+            cellColor = ezstatslib.BG_COLOR_GREEN
+        else:
+            cellColor = ezstatslib.BG_COLOR_RED
+        
+        tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+            
+    htmlTable.rows.append(tableRow)  
+
+resultString += str(htmlTable)
+
+# team 2
+htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+resultString += "\n"
+headerRow=["[" + team1.name + "]", 'Frags', 'Kills', 'Deaths']
+playersNames = []
+for pl in players2ByFrags:
+    headerRow.append(pl.name);
+    playersNames.append(pl.name)
+
+colAlign=[]
+for i in xrange(len(headerRow)):
+    colAlign.append("center")
+
+htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+
+for pl in players1ByFrags:
+    tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
+                                    ezstatslib.htmlBold(pl.frags()),
+                                    ezstatslib.htmlBold(pl.kills),
+                                    ezstatslib.htmlBold(pl.deaths)])
+        
+    for pll in players2ByFrags:
+        plName = pll.name
+        plKills = 0
+        for val in headToHead[pl.name]:
+            if val[0] == plName:
+                plKills = val[1]
+        
+        plDeaths = 0
+        for val in headToHead[plName]:
+            if val[0] == pl.name:
+                plDeaths = val[1]
+        
+        cellVal = "%s / %s" % (ezstatslib.htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
+                               ezstatslib.htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
+        
+        cellColor = ""
+        if plKills == plDeaths:
+            cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
+        elif plKills > plDeaths:
+            cellColor = ezstatslib.BG_COLOR_GREEN
+        else:
+            cellColor = ezstatslib.BG_COLOR_RED
+        
+        tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+            
+    htmlTable.rows.append(tableRow)  
+
+resultString += str(htmlTable)
+
 print resultString
 
 def writeHtmlWithScripts(f, teams, resStr):    
