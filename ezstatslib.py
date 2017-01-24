@@ -985,6 +985,57 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG = "<div id=\"highchart_battle_pro
 HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY = 4
 
 # =========================================================================================================================================================
+# "            categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']\n" \
+
+HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_FUNCTION = \
+"$(function () {\n" \
+"    Highcharts.chart('DIV_NAME', {\n" \
+"        title: {\n" \
+"            text: 'TEAM_NAME'\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            categories: [MINUTES]\n" \
+"        },\n" \
+"        series: [\n" \
+"ADD_ROWS" \
+"        {\n" \
+"            type: 'spline',\n" \
+"            name: 'Team score',\n" \
+"            data: [TEAM_POINTS],\n" \
+"            lineWidth: 8,\n" \
+"            marker: {\n" \
+"                lineWidth: 3,\n" \
+"                lineColor: Highcharts.getOptions().colors[3],\n" \
+"                fillColor: 'white'\n" \
+"            }\n" \
+"        }\n" \
+"      ]\n" \
+"    });\n" \
+"});\n"
+
+HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_PLAYER_SECTION = \
+"        {\n" \
+"            type: 'column',\n" \
+"            name: 'PLAYER_NAME',\n" \
+"            data: [PLAYER_POINTS]\n" \
+"        },\n" \
+
+HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM1 = "<div id=\"team_progress1\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>"
+HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM2 = "<div id=\"team_progress2\" style=\"min-width: 310px; height: 400px; margin: 0 auto\"></div>"
+
+HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG = \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 50%\">\n" \
+  "            <div id=\"team_progress1\" style=\"height: 400px; margin: 0 auto\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 50%\">\n" \
+  "            <div id=\"team_progress2\" style=\"height: 400px; margin: 0 auto\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
+
+# =========================================================================================================================================================
 
 HTML_SCRIPT_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_FUNCTION =\
     "google.charts.setOnLoadCallback(drawPLAYER_NAMEPowerUpsByMinutes);\n" \
@@ -1144,8 +1195,7 @@ def htmlBold(s):
 def readLineWithCheck(f, num):
     line = f.readline()
     num += 1
-    if (num > READ_LINES_LIMIT):
-        #print "ERROR: too many lines, limit =", READ_LINES_LIMIT
+    if (num > READ_LINES_LIMIT):        
         logError("ERROR: too many lines, limit = %d\n" % (READ_LINES_LIMIT))
         exit(2)
     return line,num

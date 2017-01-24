@@ -16,6 +16,8 @@ from ezstatslib import Team,Player
 
 import HTML
 
+import random
+
 # TODO use ezstatslib.readLineWithCheck
 # TODO error log
 # TODO skip lines separate log
@@ -90,6 +92,8 @@ isEnd = False
 
 teamNames = []
 matchProgressDict = []
+matchProgressPlayers1Dict = []
+matchProgressPlayers2Dict = []
 
 players1 = []
 players2 = []
@@ -377,6 +381,18 @@ for logline in matchlog:
         progressLineDict[team2.name] = fr2; # team2.frags()
         matchProgressDict.append(progressLineDict)
         
+        players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+        playersProgressLineDict1 = {}
+        for pl in players1ByFrags:
+            playersProgressLineDict1[pl.name] = pl.frags();
+        matchProgressPlayers1Dict.append(playersProgressLineDict1)
+        
+        players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+        playersProgressLineDict2 = {}
+        for pl in players2ByFrags:
+            playersProgressLineDict2[pl.name] = pl.frags();
+        matchProgressPlayers2Dict.append(playersProgressLineDict2)        
+        
         if "tie" in logline:
             progressStr.append("tie")
             fillExtendedBattleProgress()
@@ -588,6 +604,18 @@ progressLineDict[team1.name] = team1.frags();
 progressLineDict[team2.name] = team2.frags();
 matchProgressDict.append(progressLineDict)
 
+players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+playersProgressLineDict1 = {}
+for pl in players1ByFrags:
+    playersProgressLineDict1[pl.name] = pl.frags();
+matchProgressPlayers1Dict.append(playersProgressLineDict1)
+
+players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+playersProgressLineDict2 = {}
+for pl in players2ByFrags:
+    playersProgressLineDict2[pl.name] = pl.frags();
+matchProgressPlayers2Dict.append(playersProgressLineDict2)        
+
 fillExtendedBattleProgress()
 # extended battle progress
 i = 1
@@ -599,6 +627,9 @@ for p in extendedProgressStr:
 
 if options.withScripts:
     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
+    
+if options.withScripts:
+    resultString += "\nHIGHCHART_TEAM_BATTLE_PROGRESS_PLACE\n"
 
 sortedByDelta = sorted(allplayers, key=methodcaller("calcDelta"))
 # print
@@ -867,6 +898,8 @@ for pl in players1ByFrags:
 
 resultString += str(htmlTable)
 
+resultString += "\nTeammate telefrags: " + str(teammateTelefrags) + "\n"
+
 print resultString
 
 def writeHtmlWithScripts(f, teams, resStr):    
@@ -924,10 +957,54 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle progress
     
+    # highcharts teams battle progress -->
+    matchMinutesCnt = len(matchProgressDict)
+    minutesStr = ""
+    for i in xrange(1,matchMinutesCnt):
+        minutesStr += "'%d'," % (i)
+    minutesStr = minutesStr[:-1]
+    
+    tn = 1
+    for tt in teams:
+        highchartsTeamBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_FUNCTION
+        
+        rowLines = ""
+        for pl in (players1 if tn == 1 else players2):
+            plStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_PLAYER_SECTION
+            
+            plPoints = ""
+            for minEl in matchProgressPlayers1Dict if tn == 1 else matchProgressPlayers2Dict:
+                plPoints += "%d," % (minEl[pl.name])
+            plPoints = plPoints[:-1]        
+            
+            plStr = plStr.replace("PLAYER_NAME", pl.name)
+            plStr = plStr.replace("PLAYER_POINTS", plPoints)
+            
+            rowLines += plStr
+        
+        teamPointsStr = ""
+        for minEl in matchProgressDict:
+            teamPointsStr += "%d," % (minEl[tt.name])
+        teamPointsStr = teamPointsStr[:-1]
+        
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("DIV_NAME", "team_progress%d" % (tn))
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("TEAM_NAME", tt.name)
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("MINUTES", minutesStr)
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("ADD_ROWS", rowLines)
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("TEAM_POINTS", teamPointsStr)
+                    
+        f.write(highchartsTeamBattleProgressFunctionStr)
+        
+        tn = 2
+    # <-- highcharts teams battle progress
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
-    resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE",      ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    # resStr = resStr.replace("HIGHCHART_TEAM_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM1 + "\n" + \
+    #                                                                 ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM2 )
+    resStr = resStr.replace("HIGHCHART_TEAM_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG)
     
     f.write(resStr)
     
