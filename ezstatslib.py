@@ -1005,12 +1005,14 @@ HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_FUNCTION = \
 "                text: 'Player Frags'\n" \
 "            },\n" \
 "            opposite: true,\n" \
+"            min: 0,\n" \
 "            max: MAX_PLAYER_FRAGS\n" \
 "        }, {\n" \
 "	         gridLineWidth: 0,\n" \
 "            title: {\n" \
 "                text: 'Total Frags',\n" \
 "            },\n" \
+"            min: 0,\n" \
 "            max: MAX_TOTAL_FRAGS\n" \
 "        }],\n" \
 "        tooltip: {\n" \
