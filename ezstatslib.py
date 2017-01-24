@@ -990,11 +990,51 @@ HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY = 4
 HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_FUNCTION = \
 "$(function () {\n" \
 "    Highcharts.chart('DIV_NAME', {\n" \
+"        chart: {\n " \
+"            zoomType: 'x'\n " \
+"        },\n " \
 "        title: {\n" \
 "            text: 'TEAM_NAME'\n" \
 "        },\n" \
 "        xAxis: {\n" \
-"            categories: [MINUTES]\n" \
+"            categories: [MINUTES],\n" \
+"            crosshair: true\n" \
+"        },\n" \
+"        yAxis: [{\n" \
+"            title: {\n" \
+"                text: 'Player Frags'\n" \
+"            },\n" \
+"            opposite: true,\n" \
+"            max: MAX_PLAYER_FRAGS\n" \
+"        }, {\n" \
+"	         gridLineWidth: 0,\n" \
+"            title: {\n" \
+"                text: 'Total Frags',\n" \
+"            },\n" \
+"            max: MAX_TOTAL_FRAGS\n" \
+"        }],\n" \
+"        tooltip: {\n" \
+"            valueSuffix: '',\n" \
+"            shared: true,\n" \
+"            formatter: function() {\n" \
+"            var s = '<strong>'+ this.x +'</strong>';\n" \
+"            var sortedPoints = this.points.sort(function(a, b){\n" \
+"                  return ((a.y < b.y) ? 1 : ((a.y > b.y) ? -1 : 0));\n" \
+"                });\n" \
+"            $.each(sortedPoints , function(i, point) {\n" \
+"            s += '<br/>'+ point.series.name +': '+ '<strong>' + point.y + '</strong>';\n" \
+"            });\n" \
+"            return s;\n" \
+"            },\n" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'left',\n" \
+"            x: 180,\n" \
+"            verticalAlign: 'top',\n" \
+"            y: 55,\n" \
+"            floating: true,\n" \
+"            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'\n" \
 "        },\n" \
 "        series: [\n" \
 "ADD_ROWS" \
@@ -1003,6 +1043,7 @@ HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_FUNCTION = \
 "            name: 'Team score',\n" \
 "            data: [TEAM_POINTS],\n" \
 "            lineWidth: 8,\n" \
+"            yAxis: 1,\n" \
 "            marker: {\n" \
 "                lineWidth: 3,\n" \
 "                lineColor: Highcharts.getOptions().colors[3],\n" \

@@ -635,9 +635,6 @@ sortedByDelta = sorted(allplayers, key=methodcaller("calcDelta"))
 # print
 # print "next captains: %s(%d) and %s(%d)" % (sortedByDelta[0].name, sortedByDelta[0].calcDelta(), sortedByDelta[1].name, sortedByDelta[1].calcDelta())
 
-resultString += "\n" 
-resultString += "===============================================\n"
-
 # team stats output
 resultString += "\n"
 resultString += "Team stats:\n"
@@ -964,6 +961,9 @@ def writeHtmlWithScripts(f, teams, resStr):
         minutesStr += "'%d'," % (i)
     minutesStr = minutesStr[:-1]
     
+    maxTotalFrags =  (sorted(teams, key=methodcaller("frags"), reverse=True))[0].frags()
+    maxPlayerFrags = (sorted(allplayers, key=methodcaller("frags"), reverse=True))[0].frags()
+    
     tn = 1
     for tt in teams:
         highchartsTeamBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_FUNCTION
@@ -992,6 +992,9 @@ def writeHtmlWithScripts(f, teams, resStr):
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("MINUTES", minutesStr)
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("ADD_ROWS", rowLines)
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("TEAM_POINTS", teamPointsStr)
+        
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", str(int(maxPlayerFrags*1.2)))
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("MAX_TOTAL_FRAGS",  str(int(maxTotalFrags*1.2)))
                     
         f.write(highchartsTeamBattleProgressFunctionStr)
         
