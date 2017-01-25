@@ -355,16 +355,11 @@ for logline in matchlog:
         logline = logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
 
     # battle progress
-    if "time over, the game is a draw" in logline: # time over, the game is a draw
-        progressStr.append("tie (overtime)")
-        fillExtendedBattleProgress()
-        continue
-
     if "remaining" in logline:  # [9] minutes remaining
         isProgressLine = True
         continue
 
-    if isProgressLine: # Team [red] leads by 4 frags || tie
+    if isProgressLine or "time over, the game is a draw" in logline: # Team [red] leads by 4 frags || tie || time over, the game is a draw
         isProgressLine = False
         
         # TODO replace with frags when teams stats are updated on each increment
@@ -393,7 +388,12 @@ for logline in matchlog:
             playersProgressLineDict2[pl.name] = pl.frags();
         matchProgressPlayers2Dict.append(playersProgressLineDict2)        
         
-        if "tie" in logline:
+        
+        if "time over, the game is a draw" in logline:
+            progressStr.append("tie (overtime)")
+            fillExtendedBattleProgress()
+            continue
+        elif "tie" in logline:
             progressStr.append("tie")
             fillExtendedBattleProgress()
             continue
@@ -956,8 +956,9 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     # highcharts teams battle progress -->
     matchMinutesCnt = len(matchProgressDict)
+    
     minutesStr = ""
-    for i in xrange(1,matchMinutesCnt):
+    for i in xrange(1,matchMinutesCnt+1):
         minutesStr += "'%d'," % (i)
     minutesStr = minutesStr[:-1]
     
