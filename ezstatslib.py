@@ -1270,7 +1270,7 @@ def commonDetection(s):
     elif "pineapple" in s: #ss eats rea[rbf]'s pineapple
         return True, spl[2].split("'")[0], spl[0], "gl"
         
-    elif "rocket" in s and not "took" in s and not "{rockets}" in s: # zrkn rides EEE's rocket
+    elif "rocket" in s and not "took" in s and not "{rockets}" in s and not "rockets at " in s: # zrkn rides EEE's rocket
         return True, spl[2].split("'")[0], spl[0], "rl"
         
     elif "shaft" in s and not "fakeshaft" in s: # ss accepts Onanim's shaft
