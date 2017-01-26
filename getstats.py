@@ -34,9 +34,12 @@ COMMAND_LOG_NET_BIG_DELIM     = "(=================================)";
 teammateTelefrags = [] # array of names who was telegragged by teammates
 
 def fillH2H(who,whom):
-    for elem in headToHead[who]:
-        if elem[0] == whom:
-            elem[1] += 1
+    try:
+        for elem in headToHead[who]:
+            if elem[0] == whom:
+                elem[1] += 1
+    except Exception, ex:
+        ezstatslib.logError("fillH2H: who=%s, whom=%s, ex=%s\n" % (who, whom, ex))
 
 def fillExtendedBattleProgress():
     players1ByFrags = sorted(players1, key=methodcaller("frags"), reverse=True)
@@ -479,13 +482,12 @@ for logline in matchlog:
                 isFoundWhom = True
                 
         fillH2H(who,whom)
-
+        
         if not isFoundWho or not isFoundWhom:
-            # print "ERROR: count common", who, "-", whom, ":", logline
-            exit(0)
-
+            ezstatslib.logError("ERROR: count common %s-%s: %s\n" % (who, whom, logline))
+        
         continue
-
+    
 
 # validate score
 fragsSum1 = 0

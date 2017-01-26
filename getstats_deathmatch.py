@@ -19,11 +19,25 @@ from ezstatslib import enum
 import HTML
 
 def fillH2H(who,whom,minute):
-    # TODO add checks for headToHead
-    for elem in headToHead[who]:
-        if elem[0] == whom:
-            elem[1] += 1            
-            elem[2][minute] += 1
+    try:
+        for elem in headToHead[who]:
+            if elem[0] == whom:
+                elem[1] += 1
+                elem[2][minute] += 1
+    except Exception, ex:
+        ezstatslib.logError("fillH2H: who=%s, whom=%s, minute=%d, ex=%s\n" % (who, whom, ex))
+            
+def clearZeroPlayer(pl):
+    # TODO remove from headToHead
+    
+    # clear battle progress
+    for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]
+        for mp in mpline:        # mp:     [pl1_name,pl1_frags]
+            if pl.name == mp[0]:
+                mpline.remove(mp)       # TODO REMOVE
+                                        # (n for n in n_list if n !=3)  # ifilter
+                                        # https://docs.python.org/2.7/library/stdtypes.html#mutable-sequence-types
+        
 
 usageString = "" 
 versionString = ""
@@ -437,9 +451,7 @@ for matchPart in matchlog:
             fillH2H(who,whom,currentMinute)
     
             if not isFoundWho or not isFoundWhom:
-                #print "ERROR: count common", who, "-", whom, ":", logline
                 ezstatslib.logError("ERROR: count common %s-%s: %s\n" % (who, whom, logline))
-                exit(0)
     
             continue            
 
