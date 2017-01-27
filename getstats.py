@@ -720,7 +720,7 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
 
 if len(disconnectedplayers) != 0:
     resultString += "\n"
-    resultString += "Disconnected players:" + disconnectedplayers + "\n"
+    resultString += "Disconnected players:" + str(disconnectedplayers) + "\n"
 
 # H2H stats
 resultString += "\n"
