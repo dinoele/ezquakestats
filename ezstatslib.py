@@ -1991,7 +1991,7 @@ class Player:
         # PERSONAL_STALKER
         if len(matchProgress) != 0 and len(matchProgress[0]) > 2: # not duel match
             sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
-            if sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
+            if sortedHeadToHead[0][0] != self.name and sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
                 self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
             
         # SELF_DESTRUCTOR
