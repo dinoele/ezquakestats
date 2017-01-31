@@ -13,6 +13,8 @@ import os.path
 
 import ezstatslib
 from ezstatslib import Team,Player
+from ezstatslib import enum,checkNew,htmlLink
+from ezstatslib import NEW_GIF_TAG as newGifTag
 
 import HTML
 
@@ -1068,10 +1070,6 @@ else:  # not os.path.exists(filePathFull):
     outf.close()
     isFileNew = True
 
-# TODO move to lib
-def htmlLink(fname, gifPath = "", linkText = "", isBreak = True):
-    return "<a href=\"%s\">%s</a>%s%s" % (fname, fname if linkText == "" else linkText, gifPath, "<br>" if isBreak else "")
-
 # index file
 logsIndexPath    = "../" + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME
 tmpLogsIndexPath = "../" + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME + ".tmp"
@@ -1134,7 +1132,7 @@ for el in sorted_filesMap:
         formattedTime = gg[1].strftime("%H-%M-%S")        
         
         tableRow = HTML.TableRow(cells=[formattedDate,formattedTime])        
-        tableRow.cells.append( HTML.TableCell( htmlLink(gg[0]) ) )
+        tableRow.cells.append( HTML.TableCell( htmlLink(gg[0], newGifTag if checkNew(isFileNew, filePath, gg[0]) else "") ) )
         
         filesTable.rows.append(tableRow)
 
