@@ -48,6 +48,7 @@ LOGS_INDEX_FILE_NAME = "logs.html"
 TEAM_LOGS_INDEX_FILE_NAME = "teamlogs.html"
 LOGS_BY_MAP_FILE_NAME = "logs_by_maps.html"
 TOURNAMENT_TABLE_FILE_NAME = "ezquakestats/tournament_table.html"
+NEW_GIF_TAG = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
 
 ERROR_LOG_FILE_NAME = "errors"
 SKIPED_LINES_FILE_NAME = "skiped_lines"

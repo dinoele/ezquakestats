@@ -15,6 +15,7 @@ import os.path
 import ezstatslib
 from ezstatslib import Team,Player
 from ezstatslib import enum,checkNew,htmlLink
+from ezstatslib import NEW_GIF_TAG as newGifTag
 
 import HTML
 
@@ -1596,8 +1597,6 @@ logsByMapPath    = "../" + ezstatslib.LOGS_BY_MAP_FILE_NAME
 tmpLogsIndexPath = "../" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
 
 files = os.listdir("../")
-
-newGifTag = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
 
 #headerRow = HTML.TableRow(["Date", "Time", "Premier League", "First Division", "Second Division"], header=True)
 
