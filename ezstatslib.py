@@ -9,6 +9,7 @@ from operator import itemgetter, attrgetter, methodcaller
 from optparse import OptionParser,OptionValueError
 
 import fileinput
+import os.path
 
 import ezstatslib
 
@@ -39,6 +40,8 @@ possibleColors = [HtmlColor.COLOR_RED,
 LOG_TIMESTAMP_DELIMITER = " <-> "
 
 DEFAULT_PLAYER_NAME_MAX_LEN = 10
+
+NEW_FILE_TIME_DETECTION = 60*60*4 # 4 hours
 
 READ_LINES_LIMIT = 10000
 LOGS_INDEX_FILE_NAME = "logs.html"
@@ -1234,6 +1237,21 @@ def logSkipped(line):
 
 def htmlBold(s):
     return "%s%s%s" % ("<b>",s,"</b>")
+
+def htmlLink(fname, gifPath = "", linkText = "", isBreak = True):
+    return "<a href=\"%s\">%s</a>%s%s" % (fname, fname if linkText == "" else linkText, gifPath, "<br>" if isBreak else "")
+
+def checkNew(fileNew, workFilePath, pathForCheck):
+    isNew = (fileNew and workFilePath == pathForCheck)
+    if not isNew:
+        # check modification time
+        modTime = os.stat("../" + pathForCheck).st_mtime
+        modTimeDt = datetime.fromtimestamp(int(modTime))
+        timeDelta = datetime.today() - modTimeDt
+        if timeDelta.total_seconds() < NEW_FILE_TIME_DETECTION:
+            isNew = True
+            
+    return isNew
 
 def readLineWithCheck(f, num):
     line = f.readline()

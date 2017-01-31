@@ -14,7 +14,7 @@ import os.path
 
 import ezstatslib
 from ezstatslib import Team,Player
-from ezstatslib import enum
+from ezstatslib import enum,checkNew,htmlLink
 
 import HTML
 
@@ -1590,22 +1590,6 @@ else:  # not os.path.exists(filePathFull):
     outf.close()
     isFileNew = True
     
-# TODO move to lib
-def htmlLink(fname, gifPath = "", linkText = "", isBreak = True):
-    return "<a href=\"%s\">%s</a>%s%s" % (fname, fname if linkText == "" else linkText, gifPath, "<br>" if isBreak else "")
-
-def checkNew(fileNew, workFilePath, pathForCheck):
-    isNew = (fileNew and workFilePath == pathForCheck)
-    if not isNew:
-        # check modification time
-        modTime = os.stat("../" + pathForCheck).st_mtime
-        modTimeDt = datetime.fromtimestamp(int(modTime))
-        timeDelta = datetime.today() - modTimeDt
-        if timeDelta.total_seconds() < 60*60*4: # 4 hours
-            isNew = True
-            
-    return isNew
-
 # update contents file
 logsIndexPath    = "../" + ezstatslib.LOGS_INDEX_FILE_NAME
 logsByMapPath    = "../" + ezstatslib.LOGS_BY_MAP_FILE_NAME
