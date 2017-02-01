@@ -21,10 +21,7 @@ import HTML
 import random
 
 # TODO use ezstatslib.readLineWithCheck
-# TODO error log
 # TODO skip lines separate log
-# TODO remove all prints
-# TODO write htmls
 # TODO make index file
 
 COMMAND_LOG_LOCAL_SMALL_DELIM = "__________";
@@ -43,31 +40,41 @@ def fillH2H(who,whom):
     except Exception, ex:
         ezstatslib.logError("fillH2H: who=%s, whom=%s, ex=%s\n" % (who, whom, ex))
 
-def fillExtendedBattleProgress():
-    players1ByFrags = sorted(players1, key=methodcaller("frags"), reverse=True)
+plPrevFragsDict = {}
+
+def getFragsLine(players):
+    playersByFrags = sorted(players, key=methodcaller("frags"), reverse=True)
     s = "[%s]" % (players1[0].teamname)
     
     fragsSum = 0
-    for pl in players1ByFrags:
+    for pl in playersByFrags:
         fragsSum += pl.frags()
     s += " {0:3d}: ".format(fragsSum)
 
-    for pl in players1ByFrags:
-        s += "{0:20s}".format(pl.name + "(" + str(pl.frags()) + ")")
+    for pl in playersByFrags:        
+        if not pl.name in plPrevFragsDict.keys():
+            plFragsDelta = pl.frags()
+        else:
+            plFragsDelta = pl.frags() - plPrevFragsDict[pl.name]        
+        plPrevFragsDict[pl.name] = pl.frags()
+
+        if plFragsDelta == 0:
+            deltaStr = "<sup>0  </sup>"
+        else:
+            if plFragsDelta > 0:
+                deltaStr = "<sup>+%d%s</sup>" % (plFragsDelta, " " if plFragsDelta < 10 else "")
+            else:
+                deltaStr = "<sup>%d%s</sup>"  % (plFragsDelta, " " if plFragsDelta < 10 else "")
+                
+        s += ( "{0:%ds}" % (20+len(deltaStr)) ).format(pl.name + "(" + str(pl.frags()) + ")" + deltaStr)
     s = s[:-1]
     
-    players2ByFrags = sorted(players2, key=methodcaller("frags"), reverse=True)
-    
-    fragsSum = 0
-    for pl in players2ByFrags:
-        fragsSum += pl.frags()
+    return s
 
-    s += " vs. [%s]" % (players2[0].teamname)
-    s += " {0:3d}: ".format(fragsSum)
-    for pl in players2ByFrags:
-        s += "{0:20s}".format(pl.name + "(" + str(pl.frags()) + ")")
-    s = s[:-1]
-
+def fillExtendedBattleProgress():
+    s = getFragsLine(players1)
+    s += " vs. "
+    s += getFragsLine(players2)
     extendedProgressStr.append(s)
 
 usageString = "" 
