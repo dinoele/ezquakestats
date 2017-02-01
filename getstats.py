@@ -404,7 +404,7 @@ for logline in matchlog:
             continue
         else:
             if not "leads" in logline:
-                # print "ERROR: progress"
+                ezstatslib.logError("progress\n")
                 exit(0)                
             sp = logline.split(" ")
             progressStr.append("%s%s" % (sp[1], sp[4]))
@@ -419,8 +419,8 @@ for logline in matchlog:
                 pl.teamkills += 1
                 isFound = True
                 break;
-        if not isFound:
-            # print "ERROR: count teamkills"
+        if not isFound:            
+            ezstatslib.logError("count teamkills\n")
             exit(0)
 
         continue
@@ -444,8 +444,8 @@ for logline in matchlog:
         if who != "":
             fillH2H(who,whom)
 
-        if not isFoundWho or not isFoundWhom:
-            # print "ERROR: count telefrag", who, "-", whom, ":", logline
+        if not isFoundWho or not isFoundWhom:            
+            ezstatslib.logError("count telefrag %s - %s: %s\n" % (who, whom, logline))
             exit(0)
 
         continue
@@ -459,7 +459,7 @@ for logline in matchlog:
                 isFound = True
                 break;
         if not isFound:
-            # print "ERROR: count suicides"
+            ezstatslib.logError("count suicides")
             exit(0)
 
         continue
@@ -467,7 +467,7 @@ for logline in matchlog:
     cres,who,whom,weap = ezstatslib.commonDetection(logline)
     if cres:
         if not weap in ezstatslib.possibleWeapons:
-            # print "ERROR: unknown weapon:", weap
+            ezstatslib.logError("unknown weapon: %s\n" % (weap))
             exit(0)
 
         isFoundWho = False
@@ -486,7 +486,7 @@ for logline in matchlog:
         fillH2H(who,whom)
         
         if not isFoundWho or not isFoundWhom:
-            ezstatslib.logError("ERROR: count common %s-%s: %s\n" % (who, whom, logline))
+            ezstatslib.logError("count common %s-%s: %s\n" % (who, whom, logline))
         
         continue
     
