@@ -223,7 +223,7 @@ while not bigDelimiter in line:
     
     playerName = line.split(' ')[1].split(':')[0]
 
-    if playerName[0] == "_":
+    if playerName[0] == "_" or playerName[0] == "#":
         playerName = playerName[1:]
         disconnectedplayers.append(playerName)
 
