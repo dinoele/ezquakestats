@@ -11,7 +11,7 @@ from optparse import OptionParser,OptionValueError
 import fileinput
 import os.path
 
-import ezstatslib
+import HTML
 
 def enum(**enums):
     return type('Enum', (), enums)
@@ -1483,6 +1483,85 @@ class Streak:
         resStr = resStr[:-2]
         
         return resStr
+    
+def createStreaksHtmlTable(sortedPlayers, streakType):
+    streaksList = []  # [[name1,[s1,s2,..]]]
+    maxCnt = 0
+    for pl in sortedPlayers:
+        strkRes,maxStrk,strkNames = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()                        
+        streaksList.append( [pl.name, strkRes, strkNames] )
+        maxCnt = max(maxCnt,len(strkRes))
+        if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
+            logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+            
+    cellWidth = "20px"
+    streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
+                           style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    for strk in streaksList:
+        tableRow = HTML.TableRow(cells=[ HTML.TableCell(htmlBold(strk[0]), align="center", width=cellWidth) ])
+        
+        maxVal = 0
+        if len(strk[1]) > 0:
+            maxVal = sorted(strk[1], reverse=True)[0]
+            
+        i = 0
+        for val in strk[1]:       
+            if val == maxVal:
+                tableRow.cells.append( HTML.TableCell(htmlBold(str(val)),
+                                                      align="center",
+                                                      width=cellWidth,
+                                                      bgcolor=BG_COLOR_GREEN if streakType == StreakType.KILL_STREAK else BG_COLOR_RED) )
+            else:
+                tableRow.cells.append( HTML.TableCell(str(val), align="center", width=cellWidth) )            
+            i += 1
+        
+        for j in xrange(i,maxCnt):
+            tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
+            
+        streaksHtmlTable.rows.append(tableRow)
+    
+    return streaksHtmlTable
+
+
+def createFullStreaksHtmlTable(sortedPlayers, streakType):
+    streaksList = []  # [[name1,[s1,s2,..]]]
+    maxCnt = 0
+    for pl in sortedPlayers:
+        
+        strkRes,maxStrk = pl.getCalculatedStreaksFull() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaksFull()        
+        streaksList.append( [pl.name, strkRes] )
+        maxCnt = max(maxCnt,len(strkRes))
+        if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
+            logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+            
+    cellWidth = "20px"
+    streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
+                           style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    for strk in streaksList:
+        tableRow = HTML.TableRow(cells=[ HTML.TableCell(htmlBold(strk[0]), align="center", width=cellWidth) ])
+        
+        maxVal = 0
+        if len(strk[1]) > 0:
+            maxVal = (sorted(strk[1], key=attrgetter("count"), reverse=True)[0]).count
+            
+        i = 0
+        for val in strk[1]:
+            if val.count == maxVal:
+                tableRow.cells.append( HTML.TableCell(htmlBold(val.toString()),
+                                                      align="center",
+                                                      width=cellWidth,
+                                                      bgcolor=BG_COLOR_GREEN if streakType == StreakType.KILL_STREAK else BG_COLOR_RED) )
+            else:
+                tableRow.cells.append( HTML.TableCell(val.toString(), align="center", width=cellWidth) )            
+            i += 1
+        
+        for j in xrange(i,maxCnt):
+            tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
+            
+        streaksHtmlTable.rows.append(tableRow)
+    
+    return streaksHtmlTable
+    
 
 PowerUpType = enum(UNKNOWN=0, RA=1, YA=2, GA=3, MH=4)
 def powerUpTypeToString(pwrType):
