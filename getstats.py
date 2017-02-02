@@ -363,8 +363,11 @@ for logline in matchlog:
     if logline == "":
         continue
 
+    lineStamp = -1
     if ezstatslib.LOG_TIMESTAMP_DELIMITER in logline:
+        lineStamp = int( logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[0] )
         logline = logline.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
+        currentMatchTime = lineStamp - matchStartStamp
 
     # battle progress
     if "remaining" in logline:  # [9] minutes remaining
@@ -423,13 +426,13 @@ for logline in matchlog:
         isFound = False
         for pl in allplayers:
             if pl.name == checkname:
-                pl.teamkills += 1
+                pl.incTeamkills(currentMatchTime)
+                # TODO fillH2H
                 isFound = True
                 break;
         if not isFound:            
             ezstatslib.logError("count teamkills\n")
             exit(0)
-
         continue
 
     # telefrag
@@ -439,12 +442,12 @@ for logline in matchlog:
         isFoundWhom = False
         for pl in allplayers:
             if who != "" and pl.name == who:
-                pl.kills += 1
+                pl.incKill(currentMatchTime, who, whom)
                 pl.tele_kills += 1
                 isFoundWho = True
             
             if pl.name == whom:
-                pl.deaths += 1
+                pl.incDeath(currentMatchTime, who, whom)
                 pl.tele_deaths += 1
                 isFoundWhom = True
                 
@@ -462,7 +465,8 @@ for logline in matchlog:
         isFound = False
         for pl in allplayers:
             if pl.name == checkname:
-                pl.suicides += 1
+                pl.incSuicides(currentMatchTime)
+                fillH2H(checkname,checkname)
                 isFound = True
                 break;
         if not isFound:
@@ -470,6 +474,8 @@ for logline in matchlog:
             exit(0)
 
         continue
+
+    # TODO checkres,checkname,pwr = ezstatslib.powerupDetection(logline)
 
     cres,who,whom,weap = ezstatslib.commonDetection(logline)
     if cres:
@@ -481,12 +487,12 @@ for logline in matchlog:
         isFoundWhom = False
         for pl in allplayers:
             if pl.name == who:
-                pl.kills += 1
+                pl.incKill(currentMatchTime, who, whom)
                 exec("pl.%s_kills += 1" % (weap))
                 isFoundWho = True
             
             if pl.name == whom:
-                pl.deaths += 1
+                pl.incDeath(currentMatchTime, who, whom);
                 exec("pl.%s_deaths += 1" % (weap))
                 isFoundWhom = True
                 
@@ -539,6 +545,31 @@ for pl in players2:
     team2.deaths += pl.deaths
     team2.teamkills += pl.teamkills
     team2.suicides += pl.suicides
+
+# fill final battle progress    
+progressLineDict = {}
+progressLineDict[team1.name] = team1.frags();
+progressLineDict[team2.name] = team2.frags();
+matchProgressDict.append(progressLineDict)
+
+players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+playersProgressLineDict1 = {}
+for pl in players1ByFrags:
+    playersProgressLineDict1[pl.name] = pl.frags();
+matchProgressPlayers1Dict.append(playersProgressLineDict1)
+
+players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+playersProgressLineDict2 = {}
+for pl in players2ByFrags:
+    playersProgressLineDict2[pl.name] = pl.frags();
+matchProgressPlayers2Dict.append(playersProgressLineDict2)        
+
+fillExtendedBattleProgress()
+    
+# fill final element in calculatedStreaks
+for pl in allplayers:
+    pl.fillStreaks(currentMatchTime)
+    pl.fillDeathStreaks(currentMatchTime)
 
 # TODO add teammateTelefrags to team score
 # print "teammateTelefrags:", teammateTelefrags
@@ -610,24 +641,6 @@ if totalScore[0][1] > totalScore[1][1]:
 else:
     resultString += "%d: [%s]%d\n" % (i, totalScore[1][0], (totalScore[1][1] - totalScore[0][1]))
 
-progressLineDict = {}
-progressLineDict[team1.name] = team1.frags();
-progressLineDict[team2.name] = team2.frags();
-matchProgressDict.append(progressLineDict)
-
-players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
-playersProgressLineDict1 = {}
-for pl in players1ByFrags:
-    playersProgressLineDict1[pl.name] = pl.frags();
-matchProgressPlayers1Dict.append(playersProgressLineDict1)
-
-players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
-playersProgressLineDict2 = {}
-for pl in players2ByFrags:
-    playersProgressLineDict2[pl.name] = pl.frags();
-matchProgressPlayers2Dict.append(playersProgressLineDict2)        
-
-fillExtendedBattleProgress()
 # extended battle progress
 i = 1
 resultString += "\n"

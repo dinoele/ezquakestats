@@ -1667,7 +1667,17 @@ class Player:
         self.currentDeathStreak.names += "SELF,"
         
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
-        self.fillStreaks(time)            
+        self.fillStreaks(time)
+        
+    def incTeamkills(self, time):
+        self.teamkills += 1
+        self.currentDeathStreak.count += 1
+        
+        # self.currentDeathStreak.names.append("SELF")
+        self.currentDeathStreak.names += "TEAMMATE,"
+        
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+        self.fillStreaks(time)
     
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
