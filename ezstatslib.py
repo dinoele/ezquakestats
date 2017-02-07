@@ -929,7 +929,7 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "                zoomType: 'x'\n" \
 "            },\n" \
 "        title: {\n" \
-"            text: 'Battle progress',\n" \
+"            text: 'GRAPH_TITLE',\n" \
 "            x: -20 //center\n" \
 "        },\n" \
 "        subtitle: {\n" \
@@ -943,7 +943,7 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "        },\n" \
 "        yAxis: {\n" \
 "            title: {\n" \
-"                text: 'Frags'\n" \
+"                text: 'Y_AXIS_TITLE'\n" \
 "            },\n" \
 "            plotLines: [{\n" \
 "                value: 0,\n" \
@@ -987,6 +987,18 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED = \
 HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG = "<div id=\"highchart_battle_progress\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
 
 HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY = 4
+
+HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG = \
+  "      <table style=\"width: 100%;\">\n" \
+  "        <tr>\n" \
+  "          <td style=\"width: 50%\">\n" \
+  "            <div id=\"players_rank1\" style=\"height: 400px; margin: 0 auto\"></div>\n" \
+  "          </td>\n" \
+  "          <td style=\"width: 50%\">\n" \
+  "            <div id=\"players_rank2\" style=\"height: 400px; margin: 0 auto\"></div>\n" \
+  "          </td>\n" \
+  "        </tr>\n" \
+  "      </table>\n" \
 
 # =========================================================================================================================================================
 # "            categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']\n" \

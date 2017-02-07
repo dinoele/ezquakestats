@@ -394,13 +394,13 @@ for logline in matchlog:
         players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
         playersProgressLineDict1 = {}
         for pl in players1ByFrags:
-            playersProgressLineDict1[pl.name] = pl.frags();
+            playersProgressLineDict1[pl.name] = [pl.frags(), pl.calcDelta()];
         matchProgressPlayers1Dict.append(playersProgressLineDict1)
         
         players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
         playersProgressLineDict2 = {}
         for pl in players2ByFrags:
-            playersProgressLineDict2[pl.name] = pl.frags();
+            playersProgressLineDict2[pl.name] = [pl.frags(), pl.calcDelta()];
         matchProgressPlayers2Dict.append(playersProgressLineDict2)        
         
         
@@ -555,13 +555,13 @@ matchProgressDict.append(progressLineDict)
 players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 playersProgressLineDict1 = {}
 for pl in players1ByFrags:
-    playersProgressLineDict1[pl.name] = pl.frags();
+    playersProgressLineDict1[pl.name] = [pl.frags(), pl.calcDelta()];
 matchProgressPlayers1Dict.append(playersProgressLineDict1)
 
 players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 playersProgressLineDict2 = {}
 for pl in players2ByFrags:
-    playersProgressLineDict2[pl.name] = pl.frags();
+    playersProgressLineDict2[pl.name] = [pl.frags(), pl.calcDelta()];
 matchProgressPlayers2Dict.append(playersProgressLineDict2)        
 
 fillExtendedBattleProgress()
@@ -673,12 +673,15 @@ for p in extendedProgressStr:
 
 if options.withScripts:
     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
+
+if options.withScripts:
+    resultString += "\nHIGHCHART_PLAYERS_BATTLE_PROGRESS_PLACE\n"
     
 if options.withScripts:
     resultString += "\nHIGHCHART_TEAM_BATTLE_PROGRESS_PLACE\n"
-    
+
 if options.withScripts:
-    resultString += "\nHIGHCHART_PLAYERS_BATTLE_PROGRESS_PLACE\n"
+    resultString += "\nHIGHCHART_PLAYERS_RANK_PROGRESS_PLACE\n"
 
 sortedByDelta = sorted(allplayers, key=methodcaller("calcDelta"))
 # print
@@ -961,6 +964,9 @@ def writeHtmlWithScripts(f, teams, resStr):
     # highcharts battle progress -->
     highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
             
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Battle progress")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
+            
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
     
@@ -1027,7 +1033,7 @@ def writeHtmlWithScripts(f, teams, resStr):
             
             plPoints = ""
             for minEl in matchProgressPlayers1Dict if tn == 1 else matchProgressPlayers2Dict:
-                plPoints += "%d," % (minEl[pl.name])
+                plPoints += "%d," % (minEl[pl.name][0])
             plPoints = plPoints[:-1]        
             
             plStr = plStr.replace("PLAYER_NAME", pl.name)
@@ -1056,11 +1062,12 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     # highcharts players battle progress -->
     highchartsBattleProgressFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION).replace("highchart_battle_progress", "highchart_battle_progress_players")
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Players battle progress")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
             
     # " name: 'rea[rbf]',\n" \
-    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
-    
-    allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \        
     
     hcDelim = "}, {\n"
     rowLines = ""        
@@ -1076,7 +1083,7 @@ def writeHtmlWithScripts(f, teams, resStr):
         graphGranularity = 1.0
         for minEl in matchProgressPlayers1Dict:
             # rowLines += ",%d" % (minEl[pl.name])
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name])  # TODO format, now is 0.500000
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
             # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             graphGranularity += 1.0
         
@@ -1095,7 +1102,7 @@ def writeHtmlWithScripts(f, teams, resStr):
         graphGranularity = 1.0
         for minEl in matchProgressPlayers2Dict:
             # rowLines += ",%d" % (minEl[pl.name])
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name])  # TODO format, now is 0.500000
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
             # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             graphGranularity += 1.0
             
@@ -1111,6 +1118,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     # all streaks timeline -->
     allStreaksTimelineFunctionStr = ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_FUNCTION
+    
+    allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
     
     rowLines = ""
     currentRowsLines = ""
@@ -1154,6 +1163,80 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write(allStreaksTimelineFunctionStr)
     # <-- all streaks timeline
     
+    # highcharts players rank progress -->
+    # I -->
+    highchartsBattleProgressFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION).replace("highchart_battle_progress", "players_rank1")
+
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "[%s] ranks" % (players1[0].teamname))
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Rank")
+            
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \        
+    
+    hcDelim = "}, {\n"
+    rowLines = ""        
+    for pl in players1:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (pl.name)
+        # rowLines += "data: [0"
+        rowLines += "data: [[0,0]"
+        
+        # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        graphGranularity = 1.0
+        for minEl in matchProgressPlayers1Dict:
+            # rowLines += ",%d" % (minEl[pl.name])
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
+            # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            graphGranularity += 1.0
+        
+        rowLines += "]\n"
+        
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)    
+    # tooltip style
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
+    
+    f.write(highchartsBattleProgressFunctionStr)
+    # <-- I
+    
+    # II -->
+    highchartsBattleProgressFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION).replace("highchart_battle_progress", "players_rank2")
+            
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "[%s] ranks" % (players2[0].teamname))
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Rank")
+            
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \        
+    
+    hcDelim = "}, {\n"
+    rowLines = ""        
+    for pl in players2:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (pl.name)
+        # rowLines += "data: [0"
+        rowLines += "data: [[0,0]"
+        
+        # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        graphGranularity = 1.0
+        for minEl in matchProgressPlayers2Dict:
+            # rowLines += ",%d" % (minEl[pl.name])
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
+            # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            graphGranularity += 1.0
+        
+        rowLines += "]\n"
+        
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)    
+    # tooltip style
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
+    
+    f.write(highchartsBattleProgressFunctionStr)
+    # <-- II
+    # <-- highcharts players rank progress
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
@@ -1163,6 +1246,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("HIGHCHART_TEAM_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("HIGHCHART_PLAYERS_BATTLE_PROGRESS_PLACE", (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG).replace("highchart_battle_progress", "highchart_battle_progress_players"))
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
+    resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG)
     
     f.write(resStr)
     

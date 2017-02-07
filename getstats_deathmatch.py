@@ -1262,6 +1262,9 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     # highcharts battle progress -->
     highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
             
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Battle progress")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
+        
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
     
