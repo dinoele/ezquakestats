@@ -1193,6 +1193,9 @@ def writeHtmlWithScripts(f, teams, resStr):
         
         rowLines += "]\n"
         
+        # add negative zone
+        rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
+        
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)    
     # tooltip style
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
@@ -1228,6 +1231,9 @@ def writeHtmlWithScripts(f, teams, resStr):
             graphGranularity += 1.0
         
         rowLines += "]\n"
+        
+        # add negative zone
+        rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
         
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)    
     # tooltip style
