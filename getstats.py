@@ -121,7 +121,7 @@ line = f.readline()
 #matchdate = line.split("matchdate: ")[1].split("\n")[0]
 
 while not ezstatslib.isMatchStart(line):
-    if "telefrag" in line and not "teammate" in line: # telefrags before match start
+    if "telefrag" in line: # telefrags before match start
         matchlog.append(line)
         
     if "matchdate" in line:
@@ -353,8 +353,8 @@ headToHead = {}
 for pl1 in allplayers:
     headToHead[pl1.name] = []
     for pl2 in allplayers:
-        if pl1.name != pl2.name and pl1.teamname != pl2.teamname:
-            headToHead[pl1.name].append([pl2.name,0])
+        # if pl1.name != pl2.name and pl1.teamname != pl2.teamname:
+        headToHead[pl1.name].append([pl2.name,0])
 
 progressStr = []
 extendedProgressStr = []
@@ -421,16 +421,24 @@ for logline in matchlog:
             fillExtendedBattleProgress()
             continue
     
-    checkres,checkname = ezstatslib.teamkillDetection(logline)
+    # teamkill
+    checkres,who,whom = ezstatslib.teamkillDetection(logline)
     if checkres:
-        isFound = False
+        isFoundWho = False
+        isFoundWhom = False if whom != "" else True
         for pl in allplayers:
-            if pl.name == checkname:
-                pl.incTeamkills(currentMatchTime)
-                # TODO fillH2H
-                isFound = True
-                break;
-        if not isFound:            
+            if pl.name == who:
+                pl.incTeamkill(currentMatchTime, who, whom)                
+                isFoundWho = True
+
+            if whom != "" and pl.name == whom:
+                pl.incTeamdeath(currentMatchTime, who, whom)
+                isFoundWhom = True
+                
+        if whom != "":
+            fillH2H(who,whom)
+                
+        if not isFoundWho and not isFoundWhom:            
             ezstatslib.logError("count teamkills\n")
             exit(0)
         continue

@@ -1380,7 +1380,12 @@ def talefragDetection(s, teammateTelefrags):
         
         if "teammate" in s:
             teammateTelefrags.append(spl[0])
-            return True,"",spl[0]  # only death is increased
+            
+            # check whether victim is know (in new versions)
+            if len(spl) == 1 + len("was telefragged by his teammate"):
+                return True,"",spl[0]  # only death is increased
+            else:
+                return True,spl[len(spl) - 1].replace("\n",""),spl[0]
         else:
             return True,spl[4].split("\n")[0],spl[0]
     return False,"",""
@@ -1392,8 +1397,15 @@ def teamkillDetection(s):
                   "mows down a teammate"]
     for det in detectStrs:
          if det in s:
-            return True,s.split( )[0]
-    return False,""
+            spl = s.split( )
+            
+            # check whether victim is know (in new versions)
+            if len(spl) == 1 + len(det.split( )):
+                return True,spl[0],"" 
+            else:
+                return True,spl[0],spl[len(spl) - 1].replace("\n","")
+    
+    return False,"",""
 
 def powerupDetection(s):  
     if "picked up" in s:
@@ -1603,6 +1615,7 @@ class Player:
         self.deaths = 0
         self.suicides = 0
         self.teamkills = 0
+        self.teamdeaths = 0
 
         self.streaks = 0
         self.spawnfrags = 0
@@ -1760,12 +1773,22 @@ class Player:
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
         self.fillStreaks(time)
         
-    def incTeamkills(self, time):
+    def incTeamkill(self, time, who, whom):
         self.teamkills += 1
         self.currentDeathStreak.count += 1
         
         # self.currentDeathStreak.names.append("SELF")
-        self.currentDeathStreak.names += "TEAMMATE,"
+        self.currentDeathStreak.names += "[MATE]%s," % (whom)
+        
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+        self.fillStreaks(time)
+        
+    def incTeamdeath(self, time, who, whom):
+        self.teamdeaths += 1
+        self.currentDeathStreak.count += 1
+        
+        # self.currentDeathStreak.names.append("SELF")
+        self.currentDeathStreak.names += "[MATE]%s," % (who)
         
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
         self.fillStreaks(time)
