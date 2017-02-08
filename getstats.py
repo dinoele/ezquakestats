@@ -444,18 +444,28 @@ for logline in matchlog:
         continue
 
     # telefrag
+    teamcnt = len(teammateTelefrags)
     checkres,who,whom = ezstatslib.talefragDetection(logline, teammateTelefrags)
     if checkres:
         isFoundWho = False if who != "" else True
         isFoundWhom = False
+        isTeammateFrag = (teamcnt != len(teammateTelefrags))
         for pl in allplayers:
             if who != "" and pl.name == who:
-                pl.incKill(currentMatchTime, who, whom)
+                if not isTeammateFrag:
+                    pl.incKill(currentMatchTime, who, whom)
+                else:
+                    pl.incTeamkill(currentMatchTime, who, whom)
+                    
                 pl.tele_kills += 1
                 isFoundWho = True
             
             if pl.name == whom:
-                pl.incDeath(currentMatchTime, who, whom)
+                if not isTeammateFrag:
+                    pl.incDeath(currentMatchTime, who, whom)
+                else:
+                    pl.incTeamdeath(currentMatchTime, who, whom)
+                    
                 pl.tele_deaths += 1
                 isFoundWhom = True
                 
@@ -854,36 +864,20 @@ for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
 resultString += "\n"
 resultString += "Players duels:<br>"
 
-# team1
-headerRow=["[" + team2.name + "]", 'Frags', 'Kills', 'Deaths']
-playersNames = []
-for pl in players1ByFrags:
-    headerRow.append(pl.name);
-    playersNames.append(pl.name)
-
-colAlign=[]
-for i in xrange(len(headerRow)):
-    colAlign.append("center")
-
-htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
-                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
-
-for pl in players2ByFrags:
-    tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
-                                    ezstatslib.htmlBold(pl.frags()),
-                                    ezstatslib.htmlBold(pl.kills),
-                                    ezstatslib.htmlBold(pl.deaths)])
-        
-    for pll in players1ByFrags:
-        plName = pll.name
+def createDuelCell(rowPlayer, player):
+    plName = player.name
+    
+    if rowPlayer.name == plName:
+        return HTML.TableCell(str(rowPlayer.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY)
+    else:        
         plKills = 0
-        for val in headToHead[pl.name]:
+        for val in headToHead[rowPlayer.name]:
             if val[0] == plName:
                 plKills = val[1]
         
         plDeaths = 0
         for val in headToHead[plName]:
-            if val[0] == pl.name:
+            if val[0] == rowPlayer.name:
                 plDeaths = val[1]
         
         cellVal = "%s / %s" % (ezstatslib.htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
@@ -895,65 +889,53 @@ for pl in players2ByFrags:
         elif plKills > plDeaths:
             cellColor = ezstatslib.BG_COLOR_GREEN
         else:
-            cellColor = ezstatslib.BG_COLOR_RED
+            cellColor = ezstatslib.BG_COLOR_RED            
+
+        return HTML.TableCell(cellVal, bgcolor=cellColor)
+    
+def createPlayersDuelTable(team, teamPlayers, enemyPlayers):
+    headerRow=["[" + team.name + "]", 'Frags', 'Kills', 'Deaths']
+    playersNames = []
+    for pl in enemyPlayers:
+        headerRow.append(pl.name);
+        playersNames.append(pl.name)
         
-        tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+    headerRow.append("X");
+    headerRow.append("Team kills");
+    headerRow.append("Team deaths");
+    for pl in teamPlayers:
+        headerRow.append(pl.name);
+    
+    colAlign=[]
+    for i in xrange(len(headerRow)):
+        colAlign.append("center")
+    
+    htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
+                           style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    
+    for pl in teamPlayers:
+        tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
+                                        ezstatslib.htmlBold(pl.frags()),
+                                        ezstatslib.htmlBold(pl.kills),
+                                        ezstatslib.htmlBold(pl.deaths)])
             
-    htmlTable.rows.append(tableRow)  
+        for pll in enemyPlayers:
+            tableRow.cells.append( createDuelCell(pl, pll) )
+                
+        tableRow.cells.append( HTML.TableCell("") )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.htmlBold(pl.teamkills)) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.htmlBold(pl.teamdeaths)) )
+        
+        for pll in teamPlayers:
+            tableRow.cells.append( createDuelCell(pl, pll) )
+                
+        htmlTable.rows.append(tableRow)  
 
-resultString += str(htmlTable)
+    return htmlTable 
 
-# team 2
-htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
-                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+resultString += str( createPlayersDuelTable(team1, players1ByFrags, players2ByFrags) )
 resultString += "\n"
-headerRow=["[" + team1.name + "]", 'Frags', 'Kills', 'Deaths']
-playersNames = []
-for pl in players2ByFrags:
-    headerRow.append(pl.name);
-    playersNames.append(pl.name)
-
-colAlign=[]
-for i in xrange(len(headerRow)):
-    colAlign.append("center")
-
-htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
-                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
-
-for pl in players1ByFrags:
-    tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
-                                    ezstatslib.htmlBold(pl.frags()),
-                                    ezstatslib.htmlBold(pl.kills),
-                                    ezstatslib.htmlBold(pl.deaths)])
-        
-    for pll in players2ByFrags:
-        plName = pll.name
-        plKills = 0
-        for val in headToHead[pl.name]:
-            if val[0] == plName:
-                plKills = val[1]
-        
-        plDeaths = 0
-        for val in headToHead[plName]:
-            if val[0] == pl.name:
-                plDeaths = val[1]
-        
-        cellVal = "%s / %s" % (ezstatslib.htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
-                               ezstatslib.htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
-        
-        cellColor = ""
-        if plKills == plDeaths:
-            cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
-        elif plKills > plDeaths:
-            cellColor = ezstatslib.BG_COLOR_GREEN
-        else:
-            cellColor = ezstatslib.BG_COLOR_RED
-        
-        tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
-            
-    htmlTable.rows.append(tableRow)  
-
-resultString += str(htmlTable)
+resultString += str( createPlayersDuelTable(team2, players2ByFrags, players1ByFrags) )
 
 resultString += "\nTeammate telefrags: " + str(teammateTelefrags) + "\n"
 
