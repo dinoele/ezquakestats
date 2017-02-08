@@ -2113,7 +2113,7 @@ class Player:
             self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
             
         # PERSONAL_STALKER
-        if len(matchProgress) != 0 and len(matchProgress[0]) > 2: # not duel match
+        if len(matchProgress) != 0 and len(matchProgress[0]) > 3:
             sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
             if sortedHeadToHead[0][0] != self.name and sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
                 self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
