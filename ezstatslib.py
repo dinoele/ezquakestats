@@ -2073,33 +2073,35 @@ class Player:
             self.achievements.append( Achievement(AchievementType.CHILD_KILLER, "%d spawn frags%s" % (self.spawnfrags, "" if self.spawnfrags < 15 else ". %d CARL!!" % (self.spawnfrags))) )
             
         # ALWAYS_THE_FIRST
-        isFirst = True
-        alwaysTheFirst = True
-        for el in matchProgress:
-            if isFirst:
-                isFirst = False
-            else:
-                if not el[0][0] == self.name:
-                    alwaysTheFirst = False
-                    break
-                
-        if alwaysTheFirst:
-            self.achievements.append( Achievement(AchievementType.ALWAYS_THE_FIRST, "the 1st place from the 1st minute until the finish") )
-            
-        # ALWAYS_THE_LAST
-        if self.connectTime == 0:
+        if len(matchProgress) >= 2:
             isFirst = True
-            alwaysTheLast = True
+            alwaysTheFirst = True
             for el in matchProgress:
                 if isFirst:
                     isFirst = False
                 else:
-                    if not el[ len(el)-1 ][0] == self.name:
-                        alwaysTheLast = False
+                    if not el[0][0] == self.name:
+                        alwaysTheFirst = False
                         break
                     
-            if alwaysTheLast:
-                self.achievements.append( Achievement(AchievementType.ALWAYS_THE_LAST, "the last place from the 1st minute until the finish") )
+            if alwaysTheFirst:
+                self.achievements.append( Achievement(AchievementType.ALWAYS_THE_FIRST, "the 1st place from the 1st minute until the finish") )
+            
+        # ALWAYS_THE_LAST
+        if len(matchProgress) >= 2:
+            if self.connectTime == 0:
+                isFirst = True
+                alwaysTheLast = True
+                for el in matchProgress:
+                    if isFirst:
+                        isFirst = False
+                    else:
+                        if not el[ len(el)-1 ][0] == self.name:
+                            alwaysTheLast = False
+                            break
+                        
+                if alwaysTheLast:
+                    self.achievements.append( Achievement(AchievementType.ALWAYS_THE_LAST, "the last place from the 1st minute until the finish") )
                 
         # ROCKETS_LOVER
         if self.kills != 0 and self.kills == self.rl_kills:

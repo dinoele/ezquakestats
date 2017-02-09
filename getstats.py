@@ -592,6 +592,22 @@ for pl in allplayers:
 # TODO add teammateTelefrags to team score
 # print "teammateTelefrags:", teammateTelefrags
 
+powerUpsStatus = {}
+for pwrup in ["ra","ya","ga","mh"]:
+    exec("powerUpsStatus[\"%s\"] = False" % (pwrup))
+
+# move power stats for doroped players from power ups by minutes and get power ups status
+for pl in allplayers:
+    pl.recoverArmorStats()
+
+    for pwrup in ["ra","ya","ga","mh"]:
+        exec("if pl.%s != 0:\n    powerUpsStatus[\"%s\"] = True" % (pwrup, pwrup))
+
+# achievements
+for pl in allplayers:
+    pl.calculateAchievements([], powerUpsStatus, headToHead)
+    #pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead)
+
 # generate output string
 resultString = ""
 
@@ -647,6 +663,9 @@ resultString += "\n"
 for pl in players2ByFrags:
     resultString += "{0:20s}  {1:s}\n".format(pl.name, pl.getFormatedPowerUpsStats())
 resultString += "\n"
+
+if options.withScripts:
+    resultString += "</pre>PLAYERS_ACHIEVEMENTS_PLACE\n<pre>"
 
 allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
 
@@ -1233,6 +1252,23 @@ def writeHtmlWithScripts(f, teams, resStr):
     # <-- II
     # <-- highcharts players rank progress
     
+    # players achievements -->
+    playersAchievementsStr = ezstatslib.HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG    
+    cellWidth = "20px"
+    achievementsHtmlTable = HTML.Table(border="0", cellspacing="0",
+                                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    
+    for pl in allplayersByFrags:
+        if len(pl.achievements) != 0:
+            tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(pl.name), align="center", width=cellWidth) ])  # TODO player name cell width
+            for ach in pl.achievements:
+                tableRow.cells.append( HTML.TableCell(ach.generateHtml(), align="center" ) )
+            
+            achievementsHtmlTable.rows.append(tableRow)
+        
+    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable))    
+    # <-- players achievements
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
@@ -1243,6 +1279,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("HIGHCHART_PLAYERS_BATTLE_PROGRESS_PLACE", (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG).replace("highchart_battle_progress", "highchart_battle_progress_players"))
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
     resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG)
+    resStr = resStr.replace("PLAYERS_ACHIEVEMENTS_PLACE", playersAchievementsStr)
     
     f.write(resStr)
     
