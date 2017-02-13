@@ -2326,14 +2326,19 @@ class Achievement:
 def calculateCommonAchievements(allplayers):
     # TEAM_BEST_FRIEND_KILLER
     sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
-    if sortedByTeamkills[0].teamkills != 0:
-        sortedByTeamkills[0].achievements.append( Achievement(AchievementType.TEAM_BEST_FRIEND_KILLER, "killed teammates %d times" % (sortedByTeamkills[0].teamkills)) )
+    maxTeamkillsVal = sortedByTeamkills[0].teamkills
+    if maxTeamkillsVal != 0:
+        for pl in sortedByTeamkills:
+            if pl.teamkills == maxTeamkillsVal:
+                pl.achievements.append( Achievement(AchievementType.TEAM_BEST_FRIEND_KILLER, "killed teammates %d times" % (pl.teamkills)) )
         
     # TEAM_MAXIMUM_TEAMDEATHS
     sortedByTeamdeaths = sorted(allplayers, key=attrgetter("teamdeaths"), reverse=True)
-    if sortedByTeamdeaths[0].teamdeaths != 0:
-        sortedByTeamdeaths[0].achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (sortedByTeamdeaths[0].teamdeaths)) )
-
+    maxTeamdeathsVal = sortedByTeamdeaths[0].teamdeaths
+    if maxTeamdeathsVal != 0:
+        for pl in sortedByTeamdeaths:
+            if pl.teamdeaths == maxTeamdeathsVal:
+                pl.achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (pl.teamdeaths)) )
 
 class Team:
     def __init__(self, teamname):
