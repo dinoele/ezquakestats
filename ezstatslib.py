@@ -2180,6 +2180,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         OVERTIME_LOOSERS = 30, # "Looooooosers go home", # both the 1st and the 2nd places before overtime are finally below the 2nd place
                         PHENIX_BIRD = 31, # "Like a phenix bird", # won after the last place on the 4th minute
                         TEAM_BEST_FRIEND_KILLER = 32, # "With friends like that, who needs enemies?" # maximum team kills  DONE
+                        TEAM_MAXIMUM_TEAMDEATHS = 33, # "My friends are THE BEST OF THE BEST!!" # maximum team deaths  DONE
                                             )
 
 class Achievement:
@@ -2255,7 +2256,8 @@ class Achievement:
             return "Self destructor - the main your enemy is yourself"
         if self.achtype == AchievementType.TEAM_BEST_FRIEND_KILLER:
             return "With friends like that, who needs enemies?"
-        
+        if self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
+            return "My friends are THE BEST OF THE BEST!!"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -2304,6 +2306,8 @@ class Achievement:
             return "ezquakestats/img/ach_self_destructor.jpg"
         if self.achtype == AchievementType.TEAM_BEST_FRIEND_KILLER:
             return "ezquakestats/img/ach_team_killer.jpg"
+        if self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
+            return "ezquakestats/img/ach_team_deaths.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -2324,6 +2328,12 @@ def calculateCommonAchievements(allplayers):
     sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
     if sortedByTeamkills[0].teamkills != 0:
         sortedByTeamkills[0].achievements.append( Achievement(AchievementType.TEAM_BEST_FRIEND_KILLER, "killed teammates %d times" % (sortedByTeamkills[0].teamkills)) )
+        
+    # TEAM_MAXIMUM_TEAMDEATHS
+    sortedByTeamdeaths = sorted(allplayers, key=attrgetter("teamdeaths"), reverse=True)
+    if sortedByTeamdeaths[0].teamdeaths != 0:
+        sortedByTeamdeaths[0].achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (sortedByTeamdeaths[0].teamdeaths)) )
+
 
 class Team:
     def __init__(self, teamname):
