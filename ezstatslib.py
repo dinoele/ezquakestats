@@ -907,7 +907,9 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "         style: {\n" \
 "            fontSize: '12px'\n" \
 "         }\n" \
-"      }\n" \
+"      },\n" \
+"MIN_PLAYER_FRAGS\n" \
+"MAX_PLAYER_FRAGS\n" \
 "   },\n" \
 "   plotOptions: {\n" \
 "      candlestick: {\n" \
