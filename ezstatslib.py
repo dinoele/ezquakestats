@@ -2128,6 +2128,10 @@ class Player:
         if sortedHeadToHead[0][0] == self.name:
             self.achievements.append( Achievement(AchievementType.SELF_DESTRUCTOR, "suicided %d times which more than killed any other player" % (self.suicides)) )
 
+        # LUMBERJACK
+        if self.axe_kills >= 3:
+            self.achievements.append( Achievement(AchievementType.LUMBERJACK, "%d axe kills" % (self.axe_kills)) )
+
 
         
 
@@ -2183,6 +2187,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         PHENIX_BIRD = 31, # "Like a phenix bird", # won after the last place on the 4th minute
                         TEAM_BEST_FRIEND_KILLER = 32, # "With friends like that, who needs enemies?" # maximum team kills  DONE
                         TEAM_MAXIMUM_TEAMDEATHS = 33, # "My friends are THE BEST OF THE BEST!!" # maximum team deaths  DONE
+                        LUMBERJACK = 34, # "Lumberjack" # 3+ axe kills
                                             )
 
 class Achievement:
@@ -2260,6 +2265,8 @@ class Achievement:
             return "With friends like that, who needs enemies?"
         if self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
             return "My friends are THE BEST OF THE BEST!!"
+        if self.achtype == AchievementType.LUMBERJACK:
+            return "Lumberjack"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -2310,6 +2317,8 @@ class Achievement:
             return "ezquakestats/img/ach_team_killer.jpg"
         if self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
             return "ezquakestats/img/ach_team_deaths.jpg"
+        if self.achtype == AchievementType.LUMBERJACK:
+            return "ezquakestats/img/ach_lumberjack.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
