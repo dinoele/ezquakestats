@@ -2465,6 +2465,7 @@ class Team:
         self.deaths = 0
         self.suicides = 0
         self.teamkills = 0
+        self.teamdeaths = 0
     
     def damageDelta(self):
         return (self.gvn - self.tkn)

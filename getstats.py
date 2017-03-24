@@ -551,18 +551,20 @@ else:
     totalScore.append( [players2[0].teamname, fragsSum2] )
     
 
-# fill team kills/deaths/teamkills/suicides
+# fill team kills/deaths/teamkills/suicides/teamdeaths
 for pl in players1:
     team1.kills += pl.kills
     team1.deaths += pl.deaths
     team1.teamkills += pl.teamkills
     team1.suicides += pl.suicides
+    team1.teamdeaths += pl.teamdeaths
 
 for pl in players2:
     team2.kills += pl.kills
     team2.deaths += pl.deaths
     team2.teamkills += pl.teamkills
     team2.suicides += pl.suicides
+    team2.teamdeaths += pl.teamdeaths
 
 # fill final battle progress    
 progressLineDict = {}
