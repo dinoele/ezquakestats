@@ -1302,58 +1302,31 @@ def writeHtmlWithScripts(f, teams, resStr):
     # <-- players achievements
     
     # power ups donuts -->
-    # ra donut -->
-    raDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RA_DONUT_FUNCTION
-            
-    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
-    
-    dataStr = ""
-    for tt in teams:
-        dataStr += "['%s',%d]," % (tt.name, tt.ra)    
+    for pwrup in ["ra","ya","ga","mh"]:
+        # data: [ ['Firefox', 45.0], ['IE', 26.8]]
+        dataStr = ""
+        valSum = 0
+        for tt in teams:
+            exec("val = tt.%s" % (pwrup))
+            valSum += val
+            dataStr += "['%s',%d]," % (tt.name, val)
         
-    raDonutFunctionStr = raDonutFunctionStr.replace("ADD_ROWS", dataStr)        
-    
-    f.write(raDonutFunctionStr)
-    # <-- ra donut
-    # ya donut -->
-    yaDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_YA_DONUT_FUNCTION
-            
-    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
-    
-    dataStr = ""
-    for tt in teams:
-        dataStr += "['%s',%d]," % (tt.name, tt.ya)    
+        donutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_DONUT_FUNCTION_TEMPLATE if valSum != 0 else ezstatslib.HTML_SCRIPT_HIGHCHARTS_EMPTY_DONUT_FUNCTION
+        donutFunctionStr = donutFunctionStr.replace("CHART_NAME", "%s_donut" % (pwrup))
         
-    yaDonutFunctionStr = yaDonutFunctionStr.replace("ADD_ROWS", dataStr)        
-    
-    f.write(yaDonutFunctionStr)
-    # <-- ya donut
-    # ga donut -->
-    gaDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_GA_DONUT_FUNCTION
-            
-    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
-    
-    dataStr = ""
-    for tt in teams:
-        dataStr += "['%s',%d]," % (tt.name, tt.ga)    
+        if pwrup == "ra":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Red Armors")
+        if pwrup == "ya":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Yellow Armors")
+        if pwrup == "ga":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Green Armors")
+        if pwrup == "mh":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Mega Healths")
         
-    gaDonutFunctionStr = gaDonutFunctionStr.replace("ADD_ROWS", dataStr)        
-    
-    f.write(gaDonutFunctionStr)
-    # <-- ga donut
-    # mh donut -->
-    mhDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_MH_DONUT_FUNCTION
-            
-    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
-    
-    dataStr = ""
-    for tt in teams:
-        dataStr += "['%s',%d]," % (tt.name, tt.mh)    
+        if valSum != 0:    
+            donutFunctionStr = donutFunctionStr.replace("ADD_ROWS", dataStr)
         
-    mhDonutFunctionStr = mhDonutFunctionStr.replace("ADD_ROWS", dataStr)        
-    
-    f.write(mhDonutFunctionStr)
-    # <-- mh donut
+        f.write(donutFunctionStr)
     # <-- power ups donuts
     
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)

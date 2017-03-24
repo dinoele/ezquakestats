@@ -1099,9 +1099,9 @@ HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG = \
 # =========================================================================================================================================================
 # data: [ ['Firefox', 45.0], ['IE', 26.8]]
 
-HTML_SCRIPT_HIGHCHARTS_RA_DONUT_FUNCTION = \
+HTML_SCRIPT_HIGHCHARTS_DONUT_FUNCTION_TEMPLATE = \
 "$(function () {\n" \
-"Highcharts.chart('ra_donut', {\n" \
+"Highcharts.chart('CHART_NAME', {\n" \
 "    chart: {\n" \
 "        type: 'donut',\n" \
 "        options3d: {\n" \
@@ -1112,7 +1112,7 @@ HTML_SCRIPT_HIGHCHARTS_RA_DONUT_FUNCTION = \
 "        }\n" \
 "    },\n" \
 "    title: {\n" \
-"        text: 'Red Armors'\n" \
+"        text: 'CHART_TITLE'\n" \
 "    },\n" \
 "    tooltip: {\n" \
 "        pointFormat: '<b>{point.y}</b>'\n" \
@@ -1138,9 +1138,9 @@ HTML_SCRIPT_HIGHCHARTS_RA_DONUT_FUNCTION = \
 "});\n" \
 "});\n"
 
-HTML_SCRIPT_HIGHCHARTS_YA_DONUT_FUNCTION = \
+HTML_SCRIPT_HIGHCHARTS_EMPTY_DONUT_FUNCTION = \
 "$(function () {\n" \
-"Highcharts.chart('ya_donut', {\n" \
+"Highcharts.chart('CHART_NAME', {\n" \
 "    chart: {\n" \
 "        type: 'donut',\n" \
 "        options3d: {\n" \
@@ -1151,10 +1151,10 @@ HTML_SCRIPT_HIGHCHARTS_YA_DONUT_FUNCTION = \
 "        }\n" \
 "    },\n" \
 "    title: {\n" \
-"        text: 'Yellow Armors'\n" \
+"        text: 'CHART_TITLE'\n" \
 "    },\n" \
 "    tooltip: {\n" \
-"        pointFormat: '<b>{point.y}</b>'\n" \
+"        pointFormat: '<b>NO</b>'\n" \
 "    },\n" \
 "    plotOptions: {\n" \
 "        pie: {\n" \
@@ -1162,8 +1162,7 @@ HTML_SCRIPT_HIGHCHARTS_YA_DONUT_FUNCTION = \
 "            cursor: 'pointer',\n" \
 "            depth: 50,\n" \
 "            dataLabels: {\n" \
-"                enabled: true,\n" \
-"                format: '{point.name}: <b>{point.y}</b>'\n" \
+"                enabled: false,\n" \
 "            },\n" \
 "            innerSize: 70\n" \
 "        }\n" \
@@ -1171,91 +1170,11 @@ HTML_SCRIPT_HIGHCHARTS_YA_DONUT_FUNCTION = \
 "    series: [{\n" \
 "        type: 'pie',\n" \
 "        data: [\n" \
-"ADD_ROWS" \
+"['NO', 1]" \
 "        ]\n" \
 "    }]\n" \
 "});\n" \
 "});\n"
-
-HTML_SCRIPT_HIGHCHARTS_GA_DONUT_FUNCTION = \
-"$(function () {\n" \
-"Highcharts.chart('ga_donut', {\n" \
-"    chart: {\n" \
-"        type: 'donut',\n" \
-"        options3d: {\n" \
-"            enabled: true,\n" \
-"            alpha: 30,\n" \
-"            beta: 0,\n" \
-"            depth: 1\n" \
-"        }\n" \
-"    },\n" \
-"    title: {\n" \
-"        text: 'Green Armors'\n" \
-"    },\n" \
-"    tooltip: {\n" \
-"        pointFormat: '<b>{point.y}</b>'\n" \
-"    },\n" \
-"    plotOptions: {\n" \
-"        pie: {\n" \
-"            allowPointSelect: true,\n" \
-"            cursor: 'pointer',\n" \
-"            depth: 50,\n" \
-"            dataLabels: {\n" \
-"                enabled: true,\n" \
-"                format: '{point.name}: <b>{point.y}</b>'\n" \
-"            },\n" \
-"            innerSize: 70\n" \
-"        }\n" \
-"    },\n" \
-"    series: [{\n" \
-"        type: 'pie',\n" \
-"        data: [\n" \
-"ADD_ROWS" \
-"        ]\n" \
-"    }]\n" \
-"});\n" \
-"});\n"
-
-HTML_SCRIPT_HIGHCHARTS_MH_DONUT_FUNCTION = \
-"$(function () {\n" \
-"Highcharts.chart('mh_donut', {\n" \
-"    chart: {\n" \
-"        type: 'donut',\n" \
-"        options3d: {\n" \
-"            enabled: true,\n" \
-"            alpha: 30,\n" \
-"            beta: 0,\n" \
-"            depth: 1\n" \
-"        }\n" \
-"    },\n" \
-"    title: {\n" \
-"        text: 'Mega Health'\n" \
-"    },\n" \
-"    tooltip: {\n" \
-"        pointFormat: '<b>{point.y}</b>'\n" \
-"    },\n" \
-"    plotOptions: {\n" \
-"        pie: {\n" \
-"            allowPointSelect: true,\n" \
-"            cursor: 'pointer',\n" \
-"            depth: 50,\n" \
-"            dataLabels: {\n" \
-"                enabled: true,\n" \
-"                format: '{point.name}: <b>{point.y}</b>'\n" \
-"            },\n" \
-"            innerSize: 70\n" \
-"        }\n" \
-"    },\n" \
-"    series: [{\n" \
-"        type: 'pie',\n" \
-"        data: [\n" \
-"ADD_ROWS" \
-"        ]\n" \
-"    }]\n" \
-"});\n" \
-"});\n"
-
-# HTML_SCRIPT_HIGHCHARTS_DONUT_DIV_TAG = "<div id=\"ra_donut\" style=\"height: 400px\"></div>"
 
 HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG = \
 "      <table style=\"width: 100%;\">\n" \
