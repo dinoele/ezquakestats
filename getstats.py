@@ -684,6 +684,9 @@ totalStreaksHtmlTable = \
                border="1", 
                style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
+if options.withScripts:
+    resultString += "</pre>POWER_UPS_DONUTS_PLACE\n<pre>"
+
 resultString += "\n"
 resultString += "Players streaks:\n"
 resultString += str(totalStreaksHtmlTable)
@@ -1298,6 +1301,61 @@ def writeHtmlWithScripts(f, teams, resStr):
     playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable))    
     # <-- players achievements
     
+    # power ups donuts -->
+    # ra donut -->
+    raDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RA_DONUT_FUNCTION
+            
+    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
+    
+    dataStr = ""
+    for tt in teams:
+        dataStr += "['%s',%d]," % (tt.name, tt.ra)    
+        
+    raDonutFunctionStr = raDonutFunctionStr.replace("ADD_ROWS", dataStr)        
+    
+    f.write(raDonutFunctionStr)
+    # <-- ra donut
+    # ya donut -->
+    yaDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_YA_DONUT_FUNCTION
+            
+    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
+    
+    dataStr = ""
+    for tt in teams:
+        dataStr += "['%s',%d]," % (tt.name, tt.ya)    
+        
+    yaDonutFunctionStr = yaDonutFunctionStr.replace("ADD_ROWS", dataStr)        
+    
+    f.write(yaDonutFunctionStr)
+    # <-- ya donut
+    # ga donut -->
+    gaDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_GA_DONUT_FUNCTION
+            
+    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
+    
+    dataStr = ""
+    for tt in teams:
+        dataStr += "['%s',%d]," % (tt.name, tt.ga)    
+        
+    gaDonutFunctionStr = gaDonutFunctionStr.replace("ADD_ROWS", dataStr)        
+    
+    f.write(gaDonutFunctionStr)
+    # <-- ga donut
+    # mh donut -->
+    mhDonutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_MH_DONUT_FUNCTION
+            
+    # data: [ ['Firefox', 45.0], ['IE', 26.8]]
+    
+    dataStr = ""
+    for tt in teams:
+        dataStr += "['%s',%d]," % (tt.name, tt.mh)    
+        
+    mhDonutFunctionStr = mhDonutFunctionStr.replace("ADD_ROWS", dataStr)        
+    
+    f.write(mhDonutFunctionStr)
+    # <-- mh donut
+    # <-- power ups donuts
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
@@ -1309,6 +1367,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
     resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG)
     resStr = resStr.replace("PLAYERS_ACHIEVEMENTS_PLACE", playersAchievementsStr)
+    resStr = resStr.replace("POWER_UPS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG)
     
     f.write(resStr)
     

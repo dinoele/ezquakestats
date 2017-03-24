@@ -1097,6 +1097,185 @@ HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG = \
   "      </table>\n" \
 
 # =========================================================================================================================================================
+# data: [ ['Firefox', 45.0], ['IE', 26.8]]
+
+HTML_SCRIPT_HIGHCHARTS_RA_DONUT_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.chart('ra_donut', {\n" \
+"    chart: {\n" \
+"        type: 'donut',\n" \
+"        options3d: {\n" \
+"            enabled: true,\n" \
+"            alpha: 30,\n" \
+"            beta: 0,\n" \
+"            depth: 1\n" \
+"        }\n" \
+"    },\n" \
+"    title: {\n" \
+"        text: 'Red Armors'\n" \
+"    },\n" \
+"    tooltip: {\n" \
+"        pointFormat: '<b>{point.y}</b>'\n" \
+"    },\n" \
+"    plotOptions: {\n" \
+"        pie: {\n" \
+"            allowPointSelect: true,\n" \
+"            cursor: 'pointer',\n" \
+"            depth: 50,\n" \
+"            dataLabels: {\n" \
+"                enabled: true,\n" \
+"                format: '{point.name}: <b>{point.y}</b>'\n" \
+"            },\n" \
+"            innerSize: 70\n" \
+"        }\n" \
+"    },\n" \
+"    series: [{\n" \
+"        type: 'pie',\n" \
+"        data: [\n" \
+"ADD_ROWS" \
+"        ]\n" \
+"    }]\n" \
+"});\n" \
+"});\n"
+
+HTML_SCRIPT_HIGHCHARTS_YA_DONUT_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.chart('ya_donut', {\n" \
+"    chart: {\n" \
+"        type: 'donut',\n" \
+"        options3d: {\n" \
+"            enabled: true,\n" \
+"            alpha: 30,\n" \
+"            beta: 0,\n" \
+"            depth: 1\n" \
+"        }\n" \
+"    },\n" \
+"    title: {\n" \
+"        text: 'Yellow Armors'\n" \
+"    },\n" \
+"    tooltip: {\n" \
+"        pointFormat: '<b>{point.y}</b>'\n" \
+"    },\n" \
+"    plotOptions: {\n" \
+"        pie: {\n" \
+"            allowPointSelect: true,\n" \
+"            cursor: 'pointer',\n" \
+"            depth: 50,\n" \
+"            dataLabels: {\n" \
+"                enabled: true,\n" \
+"                format: '{point.name}: <b>{point.y}</b>'\n" \
+"            },\n" \
+"            innerSize: 70\n" \
+"        }\n" \
+"    },\n" \
+"    series: [{\n" \
+"        type: 'pie',\n" \
+"        data: [\n" \
+"ADD_ROWS" \
+"        ]\n" \
+"    }]\n" \
+"});\n" \
+"});\n"
+
+HTML_SCRIPT_HIGHCHARTS_GA_DONUT_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.chart('ga_donut', {\n" \
+"    chart: {\n" \
+"        type: 'donut',\n" \
+"        options3d: {\n" \
+"            enabled: true,\n" \
+"            alpha: 30,\n" \
+"            beta: 0,\n" \
+"            depth: 1\n" \
+"        }\n" \
+"    },\n" \
+"    title: {\n" \
+"        text: 'Green Armors'\n" \
+"    },\n" \
+"    tooltip: {\n" \
+"        pointFormat: '<b>{point.y}</b>'\n" \
+"    },\n" \
+"    plotOptions: {\n" \
+"        pie: {\n" \
+"            allowPointSelect: true,\n" \
+"            cursor: 'pointer',\n" \
+"            depth: 50,\n" \
+"            dataLabels: {\n" \
+"                enabled: true,\n" \
+"                format: '{point.name}: <b>{point.y}</b>'\n" \
+"            },\n" \
+"            innerSize: 70\n" \
+"        }\n" \
+"    },\n" \
+"    series: [{\n" \
+"        type: 'pie',\n" \
+"        data: [\n" \
+"ADD_ROWS" \
+"        ]\n" \
+"    }]\n" \
+"});\n" \
+"});\n"
+
+HTML_SCRIPT_HIGHCHARTS_MH_DONUT_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.chart('mh_donut', {\n" \
+"    chart: {\n" \
+"        type: 'donut',\n" \
+"        options3d: {\n" \
+"            enabled: true,\n" \
+"            alpha: 30,\n" \
+"            beta: 0,\n" \
+"            depth: 1\n" \
+"        }\n" \
+"    },\n" \
+"    title: {\n" \
+"        text: 'Mega Health'\n" \
+"    },\n" \
+"    tooltip: {\n" \
+"        pointFormat: '<b>{point.y}</b>'\n" \
+"    },\n" \
+"    plotOptions: {\n" \
+"        pie: {\n" \
+"            allowPointSelect: true,\n" \
+"            cursor: 'pointer',\n" \
+"            depth: 50,\n" \
+"            dataLabels: {\n" \
+"                enabled: true,\n" \
+"                format: '{point.name}: <b>{point.y}</b>'\n" \
+"            },\n" \
+"            innerSize: 70\n" \
+"        }\n" \
+"    },\n" \
+"    series: [{\n" \
+"        type: 'pie',\n" \
+"        data: [\n" \
+"ADD_ROWS" \
+"        ]\n" \
+"    }]\n" \
+"});\n" \
+"});\n"
+
+# HTML_SCRIPT_HIGHCHARTS_DONUT_DIV_TAG = "<div id=\"ra_donut\" style=\"height: 400px\"></div>"
+
+HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG = \
+"      <table style=\"width: 100%;\">\n" \
+"        <tr>\n" \
+"          <td style=\"width: 25%\">\n" \
+"            <div id=\"ra_donut\" style=\"height: 250px\"></div>\n" \
+"          </td>\n" \
+"          <td style=\"width: 25%\">\n" \
+"            <div id=\"ya_donut\" style=\"height: 250px\"></div>\n" \
+"          </td>\n" \
+"          <td style=\"width: 25%\">\n" \
+"            <div id=\"ga_donut\" style=\"height: 250px\"></div>\n" \
+"          </td>\n" \
+"          <td style=\"width: 25%\">\n" \
+"            <div id=\"mh_donut\" style=\"height: 250px \"></div>\n" \
+"          </td>\n" \
+"        </tr>\n" \
+"      </table>\n" \
+
+# =========================================================================================================================================================
 
 HTML_SCRIPT_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_FUNCTION =\
     "google.charts.setOnLoadCallback(drawPLAYER_NAMEPowerUpsByMinutes);\n" \
@@ -1204,6 +1383,7 @@ HTML_BODY_FOLDING_SCRIPT = \
   "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/dependencies/js/jquery.min.js\"></script>\n" \
   "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/js/bootstrap-slider.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/highcharts.js\"></script>\n" \
+  "<script src=\"https://code.highcharts.com/highcharts-3d.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/modules/exporting.js\"></script>\n" \
   "<script type='text/javascript'>\n" \
   "  var timelineSliderOnChange = function() { drawAllStreakTimelines(timelineSliderObj.getValue()); console.log(timelineSliderObj.getValue()) }\n" \
