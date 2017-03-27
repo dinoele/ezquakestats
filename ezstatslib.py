@@ -1126,7 +1126,7 @@ HTML_SCRIPT_HIGHCHARTS_DONUT_FUNCTION_TEMPLATE = \
 "                enabled: true,\n" \
 "                format: '{point.name}: <b>{point.y}</b>'\n" \
 "            },\n" \
-"            innerSize: 70\n" \
+"            innerSize: 45\n" \
 "        }\n" \
 "    },\n" \
 "    series: [{\n" \
@@ -1190,6 +1190,27 @@ HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG = \
 "          </td>\n" \
 "          <td style=\"width: 25%\">\n" \
 "            <div id=\"mh_donut\" style=\"height: 250px \"></div>\n" \
+"          </td>\n" \
+"        </tr>\n" \
+"      </table>\n" \
+
+HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG = \
+"      <table style=\"width: 100%;\">\n" \
+"        <tr>\n" \
+"          <td style=\"width: 20%\">\n" \
+"            <div id=\"frags_donut\" style=\"height: 250px\"></div>\n" \
+"          </td>\n" \
+"          <td style=\"width: 20%\">\n" \
+"            <div id=\"kills_donut\" style=\"height: 250px\"></div>\n" \
+"          </td>\n" \
+"          <td style=\"width: 20%\">\n" \
+"            <div id=\"deaths_donut\" style=\"height: 250px\"></div>\n" \
+"          </td>\n" \
+"          <td style=\"width: 20%\">\n" \
+"            <div id=\"suicides_donut\" style=\"height: 250px \"></div>\n" \
+"          </td>\n" \
+"          <td style=\"width: 20%\">\n" \
+"            <div id=\"teamkills_donut\" style=\"height: 250px\"></div>\n" \
 "          </td>\n" \
 "        </tr>\n" \
 "      </table>\n" \

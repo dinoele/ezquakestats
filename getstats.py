@@ -687,7 +687,14 @@ totalStreaksHtmlTable = \
                style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
 if options.withScripts:
+    resultString += "</pre>TEAM_STATS_DONUTS_PLACE\n<pre>"
+
+resultString += "<hr>"
+
+if options.withScripts:
     resultString += "</pre>POWER_UPS_DONUTS_PLACE\n<pre>"
+    
+resultString += "<hr>"
 
 resultString += "\n"
 resultString += "Players streaks:\n"
@@ -1331,6 +1338,33 @@ def writeHtmlWithScripts(f, teams, resStr):
         f.write(donutFunctionStr)
     # <-- power ups donuts
     
+    # team stats donuts -->
+    for tstat in ["frags","kills","deaths","suicides","teamkills"]:
+        # data: [ ['Firefox', 45.0], ['IE', 26.8]]
+        dataStr = ""
+        for tt in teams:
+            exec("val = tt.%s%s" % (tstat, "()" if tstat == "frags" else ""))
+            dataStr += "['%s',%d]," % (tt.name, val)
+        
+        donutFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_DONUT_FUNCTION_TEMPLATE
+        donutFunctionStr = donutFunctionStr.replace("CHART_NAME", "%s_donut" % (tstat))
+        
+        if tstat == "frags":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Frags")
+        if tstat == "kills":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Kills")
+        if tstat == "deaths":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Deaths")
+        if tstat == "suicides":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Suicides")
+        if tstat == "teamkills":
+            donutFunctionStr = donutFunctionStr.replace("CHART_TITLE", "Teamkills")
+        
+        donutFunctionStr = donutFunctionStr.replace("ADD_ROWS", dataStr)
+        
+        f.write(donutFunctionStr)
+    # <-- team stats donuts
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
@@ -1343,6 +1377,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG)
     resStr = resStr.replace("PLAYERS_ACHIEVEMENTS_PLACE", playersAchievementsStr)
     resStr = resStr.replace("POWER_UPS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG)
+    resStr = resStr.replace("TEAM_STATS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG)
     
     f.write(resStr)
     
