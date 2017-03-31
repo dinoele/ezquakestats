@@ -1511,7 +1511,7 @@ for el in sorted_filesMap:
             teamsStr = teamsStr.replace("\n","")
             teamsStrSplit = teamsStr.split(" ")
             
-            # TODO get winner, check for xep vs. red, use htmlBold
+            # TODO check for xep vs. red
         
         formattedTime = gg[1].strftime("%H-%M-%S")        
         
@@ -1522,8 +1522,8 @@ for el in sorted_filesMap:
             tableRow.cells.append( HTML.TableCell("") )
             tableRow.cells.append( HTML.TableCell("") )
         else:
-            tableRow.cells.append( HTML.TableCell(teamsStrSplit[0]) )
-            tableRow.cells.append( HTML.TableCell(teamsStrSplit[1]) )
+            tableRow.cells.append( HTML.TableCell( ezstatslib.htmlBold(teamsStrSplit[0]), align="center" ) )
+            tableRow.cells.append( HTML.TableCell(teamsStrSplit[1], align="center") )
         
         filesTable.rows.append(tableRow)
 
