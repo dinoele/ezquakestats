@@ -4,6 +4,7 @@ import time, sys
 from datetime import timedelta, date, datetime
 import time
 import re
+import subprocess
 from operator import itemgetter, attrgetter, methodcaller
 
 from optparse import OptionParser,OptionValueError
@@ -975,7 +976,15 @@ resultString += "\nTeammate telefrags: " + str(teammateTelefrags) + "\n"
 
 print resultString
 
-def writeHtmlWithScripts(f, teams, resStr):    
+def writeHtmlWithScripts(f, teams, resStr):
+    sortedTeams = sorted(teams, key=lambda x: (x.frags()), reverse=True)
+    teamsStr = ""
+    for tt in sortedTeams:
+        teamsStr += "%s(%d) " % (tt.name, tt.frags())
+    teamsStr = teamsStr[:-1]
+    teamsStr += "\n"        
+    f.write("<!--\nGAME_TEAMS\n" + teamsStr + "-->\n")    
+    
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % ("TEAM", mapName, matchdate)  # global values
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
@@ -1448,7 +1457,8 @@ attrs = {} # attribs
 attrs['colspan'] = 2
 headerRow.cells.append( HTML.TableCell("Date", header=True) )
 headerRow.cells.append( HTML.TableCell("Time", header=True) )
-headerRow.cells.append( HTML.TableCell("Matches", attribs=attrs, header=True) )
+headerRow.cells.append( HTML.TableCell("Match", header=True) )
+headerRow.cells.append( HTML.TableCell("Result", attribs=attrs, header=True) )
 
 filesTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", cellpadding="8")
 
@@ -1494,10 +1504,26 @@ for el in sorted_filesMap:
     pls = sorted(pls, key=lambda x: x[1], reverse=True)
         
     for gg in pls:
+        logHeadStr = subprocess.check_output(["head", "%s" % ("../" + gg[0])])
+        teamsStr = ""
+        if "GAME_TEAMS" in logHeadStr:
+            teamsStr = logHeadStr.split("GAME_TEAMS")[1].split("-->")[0]
+            teamsStr = teamsStr.replace("\n","")
+            teamsStrSplit = teamsStr.split(" ")
+            
+            # TODO get winner, check for xep vs. red, use htmlBold
+        
         formattedTime = gg[1].strftime("%H-%M-%S")        
         
         tableRow = HTML.TableRow(cells=[formattedDate,formattedTime])        
         tableRow.cells.append( HTML.TableCell( htmlLink(gg[0], newGifTag if checkNew(isFileNew, filePath, gg[0]) else "") ) )
+        
+        if teamsStr == "":
+            tableRow.cells.append( HTML.TableCell("") )
+            tableRow.cells.append( HTML.TableCell("") )
+        else:
+            tableRow.cells.append( HTML.TableCell(teamsStrSplit[0]) )
+            tableRow.cells.append( HTML.TableCell(teamsStrSplit[1]) )
         
         filesTable.rows.append(tableRow)
 
