@@ -108,6 +108,10 @@ matchProgressDict = []
 matchProgressPlayers1Dict = []
 matchProgressPlayers2Dict = []
 
+matchProgressDictEx = []
+matchProgressPlayers1DictEx = []
+matchProgressPlayers2DictEx = []
+
 players1 = []
 players2 = []
 allplayers = []
@@ -360,6 +364,8 @@ for pl1 in allplayers:
 progressStr = []
 extendedProgressStr = []
 isProgressLine = False
+currentMatchTime = 0
+battleProgressExtendedNextPoint = 15
 for logline in matchlog:
     if logline == "":
         continue
@@ -375,9 +381,9 @@ for logline in matchlog:
         isProgressLine = True
         continue
 
-    if isProgressLine or "time over, the game is a draw" in logline: # Team [red] leads by 4 frags || tie || time over, the game is a draw
-        isProgressLine = False
-        
+    isIntermediatePoint = (not "time over, the game is a draw" in logline) and (currentMatchTime > battleProgressExtendedNextPoint)
+
+    if isProgressLine or isIntermediatePoint or "time over, the game is a draw" in logline: # Team [red] leads by 4 frags || tie || time over, the game is a draw
         # TODO replace with frags when teams stats are updated on each increment
         progressLineDict = {}
         
@@ -390,37 +396,47 @@ for logline in matchlog:
         
         progressLineDict[team1.name] = fr1;  # team1.frags()
         progressLineDict[team2.name] = fr2; # team2.frags()
-        matchProgressDict.append(progressLineDict)
+        if not isIntermediatePoint:
+            matchProgressDict.append(progressLineDict)
+        matchProgressDictEx.append(progressLineDict)
         
         players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
         playersProgressLineDict1 = {}
         for pl in players1ByFrags:
             playersProgressLineDict1[pl.name] = [pl.frags(), pl.calcDelta()];
-        matchProgressPlayers1Dict.append(playersProgressLineDict1)
+        if not isIntermediatePoint:
+            matchProgressPlayers1Dict.append(playersProgressLineDict1)
+        matchProgressPlayers1DictEx.append(playersProgressLineDict1)
         
         players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
         playersProgressLineDict2 = {}
         for pl in players2ByFrags:
             playersProgressLineDict2[pl.name] = [pl.frags(), pl.calcDelta()];
-        matchProgressPlayers2Dict.append(playersProgressLineDict2)        
+        if not isIntermediatePoint:
+            matchProgressPlayers2Dict.append(playersProgressLineDict2)
+        matchProgressPlayers2DictEx.append(playersProgressLineDict2)
+
+        battleProgressExtendedNextPoint += (int)(60 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
         
+        if not isIntermediatePoint:
+            isProgressLine = False
         
-        if "time over, the game is a draw" in logline:
-            progressStr.append("tie (overtime)")
-            fillExtendedBattleProgress()
-            continue
-        elif "tie" in logline:
-            progressStr.append("tie")
-            fillExtendedBattleProgress()
-            continue
-        else:
-            if not "leads" in logline:
-                ezstatslib.logError("progress\n")
-                exit(0)                
-            sp = logline.split(" ")
-            progressStr.append("%s%s" % (sp[1], sp[4]))
-            fillExtendedBattleProgress()
-            continue
+            if "time over, the game is a draw" in logline:
+                progressStr.append("tie (overtime)")
+                fillExtendedBattleProgress()
+                continue
+            elif "tie" in logline:
+                progressStr.append("tie")
+                fillExtendedBattleProgress()
+                continue
+            else:
+                if not "leads" in logline:
+                    ezstatslib.logError("progress\n")
+                    exit(0)                
+                sp = logline.split(" ")
+                progressStr.append("%s%s" % (sp[1], sp[4]))
+                fillExtendedBattleProgress()
+                continue
     
     # teamkill
     checkres,who,whom = ezstatslib.teamkillDetection(logline)
@@ -572,18 +588,21 @@ progressLineDict = {}
 progressLineDict[team1.name] = team1.frags();
 progressLineDict[team2.name] = team2.frags();
 matchProgressDict.append(progressLineDict)
+matchProgressDictEx.append(progressLineDict)
 
 players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 playersProgressLineDict1 = {}
 for pl in players1ByFrags:
     playersProgressLineDict1[pl.name] = [pl.frags(), pl.calcDelta()];
 matchProgressPlayers1Dict.append(playersProgressLineDict1)
+matchProgressPlayers1DictEx.append(playersProgressLineDict1)
 
 players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 playersProgressLineDict2 = {}
 for pl in players2ByFrags:
     playersProgressLineDict2[pl.name] = [pl.frags(), pl.calcDelta()];
-matchProgressPlayers2Dict.append(playersProgressLineDict2)        
+matchProgressPlayers2Dict.append(playersProgressLineDict2)
+matchProgressPlayers2DictEx.append(playersProgressLineDict2)        
 
 fillExtendedBattleProgress()
     
@@ -1031,12 +1050,16 @@ def writeHtmlWithScripts(f, teams, resStr):
                 rowLines += "color: 'blue',\n"
         
         rowLines += "data: [[0,0]"
-        
-        # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        graphGranularity = 1.0
-        for minEl in matchProgressDict:
+                
+        # graphGranularity = 1.0
+        # for minEl in matchProgressDict:
+        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[tt.name])  # TODO format, now is 0.500000
+        #     graphGranularity += 1.0
+            
+        graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        for minEl in matchProgressDictEx:
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[tt.name])  # TODO format, now is 0.500000
-            graphGranularity += 1.0
+            graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             
         rowLines += "]\n"        
     
@@ -1118,13 +1141,15 @@ def writeHtmlWithScripts(f, teams, resStr):
         # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
         
-        # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        graphGranularity = 1.0
-        for minEl in matchProgressPlayers1Dict:
-            # rowLines += ",%d" % (minEl[pl.name])
+        # graphGranularity = 1.0
+        # for minEl in matchProgressPlayers1Dict:
+        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000            
+        #     graphGranularity += 1.0
+            
+        graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        for minEl in matchProgressPlayers1DictEx:
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
-            # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            graphGranularity += 1.0
+            graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
         
         rowLines += "]\n"
         rowLines += ",\ndashStyle: 'ShortDash',\n    lineWidth: 3"
@@ -1136,14 +1161,16 @@ def writeHtmlWithScripts(f, teams, resStr):
         rowLines += "name: '%s',\n" % (pl.name)
         # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
-        
-        # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        graphGranularity = 1.0
-        for minEl in matchProgressPlayers2Dict:
-            # rowLines += ",%d" % (minEl[pl.name])
+                
+        # graphGranularity = 1.0
+        # for minEl in matchProgressPlayers2Dict:        
+        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
+        #     graphGranularity += 1.0
+            
+        graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        for minEl in matchProgressPlayers2DictEx:        
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
-            # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            graphGranularity += 1.0
+            graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             
         rowLines += "]\n"
     
@@ -1239,13 +1266,23 @@ def writeHtmlWithScripts(f, teams, resStr):
         # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
         
+        # graphGranularity = 1.0
+        # for minEl in matchProgressPlayers1Dict:
+        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
+        #     graphGranularity += 1.0
+            
         # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        graphGranularity = 1.0
-        for minEl in matchProgressPlayers1Dict:
-            # rowLines += ",%d" % (minEl[pl.name])
+        # for minEl in matchProgressPlayers1DictEx:
+        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
+        #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        
+        graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        k = 0
+        while k < len(matchProgressPlayers1DictEx):            
+            minEl = matchProgressPlayers1DictEx[k]        
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
-            # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            graphGranularity += 1.0
+            graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            k += 2
         
         rowLines += "]\n"
         
@@ -1281,13 +1318,23 @@ def writeHtmlWithScripts(f, teams, resStr):
         # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
         
+        # graphGranularity = 1.0
+        # for minEl in matchProgressPlayers2Dict:
+        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
+        #     graphGranularity += 1.0
+            
         # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        graphGranularity = 1.0
-        for minEl in matchProgressPlayers2Dict:
-            # rowLines += ",%d" % (minEl[pl.name])
+        # for minEl in matchProgressPlayers2DictEx:
+        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
+        #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            
+        graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        k = 0
+        while k < len(matchProgressPlayers2DictEx):
+            minEl = matchProgressPlayers2DictEx[k]
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
-            # graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            graphGranularity += 1.0
+            graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            k += 2
         
         rowLines += "]\n"
         
