@@ -987,6 +987,7 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED = \
 "            },\n"
 
 HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG = "<div id=\"highchart_battle_progress\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+HTML_SCRIPT_HIGHCHARTS_EXTENDED_BATTLE_PROGRESS_DIV_TAG = "<div id=\"highchart_battle_progress_extended\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
 
 HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY = 4
 

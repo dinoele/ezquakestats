@@ -112,6 +112,8 @@ matchProgressDictEx = []
 matchProgressPlayers1DictEx = []
 matchProgressPlayers2DictEx = []
 
+matchProgressDictEx2 = []
+
 players1 = []
 players2 = []
 allplayers = []
@@ -438,6 +440,20 @@ for logline in matchlog:
                 fillExtendedBattleProgress()
                 continue
     
+    if len(matchProgressDictEx2) == 0 or matchProgressDictEx2[len(matchProgressDictEx2)-1][team1.name][0] != currentMatchTime:
+        progressLineDict = {}
+        
+        fr1 = 0
+        for pl in players1:
+            fr1 += pl.frags()
+        fr2 = 0
+        for pl in players2:
+            fr2 += pl.frags()        
+        
+        progressLineDict[team1.name] = [currentMatchTime, fr1]; # team1.frags()
+        progressLineDict[team2.name] = [currentMatchTime, fr2]; # team2.frags()        
+        matchProgressDictEx2.append(progressLineDict)
+    
     # teamkill
     checkres,who,whom = ezstatslib.teamkillDetection(logline)
     if checkres:
@@ -589,6 +605,19 @@ progressLineDict[team1.name] = team1.frags();
 progressLineDict[team2.name] = team2.frags();
 matchProgressDict.append(progressLineDict)
 matchProgressDictEx.append(progressLineDict)
+
+
+minsCount = len(matchProgressDict)
+progressLineDict = {}
+progressLineDict[team1.name] = [minsCount*60, team1.frags()];
+progressLineDict[team2.name] = [minsCount*60, team2.frags()];
+
+# correct final point if necessary
+if len(matchProgressDictEx2) != 0 and matchProgressDictEx2[len(matchProgressDictEx2)-1][team1.name][0] == minsCount*60:
+    matchProgressDictEx2[len(matchProgressDictEx2)-1] = progressLineDict
+else:
+    matchProgressDictEx2.append(progressLineDict)
+
 
 players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 playersProgressLineDict1 = {}
@@ -745,6 +774,9 @@ for p in extendedProgressStr:
 
 if options.withScripts:
     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
+    
+if options.withScripts:
+    resultString += "\nHIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE\n"
 
 if options.withScripts:
     resultString += "\nHIGHCHART_PLAYERS_BATTLE_PROGRESS_PLACE\n"
@@ -1070,6 +1102,59 @@ def writeHtmlWithScripts(f, teams, resStr):
                 
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle progress
+    
+    # highcharts battle extended progress -->
+    highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("highchart_battle_progress", "highchart_battle_progress_extended")
+            
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Battle progress")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "")
+            
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
+    
+    hcDelim = "}, {\n"
+    rowLines = ""
+
+    isRed = False
+    if len(teams) == 2:
+        for tt in teams:
+            if "red" == tt.name:
+                isRed = True
+                break        
+    
+    for tt in teams:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (tt.name)
+        # rowLines += "data: [0"
+        
+        # add color if one of the two teams is 'red'
+        if isRed:
+            if tt.name == "red":
+                rowLines += "color: 'red',\n"
+            else:
+                rowLines += "color: 'blue',\n"
+        
+        rowLines += "data: [[0,0]"
+            
+        for minEl in matchProgressDictEx2:
+            rowLines += ",[%f,%d]" % (minEl[tt.name][0], minEl[tt.name][1])  # TODO format, now is 0.500000
+            
+        rowLines += "]\n"        
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
+    
+    # tooltip style
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SIMPLE)
+                
+    f.write(highchartsBattleProgressFunctionStr)
+    # <-- highcharts battle extended progress
     
     # highcharts teams battle progress -->
     matchMinutesCnt = len(matchProgressDict)
@@ -1425,6 +1510,9 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     # add divs
     resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE",      ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    
+    resStr = resStr.replace("HIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_EXTENDED_BATTLE_PROGRESS_DIV_TAG)    
+    
     # resStr = resStr.replace("HIGHCHART_TEAM_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM1 + "\n" + \
     #                                                                 ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM2 )
     resStr = resStr.replace("HIGHCHART_TEAM_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG)
