@@ -1509,7 +1509,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
-    resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE",      ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    # resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE",      ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", "")
     
     resStr = resStr.replace("HIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_EXTENDED_BATTLE_PROGRESS_DIV_TAG)    
     
