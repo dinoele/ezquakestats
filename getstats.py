@@ -433,7 +433,7 @@ for logline in matchlog:
                 continue
             else:
                 if not "leads" in logline:
-                    ezstatslib.logError("progress\n")
+                    ezstatslib.logError("progress: \"%s\"\n" % (logline))
                     exit(0)                
                 sp = logline.split(" ")
                 progressStr.append("%s%s" % (sp[1], sp[4]))
@@ -1320,12 +1320,12 @@ def writeHtmlWithScripts(f, teams, resStr):
     minRank = 10000
     maxRank = -10000
     for pl in players1:
-        for minEl in matchProgressPlayers1Dict:
+        for minEl in matchProgressPlayers1DictEx:
             minRank = min(minRank, minEl[pl.name][1])
             maxRank = max(maxRank, minEl[pl.name][1])
             
     for pl in players2:
-        for minEl in matchProgressPlayers2Dict:
+        for minEl in matchProgressPlayers2DictEx:
             minRank = min(minRank, minEl[pl.name][1])
             maxRank = max(maxRank, minEl[pl.name][1])
             
@@ -1362,9 +1362,9 @@ def writeHtmlWithScripts(f, teams, resStr):
         #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
         
         graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        k = 0
-        while k < len(matchProgressPlayers1DictEx):            
-            minEl = matchProgressPlayers1DictEx[k]        
+        k = 1
+        while k < len(matchProgressPlayers1DictEx):
+            minEl = matchProgressPlayers1DictEx[k]
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
             graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             k += 2
@@ -1411,10 +1411,10 @@ def writeHtmlWithScripts(f, teams, resStr):
         # graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
         # for minEl in matchProgressPlayers2DictEx:
         #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
-        #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)            
             
         graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        k = 0
+        k = 1
         while k < len(matchProgressPlayers2DictEx):
             minEl = matchProgressPlayers2DictEx[k]
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
