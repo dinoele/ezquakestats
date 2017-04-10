@@ -383,7 +383,7 @@ for logline in matchlog:
         isProgressLine = True
         continue
 
-    isIntermediatePoint = (not "time over, the game is a draw" in logline) and (currentMatchTime > battleProgressExtendedNextPoint)
+    isIntermediatePoint = (not isProgressLine) and (not "time over, the game is a draw" in logline) and (currentMatchTime > battleProgressExtendedNextPoint)
 
     if isProgressLine or isIntermediatePoint or "time over, the game is a draw" in logline: # Team [red] leads by 4 frags || tie || time over, the game is a draw
         # TODO replace with frags when teams stats are updated on each increment
