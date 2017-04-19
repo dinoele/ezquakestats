@@ -282,6 +282,7 @@ for pl1 in allplayers:
 matchProgress = []  # [[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..],[[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]]
 matchProgressDict = []
 matchProgressDictEx = []
+matchProgressDictEx2 = []
 currentMinute = 1
 currentMatchTime = 0
 battleProgressExtendedNextPoint = 15
@@ -365,6 +366,13 @@ for matchPart in matchlog:
             # final time correction
             if currentMatchTime > matchMinutesCnt*60:
                 currentMatchTime = matchMinutesCnt*60;                
+    
+        if len(matchProgressDictEx2) == 0 or matchProgressDictEx2[len(matchProgressDictEx2)-1][allplayers[0].name][0] != currentMatchTime:
+            allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+            progressLineDict = {}
+            for pl in allplayersByFrags:
+                progressLineDict[pl.name] = [currentMatchTime, pl.frags()];
+            matchProgressDictEx2.append(progressLineDict)
     
         # telefrag
         checkres,who,whom = ezstatslib.talefragDetection(logline, [])
@@ -486,6 +494,17 @@ for pl in allplayersByFrags:
 matchProgress.append(progressLine)
 matchProgressDict.append(progressLineDict)
 matchProgressDictEx.append(progressLineDict)
+
+minsCount = len(matchProgressDict)
+progressLineDict = {}
+for pl in allplayersByFrags:
+    progressLineDict[pl.name] = [minsCount*60, pl.frags()];
+
+# correct final point if necessary
+if len(matchProgressDictEx2) != 0 and matchProgressDictEx2[len(matchProgressDictEx2)-1][allplayers[0].name][0] == minsCount*60:
+    matchProgressDictEx2[len(matchProgressDictEx2)-1] = progressLineDict
+else:
+    matchProgressDictEx2.append(progressLineDict)
     
 # fill final element in calculatedStreaks
 for pl in allplayers:
@@ -734,6 +753,9 @@ for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags
     
 if options.withScripts:
     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
+    
+if options.withScripts:
+    resultString += "\nHIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE\n"    
     
 if options.withScripts:
     resultString += ezstatslib.HTML_EXPAND_CHECKBOX_TAG
@@ -1297,6 +1319,43 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle progress
     
+    # highcharts battle extended progress -->
+    highchartsBattleProgressFunctionStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("highchart_battle_progress", "highchart_battle_progress_extended")
+            
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Battle progress")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "")
+        
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
+    
+    hcDelim = "}, {\n"
+    rowLines = ""        
+    for pl in sortedPlayers:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (pl.name)
+        # rowLines += "data: [0"
+        rowLines += "data: [[0,0]"
+                
+        for minEl in matchProgressDictEx2:            
+            rowLines += ",[%d,%d]" % (minEl[pl.name][0], minEl[pl.name][1])  # TODO format, now is 0.500000
+            
+        rowLines += "]\n"        
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
+    
+    # tooltip style
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
+                
+    f.write(highchartsBattleProgressFunctionStr)
+    # <-- highcharts battle extended progress
+    
     # power ups timeline -->
     powerUpsTimelineFunctionStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_FUNCTION
     
@@ -1445,6 +1504,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("STREAK_TIMELINE_PLACE", ezstatslib.HTML_SCRIPT_STREAK_TIMELINE_DIV_TAG)
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
     resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
+    resStr = resStr.replace("HIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_EXTENDED_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("HIGHCHART_POWER_UPS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIVS_TAG)
     resStr = resStr.replace("POWER_UPS_TIMELINE_PLACE", powerUpsTimelineDivStr)
     resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)            
