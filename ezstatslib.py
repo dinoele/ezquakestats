@@ -1003,6 +1003,8 @@ HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG = \
   "        </tr>\n" \
   "      </table>\n" \
 
+HTML_SCRIPT_HIGHCHARTS_DEATHMATCH_PLAYERS_RANK_PROGRESS_DIV_TAG = "<div id=\"players_rank\" style=\"height: 400px; margin: 0 auto\"></div>\n"
+
 # =========================================================================================================================================================
 # "            categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']\n" \
 

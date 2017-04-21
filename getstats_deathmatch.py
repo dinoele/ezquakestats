@@ -285,7 +285,7 @@ matchProgressDictEx = []
 matchProgressDictEx2 = []
 currentMinute = 1
 currentMatchTime = 0
-battleProgressExtendedNextPoint = 15
+battleProgressExtendedNextPoint = (int)(60 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
 
 for matchPart in matchlog:
     if not newLogFormat:
@@ -324,7 +324,7 @@ for matchPart in matchlog:
                 allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
                 progressLineDict = {}
                 for pl in allplayersByFrags:
-                    progressLineDict[pl.name] = pl.frags();
+                    progressLineDict[pl.name] = [pl.frags(), pl.calcDelta()];
                 matchProgressDictEx.append(progressLineDict)        
     
         # connected after the match start players
@@ -347,19 +347,19 @@ for matchPart in matchlog:
             progressLineDict = {}
             for pl in allplayersByFrags:
                 progressLine.append([pl.name, pl.frags()]);
-                progressLineDict[pl.name] = pl.frags();
+                progressLineDict[pl.name] = [pl.frags(), pl.calcDelta()];
             matchProgress.append(progressLine)
             matchProgressDict.append(progressLineDict)
             matchProgressDictEx.append(progressLineDict)
-            battleProgressExtendedNextPoint += 15
+            battleProgressExtendedNextPoint += (int)(60 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             continue
         else:
             if newLogFormat and currentMatchTime > battleProgressExtendedNextPoint:
-                battleProgressExtendedNextPoint += 15
+                battleProgressExtendedNextPoint += (int)(60 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
                 allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
                 progressLineDict = {}
                 for pl in allplayersByFrags:
-                    progressLineDict[pl.name] = pl.frags();
+                    progressLineDict[pl.name] = [pl.frags(), pl.calcDelta()];
                 matchProgressDictEx.append(progressLineDict)
                         
         if not newLogFormat:
@@ -490,7 +490,7 @@ progressLine = []
 progressLineDict = {}
 for pl in allplayersByFrags:    
     progressLine.append([pl.name, pl.frags()]);
-    progressLineDict[pl.name] = pl.frags();
+    progressLineDict[pl.name] = [pl.frags(), pl.calcDelta()];
 matchProgress.append(progressLine)
 matchProgressDict.append(progressLineDict)
 matchProgressDictEx.append(progressLineDict)
@@ -755,7 +755,10 @@ if options.withScripts:
     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
     
 if options.withScripts:
-    resultString += "\nHIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE\n"    
+    resultString += "\nHIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE\n"
+    
+if options.withScripts:
+    resultString += "\nHIGHCHART_PLAYERS_RANK_PROGRESS_PLACE\n"
     
 if options.withScripts:
     resultString += ezstatslib.HTML_EXPAND_CHECKBOX_TAG
@@ -866,7 +869,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     for minEl in matchProgressDict:
         rowLines += "[%d" % (minuteNum)
         for pl in sortedPlayers:
-            rowLines += ",%d" % (minEl[pl.name])
+            rowLines += ",%d" % (minEl[pl.name][0])
         rowLines += "],\n"
         minuteNum += 1
         
@@ -1306,7 +1309,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
         for minEl in matchProgressDictEx:
             # rowLines += ",%d" % (minEl[pl.name])
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name])  # TODO format, now is 0.500000
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
             graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             
         rowLines += "]\n"        
@@ -1489,6 +1492,47 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable))    
     # <-- players achievements
     
+    # highcharts players rank progress -->
+    highchartsBattleProgressFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION).replace("highchart_battle_progress", "players_rank")
+
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Players ranks")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Rank")
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "")
+            
+    # " name: 'rea[rbf]',\n" \
+    # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \        
+    
+    hcDelim = "}, {\n"
+    rowLines = ""        
+    for pl in allplayersByFrags:
+        if rowLines != "":
+            rowLines += hcDelim
+        
+        rowLines += "name: '%s',\n" % (pl.name)        
+        rowLines += "data: [[0,0]"
+        
+        graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        k = 1
+        while k < len(matchProgressDictEx):
+            minEl = matchProgressDictEx[k]
+            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
+            graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            k += 2
+        
+        rowLines += "]\n"
+        
+        # add negative zone
+        rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
+        
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)    
+    # tooltip style
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
+    
+    f.write(highchartsBattleProgressFunctionStr)
+    # <-- highcharts players rank progress
+    
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     f.write(ezstatslib.HTML_EXPAND_POWER_UPS_CHECKBOX_FUNCTION)
@@ -1508,7 +1552,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("HIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_EXTENDED_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("HIGHCHART_POWER_UPS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIVS_TAG)
     resStr = resStr.replace("POWER_UPS_TIMELINE_PLACE", powerUpsTimelineDivStr)
-    resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)            
+    resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)
+    resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_DEATHMATCH_PLAYERS_RANK_PROGRESS_DIV_TAG)    
     
     f.write(resStr)
     
