@@ -2258,7 +2258,7 @@ class Player:
         # ELECTROMASTER
         if self.lg_kills >= 20 and ((float(self.lg_kills) / float(self.kills) * 100)) >= 40.0:
             self.achievements.append( Achievement(AchievementType.ELECTROMASTER, "{0:d} lazer gun kills({1:5.3}%)".format(self.lg_kills, (float(self.lg_kills) / float(self.kills) * 100))) )
-        
+
 
 # AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
 #                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
@@ -2314,6 +2314,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         TEAM_MAXIMUM_TEAMDEATHS = 33, # "My friends are THE BEST OF THE BEST!!" # maximum team deaths  DONE
                         LUMBERJACK = 34, # "Lumberjack" # 3+ axe kills
                         ELECTROMASTER = 35, # "Electomaster" # 40%+ and 20+ kills by shaft (thanks to Onanim)  DONE
+                        WHITEWASH = 36, # "Whitewash - full duel victory and total domination" # dry win duel  DONE
                                             )
 
 class Achievement:
@@ -2395,6 +2396,8 @@ class Achievement:
             return "Lumberjack"
         if self.achtype == AchievementType.ELECTROMASTER:
             return "Electomaster - I like to roast"
+        if self.achtype == AchievementType.WHITEWASH:
+            return "Whitewash - full duel victory and total domination"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -2449,6 +2452,8 @@ class Achievement:
             return "ezquakestats/img/ach_lumberjack.jpg"
         if self.achtype == AchievementType.ELECTROMASTER:
             return "ezquakestats/img/ach_electromaster.png"
+        if self.achtype == AchievementType.WHITEWASH:
+            return "ezquakestats/img/ach_whitewash.png"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -2464,7 +2469,7 @@ class Achievement:
         
         return "NotImplemented"
 
-def calculateCommonAchievements(allplayers):
+def calculateCommonAchievements(allplayers, headToHead):
     # TEAM_BEST_FRIEND_KILLER
     sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
     maxTeamkillsVal = sortedByTeamkills[0].teamkills
@@ -2480,6 +2485,28 @@ def calculateCommonAchievements(allplayers):
         for pl in sortedByTeamdeaths:
             if pl.teamdeaths == maxTeamdeathsVal:
                 pl.achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (pl.teamdeaths)) )
+                
+    # WHITEWASH
+    # if len(matchProgress) != 0:
+    if True:  # TODO matchProgress or minutes count for team mode
+        for pl in allplayers:
+            for plname,elem in headToHead.items():
+                for plElem in elem:
+                    if plElem[0] == pl.name and plElem[1] == 0:
+                        pnts = 0
+                        for elem2 in headToHead[pl.name]:
+                            if elem2[0] == plname:
+                                pnts = elem2[1]
+                        if pnts != 0:
+                            # check for teammates
+                            isEnemy = (pl.teamname == "")
+                            if not isEnemy:
+                                for pl2 in allplayers:
+                                    if pl2.name == plname:
+                                        isEnemy = pl2.teamname != pl.teamname
+                                        break
+                            if isEnemy:
+                                pl.achievements.append( Achievement(AchievementType.WHITEWASH, "duel with %s is fully won, score is %d:0" % (plname, pnts)) )
 
 class Team:
     def __init__(self, teamname):

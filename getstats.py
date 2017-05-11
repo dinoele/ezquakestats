@@ -659,7 +659,7 @@ for pl in allplayers:
     pl.calculateAchievements([], powerUpsStatus, headToHead)
     #pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead)
     
-ezstatslib.calculateCommonAchievements(allplayers)
+ezstatslib.calculateCommonAchievements(allplayers, headToHead)
     
 
 # generate output string
