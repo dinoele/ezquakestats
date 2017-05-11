@@ -128,7 +128,7 @@ line = f.readline()
 #matchdate = line.split("matchdate: ")[1].split("\n")[0]
 
 while not ezstatslib.isMatchStart(line):
-    if "telefrag" in line: # telefrags before match start
+    if "telefrag" in line and not "teammate" in line: # telefrags before match start
         matchlog.append(line)
         
     if "matchdate" in line:
