@@ -2258,25 +2258,12 @@ class Player:
         # ELECTROMASTER
         if self.lg_kills >= 20 and ((float(self.lg_kills) / float(self.kills) * 100)) >= 40.0:
             self.achievements.append( Achievement(AchievementType.ELECTROMASTER, "{0:d} lazer gun kills({1:5.3}%)".format(self.lg_kills, (float(self.lg_kills) / float(self.kills) * 100))) )
-
-
-# AchievementType = enum( LONG_LIVE  = "Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
-#                         SUICIDE_MASTER = "Suicide Master",   # 2 suicides in a row  DONE
-#                         SUICIDE_KING = "Suicide King",   # 3++ suicides in a row  DONE
-#                         DEATH_STREAK_PAIN = "What do you know about the pain?...", # 10++ death streak  DONE
-#                         GREAT_FINISH = "Great Finish", # 2+ places up during the last minute
-#                         FINISH_GURU = "Finish Guru", # 2+ places up during the last minute and win
-#                         HORRIBLE_FINISH = "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
-#                         ALWAYS_THE_FIRST = "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
-#                         OVERTIME_REASON = "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
-#                         SECOND_OVERTIME_REASON = "The 2nd overtime!",  # one of who didn't want to give up once more time
-#                         HUNDRED_KILLS = "More than 100 kills", # 100++ kills  DONE tmp img
-#                         HUNDRED_DEATHS = "More than 100 deaths", # 100++ deaths  DONE tmp img
-#                         HUNDRED_FRAGS = "More than 100 frags", # 100++ frags  DONE tmp img
-#                         RED_ARMOR_EATER = "Red armor eater", # 10+ red armors  DONE
-#                         GREEN_ARMOR_EATER = "Green armor eater", # 10+ green armors  DONE
-#                         YELLOW_ARMOR_EATER = "Yellow armor eater", # 10+ yellow armors  DONE
-#                         MEGA_HEALTH_EATER = "Mega healths eater", # 10+ mega healths  DONE
+            
+        # FASTER_THAN_BULLET
+        for strk in self.calculatedStreaks:
+            if strk.count >= 5 and (float(strk.end - strk.start) / (float)(strk.count)) <= 3.0:
+                self.achievements.append( Achievement(AchievementType.FASTER_THAN_BULLET, "streak {0:d} kills in {1:d} seconds - only {2:.3} seconds per kill".format(strk.count, (strk.end - strk.start), (float(strk.end - strk.start) / (float)(strk.count)))) )
+    
 
 # DO NOT FORGET TO ADD NEW ITEMS TO description() METHOD
 AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
@@ -2315,6 +2302,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         LUMBERJACK = 34, # "Lumberjack" # 3+ axe kills
                         ELECTROMASTER = 35, # "Electomaster" # 40%+ and 20+ kills by shaft (thanks to Onanim)  DONE
                         WHITEWASH = 36, # "Whitewash - full duel victory and total domination" # dry win duel  DONE
+                        FASTER_THAN_BULLET = 37,  # "Faster than bullet"  # streak 5+, 3.0- seconds per kill DONE
                                             )
 
 class Achievement:
@@ -2398,6 +2386,8 @@ class Achievement:
             return "Electomaster - I like to roast"
         if self.achtype == AchievementType.WHITEWASH:
             return "Whitewash - full duel victory and total domination"
+        if self.achtype == AchievementType.FASTER_THAN_BULLET:
+            return "Faster than bullet"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -2454,6 +2444,8 @@ class Achievement:
             return "ezquakestats/img/ach_electromaster.png"
         if self.achtype == AchievementType.WHITEWASH:
             return "ezquakestats/img/ach_whitewash.png"
+        if self.achtype == AchievementType.FASTER_THAN_BULLET:
+            return "ezquakestats/img/ach_faster_than_bullet.png"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
