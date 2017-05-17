@@ -1832,6 +1832,16 @@ class Player:
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.MH, time) )
             
+    def playTime(self):
+        playTime = 0
+        minutesCnt = len(self.gaByMinutes)  # TODO get minutes count
+        if minutesCnt != 0:
+            if self.disconnectTime != 0:
+                playTime = self.disconnectTime - self.connectTime
+            else:
+                playTime = (minutesCnt * 60) - self.connectTime
+        return playTime
+            
     def recoverArmorStats(self):
         if self.ga == 0 and self.ya == 0 and self.ra == 0 and self.mh == 0 and self.isDropped:
             for ga in self.gaByMinutes:
@@ -2480,25 +2490,28 @@ def calculateCommonAchievements(allplayers, headToHead):
                 
     # WHITEWASH
     # if len(matchProgress) != 0:
-    if True:  # TODO matchProgress or minutes count for team mode
+    if True:  # TODO matchProgress or minutes count for team mode - can be taken from player.gaByMinutes
         for pl in allplayers:
-            for plname,elem in headToHead.items():
-                for plElem in elem:
-                    if plElem[0] == pl.name and plElem[1] == 0:
-                        pnts = 0
-                        for elem2 in headToHead[pl.name]:
-                            if elem2[0] == plname:
-                                pnts = elem2[1]
-                        if pnts != 0:
-                            # check for teammates
-                            isEnemy = (pl.teamname == "")
-                            if not isEnemy:
+            if pl.playTime() >= 300:
+                for plname,elem in headToHead.items():
+                    for plElem in elem:
+                        if plElem[0] == pl.name and plElem[1] == 0:
+                            pnts = 0
+                            for elem2 in headToHead[pl.name]:
+                                if elem2[0] == plname:
+                                    pnts = elem2[1]
+                            if pnts != 0:
+                                # check for teammates
+                                isEnemy = False
+                                enemyPlayTime = 0
                                 for pl2 in allplayers:
                                     if pl2.name == plname:
                                         isEnemy = pl2.teamname != pl.teamname
+                                        enemyPlayTime = pl2.playTime()
                                         break
-                            if isEnemy:
-                                pl.achievements.append( Achievement(AchievementType.WHITEWASH, "duel with %s is fully won, score is %d:0" % (plname, pnts)) )
+                                if isEnemy or (pl.teamname == ""):
+                                    if enemyPlayTime >= 300:
+                                        pl.achievements.append( Achievement(AchievementType.WHITEWASH, "duel with %s is fully won, score is %d:0" % (plname, pnts)) )
 
 class Team:
     def __init__(self, teamname):
