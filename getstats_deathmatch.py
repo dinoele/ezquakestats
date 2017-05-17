@@ -804,7 +804,7 @@ if len(disconnectedplayers) != 0:
 connectedPlayersStr = ""
 for pl in allplayersByFrags:
     if pl.connectTime != 0:
-        connectedPlayersStr = "%s(connect time: %d), " % (pl.name, pl.connectTime)
+        connectedPlayersStr += "%s(connect time: %d), " % (pl.name, pl.connectTime)
     
 if connectedPlayersStr != "":
     connectedPlayersStr = connectedPlayersStr[:-1]
