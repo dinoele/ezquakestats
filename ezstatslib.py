@@ -942,6 +942,7 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION = \
 "            title: {\n" \
 "                text: 'Time'\n" \
 "            },\n" \
+"EXTRA_XAXIS_OPTIONS" \
 "        },\n" \
 "        yAxis: {\n" \
 "            title: {\n" \
