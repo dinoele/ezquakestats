@@ -1334,8 +1334,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "")
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "")
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", "")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "")    
         
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \    
@@ -1356,6 +1355,20 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         rowLines += "]\n"        
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
+        
+    tickPositions = ""
+    for k in xrange(matchMinutesCnt*60+1):
+        if k % 30 == 0:
+            tickPositions += "%d," % (k)
+            
+    xAxisLabels = \
+        "labels: {\n" \
+        "     formatter: function () {\n" \
+        "       return (this.value / 60).toFixed(1).toString()\n" \
+        "    },\n" \
+        "},\n"
+    xAxisLabels += "tickPositions: [%s]\n" % (tickPositions)
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
     
     # tooltip style
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
