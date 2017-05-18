@@ -1289,14 +1289,19 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     rowLines = ""
     currentRowsLines = ""
-    delimeter = False
+    # isFirstTeam = False
+    # isSecondTeam = False
     for pl in sorted(players1, key=methodcaller("frags"), reverse=True) + sorted(players2, key=methodcaller("frags"), reverse=True):
         
-        # delimeter between teams
-        if not delimeter and pl.teamname == players2[0].teamname:
-            currentRowsLines += "[ '-', '', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n"
-            currentRowsLines += "[ '-', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % (matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt    
-            delimeter = True
+        # if not isFirstTeam and pl.teamname == players1[0].teamname:
+        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % (pl.teamname)
+        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % (pl.teamname, matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+        #     isFirstTeam = True
+        # 
+        # if not isSecondTeam and pl.teamname == players2[0].teamname:
+        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % (pl.teamname)
+        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % (pl.teamname, matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+        #     isSecondTeam = True
         
         strkRes,maxStrk           = pl.getCalculatedStreaksFull(1)
         for strk in strkRes:
@@ -1304,7 +1309,6 @@ def writeHtmlWithScripts(f, teams, resStr):
                       "<p>&nbsp&nbsp&nbsp<b>Sum: %s</b>&nbsp&nbsp&nbsp</p><hr>" \
                       "&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br>" \
                       "<b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.count, strk.formattedNames(), strk.formattedNamesSum(), (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
-            #hintStr = "<p>&nbsp&nbsp&nbsp<b>%s</b>&nbsp&nbsp&nbsp</p><hr>&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br><b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.names, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
             rowLines += "[ '%s', '%d', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("[%s] %s_kills" % (pl.teamname, pl.name), strk.count, hintStr, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
             
         currentRowsLines += "[ '%s', '', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("[%s] %s_kills" % (pl.teamname, pl.name))
@@ -1316,7 +1320,6 @@ def writeHtmlWithScripts(f, teams, resStr):
                       "<p>&nbsp&nbsp&nbsp<b>Sum: %s</b>&nbsp&nbsp&nbsp</p><hr>" \
                       "&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br>" \
                       "<b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.count, strk.formattedNames(), strk.formattedNamesSum(), (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
-            #hintStr = "<p>&nbsp&nbsp&nbsp<b>%s</b>&nbsp&nbsp&nbsp</p><hr>&nbsp&nbsp&nbsp<b>Time:</b>&nbsp%dm %ds - %dm %ds&nbsp<br><b>&nbsp&nbsp&nbspDuration:</b>&nbsp%d seconds<br>&nbsp" % (strk.names, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60), strk.duration())
             rowLines += "[ '%s', '%d', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % ("[%s] %s_deaths" % (pl.teamname, pl.name), strk.count, hintStr, (strk.start / 60), (strk.start % 60), (strk.end / 60), (strk.end % 60))
             
         currentRowsLines += "[ '%s', '', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("[%s] %s_deaths" % (pl.teamname, pl.name))  
@@ -1326,11 +1329,10 @@ def writeHtmlWithScripts(f, teams, resStr):
     allStreaksTimelineFunctionStr = allStreaksTimelineFunctionStr.replace("CURRENT_ROWS", currentRowsLines)
     
     allStreaksTimelineDivStr = ezstatslib.HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG
-    timelineChartHeight = (len(allplayersByFrags) * 2 + 1 + 1) * (33 if len(allplayersByFrags) >= 4 else 35)
+    timelineChartHeight = (len(allplayersByFrags) * 2 + 1) * (33 if len(allplayersByFrags) >= 4 else 35)
     allStreaksTimelineDivStr = allStreaksTimelineDivStr.replace("HEIGHT_IN_PX", str(timelineChartHeight))
     
     # TODO black text color for deaths
-    # TODO hints ??    
     # TODO bold players names
     # TODO folding ??
                     
