@@ -127,6 +127,7 @@ line = f.readline()
 #    line = f.readline()
 #matchdate = line.split("matchdate: ")[1].split("\n")[0]
 
+
 while not ezstatslib.isMatchStart(line):
     if "telefrag" in line and not "teammate" in line: # telefrags before match start
         matchlog.append(line)
@@ -141,9 +142,14 @@ while not ezstatslib.isMatchStart(line):
     line = f.readline()
 
 line = f.readline()
+
+matchMinutesCnt = 0
 while not ezstatslib.isMatchEnd(line):
     matchlog.append(line)
     line = f.readline()
+    
+    if "remaining" in line or "overtime" in line:  # [9] minutes remaining
+        matchMinutesCnt += 1
     
 # team 1
 while not "Team [" in line:
@@ -180,6 +186,7 @@ while not "Team [" in line:
     #"  24 (-25) 10 32.9%"
     stats = line.split(' ')
     pl = Player( teamName1, playerName, int(stats[2]), int( stats[3].split('(')[1].split(')')[0]), int(stats[4]) )
+    pl.initPowerUpsByMinutes(matchMinutesCnt)
     
     line = f.readline() # Wp: rl52.1% sg12.2%
     pl.parseWeapons(line)
@@ -248,6 +255,7 @@ while not bigDelimiter in line:
     #"  24 (-25) 10 32.9%"
     stats = line.split(' ')
     pl = Player( teamName2, playerName, int(stats[2]), int( stats[3].split('(')[1].split(')')[0]), int(stats[4]) )
+    pl.initPowerUpsByMinutes(matchMinutesCnt)
     
     line = f.readline() # Wp: rl52.1% sg12.2%
     pl.parseWeapons(line)
