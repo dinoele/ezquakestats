@@ -317,7 +317,7 @@ HTML_SCRIPT_TEAM_RESULTS_FUNCTION = \
 "        hAxis: {\n" \
 "          title: '',\n" \
 "          minValue: 0,\n" \
-"          ticks: [0.5]\n" \
+"          ticks: [0.4,0.5,0.6]\n" \
 "        },\n" \
 "        isStacked: 'relative',\n" \
 "        legend: 'none',\n" \
