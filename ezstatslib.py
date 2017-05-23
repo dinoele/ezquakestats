@@ -305,6 +305,41 @@ HTML_POWER_UPS_BARS_DIV_TAG = \
 
 # =========================================================================================================================================================
 
+HTML_SCRIPT_TEAM_RESULTS_FUNCTION = \
+"function drawTeamResults() {\n" \
+"      var data = google.visualization.arrayToDataTable([\n" \
+"ADD_HEADER_ROW" \
+"ADD_STATS_ROWS" \
+"      ]);\n" \
+"      var options = {\n" \
+"        title: '',\n" \
+"        chartArea: {width: '100%'},\n" \
+"        hAxis: {\n" \
+"          title: '',\n" \
+"          minValue: 0,\n" \
+"          ticks: [0.5]\n" \
+"        },\n" \
+"        isStacked: 'relative',\n" \
+"        legend: 'bottom',\n" \
+"   annotations: {\n" \
+"    textStyle: {\n" \
+"      fontName: 'Times-Roman',\n" \
+"      fontSize: 45,\n" \
+"      bold: true,\n" \
+"      color: '#871b47',\n" \
+"      auraColor: '#d799ae',\n" \
+"      opacity: 1\n" \
+"     }\n" \
+"    }\n" \
+"  };\n" \
+"      var chart = new google.visualization.BarChart(document.getElementById('chart_team_results'));\n" \
+"      chart.draw(data, options);\n" \
+"    }\n"
+
+HTML_TEAM_RESULTS_FUNCTION_DIV_TAG = "<div id=\"chart_team_results\"></div>\n"
+
+# =========================================================================================================================================================
+
 HTML_SCRIPT_POWER_UPS_BY_MINUTES_FUNCTION =\
     "google.charts.setOnLoadCallback(drawPOWER_UP_NAMEByMinutes);\n" \
     "function drawPOWER_UP_NAMEByMinutes() {\n" \
@@ -1218,6 +1253,61 @@ HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG = \
 "          </td>\n" \
 "        </tr>\n" \
 "      </table>\n" \
+
+# =========================================================================================================================================================
+
+# HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_FUNCTION = \
+# "$(function () {\n" \
+# "Highcharts.chart('match_results', {\n" \
+# "    chart: {\n" \
+# "        type: 'bar'\n" \
+# "    },\n" \
+# "    title: {\n" \
+# "        text: 'Match result'\n" \
+# "    },\n" \
+# "    xAxis: {\n" \
+# "        categories: ['frags'],\n" \
+# "        labels: {\n" \
+# "            enabled: false\n" \
+# "        }\n" \
+# "    },\n" \
+# "    yAxis: {\n" \
+# "        min: 0,\n" \
+# "        labels: {\n" \
+# "            enabled: false\n" \
+# "        }\n" \
+# "    },\n" \
+# "    legend: {\n" \
+# "    		enabled: false\n" \
+# "    },\n" \
+# "    plotOptions: {\n" \
+# "        series: {\n" \
+# "            stacking: 'percent',\n" \
+# "             dataLabels: {\n" \
+# "                enabled: true,\n" \
+# "                style: {\n" \
+# "                    fontWeight: 'bold',\n" \
+# "                    fontSize: '20px'\n" \
+# "                },\n" \
+# "                formatter:function() {\n" \
+# "                    return this.series.name + ': ' + this.point.y;\n" \
+# "                }\n" \
+# "            }\n" \
+# "        },\n" \
+# "    },\n" \
+# "    series: [{\n" \
+# "        name: 'red',\n" \
+# "        color: 'red',\n" \
+# "        data: [50]\n" \
+# "    }, {\n" \
+# "        name: 'xep',\n" \
+# "        color: 'blue',\n" \
+# "        data: [83]\n" \
+# "    }]\n" \
+# "});\n" \
+# "});\n"
+# 
+# HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_DIV_TAG = "<div id=\"match_results\" style=\"height: 200px; margin: 0 auto\"></div>"
 
 # =========================================================================================================================================================
 

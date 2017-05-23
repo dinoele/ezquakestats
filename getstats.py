@@ -696,9 +696,15 @@ for pl in players2:
     s2 += "%s%s" % (sign, pl.name)
 resultString += s2 + "\n"
 
+# if options.withScripts:
+#     resultString += "</pre>MATCH_RESULTS_PLACE\n<pre>"
+
 resultString += "\n"
 resultString += "%s[%d] x %s[%d]\n" % (totalScore[0][0], totalScore[0][1], totalScore[1][0], totalScore[1][1])
 resultString += "\n"
+
+if options.withScripts:
+    resultString += "</pre>TEAM_RESULTS\n<pre>"
 
 s1 = ""
 players1ByFrags = sorted(players1, key=methodcaller("frags"), reverse=True)
@@ -1049,7 +1055,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
     pageHeaderStr += \
         "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
-        "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n"
+        "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n" \
+        "google.charts.setOnLoadCallback(drawTeamResults);\n"
     
     f.write(pageHeaderStr)
     
@@ -1541,13 +1548,25 @@ def writeHtmlWithScripts(f, teams, resStr):
         f.write(donutFunctionStr)
     # <-- team stats donuts
     
+    # match results -->
+    # matchResultsStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_FUNCTION    
+    # f.write(matchResultsStr)
+    
+    matchResultsStr = ezstatslib.HTML_SCRIPT_TEAM_RESULTS_FUNCTION
+    
+    matchResultsStr = matchResultsStr.replace("ADD_HEADER_ROW", "['', '%s',{ role: 'annotation'},'%s',{ role: 'annotation'}],\n" % (teams[0].name, teams[1].name))
+    matchResultsStr = matchResultsStr.replace("ADD_STATS_ROWS", "['', %d,'%d', %d,'%d'],\n" % (teams[0].frags(), teams[0].frags(), teams[1].frags(), teams[1].frags()))
+    
+    f.write(matchResultsStr)
+    # <-- match results
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
     # resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE",      ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_DIV_TAG)
     resStr = resStr.replace("HIGHCHART_BATTLE_PROGRESS_PLACE", "")
     
-    resStr = resStr.replace("HIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_EXTENDED_BATTLE_PROGRESS_DIV_TAG)    
+    resStr = resStr.replace("HIGHCHART_EXTENDED_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_EXTENDED_BATTLE_PROGRESS_DIV_TAG)
     
     # resStr = resStr.replace("HIGHCHART_TEAM_BATTLE_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM1 + "\n" + \
     #                                                                 ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_DIV_TAG_TEAM2 )
@@ -1558,6 +1577,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("PLAYERS_ACHIEVEMENTS_PLACE", playersAchievementsStr)
     resStr = resStr.replace("POWER_UPS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG)
     resStr = resStr.replace("TEAM_STATS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG)
+    # resStr = resStr.replace("MATCH_RESULTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_DIV_TAG)
+    resStr = resStr.replace("TEAM_RESULTS", ezstatslib.HTML_TEAM_RESULTS_FUNCTION_DIV_TAG)    
     
     f.write(resStr)
     
