@@ -320,7 +320,7 @@ HTML_SCRIPT_TEAM_RESULTS_FUNCTION = \
 "          ticks: [0.5]\n" \
 "        },\n" \
 "        isStacked: 'relative',\n" \
-"        legend: 'bottom',\n" \
+"        legend: 'none',\n" \
 "   annotations: {\n" \
 "    textStyle: {\n" \
 "      fontName: 'Times-Roman',\n" \
@@ -336,7 +336,7 @@ HTML_SCRIPT_TEAM_RESULTS_FUNCTION = \
 "      chart.draw(data, options);\n" \
 "    }\n"
 
-HTML_TEAM_RESULTS_FUNCTION_DIV_TAG = "<div id=\"chart_team_results\"></div>\n"
+HTML_TEAM_RESULTS_FUNCTION_DIV_TAG = "<div id=\"chart_team_results\" style=\"min-width: 30px;  height: 150px; margin: 0 auto\"></div>\n"
 
 # =========================================================================================================================================================
 

@@ -1554,8 +1554,21 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     matchResultsStr = ezstatslib.HTML_SCRIPT_TEAM_RESULTS_FUNCTION
     
-    matchResultsStr = matchResultsStr.replace("ADD_HEADER_ROW", "['', '%s',{ role: 'annotation'},'%s',{ role: 'annotation'}],\n" % (teams[0].name, teams[1].name))
-    matchResultsStr = matchResultsStr.replace("ADD_STATS_ROWS", "['', %d,'%d', %d,'%d'],\n" % (teams[0].frags(), teams[0].frags(), teams[1].frags(), teams[1].frags()))
+    matchResultsStr = matchResultsStr.replace("ADD_HEADER_ROW", "['', '%s',{ role: 'annotation'},{ role: 'style'},'%s',{ role: 'annotation'},{role: 'style'}],\n" % (teams[0].name, teams[1].name))
+    
+    color1 = ""
+    color2 = ""
+    if "red" in teams[0].name:
+        color1 = "red"
+        color2 = "blue"
+    elif "red" in teams[1].name:
+        color1 = "blue"
+        color2 = "red"
+    else:
+        color1 = "red"
+        color2 = "blue"    
+    
+    matchResultsStr = matchResultsStr.replace("ADD_STATS_ROWS", "['', %d,'%d','color: %s', %d,'%d','color: %s'],\n" % (teams[0].frags(), teams[0].frags(), color1, teams[1].frags(), teams[1].frags(), color2))
     
     f.write(matchResultsStr)
     # <-- match results
