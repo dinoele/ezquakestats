@@ -2620,6 +2620,13 @@ class Team:
         self.suicides = 0
         self.teamkills = 0
         self.teamdeaths = 0
+        
+        self.gaByMinutes = []
+        self.yaByMinutes = []
+        self.raByMinutes = []
+        self.mhByMinutes = []
+        
+        self.powerUps = []
     
     def damageDelta(self):
         return (self.gvn - self.tkn)
@@ -2627,6 +2634,11 @@ class Team:
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
 
+    def initPowerUpsByMinutes(self, minutesCnt):        
+        self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
+        self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
+        self.raByMinutes = [0 for i in xrange(minutesCnt+1)]
+        self.mhByMinutes = [0 for i in xrange(minutesCnt+1)]
 
 class WeaponsCheckRes:
     def __init__(self):

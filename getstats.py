@@ -143,7 +143,7 @@ while not ezstatslib.isMatchStart(line):
 
 line = f.readline()
 
-matchMinutesCnt = 0
+matchMinutesCnt = 1
 while not ezstatslib.isMatchEnd(line):
     matchlog.append(line)
     line = f.readline()
@@ -534,7 +534,20 @@ for logline in matchlog:
 
         continue
 
-    # TODO checkres,checkname,pwr = ezstatslib.powerupDetection(logline)
+    # power ups
+    checkres,checkname,pwr = ezstatslib.powerupDetection(logline)
+    if checkres:
+        isFound = False
+        for pl in allplayers:
+            if pl.name == checkname:                    
+                exec("pl.inc%s(%d,%d)" % (pwr, (currentMatchTime / 60), currentMatchTime))
+                isFound = True
+                break;
+        if not isFound:
+            ezstatslib.logError("ERROR: powerupDetection: no playername %s\n" % (checkname))
+            exit(0)
+
+        continue
 
     cres,who,whom,weap = ezstatslib.commonDetection(logline)
     if cres:
@@ -592,13 +605,25 @@ else:
     totalScore.append( [players2[0].teamname, fragsSum2] )
     
 
-# fill team kills/deaths/teamkills/suicides/teamdeaths
+# fill team kills/deaths/teamkills/suicides/teamdeaths/powerups
 for pl in players1:
     team1.kills += pl.kills
     team1.deaths += pl.deaths
     team1.teamkills += pl.teamkills
     team1.suicides += pl.suicides
     team1.teamdeaths += pl.teamdeaths
+    
+    team1.powerUps += pl.powerUps
+    
+    if len(team1.gaByMinutes) == 0:
+        team1.initPowerUpsByMinutes(len(pl.gaByMinutes))
+        
+    for minNum in xrange(len(pl.gaByMinutes)):
+        team1.gaByMinutes[minNum] += pl.gaByMinutes[minNum]
+        team1.yaByMinutes[minNum] += pl.yaByMinutes[minNum]
+        team1.raByMinutes[minNum] += pl.raByMinutes[minNum]
+        team1.mhByMinutes[minNum] += pl.mhByMinutes[minNum]
+    
 
 for pl in players2:
     team2.kills += pl.kills
@@ -606,6 +631,17 @@ for pl in players2:
     team2.teamkills += pl.teamkills
     team2.suicides += pl.suicides
     team2.teamdeaths += pl.teamdeaths
+    
+    team2.powerUps += pl.powerUps
+    
+    if len(team2.gaByMinutes) == 0:
+        team2.initPowerUpsByMinutes(len(pl.gaByMinutes))
+        
+    for minNum in xrange(len(pl.gaByMinutes)):
+        team2.gaByMinutes[minNum] += pl.gaByMinutes[minNum]
+        team2.yaByMinutes[minNum] += pl.yaByMinutes[minNum]
+        team2.raByMinutes[minNum] += pl.raByMinutes[minNum]
+        team2.mhByMinutes[minNum] += pl.mhByMinutes[minNum]
 
 # fill final battle progress    
 progressLineDict = {}
@@ -756,6 +792,9 @@ resultString += "<hr>"
 
 if options.withScripts:
     resultString += "</pre>POWER_UPS_DONUTS_PLACE\n<pre>"
+
+if options.withScripts:
+    resultString += "</pre>POWER_UPS_TIMELINE_VER2_PLACE\n<pre>"
     
 resultString += "<hr>"
 
@@ -1056,7 +1095,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     pageHeaderStr += \
         "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
         "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n" \
-        "google.charts.setOnLoadCallback(drawTeamResults);\n"
+        "google.charts.setOnLoadCallback(drawTeamResults);\n" \
+        "google.charts.setOnLoadCallback(drawPowerUpsTimelineVer2);\n"
     
     f.write(pageHeaderStr)
     
@@ -1573,6 +1613,45 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write(matchResultsStr)
     # <-- match results
     
+    # power ups timeline ver2 -->
+    powerUpsTimelineVer2FunctionStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_FUNCTION
+    
+    rowLines = ""
+    # colors = "'gray', "
+    colors = []
+    for col in ["red","yellow","green","#660066"]:
+        colors += [col for i in xrange(len(teams))]
+    colStr = ""
+    for col in colors:
+        colStr += "'%s'," % (col)
+    colStr = colStr[:-1]
+    
+    for pwrup in ["RA","YA","GA","MH"]:
+        for tt in teams:
+            rowLines += "[ '%s', '', '', new Date(2016,1,1,0,0,0,0,1),  new Date(2016,1,1,0,0,0,0,2)  ],\n" % ("%s_%s" % (tt.name, pwrup))
+            rowLines += "[ '%s', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % ("%s_%s" % (tt.name, pwrup), matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
+    
+    for tt in teams:
+        for pu in tt.powerUps:
+            rowLines += "[ '%s', '', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % \
+                        ("%s_%s" % (tt.name, ezstatslib.powerUpTypeToString(pu.type)), \
+                         " %d min %d sec " % (pu.time / 60, pu.time % 60), \
+                         ( ((pu.time-3) if (pu.time-3) >= 0 else 0) / 60), \
+                         ( ((pu.time-3) if (pu.time-3) >= 0 else 0) % 60), \
+                         ( ((pu.time+3) if (pu.time+3) <= matchMinutesCnt*60 else matchMinutesCnt*60) / 60), \
+                         ( ((pu.time+3) if (pu.time+3) <= matchMinutesCnt*60 else matchMinutesCnt*60) % 60) )
+    
+    powerUpsTimelineVer2FunctionStr = powerUpsTimelineVer2FunctionStr.replace("ALL_ROWS", rowLines)
+    powerUpsTimelineVer2FunctionStr = powerUpsTimelineVer2FunctionStr.replace("COLORS", colStr)    
+    
+    powerUpsTimelineVer2DivStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_DIV_TAG
+    powerUpsTimelineVer2ChartHeight = (len(teams) * 4 + 1) * (33 if len(teams) >= 4 else 35)
+    powerUpsTimelineVer2DivStr = powerUpsTimelineVer2DivStr.replace("HEIGHT_IN_PX", str(powerUpsTimelineVer2ChartHeight))
+    powerUpsTimelineVer2DivStr = powerUpsTimelineVer2DivStr.replace("Power Ups timeline ver.2", "Power Ups timeline")
+                    
+    f.write(powerUpsTimelineVer2FunctionStr)
+    # <-- power ups timeline ver2
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
@@ -1591,7 +1670,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("POWER_UPS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG)
     resStr = resStr.replace("TEAM_STATS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG)
     # resStr = resStr.replace("MATCH_RESULTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_DIV_TAG)
-    resStr = resStr.replace("TEAM_RESULTS", ezstatslib.HTML_TEAM_RESULTS_FUNCTION_DIV_TAG)    
+    resStr = resStr.replace("TEAM_RESULTS", ezstatslib.HTML_TEAM_RESULTS_FUNCTION_DIV_TAG)
+    resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)
     
     f.write(resStr)
     
