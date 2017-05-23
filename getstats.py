@@ -1646,6 +1646,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     powerUpsTimelineVer2DivStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_VER2_DIV_TAG
     powerUpsTimelineVer2ChartHeight = (len(teams) * 4 + 1) * (33 if len(teams) >= 4 else 35)
+    powerUpsTimelineVer2ChartHeight = (int)(powerUpsTimelineVer2ChartHeight * 1.5)  # TODO intersections
     powerUpsTimelineVer2DivStr = powerUpsTimelineVer2DivStr.replace("HEIGHT_IN_PX", str(powerUpsTimelineVer2ChartHeight))
     powerUpsTimelineVer2DivStr = powerUpsTimelineVer2DivStr.replace("Power Ups timeline ver.2", "Power Ups timeline")
                     
