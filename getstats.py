@@ -1635,7 +1635,7 @@ def writeHtmlWithScripts(f, teams, resStr):
         for pu in tt.powerUps:
             rowLines += "[ '%s', '', '%s', new Date(2016,1,1,0,%d,%d), new Date(2016,1,1,0,%d,%d) ],\n" % \
                         ("%s_%s" % (tt.name, ezstatslib.powerUpTypeToString(pu.type)), \
-                         " %d min %d sec " % (pu.time / 60, pu.time % 60), \
+                         " %s (%d min %d sec) " % (pu.playerName, pu.time / 60, pu.time % 60), \
                          ( ((pu.time-3) if (pu.time-3) >= 0 else 0) / 60), \
                          ( ((pu.time-3) if (pu.time-3) >= 0 else 0) % 60), \
                          ( ((pu.time+3) if (pu.time+3) <= matchMinutesCnt*60 else matchMinutesCnt*60) / 60), \

@@ -1813,9 +1813,10 @@ def powerUpTypeToString(pwrType):
     return "NA"
 
 class PowerUp:
-    def __init__(self, _type = PowerUpType.UNKNOWN, _time = 0):
+    def __init__(self, _type = PowerUpType.UNKNOWN, _time = 0, _playerName = ""):
         self.type = _type
         self.time = _time
+        self.playerName = _playerName
         
     def __str__(self):
         return "%s [%d]" % (powerUpTypeToString(self.type), self.time)
@@ -1906,22 +1907,22 @@ class Player:
     def incga(self, minuteNum, time = 0):
         self.gaByMinutes[minuteNum] += 1
         if time != 0:
-            self.powerUps.append( PowerUp(PowerUpType.GA, time) )
+            self.powerUps.append( PowerUp(PowerUpType.GA, time, self.name) )
         
     def incya(self, minuteNum, time = 0):
         self.yaByMinutes[minuteNum] += 1
         if time != 0:
-            self.powerUps.append( PowerUp(PowerUpType.YA, time) )
+            self.powerUps.append( PowerUp(PowerUpType.YA, time, self.name) )
         
     def incra(self, minuteNum, time = 0):
         self.raByMinutes[minuteNum] += 1
         if time != 0:
-            self.powerUps.append( PowerUp(PowerUpType.RA, time) )
+            self.powerUps.append( PowerUp(PowerUpType.RA, time, self.name) )
     
     def incmh(self, minuteNum, time = 0):
         self.mhByMinutes[minuteNum] += 1
         if time != 0:
-            self.powerUps.append( PowerUp(PowerUpType.MH, time) )
+            self.powerUps.append( PowerUp(PowerUpType.MH, time, self.name) )
             
     def playTime(self):
         playTime = 0
