@@ -2005,8 +2005,7 @@ class Player:
         self.teamkills += 1
         self.currentDeathStreak.count += 1
         
-        # self.currentDeathStreak.names.append("SELF")
-        self.currentDeathStreak.names += "[MATE]%s," % (whom)
+        self.currentDeathStreak.names += "[MATE kill]%s," % (whom)
         
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
         self.fillStreaks(time)
@@ -2015,8 +2014,7 @@ class Player:
         self.teamdeaths += 1
         self.currentDeathStreak.count += 1
         
-        # self.currentDeathStreak.names.append("SELF")
-        self.currentDeathStreak.names += "[MATE]%s," % (who)
+        self.currentDeathStreak.names += "[killed by MATE]%s," % (who)
         
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
         self.fillStreaks(time)
