@@ -785,13 +785,16 @@ totalStreaksHtmlTable = \
                border="1", 
                style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
-if options.withScripts:
-    resultString += "</pre>TEAM_STATS_DONUTS_PLACE\n<pre>"
+# if options.withScripts:
+#     resultString += "</pre>TEAM_STATS_DONUTS_PLACE\n<pre>"
+# 
+# resultString += "<hr>"
+# 
+# if options.withScripts:
+#     resultString += "</pre>POWER_UPS_DONUTS_PLACE\n<pre>"
 
-resultString += "<hr>"
-
 if options.withScripts:
-    resultString += "</pre>POWER_UPS_DONUTS_PLACE\n<pre>"
+    resultString += "</pre>TEAMS_STATS_DONUTS_PLACE\n<pre>"
 
 if options.withScripts:
     resultString += "</pre>POWER_UPS_TIMELINE_VER2_PLACE\n<pre>"
@@ -1668,8 +1671,9 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("STREAK_ALL_TIMELINE_PLACE", allStreaksTimelineDivStr)
     resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG)
     resStr = resStr.replace("PLAYERS_ACHIEVEMENTS_PLACE", playersAchievementsStr)
-    resStr = resStr.replace("POWER_UPS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG)
-    resStr = resStr.replace("TEAM_STATS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG)
+    # resStr = resStr.replace("POWER_UPS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG)
+    # resStr = resStr.replace("TEAM_STATS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG)
+    resStr = resStr.replace("TEAMS_STATS_DONUTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_TEAMS_STATS_DONUTS_DIV_TAG)
     # resStr = resStr.replace("MATCH_RESULTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_DIV_TAG)
     resStr = resStr.replace("TEAM_RESULTS", ezstatslib.HTML_TEAM_RESULTS_FUNCTION_DIV_TAG)
     resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)

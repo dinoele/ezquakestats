@@ -1215,7 +1215,51 @@ HTML_SCRIPT_HIGHCHARTS_EMPTY_DONUT_FUNCTION = \
 "});\n" \
 "});\n"
 
-HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG = \
+# HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG = \
+# "      <table style=\"width: 100%;\">\n" \
+# "        <tr>\n" \
+# "          <td style=\"width: 25%\">\n" \
+# "            <div id=\"ra_donut\" style=\"height: 250px\"></div>\n" \
+# "          </td>\n" \
+# "          <td style=\"width: 25%\">\n" \
+# "            <div id=\"ya_donut\" style=\"height: 250px\"></div>\n" \
+# "          </td>\n" \
+# "          <td style=\"width: 25%\">\n" \
+# "            <div id=\"ga_donut\" style=\"height: 250px\"></div>\n" \
+# "          </td>\n" \
+# "          <td style=\"width: 25%\">\n" \
+# "            <div id=\"mh_donut\" style=\"height: 250px \"></div>\n" \
+# "          </td>\n" \
+# "        </tr>\n" \
+# "      </table>\n" \
+
+# HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG = \
+# "      <table style=\"width: 100%;\">\n" \
+# "        <tr>\n" \
+# "          <td style=\"width: 20%\">\n" \
+# "            <div id=\"frags_donut\" style=\"height: 250px\"></div>\n" \
+# "          </td>\n" \
+# "          <td style=\"width: 20%\">\n" \
+# "            <div id=\"kills_donut\" style=\"height: 250px\"></div>\n" \
+# "          </td>\n" \
+# "          <td style=\"width: 20%\">\n" \
+# "            <div id=\"deaths_donut\" style=\"height: 250px\"></div>\n" \
+# "          </td>\n" \
+# "          <td style=\"width: 20%\">\n" \
+# "            <div id=\"suicides_donut\" style=\"height: 250px \"></div>\n" \
+# "          </td>\n" \
+# "          <td style=\"width: 20%\">\n" \
+# "            <div id=\"teamkills_donut\" style=\"height: 250px\"></div>\n" \
+# "          </td>\n" \
+# "        </tr>\n" \
+# "      </table>\n" \
+
+HTML_SCRIPT_HIGHCHARTS_TEAMS_STATS_DONUTS_DIV_TAG = \
+"<div class=\"wpb_text_column wpb_content_element \">\n" \
+"<div class=\"wpb_wrapper\">\n" \
+"  <div class=\"symple-toggle state-closed\" id=\"TeamStatsDonuts\">\n" \
+"    <h2 class=\"symple-toggle-trigger \">Team stats</h3>\n " \
+"    <div class=\"symple-toggle-container symple-clearfix\">\n" \
 "      <table style=\"width: 100%;\">\n" \
 "        <tr>\n" \
 "          <td style=\"width: 25%\">\n" \
@@ -1232,8 +1276,7 @@ HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DONUTS_DIV_TAG = \
 "          </td>\n" \
 "        </tr>\n" \
 "      </table>\n" \
-
-HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG = \
+"      <hr>\n" \
 "      <table style=\"width: 100%;\">\n" \
 "        <tr>\n" \
 "          <td style=\"width: 20%\">\n" \
@@ -1253,6 +1296,10 @@ HTML_SCRIPT_HIGHCHARTS_TEAM_STATS_DONUTS_DIV_TAG = \
 "          </td>\n" \
 "        </tr>\n" \
 "      </table>\n" \
+"    </div>\n" \
+"  </div>\n" \
+"</div>\n" \
+"</div>\n";
 
 # =========================================================================================================================================================
 
