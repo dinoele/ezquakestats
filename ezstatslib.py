@@ -1303,6 +1303,21 @@ HTML_SCRIPT_HIGHCHARTS_TEAMS_STATS_DONUTS_DIV_TAG = \
 
 # =========================================================================================================================================================
 
+HTML_SCRIPT_FOLDING_SECTION_HEADER = \
+"<div class=\"wpb_text_column wpb_content_element \">\n" \
+"<div class=\"wpb_wrapper\">\n" \
+"  <div class=\"symple-toggle state-closed\" id=\"DIV_ID_NAME\">\n" \
+"    <h2 class=\"symple-toggle-trigger \">H2_CLASS_NAME</h3>\n " \
+"    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+
+HTML_SCRIPT_FOLDING_SECTION_FOOTER = \
+"    </div>\n" \
+"  </div>\n" \
+"</div>\n" \
+"</div>\n";
+
+# =========================================================================================================================================================
+
 # HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_FUNCTION = \
 # "$(function () {\n" \
 # "Highcharts.chart('match_results', {\n" \

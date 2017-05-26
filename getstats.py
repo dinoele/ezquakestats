@@ -799,12 +799,15 @@ if options.withScripts:
 if options.withScripts:
     resultString += "</pre>POWER_UPS_TIMELINE_VER2_PLACE\n<pre>"
     
-resultString += "<hr>"
+foldingHeaderStr = "</pre>" + ezstatslib.HTML_SCRIPT_FOLDING_SECTION_HEADER
+foldingHeaderStr = foldingHeaderStr.replace("H2_CLASS_NAME", "StreaksTable");
+foldingHeaderStr = foldingHeaderStr.replace("DIV_ID_NAME", "Streaks table");
 
-resultString += "\n"
-resultString += "Players streaks:\n"
+resultString += foldingHeaderStr
+
 resultString += str(totalStreaksHtmlTable)
-resultString += "\n"
+
+resultString += ezstatslib.HTML_SCRIPT_FOLDING_SECTION_FOOTER + "<pre>"
 
 if options.withScripts:
     resultString += "</pre>STREAK_ALL_TIMELINE_PLACE\n<pre>"
