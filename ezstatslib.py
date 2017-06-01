@@ -2465,6 +2465,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         ELECTROMASTER = 35, # "Electomaster" # 40%+ and 20+ kills by shaft (thanks to Onanim)  DONE
                         WHITEWASH = 36, # "Whitewash - full duel victory and total domination" # dry win duel  DONE
                         FASTER_THAN_BULLET = 37,  # "Faster than bullet"  # streak 5+, 3.0- seconds per kill DONE
+                        DEATH_CHEATER = 38,  # "Death cheater"  # less than 50% of average deaths  DONE
                                             )
 
 class Achievement:
@@ -2550,6 +2551,8 @@ class Achievement:
             return "Whitewash - full duel victory and total domination"
         if self.achtype == AchievementType.FASTER_THAN_BULLET:
             return "Faster than bullet"
+        if self.achtype == AchievementType.DEATH_CHEATER:
+            return "Death cheater"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -2608,6 +2611,8 @@ class Achievement:
             return "ezquakestats/img/ach_whitewash.png"
         if self.achtype == AchievementType.FASTER_THAN_BULLET:
             return "ezquakestats/img/ach_faster_than_bullet.png"
+        if self.achtype == AchievementType.DEATH_CHEATER:
+            return "ezquakestats/img/ach_death_cheater.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -2664,6 +2669,19 @@ def calculateCommonAchievements(allplayers, headToHead):
                                 if isEnemy or (pl.teamname == ""):
                                     if enemyPlayTime >= 300:
                                         pl.achievements.append( Achievement(AchievementType.WHITEWASH, "duel with %s is fully won, score is %d:0" % (plname, pnts)) )
+                                        
+    # DEATH_CHEATER
+    deathsSum = 0
+    for pl in allplayers:
+        if pl.playTime() >= 450:
+            deathsSum += pl.deaths
+    
+    avgDeathsCount = deathsSum / len(allplayers)
+    
+    for pl in allplayers:
+        if pl.playTime() >= 450:
+            if pl.deaths < (int)(avgDeathsCount * 0.5):
+                pl.achievements.append( Achievement(AchievementType.DEATH_CHEATER, "died only {0:d} times ({1:5.3}% of the average)".format(pl.deaths, (float(pl.deaths) / float(avgDeathsCount) * 100))) )                
 
 class Team:
     def __init__(self, teamname):
@@ -2888,3 +2906,6 @@ def getWeaponsCheck(allplayers):
 # TODO  telefrag after kill
 # 1480090073 <-> Onanim was perforated by SHAROK
 # 1480090074 <-> SHAROK was telefragged by Onanim
+
+# TODO wasted backgroud
+# <div style="background: url('wasted2.jpg')">
