@@ -2266,7 +2266,7 @@ class Player:
         return res    
             
     # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
-    def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead):
+    def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead, isTeamGame):
         # LONG_LIVE
         if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
             self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
@@ -2425,6 +2425,11 @@ class Player:
         for strk in self.calculatedStreaks:
             if strk.count >= 5 and (float(strk.end - strk.start) / (float)(strk.count)) <= 3.0:
                 self.achievements.append( Achievement(AchievementType.FASTER_THAN_BULLET, "streak {0:d} kills in {1:d} seconds - only {2:.3} seconds per kill".format(strk.count, (strk.end - strk.start), (float(strk.end - strk.start) / (float)(strk.count)))) )
+                
+        if isTeamGame:
+            # TEAMMATES_FAN
+            if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
+                self.achievements.append( Achievement(AchievementType.TEAMMATES_FAN, "") )
     
 
 # DO NOT FORGET TO ADD NEW ITEMS TO description() METHOD
@@ -2466,6 +2471,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         WHITEWASH = 36, # "Whitewash - full duel victory and total domination" # dry win duel  DONE
                         FASTER_THAN_BULLET = 37,  # "Faster than bullet"  # streak 5+, 3.0- seconds per kill DONE
                         DEATH_CHEATER = 38,  # "Death cheater"  # less than 50% of average deaths  DONE
+                        TEAMMATES_FAN = 39,  # "Teammates fan - no team deaths and no team kills"  # no teamkills and no teamdeaths  DONE
                                             )
 
 class Achievement:
@@ -2553,6 +2559,8 @@ class Achievement:
             return "Faster than bullet"
         if self.achtype == AchievementType.DEATH_CHEATER:
             return "Death cheater"
+        if self.achtype == AchievementType.TEAMMATES_FAN:
+            return "Teammates fan - no team deaths and no team kills"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -2613,6 +2621,8 @@ class Achievement:
             return "ezquakestats/img/ach_faster_than_bullet.png"
         if self.achtype == AchievementType.DEATH_CHEATER:
             return "ezquakestats/img/ach_death_cheater.jpg"
+        if self.achtype == AchievementType.TEAMMATES_FAN:
+            return "ezquakestats/img/ach_teammates_fan.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -2628,23 +2638,27 @@ class Achievement:
         
         return "NotImplemented"
 
-def calculateCommonAchievements(allplayers, headToHead):
-    # TEAM_BEST_FRIEND_KILLER
-    sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
-    maxTeamkillsVal = sortedByTeamkills[0].teamkills
-    if maxTeamkillsVal != 0:
-        for pl in sortedByTeamkills:
-            if pl.teamkills == maxTeamkillsVal:
-                pl.achievements.append( Achievement(AchievementType.TEAM_BEST_FRIEND_KILLER, "killed teammates %d times" % (pl.teamkills)) )
+def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
+    if isTeamGame:
+        # TEAM_BEST_FRIEND_KILLER
+        sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
+        maxTeamkillsVal = sortedByTeamkills[0].teamkills
+        if maxTeamkillsVal != 0:
+            for pl in sortedByTeamkills:
+                if pl.teamkills == maxTeamkillsVal:
+                    pl.achievements.append( Achievement(AchievementType.TEAM_BEST_FRIEND_KILLER, "killed teammates %d times" % (pl.teamkills)) )
+            
+        # TEAM_MAXIMUM_TEAMDEATHS
+        sortedByTeamdeaths = sorted(allplayers, key=attrgetter("teamdeaths"), reverse=True)
+        maxTeamdeathsVal = sortedByTeamdeaths[0].teamdeaths
+        if maxTeamdeathsVal != 0:
+            for pl in sortedByTeamdeaths:
+                if pl.teamdeaths == maxTeamdeathsVal:
+                    pl.achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (pl.teamdeaths)) )
+
+    else:  # isTeamGame == False
+        pass
         
-    # TEAM_MAXIMUM_TEAMDEATHS
-    sortedByTeamdeaths = sorted(allplayers, key=attrgetter("teamdeaths"), reverse=True)
-    maxTeamdeathsVal = sortedByTeamdeaths[0].teamdeaths
-    if maxTeamdeathsVal != 0:
-        for pl in sortedByTeamdeaths:
-            if pl.teamdeaths == maxTeamdeathsVal:
-                pl.achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (pl.teamdeaths)) )
-                
     # WHITEWASH
     # if len(matchProgress) != 0:
     if True:  # TODO matchProgress or minutes count for team mode - can be taken from player.gaByMinutes

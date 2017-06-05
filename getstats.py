@@ -700,10 +700,10 @@ for pl in allplayers:
 
 # achievements
 for pl in allplayers:
-    pl.calculateAchievements([], powerUpsStatus, headToHead)
+    pl.calculateAchievements([], powerUpsStatus, headToHead, isTeamGame = True)
     #pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead)
     
-ezstatslib.calculateCommonAchievements(allplayers, headToHead)
+ezstatslib.calculateCommonAchievements(allplayers, headToHead, isTeamGame = True)
     
 
 # generate output string

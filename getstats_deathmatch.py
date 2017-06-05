@@ -528,9 +528,9 @@ for pl in allplayers:
     
 # achievements
 for pl in allplayers:
-    pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead)
+    pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead, isTeamGame = False)
     
-ezstatslib.calculateCommonAchievements(allplayers, headToHead)
+ezstatslib.calculateCommonAchievements(allplayers, headToHead, isTeamGame = False)
     
 # generate output string
 resultString = ""
