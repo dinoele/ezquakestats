@@ -2425,6 +2425,10 @@ class Player:
         for strk in self.calculatedStreaks:
             if strk.count >= 5 and (float(strk.end - strk.start) / (float)(strk.count)) <= 3.0:
                 self.achievements.append( Achievement(AchievementType.FASTER_THAN_BULLET, "streak {0:d} kills in {1:d} seconds - only {2:.3} seconds per kill".format(strk.count, (strk.end - strk.start), (float(strk.end - strk.start) / (float)(strk.count)))) )
+
+        # NO_SUICIDES
+        if self.playTime() >= 300 and self.suicides == 0:
+            self.achievements.append( Achievement(AchievementType.NO_SUICIDES, "") )
                 
         if isTeamGame:
             # TEAMMATES_FAN
@@ -2472,6 +2476,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         FASTER_THAN_BULLET = 37,  # "Faster than bullet"  # streak 5+, 3.0- seconds per kill DONE
                         DEATH_CHEATER = 38,  # "Death cheater"  # less than 50% of average deaths  DONE
                         TEAMMATES_FAN = 39,  # "Teammates fan - no team deaths and no team kills"  # no teamkills and no teamdeaths  DONE
+                        NO_SUICIDES = 40, # "I love this life!! No suicides at all"  # no suicides  DONE
                                             )
 
 class Achievement:
@@ -2561,6 +2566,8 @@ class Achievement:
             return "Death cheater"
         if self.achtype == AchievementType.TEAMMATES_FAN:
             return "Teammates fan - no team deaths and no team kills"
+        if self.achtype == AchievementType.NO_SUICIDES:
+            return "I love this life!! No suicides at all"
     
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -2623,6 +2630,8 @@ class Achievement:
             return "ezquakestats/img/ach_death_cheater.jpg"
         if self.achtype == AchievementType.TEAMMATES_FAN:
             return "ezquakestats/img/ach_teammates_fan.jpg"
+        if self.achtype == AchievementType.NO_SUICIDES:
+            return "ezquakestats/img/ach_no_suicides.jpg"
         
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -2923,3 +2932,26 @@ def getWeaponsCheck(allplayers):
 
 # TODO wasted backgroud
 # <div style="background: url('wasted2.jpg')">
+
+
+# TODO for playTime
+# TEAM PLAY:
+# 1496323356 <-> dinoel dropped
+# 1496323356 <-> dinoel left the game with 0 frags
+# 1496323356 <-> Client dinoel removed
+#
+# 1496323415 <-> Client dinoel connected
+# 1496323415 <-> dinoel [xep] rejoins the game with 0 frags
+#
+# sample: multiple_rejoins_teamlog
+#
+#
+# DEATHMATCH:
+# 1496675770 <-> dinoel dropped
+# 1496675770 <-> dinoel left the game with 11 frags
+# 1496675770 <-> Client dinoel removed
+#
+# 1496675853 <-> Client dinoel connected
+# 1496675854 <-> dinoel entered the game
+#
+# sample: multiple_drop_deathmatch
