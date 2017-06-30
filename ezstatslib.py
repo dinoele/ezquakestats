@@ -2652,7 +2652,7 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
         # TEAM_BEST_FRIEND_KILLER
         sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
         maxTeamkillsVal = sortedByTeamkills[0].teamkills
-        if maxTeamkillsVal != 0:
+        if maxTeamkillsVal >= 3:
             for pl in sortedByTeamkills:
                 if pl.teamkills == maxTeamkillsVal:
                     pl.achievements.append( Achievement(AchievementType.TEAM_BEST_FRIEND_KILLER, "killed teammates %d times" % (pl.teamkills)) )
@@ -2660,7 +2660,7 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
         # TEAM_MAXIMUM_TEAMDEATHS
         sortedByTeamdeaths = sorted(allplayers, key=attrgetter("teamdeaths"), reverse=True)
         maxTeamdeathsVal = sortedByTeamdeaths[0].teamdeaths
-        if maxTeamdeathsVal != 0:
+        if maxTeamdeathsVal >= 3:
             for pl in sortedByTeamdeaths:
                 if pl.teamdeaths == maxTeamdeathsVal:
                     pl.achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (pl.teamdeaths)) )
