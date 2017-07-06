@@ -605,7 +605,7 @@ else:
     totalScore.append( [players2[0].teamname, fragsSum2] )
     
 
-# fill team kills/deaths/teamkills/suicides/teamdeaths/powerups
+# fill team kills/deaths/teamkills/suicides/teamdeaths/powerups/weapons
 for pl in players1:
     team1.kills += pl.kills
     team1.deaths += pl.deaths
@@ -623,7 +623,8 @@ for pl in players1:
         team1.yaByMinutes[minNum] += pl.yaByMinutes[minNum]
         team1.raByMinutes[minNum] += pl.raByMinutes[minNum]
         team1.mhByMinutes[minNum] += pl.mhByMinutes[minNum]
-    
+        
+    team1.fillWeaponsKillsDeaths(pl);    
 
 for pl in players2:
     team2.kills += pl.kills
@@ -642,6 +643,8 @@ for pl in players2:
         team2.yaByMinutes[minNum] += pl.yaByMinutes[minNum]
         team2.raByMinutes[minNum] += pl.raByMinutes[minNum]
         team2.mhByMinutes[minNum] += pl.mhByMinutes[minNum]
+        
+    team2.fillWeaponsKillsDeaths(pl);
 
 # fill final battle progress    
 progressLineDict = {}
@@ -930,6 +933,15 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
     resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]%s" % (pl.teamname, pl.name), pl.kills,  pl.getWeaponsKills(pl.kills,   weaponsCheck))
     resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                                pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
     resultString += "\n"
+    
+    
+resultString += "Teams weapons:\n"    
+resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]" % (team1.name), team1.kills,  team1.getWeaponsKills(team1.kills,   weaponsCheck))
+resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                    team1.deaths, team1.getWeaponsDeaths(team1.deaths, weaponsCheck))
+resultString += "\n"
+resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]" % (team2.name), team2.kills,  team2.getWeaponsKills(team2.kills,   weaponsCheck))
+resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                    team2.deaths, team2.getWeaponsDeaths(team2.deaths, weaponsCheck))
+resultString += "\n"
 
 if len(disconnectedplayers) != 0:
     resultString += "\n"

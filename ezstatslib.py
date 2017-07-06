@@ -2729,6 +2729,30 @@ class Team:
         self.mhByMinutes = []
         
         self.powerUps = []
+        
+        self.rl_kills = 0
+        self.lg_kills = 0
+        self.gl_kills = 0
+        self.sg_kills = 0
+        self.ssg_kills = 0
+        self.ng_kills = 0
+        self.sng_kills = 0
+        self.axe_kills = 0
+        self.tele_kills = 0
+        self.other_kills = 0
+        #self.TODO_kills = 0
+        
+        self.rl_deaths = 0
+        self.lg_deaths = 0
+        self.gl_deaths = 0
+        self.sg_deaths = 0
+        self.ssg_deaths = 0
+        self.ng_deaths = 0
+        self.sng_deaths = 0
+        self.axe_deaths = 0
+        self.tele_deaths = 0
+        self.other_deaths = 0
+        #self.TODO_deaths = 0
     
     def damageDelta(self):
         return (self.gvn - self.tkn)
@@ -2741,6 +2765,66 @@ class Team:
         self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.raByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.mhByMinutes = [0 for i in xrange(minutesCnt+1)]
+        
+    def fillWeaponsKillsDeaths(self, player):
+        self.rl_kills += player.rl_kills
+        self.lg_kills += player.lg_kills
+        self.gl_kills += player.gl_kills
+        self.sg_kills += player.sg_kills
+        self.ssg_kills += player.ssg_kills
+        self.ng_kills += player.ng_kills
+        self.sng_kills += player.sng_kills
+        self.axe_kills += player.axe_kills
+        self.tele_kills += player.tele_kills
+        self.other_kills += player.other_kills
+        #self.TODO_kills += player.TODO_kills
+        
+        self.rl_deaths += player.rl_deaths
+        self.lg_deaths += player.lg_deaths
+        self.gl_deaths += player.gl_deaths
+        self.sg_deaths += player.sg_deaths
+        self.ssg_deaths += player.ssg_deaths
+        self.ng_deaths += player.ng_deaths
+        self.sng_deaths += player.sng_deaths
+        self.axe_deaths += player.axe_deaths
+        self.tele_deaths += player.tele_deaths
+        self.other_deaths += player.other_deaths
+        #self.TODO_deaths += player.TODO_deaths
+
+    def getWeaponsKills(self, totalValue, weaponsCheck):
+        rlstr   = "" if not weaponsCheck.is_rl    or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_kills,   (float(self.rl_kills)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg    or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_kills,   (float(self.lg_kills)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl    or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_kills,   (float(self.gl_kills)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg    or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_kills,   (float(self.sg_kills)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg   or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_kills,  (float(self.ssg_kills)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng    or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_kills,   (float(self.ng_kills)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng   or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_kills,  (float(self.sng_kills)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe   or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_kills,  (float(self.axe_kills)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele  or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_kills, (float(self.tele_kills) / float(totalValue) * 100));
+        otherstr= "" if not weaponsCheck.is_other or totalValue == 0 else "other:{0:3d}({1:6.3}%), ".format( self.other_kills,  (float(self.other_kills)  / float(totalValue) * 100));
+
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr
+
+    def getWeaponsDeaths(self, totalValue, weaponsCheck):
+        rlstr   = "" if not weaponsCheck.is_rl    or totalValue == 0 else "rl:{0:3d}({1:5.4}%), ".format(  self.rl_deaths,   (float(self.rl_deaths)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg    or totalValue == 0 else "lg:{0:3d}({1:6.3}%), ".format(  self.lg_deaths,   (float(self.lg_deaths)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl    or totalValue == 0 else "gl:{0:3d}({1:6.3}%), ".format(  self.gl_deaths,   (float(self.gl_deaths)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg    or totalValue == 0 else "sg:{0:3d}({1:6.3}%), ".format(  self.sg_deaths,   (float(self.sg_deaths)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg   or totalValue == 0 else "ssg:{0:3d}({1:6.3}%), ".format( self.ssg_deaths,  (float(self.ssg_deaths)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng    or totalValue == 0 else "ng:{0:3d}({1:6.3}%), ".format(  self.ng_deaths,   (float(self.ng_deaths)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng   or totalValue == 0 else "sng:{0:3d}({1:6.3}%), ".format( self.sng_deaths,  (float(self.sng_deaths)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe   or totalValue == 0 else "axe:{0:3d}({1:6.3}%), ".format( self.axe_deaths,  (float(self.axe_deaths)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele  or totalValue == 0 else "tele:{0:3d}({1:6.3}%), ".format(self.tele_deaths, (float(self.tele_deaths) / float(totalValue) * 100));
+        otherstr= "" if not weaponsCheck.is_other or totalValue == 0 else "other:{0:3d}({1:6.3}%), ".format( self.other_deaths,  (float(self.other_deaths)  / float(totalValue) * 100));
+
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr        
+    
 
 class WeaponsCheckRes:
     def __init__(self):
