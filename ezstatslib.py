@@ -176,7 +176,7 @@ HTML_SCRIPT_MAIN_STATS_FUNCTION = \
     "var chart_suicides = new google.visualization.PieChart(document.getElementById('piechart_suicides'));\n" \
     "chart_suicides.draw(data_suicides, options_suicides);\n" \
     "$(\"#main_stats\").attr(\"class\", \"symple-toggle state-closed\");\n" \
-    "}\n" 
+    "}\n"
 
 HTML_MAIN_STATS_DIAGRAMM_DIV_TAG = \
   "<div class=\"wpb_text_column wpb_content_element \">\n" \
@@ -664,7 +664,7 @@ HTML_SCRIPT_HIGHCHARTS_POWER_UPS_DIVS_TAG = \
   "    </div>\n" \
   "  </div>\n" \
   "</div>\n" \
-  "</div>\n";                                            
+  "</div>\n";
 
 # =========================================================================================================================================================
 
@@ -1368,7 +1368,7 @@ HTML_SCRIPT_FOLDING_SECTION_FOOTER = \
 # "    }]\n" \
 # "});\n" \
 # "});\n"
-# 
+#
 # HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_DIV_TAG = "<div id=\"match_results\" style=\"height: 200px; margin: 0 auto\"></div>"
 
 # =========================================================================================================================================================
@@ -1474,7 +1474,7 @@ HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\
 HTML_FOOTER_NO_PRE = "</body>\n</html>"
 
 HTML_PRE_CLOSE_TAG = "</pre>\n"
-  
+
 HTML_BODY_FOLDING_SCRIPT = \
   "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/dependencies/js/jquery.min.js\"></script>\n" \
   "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/js/bootstrap-slider.js\"></script>\n" \
@@ -1541,13 +1541,13 @@ def checkNew(fileNew, workFilePath, pathForCheck):
         timeDelta = datetime.today() - modTimeDt
         if timeDelta.total_seconds() < NEW_FILE_TIME_DETECTION:
             isNew = True
-            
+
     return isNew
 
 def readLineWithCheck(f, num):
     line = f.readline()
     num += 1
-    if (num > READ_LINES_LIMIT):        
+    if (num > READ_LINES_LIMIT):
         logError("ERROR: too many lines, limit = %d\n" % (READ_LINES_LIMIT))
         exit(2)
     return line,num
@@ -1566,28 +1566,28 @@ def commonDetection(s):
     knownSkipLines = ["not enough ammo", "second", "no weapon", "Couldn't download"]
 
     spl = s.split(" ")
-    
+
     if "boomstick" in s: #zrkn chewed on SHAROK's boomstick
         return True, spl[3].split("'")[0], spl[0], "sg"
 
     elif "was gibbed" in s and "rocket" in s: #rea[rbf] was gibbed by Ilya's rocket
         return True, spl[4].split("'")[0], spl[0], "rl"
-    
-    elif "was gibbed" in s and "grenade" in s: #zrkn was gibbed by ss's grenade 
+
+    elif "was gibbed" in s and "grenade" in s: #zrkn was gibbed by ss's grenade
         return True, spl[4].split("'")[0], spl[0], "gl"
-        
+
     elif "pineapple" in s: #ss eats rea[rbf]'s pineapple
         return True, spl[2].split("'")[0], spl[0], "gl"
-        
+
     elif "rocket" in s and not "took" in s and not "{rockets}" in s and not "rockets at " in s: # zrkn rides EEE's rocket
         return True, spl[2].split("'")[0], spl[0], "rl"
-        
+
     elif "shaft" in s and not "fakeshaft" in s: # ss accepts Onanim's shaft
         return True, spl[2].split("'")[0], spl[0], "lg"
-        
+
     elif "punctured" in s: # EEE was punctured by zrkn
         return True, spl[4].split("\n")[0], spl[0], "sng"
-       
+
     elif "buckshot" in s: # Onanim ate 2 loads of SHAROK's buckshot
         return True, spl[5].split("'")[0], spl[0], "ssg"
 
@@ -1608,10 +1608,10 @@ def commonDetection(s):
 
     elif "ax-murdered" in s: # EEE was ax-murdered by Onanim
         return True, spl[4].split("\n")[0], spl[0], "axe"
-    
+
     elif "squishes" in s: # SHAROK squishes EEE
         return True, spl[0], spl[2].split("\n")[0], "other"
- 
+
     else:
         isKnown = False
         for l in knownSkipLines:
@@ -1620,7 +1620,7 @@ def commonDetection(s):
 
         if not isKnown:
             logSkipped(s)
-        
+
         return False,"","",""
 
 def suicideDetection(s):
@@ -1649,16 +1649,16 @@ def suicideDetection(s):
 
 def talefragDetection(s, teammateTelefrags):
     spl = s.split(" ")
-    
+
     # special case: random stomps Ilya
     if "stomps" in s:
         return True,spl[0],spl[2].split("\n")[0]
-    
+
     if "telefrag" in s:  # Ilya was telefragged by zrkn || Ilya was telefragged by his teammate
-        
+
         if "teammate" in s:
             teammateTelefrags.append(spl[0])
-            
+
             # check whether victim is know (in new versions)
             if len(spl) == 1 + len("was telefragged by his teammate"):
                 return True,"",spl[0]  # only death is increased
@@ -1666,7 +1666,7 @@ def talefragDetection(s, teammateTelefrags):
                 return True,spl[len(spl) - 1].replace("\n",""),spl[0]
         else:
             return True,spl[4].split("\n")[0],spl[0]
-        
+
     return False,"",""
 
 def teamkillDetection(s):
@@ -1677,19 +1677,19 @@ def teamkillDetection(s):
     for det in detectStrs:
          if det in s:
             spl = s.split( )
-            
+
             # check whether victim is know (in new versions)
             if len(spl) == 1 + len(det.split( )):
-                return True,spl[0],"" 
+                return True,spl[0],""
             else:
                 return True,spl[0],spl[len(spl) - 1].replace("\n","")
-    
+
     return False,"",""
 
-def powerupDetection(s):  
+def powerupDetection(s):
     if "picked up" in s:
         spl = s.split(" ")
-    
+
         if "megahealth" in s: # NAGIBATOR picked up megahealth
             return True, spl[0], "mh"
         elif "Yellow Armor" in s: # ss picked up Yellow Armor
@@ -1700,13 +1700,13 @@ def powerupDetection(s):
             return True, spl[0], "ga"
         else:
             logSkipped("powerupDetection: %s" % (s))
-        
+
     else:
-        return False,"",""    
+        return False,"",""
 
 def sortPlayersBy(players, param, fieldType="attr", units = ""):
     res = ""
-    
+
     if fieldType == "attr":
         sortedPlayers = sorted(players, key=attrgetter(param), reverse=True)
     else:
@@ -1729,21 +1729,21 @@ class Streak:
         self.end   = _end
         self.names = _names
         self.finalName = ""
-        
+
     def clear(self):
         self.count = 0
         self.start = 0
-        self.end   = 0        
+        self.end   = 0
         # del self.names[:]
         self.names = ""
         self.finalName = ""
-        
+
     def toString(self):
         return "%d [%d:%d]" % (self.count, self.start, self.end)
-    
+
     def duration(self):
         return (self.end - self.start)
-    
+
     def parseNames(self):
         res = []
         names = self.names[:-1]
@@ -1754,75 +1754,75 @@ class Streak:
                 res.append([spl,1])
                 i += 1
             else:
-                res[i][1] += 1        
-        
+                res[i][1] += 1
+
         return res
-    
+
     def formattedNames(self):
         res = self.parseNames()
-        
+
         resStr = ""
         for el in res:
             resStr += "%s(%d), " % (el[0], el[1])
         resStr = resStr[:-2]
-        
+
         return resStr
-    
+
     def formattedNamesSum(self):
         res = {}
         names = self.names[:-1]
-        namesSpl = names.split(",")        
+        namesSpl = names.split(",")
         for spl in namesSpl:
             if res.has_key(spl):
                 res[spl] += 1
             else:
                 res[spl] = 1
-        
+
         sortedRes = sorted(res.items(), key=itemgetter(1), reverse=True)
-        
+
         resStr = ""
         for el in sortedRes:
             resStr += "%s(%d), " % (el[0], el[1])
         resStr = resStr[:-2]
-        
+
         return resStr
-    
+
 def createStreaksHtmlTable(sortedPlayers, streakType):
     streaksList = []  # [[name1,[s1,s2,..]]]
     maxCnt = 0
     for pl in sortedPlayers:
-        strkRes,maxStrk,strkNames = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()                        
+        strkRes,maxStrk,strkNames = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()
         streaksList.append( [pl.name, strkRes, strkNames] )
         maxCnt = max(maxCnt,len(strkRes))
         if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
             logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
-            
+
     cellWidth = "20px"
     streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
                            style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
     for strk in streaksList:
         tableRow = HTML.TableRow(cells=[ HTML.TableCell(htmlBold(strk[0]), align="center", width=cellWidth) ])
-        
+
         maxVal = 0
         if len(strk[1]) > 0:
             maxVal = sorted(strk[1], reverse=True)[0]
-            
+
         i = 0
-        for val in strk[1]:       
+        for val in strk[1]:
             if val == maxVal:
                 tableRow.cells.append( HTML.TableCell(htmlBold(str(val)),
                                                       align="center",
                                                       width=cellWidth,
                                                       bgcolor=BG_COLOR_GREEN if streakType == StreakType.KILL_STREAK else BG_COLOR_RED) )
             else:
-                tableRow.cells.append( HTML.TableCell(str(val), align="center", width=cellWidth) )            
+                tableRow.cells.append( HTML.TableCell(str(val), align="center", width=cellWidth) )
             i += 1
-        
+
         for j in xrange(i,maxCnt):
             tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
-            
+
         streaksHtmlTable.rows.append(tableRow)
-    
+
     return streaksHtmlTable
 
 
@@ -1830,23 +1830,23 @@ def createFullStreaksHtmlTable(sortedPlayers, streakType):
     streaksList = []  # [[name1,[s1,s2,..]]]
     maxCnt = 0
     for pl in sortedPlayers:
-        
-        strkRes,maxStrk = pl.getCalculatedStreaksFull() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaksFull()        
+
+        strkRes,maxStrk = pl.getCalculatedStreaksFull() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaksFull()
         streaksList.append( [pl.name, strkRes] )
         maxCnt = max(maxCnt,len(strkRes))
         if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
             logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
-            
+
     cellWidth = "20px"
     streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
                            style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
     for strk in streaksList:
         tableRow = HTML.TableRow(cells=[ HTML.TableCell(htmlBold(strk[0]), align="center", width=cellWidth) ])
-        
+
         maxVal = 0
         if len(strk[1]) > 0:
             maxVal = (sorted(strk[1], key=attrgetter("count"), reverse=True)[0]).count
-            
+
         i = 0
         for val in strk[1]:
             if val.count == maxVal:
@@ -1855,21 +1855,21 @@ def createFullStreaksHtmlTable(sortedPlayers, streakType):
                                                       width=cellWidth,
                                                       bgcolor=BG_COLOR_GREEN if streakType == StreakType.KILL_STREAK else BG_COLOR_RED) )
             else:
-                tableRow.cells.append( HTML.TableCell(val.toString(), align="center", width=cellWidth) )            
+                tableRow.cells.append( HTML.TableCell(val.toString(), align="center", width=cellWidth) )
             i += 1
-        
+
         for j in xrange(i,maxCnt):
             tableRow.cells.append( HTML.TableCell("", width=cellWidth) )
-            
+
         streaksHtmlTable.rows.append(tableRow)
-    
+
     return streaksHtmlTable
-    
+
 
 PowerUpType = enum(UNKNOWN=0, RA=1, YA=2, GA=3, MH=4)
 def powerUpTypeToString(pwrType):
     if pwrType == PowerUpType.RA: return "RA"
-    if pwrType == PowerUpType.YA: return "YA"    
+    if pwrType == PowerUpType.YA: return "YA"
     if pwrType == PowerUpType.GA: return "GA"
     if pwrType == PowerUpType.MH: return "MH"
     return "NA"
@@ -1879,7 +1879,7 @@ class PowerUp:
         self.type = _type
         self.time = _time
         self.playerName = _playerName
-        
+
     def __str__(self):
         return "%s [%d]" % (powerUpTypeToString(self.type), self.time)
 
@@ -1899,7 +1899,7 @@ class Player:
 
         self.streaks = 0
         self.spawnfrags = 0
-        
+
         self.ga = 0
         self.ya = 0
         self.ra = 0
@@ -1916,7 +1916,7 @@ class Player:
         self.w_gl = 0
         self.w_sg = 0
         self.w_ssg = 0
-        
+
         self.rl_kills = 0
         self.lg_kills = 0
         self.gl_kills = 0
@@ -1928,7 +1928,7 @@ class Player:
         self.tele_kills = 0
         self.other_kills = 0
         #self.TODO_kills = 0
-        
+
         self.rl_deaths = 0
         self.lg_deaths = 0
         self.gl_deaths = 0
@@ -1940,52 +1940,55 @@ class Player:
         self.tele_deaths = 0
         self.other_deaths = 0
         #self.TODO_deaths = 0
-        
+
         self.calculatedStreaks = []
         self.currentStreak = Streak(StreakType.KILL_STREAK)
-        
+
         self.deathStreaks = []
         self.currentDeathStreak = Streak(StreakType.DEATH_STREAK)
-        
+
         self.gaByMinutes = []
         self.yaByMinutes = []
         self.raByMinutes = []
         self.mhByMinutes = []
-        
+
         self.powerUps = []
-        
+
         self.achievements = []
-        
+
         self.connectTime = 0
         self.disconnectTime = 0
         self.isDropped = False
 
-    def initPowerUpsByMinutes(self, minutesCnt):        
+        self.kill_weapons = set()
+        self.death_weapons = set()
+
+    def initPowerUpsByMinutes(self, minutesCnt):
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.raByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.mhByMinutes = [0 for i in xrange(minutesCnt+1)]
-        
+
     def incga(self, minuteNum, time = 0):
         self.gaByMinutes[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.GA, time, self.name) )
-        
+
     def incya(self, minuteNum, time = 0):
         self.yaByMinutes[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.YA, time, self.name) )
-        
+
     def incra(self, minuteNum, time = 0):
         self.raByMinutes[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.RA, time, self.name) )
-    
+
     def incmh(self, minuteNum, time = 0):
         self.mhByMinutes[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.MH, time, self.name) )
-            
+
     def playTime(self):
         playTime = 0
         minutesCnt = len(self.gaByMinutes)  # TODO get minutes count
@@ -1995,7 +1998,7 @@ class Player:
             else:
                 playTime = (minutesCnt * 60) - self.connectTime
         return playTime
-            
+
     def recoverArmorStats(self):
         if self.ga == 0 and self.ya == 0 and self.ra == 0 and self.mh == 0 and self.isDropped:
             for ga in self.gaByMinutes:
@@ -2026,7 +2029,7 @@ class Player:
                self.disconnectTime != 0 and \
                self.disconnectTime > self.currentDeathStreak.start and \
                self.disconnectTime < time:
-                self.currentDeathStreak.end = self.disconnectTime                
+                self.currentDeathStreak.end = self.disconnectTime
             else:
                 self.currentDeathStreak.end = time
             # self.deathStreaks.append(self.currentDeathStreak)
@@ -2036,51 +2039,51 @@ class Player:
     def incKill(self, time, who, whom):
         self.kills += 1
         self.currentStreak.count += 1
-        
+
         # self.currentStreak.names.append(whom)
         self.currentStreak.names += "%s," % (whom)
-        
-        if self.currentStreak.start == 0: self.currentStreak.start = time            
+
+        if self.currentStreak.start == 0: self.currentStreak.start = time
         self.fillDeathStreaks(time)
-    
+
     def incDeath(self, time, who, whom):
         self.deaths += 1
         self.currentDeathStreak.count += 1
-        
+
         # self.currentDeathStreak.names.append(who)
         self.currentDeathStreak.names += "%s," % (who)
-        
-        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
-        
+
     def incSuicides(self, time):
         self.suicides += 1
         self.currentDeathStreak.count += 1
-        
+
         # self.currentDeathStreak.names.append("SELF")
         self.currentDeathStreak.names += "SELF,"
-        
-        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
-        
+
     def incTeamkill(self, time, who, whom):
         self.teamkills += 1
         self.currentDeathStreak.count += 1
-        
+
         self.currentDeathStreak.names += "[MATE kill]%s," % (whom)
-        
-        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
-        
+
     def incTeamdeath(self, time, who, whom):
         self.teamdeaths += 1
         self.currentDeathStreak.count += 1
-        
+
         self.currentDeathStreak.names += "[killed by MATE]%s," % (who)
-        
-        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time            
+
+        if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
-    
+
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
 
@@ -2097,59 +2100,59 @@ class Player:
 
     def damageDelta(self):
         return (self.gvn - self.tkn)
-    
+
     def calcDelta(self):
         return (self.frags() - self.deaths)
-    
+
     def getCalculatedStreaks(self, minCnt = KILL_STREAK_MIN_VALUE):
         maxStreak = 0
         res = []
         resNames = []
         for strk in self.calculatedStreaks:
-            if strk.count >= minCnt:                                
+            if strk.count >= minCnt:
                 res.append(strk.count)
                 resNames.append(strk.names)
                 maxStreak = max(maxStreak, strk.count)
-            
+
         return res, maxStreak, resNames
-    
+
     def getCalculatedStreaksFull(self, minCnt = KILL_STREAK_MIN_VALUE):
         maxStreak = 0
         res = []
         for strk in self.calculatedStreaks:
-            if strk.count >= minCnt:                                
-                res.append(strk)            
+            if strk.count >= minCnt:
+                res.append(strk)
                 maxStreak = max(maxStreak, strk.count)
-            
+
         return res, maxStreak
-    
+
     def getDeatchStreaks(self, minCnt = DEATH_STREAK_MIN_VALUE):
         maxStreak = 0
         res = []
         resNames = []
         for strk in self.deathStreaks:
-            if strk.count >= minCnt:                                
+            if strk.count >= minCnt:
                 res.append(strk.count)
                 resNames.append(strk.names)
                 maxStreak = max(maxStreak, strk.count)
-            
+
         return res, maxStreak, resNames
-    
+
     def getDeatchStreaksFull(self, minCnt = DEATH_STREAK_MIN_VALUE):
         maxStreak = 0
         res = []
         for strk in self.deathStreaks:
-            if strk.count >= minCnt:                                
-                res.append(strk)            
+            if strk.count >= minCnt:
+                res.append(strk)
                 maxStreak = max(maxStreak, strk.count)
-            
+
         return res, maxStreak
-    
+
     def getCalculatedStreaksStr(self, minCnt = KILL_STREAK_MIN_VALUE):
         s = ""
         res,cnt = self.getCalculatedStreaks(minCnt)
         for val in res:
-            s += "{0:3d} ".format(val)            
+            s += "{0:3d} ".format(val)
         return res, cnt
 
     def toString(self):
@@ -2157,7 +2160,7 @@ class Player:
 
     def getFormatedStats(self):
         return "frags:{0:3d}, kills:{1:3d}, deaths:{2:3d}, suicides:{3:3d}, teamkills:{4:3d}, teamdeaths:{5:3d}, gvn-tkn: {6:5d} - {7:5d} ({8:5d}), ratio:{9:6.3}, eff:{10:6.4}%".format(self.frags(), self.kills, self.deaths, self.suicides, self.teamkills, self.teamdeaths, self.gvn, self.tkn, self.damageDelta(), self.killRatio(), self.efficiency())
-    
+
     def getFormatedStats_noTeamKills(self):
         return "frags:{0:3d}, kills:{1:3d}, deaths:{2:3d}, suicides:{3:3d}, gvn-tkn: {4:5d} - {5:5d} ({6:5d}), ratio:{7:6.3}, eff:{8:6.4}%".format(self.frags(), self.kills, self.deaths, self.suicides, self.gvn, self.tkn, self.damageDelta(), self.killRatio(), self.efficiency())
 
@@ -2254,23 +2257,23 @@ class Player:
             else:
                 val = float(spl[1].split("%")[0])
             exec("self.w_%s = val" % (weap))
-            
+
     def achievementsToString(self):
         res = ""
         for ach in self.achievements:
             res += "%s," % (ach.toString())
-            
+
         if res != "":
             res = res[:-1]
-        
-        return res    
-            
+
+        return res
+
     # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
     def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead, isTeamGame):
         # LONG_LIVE
         if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
             self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
-            
+
         for strk in self.deathStreaks:
             # SUICIDE_MASTER & SUICIDE_KING
             strkParsedNames = strk.parseNames()
@@ -2280,11 +2283,11 @@ class Player:
                         self.achievements.append( Achievement(AchievementType.SUICIDE_MASTER, "%d suicides in a row" % (el[1])) )
                     elif el[1] >= 3:
                         self.achievements.append( Achievement(AchievementType.SUICIDE_KING, "%d suicides in a row!" % (el[1])) )
-                    
+
             # DEATH_STREAK_PAIN
             if strk.count >= 10:
                 self.achievements.append( Achievement(AchievementType.DEATH_STREAK_PAIN, "%d deaths in a row during %d seconds" % (strk.count, strk.duration())) )
-            
+
         # HORRIBLE_FINISH, FINISH_GURU
         if len(matchProgress) >= 2:
             pos1 = 1
@@ -2293,72 +2296,72 @@ class Player:
                     break
                 else:
                     pos1 +=1
-            
+
             pos2 = 1
             for el in matchProgress[len(matchProgress)-1]:
                 if el[0] == self.name:
                     break
                 else:
                     pos2 +=1
-            
+
             if pos2 - pos1 >= 2:
                 self.achievements.append( Achievement(AchievementType.HORRIBLE_FINISH, "before the last minute place was %d but finished on place %d" % (pos1, pos2)) )
-                
+
             if pos2 == 1 and pos1 > 2:
                 self.achievements.append( Achievement(AchievementType.FINISH_GURU, "before the last minute place was %d but won the game!!" % (pos1)) )
-                
+
         # HUNDRED_KILLS
         if self.kills >= 100:
             self.achievements.append( Achievement(AchievementType.HUNDRED_KILLS, "mega killer killed %d enemies" % (self.kills)) )
-        
+
         # HUNDRED_DEATHS
         if self.deaths >= 100:
             self.achievements.append( Achievement(AchievementType.HUNDRED_DEATHS, "was killed %d times" % (self.deaths)) )
-        
+
         # HUNDRED_FRAGS
         if self.frags() >= 100:
             self.achievements.append( Achievement(AchievementType.HUNDRED_FRAGS, "%d frags" % (self.frags())) )
-            
+
         # RED_ARMOR_EATER
         if self.ra >= 10:
             self.achievements.append( Achievement(AchievementType.RED_ARMOR_EATER, "%d red armors%s" % (self.ra, "" if self.ra < 15 else ". %d CARL!!" % (self.ra))) )
-            
+
         # YELLOW_ARMOR_EATER
         if self.ya >= 10:
             self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_EATER, "%d yellow armors%s" % (self.ya, "" if self.ya < 15 else ". %d CARL!!" % (self.ya))) )
-            
+
         # GREEN_ARMOR_EATER
         if self.ga >= 10:
             self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_EATER, "%d green armors%s" % (self.ga, "" if self.ga < 15 else ". %d CARL!!" % (self.ga))) )
-            
+
         # MEGA_HEALTH_EATER
         if self.mh >= 10:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths%s" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
-        
+
         # RED_ARMOR_ALLERGY
         if powerUpsStatus["ra"] and self.ra == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.RED_ARMOR_ALLERGY) )
-            
+
         # YELLOW_ARMOR_ALLERGY
         if powerUpsStatus["ya"] and self.ya == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_ALLERGY) )
-            
+
         # GREEN_ARMOR_ALLERGY
         if powerUpsStatus["ga"] and self.ga == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_ALLERGY) )
-            
+
         # MEGA_HEALTH_ALLERGY
         if powerUpsStatus["mh"] and self.mh == 0 and self.connectTime < 300:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_ALLERGY) )
-            
+
         # RAINBOW_FLAG
         if self.ra >= 10 and self.ya >= 10 and self.ga >= 10:
             self.achievements.append( Achievement(AchievementType.RAINBOW_FLAG, "10+ each of armors") )
-            
+
         # CHILD_KILLER
         if self.spawnfrags >= 10:
             self.achievements.append( Achievement(AchievementType.CHILD_KILLER, "%d spawn frags%s" % (self.spawnfrags, "" if self.spawnfrags < 15 else ". %d CARL!!" % (self.spawnfrags))) )
-            
+
         # ALWAYS_THE_FIRST
         if len(matchProgress) >= 2:
             isFirst = True
@@ -2370,10 +2373,10 @@ class Player:
                     if not el[0][0] == self.name:
                         alwaysTheFirst = False
                         break
-                    
+
             if alwaysTheFirst:
                 self.achievements.append( Achievement(AchievementType.ALWAYS_THE_FIRST, "the 1st place from the 1st minute until the finish") )
-            
+
         # ALWAYS_THE_LAST
         if len(matchProgress) >= 2:
             if self.connectTime == 0:
@@ -2386,28 +2389,28 @@ class Player:
                         if not el[ len(el)-1 ][0] == self.name:
                             alwaysTheLast = False
                             break
-                        
+
                 if alwaysTheLast:
                     self.achievements.append( Achievement(AchievementType.ALWAYS_THE_LAST, "the last place from the 1st minute until the finish") )
-                
+
         # ROCKETS_LOVER
         if self.kills != 0 and self.kills == self.rl_kills:
             self.achievements.append( Achievement(AchievementType.ROCKETS_LOVER, "all %d kills made via rocket launcher" % (self.rl_kills)) )
-            
+
         # DUEL_WINNER
         if len(matchProgress) != 0 and len(matchProgress[0]) == 2 and matchProgress[len(matchProgress)-1][0][0] == self.name:
             self.achievements.append( Achievement(AchievementType.DUEL_WINNER, "") )
-                
+
         # SNIPER
         if self.rlskill_dh >= 40:
             self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
-            
+
         # PERSONAL_STALKER
         if len(matchProgress) != 0 and len(matchProgress[0]) > 3:
             sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
             if sortedHeadToHead[0][0] != self.name and sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
                 self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
-            
+
         # SELF_DESTRUCTOR
         sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
         if sortedHeadToHead[0][0] == self.name:
@@ -2416,11 +2419,11 @@ class Player:
         # LUMBERJACK
         if self.axe_kills >= 3:
             self.achievements.append( Achievement(AchievementType.LUMBERJACK, "%d axe kills" % (self.axe_kills)) )
-            
+
         # ELECTROMASTER
         if self.lg_kills >= 20 and ((float(self.lg_kills) / float(self.kills) * 100)) >= 40.0:
             self.achievements.append( Achievement(AchievementType.ELECTROMASTER, "{0:d} lazer gun kills({1:5.3}%)".format(self.lg_kills, (float(self.lg_kills) / float(self.kills) * 100))) )
-            
+
         # FASTER_THAN_BULLET
         for strk in self.calculatedStreaks:
             if strk.count >= 5 and (float(strk.end - strk.start) / (float)(strk.count)) <= 3.0:
@@ -2429,12 +2432,20 @@ class Player:
         # NO_SUICIDES
         if self.playTime() >= 300 and self.suicides == 0:
             self.achievements.append( Achievement(AchievementType.NO_SUICIDES, "") )
-                
+
+        if len(self.kill_weapons) > 5:
+            self.achievements.append(Achievement(AchievementType.UNIVERSAL_SOLDIER,
+                                                 'Killed with {} different weapons'.format(len(self.kill_weapons))))
+
+        if len(self.death_weapons) > 5:
+            self.achievements.append(Achievement(AchievementType.MULTIPLE_PENETRATION,
+                                                 'Got killed with {} different weapons'.format(len(self.death_weapons))))
+
         if isTeamGame:
             # TEAMMATES_FAN
             if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
                 self.achievements.append( Achievement(AchievementType.TEAMMATES_FAN, "") )
-    
+
 
 # DO NOT FORGET TO ADD NEW ITEMS TO description() METHOD
 AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
@@ -2453,7 +2464,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         RED_ARMOR_EATER = 14, # "Red armor eater", # 10+ red armors  DONE
                         GREEN_ARMOR_EATER = 15, # "Green armor eater", # 10+ green armors  DONE
                         YELLOW_ARMOR_EATER = 16, # "Yellow armor eater", # 10+ yellow armors  DONE
-                        MEGA_HEALTH_EATER = 17, # "Mega healths eater", # 10+ mega healths  DONE                        
+                        MEGA_HEALTH_EATER = 17, # "Mega healths eater", # 10+ mega healths  DONE
                         RED_ARMOR_ALLERGY = 18, # "Red armor allergy", # No red armors  DONE
                         GREEN_ARMOR_ALLERGY = 19, # "Green armor allergy", # No green armors  DONE
                         YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors  DONE
@@ -2477,6 +2488,8 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         DEATH_CHEATER = 38,  # "Death cheater"  # less than 50% of average deaths  DONE
                         TEAMMATES_FAN = 39,  # "Teammates fan - no team deaths and no team kills"  # no teamkills and no teamdeaths  DONE
                         NO_SUICIDES = 40, # "I love this life!! No suicides at all"  # no suicides  DONE
+                        UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons
+                        MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons
                                             )
 
 class Achievement:
@@ -2490,7 +2503,7 @@ class Achievement:
 
     def generateHtml(self, size = 150):
         return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(self.achtype), self.description(), self.description(), self.extra_info, size, size)
-    
+
     def description(self):
         if self.achtype == AchievementType.LONG_LIVE:
             return "Long Live and Prosper"
@@ -2568,10 +2581,14 @@ class Achievement:
             return "Teammates fan - no team deaths and no team kills"
         if self.achtype == AchievementType.NO_SUICIDES:
             return "I love this life!! No suicides at all"
-    
+        if self.achtype == AchievementType.UNIVERSAL_SOLDIER:
+            return 'Can handle any weapon'
+        if self.achtype == AchievementType.MULTIPLE_PENETRATION:
+            return 'So many different holes in your body:('
+
     def getImgSrc(self, achtype):
         if self.achtype == AchievementType.LONG_LIVE:
-            return "ezquakestats/img/ach_long_liver.jpg"        
+            return "ezquakestats/img/ach_long_liver.jpg"
         if self.achtype == AchievementType.SUICIDE_MASTER:
             return "ezquakestats/img/ach_suicide_master.jpg"
         if self.achtype == AchievementType.SUICIDE_KING:
@@ -2632,7 +2649,11 @@ class Achievement:
             return "ezquakestats/img/ach_teammates_fan.jpg"
         if self.achtype == AchievementType.NO_SUICIDES:
             return "ezquakestats/img/ach_no_suicides.jpg"
-        
+        if self.achtype == AchievementType.UNIVERSAL_SOLDIER:
+            return "ezquakestats/img/ach_universal_soldier.jpg"
+        if self.achtype == AchievementType.MULTIPLE_PENETRATION:
+            return "ezquakestats/img/ach_multiple_penetration.jpg"
+
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
             return "ezquakestats/img/ach_always_the_first.jpg"
@@ -2644,7 +2665,7 @@ class Achievement:
             return "ezquakestats/img/ach_100_frags_TMP.jpg"
         if self.achtype == AchievementType.OVERTIME_REASON:
             return "ezquakestats/img/ach_overtime.jpg"
-        
+
         return "NotImplemented"
 
 def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
@@ -2656,7 +2677,7 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
             for pl in sortedByTeamkills:
                 if pl.teamkills == maxTeamkillsVal:
                     pl.achievements.append( Achievement(AchievementType.TEAM_BEST_FRIEND_KILLER, "killed teammates %d times" % (pl.teamkills)) )
-            
+
         # TEAM_MAXIMUM_TEAMDEATHS
         sortedByTeamdeaths = sorted(allplayers, key=attrgetter("teamdeaths"), reverse=True)
         maxTeamdeathsVal = sortedByTeamdeaths[0].teamdeaths
@@ -2667,7 +2688,7 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
 
     else:  # isTeamGame == False
         pass
-        
+
     # WHITEWASH
     # if len(matchProgress) != 0:
     if True:  # TODO matchProgress or minutes count for team mode - can be taken from player.gaByMinutes
@@ -2692,19 +2713,19 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
                                 if isEnemy or (pl.teamname == ""):
                                     if enemyPlayTime >= 300:
                                         pl.achievements.append( Achievement(AchievementType.WHITEWASH, "duel with %s is fully won, score is %d:0" % (plname, pnts)) )
-                                        
+
     # DEATH_CHEATER
     deathsSum = 0
     for pl in allplayers:
         if pl.playTime() >= 450:
             deathsSum += pl.deaths
-    
+
     avgDeathsCount = deathsSum / len(allplayers)
-    
+
     for pl in allplayers:
         if pl.playTime() >= 450:
             if pl.deaths < (int)(avgDeathsCount * 0.5):
-                pl.achievements.append( Achievement(AchievementType.DEATH_CHEATER, "died only {0:d} times ({1:5.3}% of the average)".format(pl.deaths, (float(pl.deaths) / float(avgDeathsCount) * 100))) )                
+                pl.achievements.append( Achievement(AchievementType.DEATH_CHEATER, "died only {0:d} times ({1:5.3}% of the average)".format(pl.deaths, (float(pl.deaths) / float(avgDeathsCount) * 100))) )
 
 class Team:
     def __init__(self, teamname):
@@ -2716,20 +2737,20 @@ class Team:
         self.tkn = 0
         self.gvn = 0
         self.tm  = 0
-        
+
         self.kills = 0
         self.deaths = 0
         self.suicides = 0
         self.teamkills = 0
         self.teamdeaths = 0
-        
+
         self.gaByMinutes = []
         self.yaByMinutes = []
         self.raByMinutes = []
         self.mhByMinutes = []
-        
+
         self.powerUps = []
-        
+
         self.rl_kills = 0
         self.lg_kills = 0
         self.gl_kills = 0
@@ -2741,7 +2762,7 @@ class Team:
         self.tele_kills = 0
         self.other_kills = 0
         #self.TODO_kills = 0
-        
+
         self.rl_deaths = 0
         self.lg_deaths = 0
         self.gl_deaths = 0
@@ -2753,19 +2774,19 @@ class Team:
         self.tele_deaths = 0
         self.other_deaths = 0
         #self.TODO_deaths = 0
-    
+
     def damageDelta(self):
         return (self.gvn - self.tkn)
-    
+
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
 
-    def initPowerUpsByMinutes(self, minutesCnt):        
+    def initPowerUpsByMinutes(self, minutesCnt):
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.raByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.mhByMinutes = [0 for i in xrange(minutesCnt+1)]
-        
+
     def fillWeaponsKillsDeaths(self, player):
         self.rl_kills += player.rl_kills
         self.lg_kills += player.lg_kills
@@ -2778,7 +2799,7 @@ class Team:
         self.tele_kills += player.tele_kills
         self.other_kills += player.other_kills
         #self.TODO_kills += player.TODO_kills
-        
+
         self.rl_deaths += player.rl_deaths
         self.lg_deaths += player.lg_deaths
         self.gl_deaths += player.gl_deaths
@@ -2823,14 +2844,14 @@ class Team:
         resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
         if len(resstr) > 2:
             resstr = resstr[:-2]
-        return resstr        
-    
+        return resstr
+
 
 class WeaponsCheckRes:
     def __init__(self):
         for weap in possibleWeapons:
             exec("self.is_%s = False" % weap)
-        
+
 def getWeaponsCheck(allplayers):
     res = WeaponsCheckRes();
     for pl in allplayers:
@@ -2840,7 +2861,7 @@ def getWeaponsCheck(allplayers):
            if weapCheck:
                exec("res.is_%s = True;" % (weap));
     return res;
-            
+
 
 
 
@@ -2914,7 +2935,7 @@ def getWeaponsCheck(allplayers):
 	#DEFINE OBITUARY	PLAYER_DEATH	LAVA				" burst into flames"
 	#DEFINE OBITUARY	PLAYER_DEATH	LAVA				" turned into hot slag"
 	#DEFINE OBITUARY	PLAYER_DEATH	LAVA				" visits the Volcano God"
-	
+
 	#DEFINE OBITUARY	PLAYER_DEATH	FALL				" cratered"
 	#DEFINE OBITUARY	PLAYER_DEATH	FALL				" fell to his death"
 	#DEFINE OBITUARY	PLAYER_DEATH	FALL				" fell to her death"
@@ -2922,21 +2943,21 @@ def getWeaponsCheck(allplayers):
 	#DEFINE OBITUARY	PLAYER_DEATH	TRAP				" was spiked"
 	#DEFINE OBITUARY	PLAYER_DEATH	TRAP				" was zapped"
 	#DEFINE OBITUARY	PLAYER_DEATH	TRAP				" ate a lavaball"
-	
+
 	#DEFINE OBITUARY	X_TEAMKILLED_UNKNOWN TELEFRAG		" was telefragged by his teammate"
 	#DEFINE OBITUARY	X_TEAMKILLED_UNKNOWN TELEFRAG		" was telefragged by her teammate"
-	
-	
+
+
 	#DEFINE OBITUARY	PLAYER_DEATH	NOWEAPON			" died"
 	#DEFINE OBITUARY	PLAYER_DEATH	NOWEAPON			" tried to leave"
 	#DEFINE OBITUARY	PLAYER_DEATH	SQUISH				" was squished"
-	
+
 	#DEFINE OBITUARY	PLAYER_SUICIDE	NOWEAPON			" suicides"
-	
+
 	#DEFINE OBITUARY	PLAYER_SUICIDE	GRENADE_LAUNCHER	" tries to put the pin back in"
 	#DEFINE OBITUARY	PLAYER_SUICIDE	ROCKET_LAUNCHER		" becomes bored with life"
 	#DEFINE OBITUARY	PLAYER_SUICIDE	ROCKET_LAUNCHER		" discovers blast radius"
-	
+
 	#DEFINE OBITUARY	PLAYER_SUICIDE	DISCHARGE			" electrocutes himself"
 	#DEFINE OBITUARY	PLAYER_SUICIDE	DISCHARGE			" electrocutes herself"
 	#DEFINE OBITUARY	PLAYER_SUICIDE	DISCHARGE			" railcutes himself" // rail dis
@@ -2945,19 +2966,19 @@ def getWeaponsCheck(allplayers):
 	#DEFINE OBITUARY	PLAYER_SUICIDE	DISCHARGE			" discharges into the lava"
 	#DEFINE OBITUARY	PLAYER_SUICIDE	DISCHARGE			" discharges into the water"
 	#DEFINE OBITUARY	PLAYER_SUICIDE	DISCHARGE			" heats up the water"
-	
+
 	#DEFINE OBITUARY	X_TEAMKILLS_UNKNOWN SQUISH			" squished a teammate"
 	#DEFINE OBITUARY	X_TEAMKILLS_UNKNOWN TEAMKILL		" mows down a teammate"
 	#DEFINE OBITUARY	X_TEAMKILLS_UNKNOWN TEAMKILL		" checks his glasses"
 	#DEFINE OBITUARY	X_TEAMKILLS_UNKNOWN TEAMKILL		" checks her glasses"
 	#DEFINE OBITUARY	X_TEAMKILLS_UNKNOWN TEAMKILL		" gets a frag for the other team"
 	#DEFINE OBITUARY	X_TEAMKILLS_UNKNOWN TEAMKILL		" loses another friend"
-	
+
 	#DEFINE OBITUARY	X_TEAMKILLED_UNKNOWN STOMP			" was crushed by his teammate" // ktpro stomp tk
 	#DEFINE OBITUARY	X_TEAMKILLED_UNKNOWN STOMP			" was crushed by her teammate" // ktpro stomp tk
 	#DEFINE OBITUARY	X_TEAMKILLED_UNKNOWN STOMP			" was jumped by his teammate"  // ktx addon for ktpro stomp tk
 	#DEFINE OBITUARY	X_TEAMKILLED_UNKNOWN STOMP			" was jumped by her teammate"  // ktx addon for ktpro stomp tk
-	
+
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	STOMP				" softens "   "'s fall" // ktpro stomp kill
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	STOMP				" softens "   "' fall" // ktpro stomp kill
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	STOMP				" tried to catch "      // ktpro stomp kill
@@ -2965,7 +2986,7 @@ def getWeaponsCheck(allplayers):
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	STOMP				" was jumped by "       // ktpro stomp kill
 	#DEFINE OBITUARY	X_FRAGS_Y		STOMP				" stomps "              // ktpro stomp kill
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	STOMP				" was literally stomped into particles by " // KTX instagib
-	
+
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	AXE					" was ax-murdered by "
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	Q_SHOTGUN			" was lead poisoned by "
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	SHOTGUN				" chewed on " "'s boomstick"
@@ -2998,9 +3019,9 @@ def getWeaponsCheck(allplayers):
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	Q_LIGHTNING_GUN		" gets a natural disaster from "
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	AXE					" was axed to pieces by " // KTX instagib
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	COIL_GUN			" was instagibbed by " // KTX instagib
-	
+
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	RAIL_GUN			" was railed by "		//for dmm8
-	
+
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	TELEFRAG			" was telefragged by "
 	#DEFINE OBITUARY	X_FRAGS_Y		SQUISH				" squishes "
 	#DEFINE OBITUARY	X_FRAGGED_BY_Y	DISCHARGE			" accepts "  "'s discharge"
