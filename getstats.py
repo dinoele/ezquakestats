@@ -1712,8 +1712,12 @@ def writeHtmlWithScripts(f, teams, resStr):
 
     f.write(ezstatslib.HTML_FOOTER_NO_PRE)
 
+formatedDateTime = ""
+try:
+    formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
+except:
+    formatedDateTime = datetime.strptime(matchdate.replace(" CEST",""), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d_%H_%M_%S')
 
-formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
 filePath     = "TEAM_" + mapName + "_" + formatedDateTime + ".html"
 filePathFull = "../" + filePath
 

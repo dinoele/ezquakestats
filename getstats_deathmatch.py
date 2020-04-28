@@ -1595,7 +1595,12 @@ if "Second" in options.leagueName:
 if "Number" in options.leagueName:    
     leaguePrefix = "N%s_" % (options.leagueName.split(" ")[1])
  
-formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
+formatedDateTime = ""
+try:
+    formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
+except:
+    formatedDateTime = datetime.strptime(matchdate.replace(" CEST",""), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d_%H_%M_%S')
+
 filePath     = leaguePrefix + mapName + "_" + formatedDateTime + ".html"
 filePathFull = "../" + filePath
 
