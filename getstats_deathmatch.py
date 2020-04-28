@@ -212,6 +212,8 @@ while not "top scorers" in line and not "Running" in line:
     pl.gvn = int(line.split("Gvn:")[1].split(" ")[0])
     pl.tm  = int(line.split("Tm:")[1].split(" ")[0])
 
+    line = f.readline() # quad
+
     line = f.readline() # Streaks: Frags:3 QuadRun:0
     readLinesNum += 1
     

@@ -209,6 +209,8 @@ while not "Team [" in line:
     pl.gvn = int(line.split("Gvn:")[1].split(" ")[0])
     pl.tm  = int(line.split("Tm:")[1].split(" ")[0])
 
+    line = f.readline() # time quad
+
     line = f.readline() # Streaks: Frags:3 QuadRun:0
     pl.streaks = int(line.split("Streaks: Frags:")[1].split(" ")[0])
 
@@ -278,6 +280,8 @@ while not bigDelimiter in line:
     pl.gvn = int(line.split("Gvn:")[1].split(" ")[0])
     pl.tm  = int(line.split("Tm:")[1].split(" ")[0])
 
+    line = f.readline() # time quad
+
     line = f.readline() # Streaks: Frags:3 QuadRun:0
     pl.streaks = int(line.split("Streaks: Frags:")[1].split(" ")[0])
 
@@ -311,6 +315,8 @@ line = f.readline() # Damage: Tkn:15750 Gvn:15831 Tm:1916
 team1.tkn = int(line.split("Tkn:")[1].split(" ")[0])
 team1.gvn = int(line.split("Gvn:")[1].split(" ")[0])
 team1.tm  = int(line.split("Tm:")[1].split(" ")[0])
+
+line = f.readline() # time quad
 
 line = f.readline() # [xep]: Wp: rl41 gl5 sg14% ssg14%
 teamName = line.split("]")[0].split("[")[1]
