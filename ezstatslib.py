@@ -48,6 +48,9 @@ LOGS_INDEX_FILE_NAME = "logs.html"
 TEAM_LOGS_INDEX_FILE_NAME = "teamlogs.html"
 LOGS_BY_MAP_FILE_NAME = "logs_by_maps.html"
 TOURNAMENT_TABLE_FILE_NAME = "ezquakestats/tournament_table.html"
+TOTALS_FILE_NAME = "totals.html"
+REPORTS_FOLDER = "../";
+
 NEW_GIF_TAG = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
 
 ERROR_LOG_FILE_NAME = "errors"
@@ -1041,6 +1044,21 @@ HTML_SCRIPT_HIGHCHARTS_PLAYERS_RANK_PROGRESS_DIV_TAG = \
 
 HTML_SCRIPT_HIGHCHARTS_DEATHMATCH_PLAYERS_RANK_PROGRESS_DIV_TAG = "<div id=\"players_rank\" style=\"height: 400px; margin: 0 auto\"></div>\n"
 
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS = \
+"labels: {\n" \
+"     formatter: function () {\n" \
+"       return (this.value / 60).toFixed(1).toString()\n" \
+"    },\n" \
+"},\n" \
+"tickPositions: [TICK_POSITIONS_VALS],\n"
+
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE = \
+"    plotLines: [{\n" \
+"        color: '#FF0000', // Red\n" \
+"        width: 7,\n" \
+"        value: VERTICAL_LINE_POS // Position, you'll have to translate this to the values on your x axis\n" \
+"    }]\n"
+
 # =========================================================================================================================================================
 # "            categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']\n" \
 
@@ -1481,6 +1499,7 @@ HTML_BODY_FOLDING_SCRIPT = \
   "<script src=\"https://code.highcharts.com/highcharts.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/highcharts-3d.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/modules/exporting.js\"></script>\n" \
+  "<script src=\"https://code.highcharts.com/modules/accessibility.js\"></script>\n" \
   "<script type='text/javascript'>\n" \
   "  var timelineSliderOnChange = function() { drawAllStreakTimelines(timelineSliderObj.getValue()); console.log(timelineSliderObj.getValue()) }\n" \
   "  var timelineSliderObj = $('#timeline_slider').slider({\n" \
@@ -1500,6 +1519,415 @@ HTML_BODY_FOLDING_SCRIPT = \
   "jQuery(function($){$(document).ready(function(){$(\"h3.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "</script>\n"
 
+# =========================================================================================================================================================
+  
+HTML_SCRIPT_HIGHCHARTS_TOTALS_FRAGS_PROGRESS_DIV_TAG = "<div id=\"highchart_totals_frags\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+  
+HTML_SCRIPT_HIGHCHARTS_TOTALS_FRAGS_PROGRESS_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.theme = {\n" \
+"   chart: {\n" \
+"      backgroundColor: null,\n" \
+"      style: {\n" \
+"         fontFamily: \"Dosis, sans-serif\"\n" \
+"      }\n" \
+"   },\n" \
+"   title: {\n" \
+"      style: {\n" \
+"         fontSize: '16px',\n" \
+"         fontWeight: 'bold',\n" \
+"         textTransform: 'uppercase'\n" \
+"      }\n" \
+"   },\n" \
+"   tooltip: {\n" \
+"      borderWidth: 0,\n" \
+"      backgroundColor: 'rgba(219,219,216,0.8)',\n" \
+"      shadow: false\n" \
+"   },\n" \
+"   legend: {\n" \
+"      itemStyle: {\n" \
+"         fontWeight: 'bold',\n" \
+"         fontSize: '13px'\n" \
+"      }\n" \
+"   },\n" \
+"   xAxis: {\n" \
+"      \n" \
+"      gridLineWidth: 1,\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      }\n" \
+"   },\n" \
+"   yAxis: {\n" \
+"      title: {\n" \
+"         style: {\n" \
+"            textTransform: 'uppercase'\n" \
+"         }\n" \
+"      },\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      },\n" \
+"MIN_PLAYER_FRAGS\n" \
+"MAX_PLAYER_FRAGS\n" \
+"   },\n" \
+"   plotOptions: {\n" \
+"      candlestick: {\n" \
+"         lineColor: '#404048'\n" \
+"      }\n" \
+"   },\n" \
+"\n" \
+"\n" \
+"   // General\n" \
+"   background2: '#F0F0EA'\n" \
+"\n" \
+"};\n" \
+"\n" \
+"// Apply the theme\n" \
+"Highcharts.setOptions(Highcharts.theme);\n" \
+"\n" \
+"    $('#highchart_totals_frags').highcharts({\n" \
+"        chart: {\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'GRAPH_TITLE',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"EXTRA_XAXIS_OPTIONS" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Y_AXIS_TITLE'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"TOOLTIP_STYLE" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle',\n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS" \
+"        }]\n" \
+"    });\n" \
+"});\n" \
+
+
+HIGHCHARTS_TOTALS_FRAGS_PROGRESS_GRANULARITY = 1
+
+# =========================================================================================================================================================
+  
+HTML_SCRIPT_HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_DIV_TAG = "<div id=\"highchart_totals_avg_frags\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+  
+HTML_SCRIPT_HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.theme = {\n" \
+"   chart: {\n" \
+"      backgroundColor: null,\n" \
+"      style: {\n" \
+"         fontFamily: \"Dosis, sans-serif\"\n" \
+"      }\n" \
+"   },\n" \
+"   title: {\n" \
+"      style: {\n" \
+"         fontSize: '16px',\n" \
+"         fontWeight: 'bold',\n" \
+"         textTransform: 'uppercase'\n" \
+"      }\n" \
+"   },\n" \
+"   tooltip: {\n" \
+"      borderWidth: 0,\n" \
+"      backgroundColor: 'rgba(219,219,216,0.8)',\n" \
+"      shadow: false\n" \
+"   },\n" \
+"   legend: {\n" \
+"      itemStyle: {\n" \
+"         fontWeight: 'bold',\n" \
+"         fontSize: '13px'\n" \
+"      }\n" \
+"   },\n" \
+"   xAxis: {\n" \
+"      \n" \
+"      gridLineWidth: 1,\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      }\n" \
+"   },\n" \
+"   yAxis: {\n" \
+"      title: {\n" \
+"         style: {\n" \
+"            textTransform: 'uppercase'\n" \
+"         }\n" \
+"      },\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      },\n" \
+"MIN_PLAYER_FRAGS\n" \
+"MAX_PLAYER_FRAGS\n" \
+"   },\n" \
+"   plotOptions: {\n" \
+"      candlestick: {\n" \
+"         lineColor: '#404048'\n" \
+"      }\n" \
+"   },\n" \
+"\n" \
+"\n" \
+"   // General\n" \
+"   background2: '#F0F0EA'\n" \
+"\n" \
+"};\n" \
+"\n" \
+"// Apply the theme\n" \
+"Highcharts.setOptions(Highcharts.theme);\n" \
+"\n" \
+"    $('#highchart_totals_avg_frags').highcharts({\n" \
+"        chart: {\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'GRAPH_TITLE',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"EXTRA_XAXIS_OPTIONS" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Y_AXIS_TITLE'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"TOOLTIP_STYLE" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle',\n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS" \
+"        }]\n" \
+"    });\n" \
+"});\n" \
+
+
+HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_GRANULARITY = 1
+
+# =========================================================================================================================================================
+
+HTML_SCRIPT_HIGHCHARTS_TOTALS_RANK_PROGRESS_DIV_TAG = "<div id=\"highchart_totals_rank\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+  
+HTML_SCRIPT_HIGHCHARTS_TOTALS_RANK_PROGRESS_FUNCTION = \
+"$(function () {\n" \
+"Highcharts.theme = {\n" \
+"   chart: {\n" \
+"      backgroundColor: null,\n" \
+"      style: {\n" \
+"         fontFamily: \"Dosis, sans-serif\"\n" \
+"      }\n" \
+"   },\n" \
+"   title: {\n" \
+"      style: {\n" \
+"         fontSize: '16px',\n" \
+"         fontWeight: 'bold',\n" \
+"         textTransform: 'uppercase'\n" \
+"      }\n" \
+"   },\n" \
+"   tooltip: {\n" \
+"      borderWidth: 0,\n" \
+"      backgroundColor: 'rgba(219,219,216,0.8)',\n" \
+"      shadow: false\n" \
+"   },\n" \
+"   legend: {\n" \
+"      itemStyle: {\n" \
+"         fontWeight: 'bold',\n" \
+"         fontSize: '13px'\n" \
+"      }\n" \
+"   },\n" \
+"   xAxis: {\n" \
+"      \n" \
+"      gridLineWidth: 1,\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      }\n" \
+"   },\n" \
+"   yAxis: {\n" \
+"      title: {\n" \
+"         style: {\n" \
+"            textTransform: 'uppercase'\n" \
+"         }\n" \
+"      },\n" \
+"      labels: {\n" \
+"         style: {\n" \
+"            fontSize: '12px'\n" \
+"         }\n" \
+"      },\n" \
+"MIN_PLAYER_FRAGS\n" \
+"MAX_PLAYER_FRAGS\n" \
+"   },\n" \
+"   plotOptions: {\n" \
+"      candlestick: {\n" \
+"         lineColor: '#404048'\n" \
+"      }\n" \
+"   },\n" \
+"\n" \
+"\n" \
+"   // General\n" \
+"   background2: '#F0F0EA'\n" \
+"\n" \
+"};\n" \
+"\n" \
+"// Apply the theme\n" \
+"Highcharts.setOptions(Highcharts.theme);\n" \
+"\n" \
+"    $('#highchart_totals_rank').highcharts({\n" \
+"        chart: {\n" \
+"                zoomType: 'x'\n" \
+"            },\n" \
+"        title: {\n" \
+"            text: 'GRAPH_TITLE',\n" \
+"            x: -20 //center\n" \
+"        },\n" \
+"        subtitle: {\n" \
+"            text: '',\n" \
+"            x: -20\n" \
+"        },\n" \
+"        xAxis: {\n" \
+"            title: {\n" \
+"                text: 'Time'\n" \
+"            },\n" \
+"EXTRA_XAXIS_OPTIONS" \
+"        },\n" \
+"        yAxis: {\n" \
+"            title: {\n" \
+"                text: 'Y_AXIS_TITLE'\n" \
+"            },\n" \
+"            plotLines: [{\n" \
+"                value: 0,\n" \
+"                width: 1,\n" \
+"                color: '#808080'\n" \
+"            }]\n" \
+"        },\n" \
+"        tooltip: {\n" \
+"TOOLTIP_STYLE" \
+"        },\n" \
+"        legend: {\n" \
+"            layout: 'vertical',\n" \
+"            align: 'right',\n" \
+"            verticalAlign: 'middle',\n" \
+"            borderWidth: 0\n" \
+"        },\n" \
+"        series: [{\n" \
+"ADD_STAT_ROWS" \
+"        }]\n" \
+"    });\n" \
+"});\n" \
+
+
+HIGHCHARTS_TOTALS_RANK_PROGRESS_GRANULARITY = 1
+
+# =========================================================================================================================================================
+
+# HTML_SCRIPT_HIGHCHARTS_RL_SKILL_DIV_TAG = "<div id=\"highchart_rl_skill_PLAYERNAME\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+HTML_SCRIPT_HIGHCHARTS_RL_SKILL_DIV_AND_TABLE_TAG = \
+"<div>" \
+"      <table style=\"width: 100%;\">\n" \
+"        <tr>\n" \
+"TABLE_ROWS" \
+"        </tr>\n" \
+"      </table>\n" \
+"</div>"
+
+HTML_SCRIPT_HIGHCHARTS_RL_SKILL_TABLE_ROW = \
+"          <td style=\"width: TD_WIDTH%\">\n" \
+"            <div id=\"highchart_rl_skill_PLAYERNAME\" style=\"width:  100%; height:  200px;\"></div>\n" \
+"          </td>\n" \
+
+HTML_SCRIPT_HIGHCHARTS_RL_SKILL_FUNCTION_TEMPLATE = \
+"$(function () {\n" \
+"Highcharts.chart('highchart_rl_skill_PLAYERNAME', {\n" \
+"  chart: {\n" \
+"    plotBackgroundColor: null,\n" \
+"    plotBorderWidth: 0,\n" \
+"    plotShadow: false\n" \
+"  },\n" \
+"  title: {\n" \
+"    text: 'CHART_TITLE',\n" \
+"    align: 'center',\n" \
+"    verticalAlign: 'middle',\n" \
+"    y: 100\n" \
+"  },\n" \
+"  tooltip: {\n" \
+"    pointFormat: '{point.percentage:.2f}% ({point.y})'\n" \
+"  },\n" \
+"  accessibility: {\n" \
+"    point: {\n" \
+"      valueSuffix: '%'\n" \
+"    }\n" \
+"  },\n" \
+"  plotOptions: {\n" \
+"    pie: {\n" \
+"      dataLabels: {\n" \
+"        enabled: true,\n" \
+"        format: '{point.name}'\n" \
+"      },\n" \
+"      startAngle: -100,\n" \
+"      endAngle: 100,\n" \
+"      center: ['50%', '75%'],\n" \
+"      size: '95%',\n" \
+"      animation: { duration: 3000 }" \
+"    }\n" \
+"  },\n" \
+"  series: [{\n" \
+"    type: 'pie',\n" \
+"    innerSize: '40%',\n" \
+"    data: [\n" \
+"ADD_ROWS" \
+"    ]\n" \
+"  }]\n" \
+"});\n" \
+"});\n"
+
+# =========================================================================================================================================================
+  
 BG_COLOR_GRAY  = "#bfbfbf"
 BG_COLOR_LIGHT_GRAY = "#e6e6e6"
 BG_COLOR_GREEN = "#00ff00"
@@ -1536,7 +1964,7 @@ def checkNew(fileNew, workFilePath, pathForCheck):
     isNew = (fileNew and workFilePath == pathForCheck)
     if not isNew:
         # check modification time
-        modTime = os.stat("../" + pathForCheck).st_mtime
+        modTime = os.stat(REPORTS_FOLDER + pathForCheck).st_mtime
         modTimeDt = datetime.fromtimestamp(int(modTime))
         timeDelta = datetime.today() - modTimeDt
         if timeDelta.total_seconds() < NEW_FILE_TIME_DETECTION:
@@ -1663,9 +2091,9 @@ def talefragDetection(s, teammateTelefrags):
             if len(spl) == 1 + len("was telefragged by his teammate"):
                 return True,"",spl[0]  # only death is increased
             else:
-                return True,spl[len(spl) - 1].replace("\n",""),spl[0]
+                return True,spl[len(spl) - 1].replace("\r\n","").replace("\r","").replace("\n",""),spl[0]
         else:
-            return True,spl[4].split("\n")[0],spl[0]
+            return True,spl[4].replace("\r\n","").replace("\r","").replace("\n",""),spl[0]
 
     return False,"",""
 
@@ -1673,7 +2101,8 @@ def teamkillDetection(s):
     detectStrs = ["checks his glasses", \
                   "gets a frag for the other team", \
                   "loses another friend", \
-                  "mows down a teammate"]
+                  "mows down a teammate", \
+                  "was telefragged by his teammate"]
     for det in detectStrs:
          if det in s:
             spl = s.split( )
@@ -1963,12 +2392,105 @@ class Player:
         self.kill_weapons = set()
         self.death_weapons = set()
 
+        # XML data
+        self.damageSelf = 0
+        self.damageGvn = 0
+        self.damageTkn = 0
+        self.damageSelfArmor = 0
+        self.damageGvnArmor = 0
+        self.damageTknArmor = 0
+        self.killsXML = 0
+        self.deathsXML = 0
+        self.suicidesXML = 0
+        self.spawnFragsXML = 0
+        self.gaXML = 0
+        self.yaXML = 0
+        self.raXML = 0
+        self.mhXML = 0
+        self.gaByMinutesXML = []
+        self.yaByMinutesXML = []
+        self.raByMinutesXML = []
+        self.mhByMinutesXML = []
+
+        self.rl_damage_gvn = 0
+        self.lg_damage_gvn = 0
+        self.gl_damage_gvn = 0
+        self.sg_damage_gvn = 0
+        self.ssg_damage_gvn = 0
+        self.ng_damage_gvn = 0
+        self.sng_damage_gvn = 0
+        self.axe_damage_gvn = 0
+        self.tele_damage_gvn = 0
+        self.other_damage_gvn = 0
+        #self.TODO_damage_gvn = 0
+
+        self.rl_damages_gvn = []
+
+        self.rl_damage_tkn = 0
+        self.lg_damage_tkn = 0
+        self.gl_damage_tkn = 0
+        self.sg_damage_tkn = 0
+        self.ssg_damage_tkn = 0
+        self.ng_damage_tkn = 0
+        self.sng_damage_tkn = 0
+        self.axe_damage_tkn = 0
+        self.tele_damage_tkn = 0
+        self.other_damage_tkn = 0
+        #self.TODO_damage_tkn = 0
+
+        self.rl_damage_gvn_cnt = 0
+        self.lg_damage_gvn_cnt = 0
+        self.gl_damage_gvn_cnt = 0
+        self.sg_damage_gvn_cnt = 0
+        self.ssg_damage_gvn_cnt = 0
+        self.ng_damage_gvn_cnt = 0
+        self.sng_damage_gvn_cnt = 0
+        self.axe_damage_gvn_cnt = 0
+        self.tele_damage_gvn_cnt = 0
+        self.other_damage_gvn_cnt = 0
+        #self.TODO_damage_gvn_cnt = 0
+
+        self.rl_damage_tkn_cnt = 0
+        self.lg_damage_tkn_cnt = 0
+        self.gl_damage_tkn_cnt = 0
+        self.sg_damage_tkn_cnt = 0
+        self.ssg_damage_tkn_cnt = 0
+        self.ng_damage_tkn_cnt = 0
+        self.sng_damage_tkn_cnt = 0
+        self.axe_damage_tkn_cnt = 0
+        self.tele_damage_tkn_cnt = 0
+        self.other_damage_tkn_cnt = 0
+        #self.TODO_damage_tkn_cnt = 0
+
+        self.rl_damage_self = 0
+        self.lg_damage_self = 0
+        self.gl_damage_self = 0
+        self.sg_damage_self = 0
+        self.ssg_damage_self = 0
+        self.ng_damage_self = 0
+        self.sng_damage_self = 0
+        self.axe_damage_self = 0
+        self.tele_damage_self = 0
+        self.other_damage_self = 0
+        #self.TODO_damage_self = 0
+
+        self.overtime_frags = -1
+        
+        self.rl_attacks = -1
+        
     def initPowerUpsByMinutes(self, minutesCnt):
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.raByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.mhByMinutes = [0 for i in xrange(minutesCnt+1)]
 
+    def initPowerUpsByMinutesXML(self, minutesCnt):
+        self.gaByMinutesXML = [0 for i in xrange(minutesCnt+1)]
+        self.yaByMinutesXML = [0 for i in xrange(minutesCnt+1)]
+        self.raByMinutesXML = [0 for i in xrange(minutesCnt+1)]
+        self.mhByMinutesXML = [0 for i in xrange(minutesCnt+1)]
+        
+        
     def incga(self, minuteNum, time = 0):
         self.gaByMinutes[minuteNum] += 1
         if time != 0:
@@ -1989,6 +2511,34 @@ class Player:
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.MH, time, self.name) )
 
+    def incgaXML(self, time):
+        minuteNum = int(time/60) + 1
+
+        self.gaByMinutesXML[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.GA, time, self.name) )
+
+    def incyaXML(self, time):
+        minuteNum = int(time/60) + 1
+    
+        self.yaByMinutesXML[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.YA, time, self.name) )
+
+    def incraXML(self, time):
+        minuteNum = int(time/60) + 1
+        
+        self.raByMinutesXML[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.RA, time, self.name) )
+
+    def incmhXML(self, time):
+        minuteNum = int(time/60) + 1
+
+        self.mhByMinutesXML[minuteNum] += 1
+        if time != 0:
+            self.powerUps.append( PowerUp(PowerUpType.MH, time, self.name) )
+                        
     def playTime(self):
         playTime = 0
         minutesCnt = len(self.gaByMinutes)  # TODO get minutes count
@@ -2206,6 +2756,23 @@ class Player:
             resstr = resstr[:-2]
         return resstr
 
+    def getWeaponsDamageGvn(self, totalValue, weaponsCheck):
+        rlstr   = "" if not weaponsCheck.is_rl    or totalValue == 0 else "rl:{0:4d}({1:5.4}%), ".format(  self.rl_damage_gvn,   (float(self.rl_damage_gvn)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg    or totalValue == 0 else "lg:{0:4d}({1:6.3}%), ".format(  self.lg_damage_gvn,   (float(self.lg_damage_gvn)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl    or totalValue == 0 else "gl:{0:4d}({1:6.3}%), ".format(  self.gl_damage_gvn,   (float(self.gl_damage_gvn)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg    or totalValue == 0 else "sg:{0:4d}({1:6.3}%), ".format(  self.sg_damage_gvn,   (float(self.sg_damage_gvn)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg   or totalValue == 0 else "ssg:{0:4d}({1:6.3}%), ".format( self.ssg_damage_gvn,  (float(self.ssg_damage_gvn)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng    or totalValue == 0 else "ng:{0:4d}({1:6.3}%), ".format(  self.ng_damage_gvn,   (float(self.ng_damage_gvn)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng   or totalValue == 0 else "sng:{0:4d}({1:6.3}%), ".format( self.sng_damage_gvn,  (float(self.sng_damage_gvn)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe   or totalValue == 0 else "axe:{0:4d}({1:6.3}%), ".format( self.axe_damage_gvn,  (float(self.axe_damage_gvn)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele  or totalValue == 0 else "tele:{0:4d}({1:6.3}%), ".format(self.tele_damage_gvn, (float(self.tele_damage_gvn) / float(totalValue) * 100));
+        otherstr= "" if not weaponsCheck.is_other or totalValue == 0 else "other:{0:4d}({1:6.3}%), ".format( self.other_damage_gvn,  (float(self.other_damage_gvn)  / float(totalValue) * 100));
+
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr        
+        
     def getWeaponsDeaths(self, totalValue = 0):
         if totalValue == 0:
             return "rl:{0:3d}, lg:{1:3d}, gl:{2:3d}, sg:{3:3d}, ssg:{4:3d}, ng:{5:3d}, sng:{6:3d}, tele:{7:3d}".format(self.rl_deaths, self.lg_deaths, self.gl_deaths, self.sg_deaths, self.ssg_deaths, self.ng_deaths, self.sng_deaths, self.tele_deaths)
@@ -2245,6 +2812,79 @@ class Player:
             resstr = resstr[:-2]
         return resstr
 
+    def getWeaponsDamageTkn(self, totalValue, weaponsCheck):
+        rlstr   = "" if not weaponsCheck.is_rl    or totalValue == 0 else "rl:{0:4d}({1:5.4}%), ".format(  self.rl_damage_tkn,   (float(self.rl_damage_tkn)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg    or totalValue == 0 else "lg:{0:4d}({1:6.3}%), ".format(  self.lg_damage_tkn,   (float(self.lg_damage_tkn)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl    or totalValue == 0 else "gl:{0:4d}({1:6.3}%), ".format(  self.gl_damage_tkn,   (float(self.gl_damage_tkn)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg    or totalValue == 0 else "sg:{0:4d}({1:6.3}%), ".format(  self.sg_damage_tkn,   (float(self.sg_damage_tkn)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg   or totalValue == 0 else "ssg:{0:4d}({1:6.3}%), ".format( self.ssg_damage_tkn,  (float(self.ssg_damage_tkn)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng    or totalValue == 0 else "ng:{0:4d}({1:6.3}%), ".format(  self.ng_damage_tkn,   (float(self.ng_damage_tkn)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng   or totalValue == 0 else "sng:{0:4d}({1:6.3}%), ".format( self.sng_damage_tkn,  (float(self.sng_damage_tkn)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe   or totalValue == 0 else "axe:{0:4d}({1:6.3}%), ".format( self.axe_damage_tkn,  (float(self.axe_damage_tkn)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele  or totalValue == 0 else "tele:{0:4d}({1:6.3}%), ".format(self.tele_damage_tkn, (float(self.tele_damage_tkn) / float(totalValue) * 100));
+        otherstr= "" if not weaponsCheck.is_other or totalValue == 0 else "other:{0:4d}({1:6.3}%), ".format( self.other_damage_tkn,  (float(self.other_damage_tkn)  / float(totalValue) * 100));
+
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr
+
+    def getWeaponsDamageSelf(self, totalValue, weaponsCheck):
+        rlstr   = "" if not weaponsCheck.is_rl    or totalValue == 0 else "rl:{0:4d}({1:5.4}%), ".format(  self.rl_damage_self,   (float(self.rl_damage_self)   / float(totalValue) * 100));
+        lgstr   = "" if not weaponsCheck.is_lg    or totalValue == 0 else "lg:{0:4d}({1:6.3}%), ".format(  self.lg_damage_self,   (float(self.lg_damage_self)   / float(totalValue) * 100));
+        glstr   = "" if not weaponsCheck.is_gl    or totalValue == 0 else "gl:{0:4d}({1:6.3}%), ".format(  self.gl_damage_self,   (float(self.gl_damage_self)   / float(totalValue) * 100));
+        sgstr   = "" if not weaponsCheck.is_sg    or totalValue == 0 else "sg:{0:4d}({1:6.3}%), ".format(  self.sg_damage_self,   (float(self.sg_damage_self)   / float(totalValue) * 100));
+        ssgstr  = "" if not weaponsCheck.is_ssg   or totalValue == 0 else "ssg:{0:4d}({1:6.3}%), ".format( self.ssg_damage_self,  (float(self.ssg_damage_self)  / float(totalValue) * 100));
+        ngstr   = "" if not weaponsCheck.is_ng    or totalValue == 0 else "ng:{0:4d}({1:6.3}%), ".format(  self.ng_damage_self,   (float(self.ng_damage_self)   / float(totalValue) * 100));
+        sngstr  = "" if not weaponsCheck.is_sng   or totalValue == 0 else "sng:{0:4d}({1:6.3}%), ".format( self.sng_damage_self,  (float(self.sng_damage_self)  / float(totalValue) * 100));
+        axestr  = "" if not weaponsCheck.is_axe   or totalValue == 0 else "axe:{0:4d}({1:6.3}%), ".format( self.axe_damage_self,  (float(self.axe_damage_self)  / float(totalValue) * 100));
+        telestr = "" if not weaponsCheck.is_tele  or totalValue == 0 else "tele:{0:4d}({1:6.3}%), ".format(self.tele_damage_self, (float(self.tele_damage_self) / float(totalValue) * 100));
+        otherstr= "" if not weaponsCheck.is_other or totalValue == 0 else "other:{0:4d}({1:6.3}%), ".format( self.other_damage_self,  (float(self.other_damage_self)  / float(totalValue) * 100));
+
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr
+
+    def getWeaponsAccuracy(self, weaponsCheck):
+        rlstr   = "" if not weaponsCheck.is_rl    or self.rl_damage_gvn_cnt == 0 else "rl:  {0:5.4}({1:3d}), ".format(   (float(self.rl_damage_gvn)   / float(self.rl_damage_gvn_cnt) ), self.rl_damage_gvn_cnt);
+        lgstr   = "" if not weaponsCheck.is_lg    or self.lg_damage_gvn_cnt == 0 else "lg:  {0:6.3}({1:3d}), ".format(   (float(self.lg_damage_gvn)   / float(self.lg_damage_gvn_cnt) ), self.lg_damage_gvn_cnt);
+        glstr   = "" if not weaponsCheck.is_gl    or self.gl_damage_gvn_cnt == 0 else "gl:  {0:6.3}({1:3d}), ".format(   (float(self.gl_damage_gvn)   / float(self.gl_damage_gvn_cnt) ), self.gl_damage_gvn_cnt);
+        sgstr   = "" if not weaponsCheck.is_sg    or self.sg_damage_gvn_cnt == 0 else "sg:  {0:6.3}({1:3d}), ".format(   (float(self.sg_damage_gvn)   / float(self.sg_damage_gvn_cnt) ), self.sg_damage_gvn_cnt);
+        ssgstr  = "" if not weaponsCheck.is_ssg   or self.ssg_damage_gvn_cnt == 0 else "ssg:  {0:6.3}({1:3d}), ".format(  (float(self.ssg_damage_gvn)  / float(self.ssg_damage_gvn_cnt) ), self.ssg_damage_gvn_cnt);
+        ngstr   = "" if not weaponsCheck.is_ng    or self.ng_damage_gvn_cnt == 0 else "ng:  {0:6.3}({1:3d}), ".format(   (float(self.ng_damage_gvn)   / float(self.ng_damage_gvn_cnt) ), self.ng_damage_gvn_cnt);
+        sngstr  = "" if not weaponsCheck.is_sng   or self.sng_damage_gvn_cnt == 0 else "sng:  {0:6.3}({1:3d}), ".format(  (float(self.sng_damage_gvn)  / float(self.sng_damage_gvn_cnt) ), self.sng_damage_gvn_cnt);
+        axestr  = "" if not weaponsCheck.is_axe   or self.axe_damage_gvn_cnt == 0 else "axe:  {0:6.3}({1:3d}), ".format(  (float(self.axe_damage_gvn)  / float(self.axe_damage_gvn_cnt) ), self.axe_damage_gvn_cnt);
+        telestr = "" if not weaponsCheck.is_tele  or self.tele_damage_gvn_cnt == 0 else "tele:  {0:6.3}({1:3d}), ".format( (float(self.tele_damage_gvn) / float(self.tele_damage_gvn_cnt) ), self.tele_damage_gvn_cnt);
+        otherstr= "" if not weaponsCheck.is_other or self.other_damage_gvn_cnt == 0 else "other:  {0:6.3}({1:3d}), ".format( (float(self.other_damage_gvn)  / float(self.other_damage_gvn_cnt) ), self.other_damage_gvn_cnt);
+
+        resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr
+
+    def getRLSkill(self):
+        cnt = len(self.rl_damages_gvn)
+        if cnt == 0:
+            return "NA"
+
+        val110 = sum(1 for val in self.rl_damages_gvn if val[0] == 110)
+        val100 = sum(1 for val in self.rl_damages_gvn if val[0] >= 100)
+        val90  = sum(1 for val in self.rl_damages_gvn if val[0] >= 90)
+        val75  = sum(1 for val in self.rl_damages_gvn if val[0] >= 75)
+        val55  = sum(1 for val in self.rl_damages_gvn if val[0] >= 55)
+
+        #valmore110 = sum(1 for val in self.rl_damages_gvn if val[0] > 110)
+
+        return "DirectHit110: {0:5.4}%({1:3d}),  >100: {2:5.4}%({3:3d}),  >90: {4:5.4}%({5:3d}),  >75: {6:5.4}%({7:3d}),  >55: {8:5.4}%({9:3d})    Total: {10:4d}{11}".format(
+                                         ((float(val110)) / float(cnt) * 100), val110, 
+                                         ((float(val100)) / float(cnt) * 100), val100, 
+                                         ((float(val90))  / float(cnt) * 100), val90,
+                                         ((float(val75))  / float(cnt) * 100), val75,
+                                         ((float(val55))  / float(cnt) * 100), val55,
+                                          cnt,
+                                          "    Attacks: {0:4d}".format(self.rl_attacks) if self.rl_attacks != -1 else "")
+                
     def correctDelta(self):
         self.correctedDelta = self.origDelta + self.suicides
 
@@ -2433,10 +3073,12 @@ class Player:
         if self.playTime() >= 300 and self.suicides == 0:
             self.achievements.append( Achievement(AchievementType.NO_SUICIDES, "") )
 
+        # UNIVERSAL_SOLDIER
         if len(self.kill_weapons) > 5:
             self.achievements.append(Achievement(AchievementType.UNIVERSAL_SOLDIER,
                                                  'Killed with {} different weapons'.format(len(self.kill_weapons))))
-
+        
+        # MULTIPLE_PENETRATION
         if len(self.death_weapons) > 5:
             self.achievements.append(Achievement(AchievementType.MULTIPLE_PENETRATION,
                                                  'Got killed with {} different weapons'.format(len(self.death_weapons))))
@@ -2478,18 +3120,18 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         PERSONAL_STALKER = 28, # "Personal stalker", # killed one player more than all others taken together DONE
                         SELF_DESTRUCTOR = 29, # "Self destructor - the main your enemy is yourself", # suicided more than killed any other player  DONE
                         OVERTIME_LOOSERS = 30, # "Looooooosers go home", # both the 1st and the 2nd places before overtime are finally below the 2nd place
-                        PHENIX_BIRD = 31, # "Like a phenix bird", # won after the last place on the 4th minute
+                        PHENIX_BIRD = 31, # "Like a Phoenix bird", # won after the last place on the 4th minute
                         TEAM_BEST_FRIEND_KILLER = 32, # "With friends like that, who needs enemies?" # maximum team kills  DONE
                         TEAM_MAXIMUM_TEAMDEATHS = 33, # "My friends are THE BEST OF THE BEST!!" # maximum team deaths  DONE
-                        LUMBERJACK = 34, # "Lumberjack" # 3+ axe kills
+                        LUMBERJACK = 34, # "Lumberjack" # 3+ axe kills  DONE
                         ELECTROMASTER = 35, # "Electomaster" # 40%+ and 20+ kills by shaft (thanks to Onanim)  DONE
                         WHITEWASH = 36, # "Whitewash - full duel victory and total domination" # dry win duel  DONE
                         FASTER_THAN_BULLET = 37,  # "Faster than bullet"  # streak 5+, 3.0- seconds per kill DONE
                         DEATH_CHEATER = 38,  # "Death cheater"  # less than 50% of average deaths  DONE
                         TEAMMATES_FAN = 39,  # "Teammates fan - no team deaths and no team kills"  # no teamkills and no teamdeaths  DONE
                         NO_SUICIDES = 40, # "I love this life!! No suicides at all"  # no suicides  DONE
-                        UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons
-                        MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons
+                        UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons"  DONE
+                        MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"  DONE
                                             )
 
 class Achievement:
@@ -2668,7 +3310,7 @@ class Achievement:
 
         return "NotImplemented"
 
-def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
+def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDamage = None):
     if isTeamGame:
         # TEAM_BEST_FRIEND_KILLER
         sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
@@ -2685,9 +3327,6 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame):
             for pl in sortedByTeamdeaths:
                 if pl.teamdeaths == maxTeamdeathsVal:
                     pl.achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (pl.teamdeaths)) )
-
-    else:  # isTeamGame == False
-        pass
 
     # WHITEWASH
     # if len(matchProgress) != 0:
@@ -2775,6 +3414,14 @@ class Team:
         self.other_deaths = 0
         #self.TODO_deaths = 0
 
+        # XML data
+        self.damageSelf = 0
+        self.damageGvn = 0
+        self.damageTkn = 0
+        self.damageSelfArmor = 0
+        self.damageGvnArmor = 0
+        self.damageTknArmor = 0        
+        
     def damageDelta(self):
         return (self.gvn - self.tkn)
 
@@ -2848,9 +3495,9 @@ class Team:
 
 
 class WeaponsCheckRes:
-    def __init__(self):
+    def __init__(self, val = False):
         for weap in possibleWeapons:
-            exec("self.is_%s = False" % weap)
+            exec("self.is_%s = %s" % (weap, "True" if val else "False"))
 
 def getWeaponsCheck(allplayers):
     res = WeaponsCheckRes();
@@ -2862,7 +3509,134 @@ def getWeaponsCheck(allplayers):
                exec("res.is_%s = True;" % (weap));
     return res;
 
+# XML STRUCTURES >>>>>
+    
+#<damage>
+#<time>15.064777</time>
+#<attacker>dinoel</attacker>
+#<target>mche</target>
+#<type>rl</type>
+#<quad>0</quad>
+#<splash>1</splash>
+#<value>41</value>
+#<armor>1</armor>
+#</damage>
 
+class DamageElement:
+    def __init__(self):
+        self.time = -1
+        self.attacker = ""
+        self.target = ""
+        self.type = ""
+        self.quad = -1
+        self.splash = -1
+        self.value = -1
+        self.armor = -1
+
+        self.isSelfDamage = False
+
+    def __init__(self, elem):
+        self.time = float(elem.find("time").text)
+        self.attacker = elem.find("attacker").text
+        self.target = elem.find("target").text
+        self.type = elem.find("type").text
+        self.quad = int(elem.find("quad").text)
+        self.splash = int(elem.find("splash").text)
+        self.value = int(elem.find("value").text)
+        self.armor = int(elem.find("armor").text)
+
+        self.isSelfDamage = self.attacker == self.target
+
+
+#<death>
+#<time>18.817241</time>
+#<attacker>dinoel</attacker>
+#<target>Sasha</target>
+#<type>rl</type>
+#<quad>0</quad>
+#<armorleft>84</armorleft>
+#<killheight>0</killheight>
+#<lifetime>18.570112</lifetime>
+#</death>
+
+class DeathElement:
+    def __init__(self):
+        self.time = -1
+        self.attacker = ""
+        self.target = ""
+        self.type = ""
+        self.quad = -1
+        self.armorleft = -1
+        self.killheight = -1
+        self.lifetime = -1
+
+        self.isSuicide = False
+        self.isSpawnFrag = False
+
+    def __init__(self, elem):
+        self.time = float(elem.find("time").text)
+        self.attacker = elem.find("attacker").text
+        self.target = elem.find("target").text
+        self.type = elem.find("type").text
+        self.quad = int(elem.find("quad").text)
+        self.armorleft = int(elem.find("armorleft").text)
+        self.killheight = int(elem.find("killheight").text)
+        self.lifetime = float(elem.find("lifetime").text)
+        
+        self.isSuicide = self.attacker == self.target
+        self.isSpawnFrag = self.lifetime < 2.0
+
+        #<pick_mapitem>
+#        <time>15.715332</time>
+#        <item>item_armor1</item>
+#        <player>Sasha</player>
+#        <value>100</value>
+#</pick_mapitem>
+
+# items:
+#    <item>health_100</item>
+#    <item>health_15</item>
+#    <item>health_25</item>
+#    <item>item_armor1</item>
+#    <item>item_armor2</item>
+#    <item>item_armorInv</item>
+#    <item>item_cells</item>
+#    <item>item_rockets</item>
+#    <item>weapon_grenadelauncher</item>
+#    <item>weapon_lightning</item>
+#    <item>weapon_rocketlauncher</item>
+
+
+class PickMapItemElement:
+    def __init__(self):
+        self.time = -1
+        self.item = ""
+        self.player = ""
+        self.value = -1
+
+        self.isArmor = False
+        self.isMH = False
+        self.armorType = PowerUpType.UNKNOWN
+
+    def __init__(self, elem):
+        self.time = float(elem.find("time").text)
+        self.item =  elem.find("item").text
+        self.player =  elem.find("player").text
+        self.value = int(elem.find("value").text) 
+
+        self.isArmor = "item_armor" in self.item
+        self.isMH    = self.item == "health_100"
+        
+        if self.isArmor:
+            if self.item == "item_armor1":
+                self.armorType = PowerUpType.GA
+            if self.item == "item_armor2":
+                self.armorType = PowerUpType.YA
+            if self.item == "item_armorInv":
+                self.armorType = PowerUpType.RA
+
+
+# <<<<< XML STRUCTURES 
 
 
 
