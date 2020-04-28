@@ -37,6 +37,8 @@ possibleColors = [HtmlColor.COLOR_RED,
                   HtmlColor.COLOR_CYAN,
                   HtmlColor.COLOR_MAGENTA]
 
+CURRENT_VERSION = "1.0"                  
+                  
 LOG_TIMESTAMP_DELIMITER = " <-> "
 
 DEFAULT_PLAYER_NAME_MAX_LEN = 10
@@ -56,11 +58,14 @@ NEW_GIF_TAG = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;
 ERROR_LOG_FILE_NAME = "errors"
 SKIPED_LINES_FILE_NAME = "skiped_lines"
 
-HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\"/></head>\n<body>\n<pre>"
+HTML_CURRENT_VERSION = "<!-- CURRENT_VERSION: " + CURRENT_VERSION + " -->\n"
+
+HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\"/>\n" + HTML_CURRENT_VERSION + "</head>\n<body>\n<pre>"
 HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
 HTML_HEADER_SCRIPT_SECTION = \
     "<!DOCTYPE html>\n<html>\n<head>\n" \
+    "HTML_CURRENT_VERSION_PLACE" \
     "<title>PAGE_TITLE</title>\n" \
     "<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\" />" \
     "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
@@ -87,6 +92,8 @@ HTML_HEADER_SCRIPT_SECTION = \
     "</style>\n" \
     "<link href=\"http://seiyria.com/bootstrap-slider/css/bootstrap-slider.css\" rel=\"stylesheet\">\n"\
     "<script type=\"text/javascript\">\n"
+    
+HTML_HEADER_SCRIPT_SECTION = HTML_HEADER_SCRIPT_SECTION.replace("HTML_CURRENT_VERSION_PLACE", HTML_CURRENT_VERSION)   
 
 HTML_HEADER_SCRIPT_GOOGLE_CHARTS_LOAD = \
     "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
