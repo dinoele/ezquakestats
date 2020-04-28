@@ -1467,7 +1467,7 @@ HTML_EXPAND_POWER_UPS_CHECKBOX_TAG = "<input type=\"checkbox\" id=\"expandPowerU
 # =========================================================================================================================================================
 
 HTML_HEAD_FOLDING_LINKS = \
-  "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='http://demoswpex.wpengine.netdna-cdn.com/symple-shortcodes/wp-content/plugins/symple-shortcodes/shortcodes/css/symple_shortcodes_styles.css?ver=4.5.2' type='text/css' media='all' />\n"
+  "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='symple_shortcodes_styles.css' type='text/css' media='all' />\n"
 
 HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n<body>\n<pre>"
 
