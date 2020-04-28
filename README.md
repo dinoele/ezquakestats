@@ -1,2 +1,2 @@
 # ezquakestats
-Scripts for stats of ezquake
+Scripts for stats of ezquake text logs
