@@ -13,8 +13,8 @@ from optparse import OptionParser,OptionValueError
 
 
 # =================================================================================================
-statsMatchesPath = "<STATS_MATCHES_PATH>"  # <---- TOCHANGE, i.e. "/cygdrive/d/tmp/qstats/matches"
 path = "<KTX_DEMOS_PATH>"                  # <---- TOCHANGE, i.e. "/cygdrive/c/nQuakesv/ktx/demos"
+statsMatchesPath = "<STATS_MATCHES_PATH>"  # <---- TOCHANGE, i.e. "/cygdrive/d/tmp/qstats/matches"
 # =================================================================================================
 
 parser = OptionParser(usage="", version="")
