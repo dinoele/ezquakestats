@@ -3141,17 +3141,23 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"  DONE
                                             )
 
+AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
+                                            
 class Achievement:
     def __init__(self, achtype, extra_info = ""):
         self.achtype = achtype
         self.extra_info = extra_info
         self.count = 1
+        self.achlevel = self.level()
 
     def toString(self):
         return "%s" % (self.achtype)
 
     def generateHtml(self, size = 150):
-        return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(self.achtype), self.description(), self.description(), self.extra_info, size, size)
+        return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(), self.description(), self.description(), self.extra_info, size, size)
+        
+    def generateHtmlEx(self, size = 125, radius = 45, shadowSize = 8, shadowIntensity = 35):
+        return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;border: 8px solid %s; -webkit-border-radius: %d%%; -moz-border-radius: %d%%; border-radius: %d%%;box-shadow: 0px 0px %dpx %dpx rgba(0,0,0,0.%d);\">" % (self.getImgSrc(), self.description(), self.description(), self.extra_info, size, size, Achievement.getBorderColor(self.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity)
 
     def description(self):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -3235,7 +3241,124 @@ class Achievement:
         if self.achtype == AchievementType.MULTIPLE_PENETRATION:
             return 'So many different holes in your body:('
 
-    def getImgSrc(self, achtype):
+    # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
+    def level(self):
+        if self.achtype == AchievementType.RED_ARMOR_EATER    or \
+           self.achtype == AchievementType.GREEN_ARMOR_EATER  or \
+           self.achtype == AchievementType.YELLOW_ARMOR_EATER or \
+           self.achtype == AchievementType.MEGA_HEALTH_EATER  or \
+           self.achtype == AchievementType.CHILD_KILLER       or \
+           self.achtype == AchievementType.ROCKETS_LOVER:
+            return AchievementLevel.BASIC_POSITIVE
+            
+        if self.achtype == AchievementType.SUICIDE_MASTER          or \
+           self.achtype == AchievementType.DEATH_STREAK_PAIN       or \
+           self.achtype == AchievementType.RED_ARMOR_ALLERGY       or \
+           self.achtype == AchievementType.GREEN_ARMOR_ALLERGY     or \
+           self.achtype == AchievementType.YELLOW_ARMOR_ALLERGY    or \
+           self.achtype == AchievementType.MEGA_HEALTH_ALLERGY     or \
+           self.achtype == AchievementType.TEAM_BEST_FRIEND_KILLER or \
+           self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
+            return AchievementLevel.BASIC_NEGATIVE            
+            
+        if self.achtype == AchievementType.LONG_LIVE          or \
+           self.achtype == AchievementType.ALWAYS_THE_FIRST   or \
+           self.achtype == AchievementType.OVERTIME_REASON    or \
+           self.achtype == AchievementType.DUEL_WINNER        or \
+           self.achtype == AchievementType.SNIPER             or \
+           self.achtype == AchievementType.PERSONAL_STALKER   or \
+           self.achtype == AchievementType.WHITEWASH          or \
+           self.achtype == AchievementType.FASTER_THAN_BULLET or \
+           self.achtype == AchievementType.TEAMMATES_FAN      or \
+           self.achtype == AchievementType.NO_SUICIDES:
+            return AchievementLevel.ADVANCE_POSITIVE            
+            
+        if self.achtype == AchievementType.SUICIDE_KING    or \
+           self.achtype == AchievementType.ALWAYS_THE_LAST or \
+           self.achtype == AchievementType.SELF_DESTRUCTOR:
+            return AchievementLevel.ADVANCE_NEGATIVE            
+               
+        if self.achtype == AchievementType.GREAT_FINISH           or \
+           self.achtype == AchievementType.SECOND_OVERTIME_REASON or \
+           self.achtype == AchievementType.HUNDRED_KILLS          or \
+           self.achtype == AchievementType.FINISH_GURU            or \
+           self.achtype == AchievementType.ELECTROMASTER          or \
+           self.achtype == AchievementType.DEATH_CHEATER          or \
+           self.achtype == AchievementType.UNIVERSAL_SOLDIER:
+            return AchievementLevel.RARE_POSITIVE
+      
+        if self.achtype == AchievementType.HORRIBLE_FINISH  or \
+           self.achtype == AchievementType.HUNDRED_DEATHS   or \
+           self.achtype == AchievementType.MULTIPLE_PENETRATION:
+            return AchievementLevel.RARE_NEGATIVE            
+            
+        if self.achtype == AchievementType.HUNDRED_FRAGS or \
+           self.achtype == AchievementType.RAINBOW_FLAG  or \
+           self.achtype == AchievementType.LUMBERJACK:
+            return AchievementLevel.ULTRA_RARE            
+
+    @staticmethod    
+    def getBorderColor(achlevel):
+        if achlevel == AchievementLevel.BASIC_POSITIVE:
+            return "green"
+        if achlevel == AchievementLevel.BASIC_NEGATIVE:
+            return "#b32f25"  # dark red
+        if achlevel == AchievementLevel.ADVANCE_POSITIVE:
+            return "#09e9ed"  
+        if achlevel == AchievementLevel.ADVANCE_NEGATIVE:
+            return "#f02313"  # light red
+        if achlevel == AchievementLevel.RARE_POSITIVE:
+            return "gold"
+        if achlevel == AchievementLevel.RARE_NEGATIVE:
+            return "#391366"  # dark purple
+        if achlevel == AchievementLevel.ULTRA_RARE:
+            return "#cd0ceb"  # purple
+
+    @staticmethod
+    def generateAchievementsLevelLegendTable():
+        achLevelsHtmlTable = HTML.Table(border="0", cellspacing="0", style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;")
+        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
+                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_NEGATIVE)),
+                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_POSITIVE)),
+                                    # HTML.TableCell("Basic level") ] ))
+        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
+                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_NEGATIVE)),
+                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_POSITIVE)),
+                                    # HTML.TableCell("Advanced level") ] ))
+        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
+                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_NEGATIVE)),
+                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_POSITIVE)),
+                                    # HTML.TableCell("Rare level") ] ))
+        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
+                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ULTRA_RARE)),
+                                    # HTML.TableCell("<pre> </pre>"),
+                                    # HTML.TableCell("UltraRare level") ] ))
+
+        achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
+                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_NEGATIVE)),
+                                    HTML.TableCell(" "),
+                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_POSITIVE)),
+                                    HTML.TableCell("Basic level"),
+                                    HTML.TableCell("<pre>   </pre>"),
+        
+                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_NEGATIVE)),
+                                    HTML.TableCell(" "),
+                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_POSITIVE)),
+                                    HTML.TableCell("Advanced level"),
+                                    HTML.TableCell("<pre>   </pre>"),
+        
+                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_NEGATIVE)),
+                                    HTML.TableCell(" "),
+                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_POSITIVE)),
+                                    HTML.TableCell("Rare level"),
+                                    HTML.TableCell("<pre>   </pre>"),
+        
+                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ULTRA_RARE)),                                    
+                                    HTML.TableCell("UltraRare level") ] ))
+                                    
+        return str(achLevelsHtmlTable)
+                    
+    def getImgSrc(self):
         if self.achtype == AchievementType.LONG_LIVE:
             return "ezquakestats/img/ach_long_liver.jpg"
         if self.achtype == AchievementType.SUICIDE_MASTER:
