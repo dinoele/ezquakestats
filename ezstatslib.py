@@ -1462,7 +1462,7 @@ HTML_PLAYER_POWER_UPS_BY_MINUTES_BY_PLAYERS_DIV_TAG = \
 HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG = \
   "<div class=\"wpb_text_column wpb_content_element \">\n" \
   "<div class=\"wpb_wrapper\">\n" \
-  "  <div class=\"symple-toggle state-closed\" id=\"achievements\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"achievements\">\n" \
   "  <h2 class=\"symple-toggle-trigger \">Achievements</h2>\n" \
   "  <div class=\"symple-toggle-container symple-clearfix\">\n" \
   "PLAYERS_ACHIEVEMENTS_TABLE" \
