@@ -37,7 +37,7 @@ possibleColors = [HtmlColor.COLOR_RED,
                   HtmlColor.COLOR_CYAN,
                   HtmlColor.COLOR_MAGENTA]
 
-CURRENT_VERSION = "1.01"                  
+CURRENT_VERSION = "1.02"  
                   
 LOG_TIMESTAMP_DELIMITER = " <-> "
 
