@@ -9,6 +9,15 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
+CONFIG_FILE="stat.conf"
+
+if test -f ./$CONFIG_FILE; then
+  . ./$CONFIG_FILE
+else
+  echo "ERROR: Config file is missing. Copy stat.conf.sample to stat.conf and set parameters."
+  exit 1
+fi
+
 isServer=false
 isNetCopy=false
 while getopts "sc" opt
@@ -21,15 +30,15 @@ do
 done
 
 if [ "$isServer" = true ] ; then
-    cd /cygdrive/c/nQuakesv  # <---- TOCHANGE
+    cd $nquakesv_root  # TODO SERVER PATH
     ./mvdsv.exe -game ktx +logrcon +logplayers +fraglogfile 1 +map warfare2 +exec port22.cfg
 fi
 
-cd /cygdrive/d/tmp/qstats  # <---- TOCHANGE
+cd $scripts_root  # TODO QSTATS ROOT PATH
 
 if [ "$isNetCopy" = false ] ; then
-    python getstats_team_launch.py
+    python launch_getstats_team_XML.py
 fi
 if [ "$isNetCopy" = true ] ; then
-    python getstats_team_launch.py --net-copy
+    python launch_getstats_team_XML.py --net-copy
 fi

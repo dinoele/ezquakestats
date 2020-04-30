@@ -1,5 +1,4 @@
-nquakesv_root=/cygdrive/d/WinApps/nQuakesv/nQuakesv
-
-scripts_root=/cygdrive/d/WinApps/nQuakesv/qs/ezquakestats/XML_scripts
-reports_dir=../../
-matches_dir=/cygdrive/d/WinApps/nQuakesv/matches
+nquakesv_root=<full path to nQuakesv dir>
+scripts_root=<full path to XML_scripts dir>
+reports_dir=<path to a directory where reports dir is created>
+matches_dir=<full path to matches dir>

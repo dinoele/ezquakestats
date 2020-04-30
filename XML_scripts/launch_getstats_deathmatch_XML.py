@@ -11,10 +11,13 @@ import os
 
 from optparse import OptionParser,OptionValueError
 
+import stat_conf
+
+stat_conf.read_config()
 
 # =================================================================================================
-path = "<KTX_DEMOS_PATH>"                  # <---- TOCHANGE, i.e. "/cygdrive/c/nQuakesv/ktx/demos"
-statsMatchesPath = "<STATS_MATCHES_PATH>"  # <---- TOCHANGE, i.e. "/cygdrive/d/tmp/qstats/matches"
+path = stat_conf.nquakesv_root + "/ktx/demos"
+statsMatchesPath = stat_conf.matches_dir
 # =================================================================================================
 
 parser = OptionParser(usage="", version="")
@@ -55,6 +58,6 @@ for cdate, size, path in sorted(entriesTXT, reverse=True):
 print "RES", pathXML
 print "RES", pathTXT
 
-os.system("python getstats_deathmatch_NEW.py --league Premier --fxml %s --fjson %s %s" % (pathXML, pathTXT, "--net-copy" if options.netCopy else ""))
+os.system("python getstats_deathmatch_XML.py --league Premier --fxml %s --fjson %s %s" % (pathXML, pathTXT, "--net-copy" if options.netCopy else ""))
 os.system("cp %s %s" % (pathXML, statsMatchesPath))
 os.system("cp %s %s" % (pathTXT, statsMatchesPath))
