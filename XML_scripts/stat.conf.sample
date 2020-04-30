@@ -1,0 +1,5 @@
+nquakesv_root=/cygdrive/d/WinApps/nQuakesv/nQuakesv
+
+scripts_root=/cygdrive/d/WinApps/nQuakesv/qs/ezquakestats/XML_scripts
+reports_dir=../../
+matches_dir=/cygdrive/d/WinApps/nQuakesv/matches
