@@ -1933,11 +1933,11 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         if len(pl.achievements) != 0:
             tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(pl.name), align="center", width=cellWidth) ])  # TODO player name cell width
             for ach in pl.achievements:
-                tableRow.cells.append( HTML.TableCell(ach.generateHtml(), align="center" ) )
+                tableRow.cells.append( HTML.TableCell(ach.generateHtmlEx(), align="center" ) )
             
             achievementsHtmlTable.rows.append(tableRow)
         
-    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable))    
+    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable) + ezstatslib.Achievement.generateAchievementsLevelLegendTable())
     # <-- players achievements
     
     # highcharts players rank progress -->
