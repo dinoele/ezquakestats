@@ -1,0 +1,4 @@
+nquakesv_root=<full path to nQuakesv dir>
+scripts_root=<full path to XML_scripts dir>
+reports_dir=<path to a directory where reports dir is created>
+matches_dir=<full path to matches dir>
