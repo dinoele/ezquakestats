@@ -8,12 +8,14 @@ import sys, time
 
 import fileinput
 import os
-
 from optparse import OptionParser,OptionValueError
+import stat_conf
+
+stat_conf.read_config()
 
 # =================================================================================================
-path = "KTX_DEMOS_PATH"   # <---- TOCHANGE, i.e. "/cygdrive/c/nQuakesv/ktx/demos"
-matchesPath = "<STATS_TEAM_MATCHES_PATH>"  # <---- TOCHANGE, i.e. "/cygdrive/d/tmp/qstats/matches/team"
+path = stat_conf.nquakesv_root + "/ktx/demos"
+matchesPath = stat_conf.matches_dir + "/team"
 # =================================================================================================
 
 parser = OptionParser(usage="", version="")

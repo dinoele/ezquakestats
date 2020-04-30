@@ -12,6 +12,10 @@ from optparse import OptionParser,OptionValueError
 import fileinput
 import os.path
 
+import stat_conf
+
+stat_conf.read_config()
+
 sys.path.append("../")
 
 import ezstatslib
@@ -31,7 +35,7 @@ import json
 # TODO skip lines separate log
 # TODO make index file
 
-ezstatslib.REPORTS_FOLDER = "reports/"
+ezstatslib.REPORTS_FOLDER = stat_conf.reports_dir
 ezstatslib.LOGS_INDEX_FILE_NAME = "index.html"
 
 COMMAND_LOG_LOCAL_SMALL_DELIM = "__________";
@@ -1964,7 +1968,7 @@ def writeHtmlWithScripts(f, teams, resStr):
   
 formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d_%H_%M_%S')
 filePath     = "TEAM_" + mapName + "_" + formatedDateTime + ".html"
-filePathFull = "reports/" + filePath
+filePathFull = ezstatslib.REPORTS_FOLDER + filePath
 
 isFileNew = False
 if os.path.exists(filePathFull):
@@ -2009,10 +2013,10 @@ else:  # not os.path.exists(filePathFull):
     isFileNew = True
 
 # index file
-logsIndexPath    = "reports/" + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME
-tmpLogsIndexPath = "reports/" + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME + ".tmp"
+logsIndexPath    = ezstatslib.REPORTS_FOLDER + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME
+tmpLogsIndexPath = ezstatslib.REPORTS_FOLDER + ezstatslib.TEAM_LOGS_INDEX_FILE_NAME + ".tmp"
 
-files = os.listdir("reports/")
+files = os.listdir(ezstatslib.REPORTS_FOLDER)
 
 teamFiles = []
 
@@ -2068,7 +2072,7 @@ for el in sorted_filesMap:
     pls = sorted(pls, key=lambda x: x[1], reverse=True)
 
     for gg in pls:
-        logHeadStr = subprocess.check_output(["head", "%s" % ("reports/" + gg[0])])
+        logHeadStr = subprocess.check_output(["head", "%s" % (ezstatslib.REPORTS_FOLDER + gg[0])])
         teamsStr = ""
         if "GAME_TEAMS" in logHeadStr:
             teamsStr = logHeadStr.split("GAME_TEAMS")[1].split("-->")[0]
@@ -2109,10 +2113,3 @@ if os.path.exists(logsIndexPath):
 os.rename(tmpLogsIndexPath, logsIndexPath)
 
 print filePath
-
-if options.netCopy:
-    os.system("cp %s //PC0V1FDH/qs$" % (logsIndexPath))
-    os.system("cp %s //PC0V1FDH/qs$" % (filePathFull))
-    os.system("cp %s //PC0V1FDH/qs$/matches/team" % (options.inputFileXML))
-    os.system("cp %s //PC0V1FDH/qs$/matches/team" % (options.inputFileJSON))
-    # os.system("cp %s //PC0V1FDH/qs$/json" % (jsonPath))

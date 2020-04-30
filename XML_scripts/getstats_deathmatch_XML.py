@@ -12,6 +12,10 @@ from optparse import OptionParser,OptionValueError
 import fileinput
 import os.path
 
+import stat_conf
+
+stat_conf.read_config()
+
 sys.path.append("../")
 
 import ezstatslib
@@ -30,7 +34,7 @@ import xml.etree.ElementTree as ET
 #tree = ET.parse('country_data.xml')
 #root = tree.getroot()
 
-ezstatslib.REPORTS_FOLDER = "reports/"
+ezstatslib.REPORTS_FOLDER = stat_conf.reports_dir
 ezstatslib.LOGS_INDEX_FILE_NAME = "index.html"
 
 def fillH2H(who,whom,minute):
@@ -2087,7 +2091,7 @@ if "Number" in options.leagueName:
 
 formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d_%H_%M_%S')
 filePath     = leaguePrefix + mapName + "_" + formatedDateTime + ".html"
-filePathFull = "reports/" + filePath
+filePathFull = ezstatslib.REPORTS_FOLDER + filePath
 
 isFileNew = False
 if os.path.exists(filePathFull):
@@ -2132,12 +2136,12 @@ else:  # not os.path.exists(filePathFull):
     isFileNew = True
     
 # update contents file
-logsIndexPath    =  "reports/" + ezstatslib.LOGS_INDEX_FILE_NAME
-logsByMapPath    =  "reports/" + ezstatslib.LOGS_BY_MAP_FILE_NAME
-tmpLogsIndexPath =  "reports/" + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
-totalsPath       =  "reports/" + ezstatslib.TOTALS_FILE_NAME
+logsIndexPath    = ezstatslib.REPORTS_FOLDER + ezstatslib.LOGS_INDEX_FILE_NAME
+logsByMapPath    = ezstatslib.REPORTS_FOLDER + ezstatslib.LOGS_BY_MAP_FILE_NAME
+tmpLogsIndexPath = ezstatslib.REPORTS_FOLDER + ezstatslib.LOGS_INDEX_FILE_NAME + ".tmp"
+totalsPath       = ezstatslib.REPORTS_FOLDER + ezstatslib.TOTALS_FILE_NAME
 
-files = os.listdir("reports")
+files = os.listdir(ezstatslib.REPORTS_FOLDER)
 
 #headerRow = HTML.TableRow(["Date", "Time", "Premier League", "First Division", "Second Division"], header=True)
 
@@ -2161,7 +2165,7 @@ otherFiles = []
 
 for fname in files:
     if "html" in fname and len(fname) != 0 and fname[0] == "N":
-        logHeadStr = subprocess.check_output(["head.exe", "%s" % ("reports/" + fname)])
+        logHeadStr = subprocess.check_output(["head.exe", "%s" % (ezstatslib.REPORTS_FOLDER + fname)])
         if "GAME_PLAYERS" in logHeadStr:
             playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
                 
@@ -2311,7 +2315,7 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
         # logf = open("../" + alllist[i][0], "r")
         # linesCnt = 0        
         
-        logHeadStr = subprocess.check_output(["head.exe", "%s" % ("reports/" + alllist[i][0])])
+        logHeadStr = subprocess.check_output(["head.exe", "%s" % (ezstatslib.REPORTS_FOLDER + alllist[i][0])])
         if "GAME_PLAYERS" in logHeadStr:
             playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
                 
@@ -2517,7 +2521,7 @@ str += "]"
 
 # print str
 
-jsonPath =  filePathFull.replace("reports", "reports/json")
+jsonPath =  filePathFull.replace(ezstatslib.REPORTS_FOLDER, ezstatslib.REPORTS_FOLDER + "json/")
 jsonPath += ".json"
 jsonf = open(jsonPath, "w")
 jsonf.write(str)
@@ -2533,7 +2537,7 @@ for oo in ooo:
 	
 print filePath    
 
-jsonDirPath = "reports/json/"
+jsonDirPath = ezstatslib.REPORTS_FOLDER + "json/"
 entries = (os.path.join(jsonDirPath, fn) for fn in os.listdir(jsonDirPath))
 entries = ((os.stat(path), path) for path in entries if ".json" in path)
 
@@ -2831,15 +2835,6 @@ for pl in jsonPlayers:
 print allCDates
 print sorted(allCDates)
 
-if options.netCopy:
-    os.system("cp %s //PC0V1FDH/qs$" % (totalsPath))
-    os.system("cp %s //PC0V1FDH/qs$" % (logsByMapPath))
-    os.system("cp %s //PC0V1FDH/qs$" % (logsIndexPath))
-    os.system("cp %s //PC0V1FDH/qs$" % (filePathFull))
-    os.system("cp %s //PC0V1FDH/qs$/matches/dm" % (options.inputFileXML))
-    os.system("cp %s //PC0V1FDH/qs$/matches/dm" % (options.inputFileJSON))
-    os.system("cp %s //PC0V1FDH/qs$/json" % (jsonPath))
-    
 print "isOverTime:", isOverTime
 print "timelimit:", timelimit
 print "duration:", duration
