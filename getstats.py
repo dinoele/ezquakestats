@@ -45,7 +45,7 @@ plPrevFragsDict = {}
 
 def getFragsLine(players):
     playersByFrags = sorted(players, key=methodcaller("frags"), reverse=True)
-    s = "[%s]" % (players1[0].teamname)
+    s = "[%s]" % (players[0].teamname)
 
     fragsSum = 0
     for pl in playersByFrags:
