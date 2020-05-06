@@ -3144,6 +3144,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons"  DONE
                         MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"  DONE
                         LONG_LIVE_KING = 43, #"Long Live and Prosper Like A King",  # the 1st 60 seconds without deaths  DONE
+                        HULK_SMASH = 44, #"Hulk SMASH!!",  # the 1st place frags is twice bigger than the 2nd place  DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3247,6 +3248,8 @@ class Achievement:
             return 'So many different holes in your body:('
         if self.achtype == AchievementType.LONG_LIVE_KING:
             return "Long Live and Prosper Like A King"
+        if self.achtype == AchievementType.HULK_SMASH:
+            return "Hulk SMASH!!"            
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3292,7 +3295,8 @@ class Achievement:
            self.achtype == AchievementType.ELECTROMASTER          or \
            self.achtype == AchievementType.DEATH_CHEATER          or \
            self.achtype == AchievementType.UNIVERSAL_SOLDIER      or \
-           self.achtype == AchievementType.LONG_LIVE_KING:
+           self.achtype == AchievementType.LONG_LIVE_KING         or \
+           self.achtype == AchievementType.HULK_SMASH:
             return AchievementLevel.RARE_POSITIVE
       
         if self.achtype == AchievementType.HORRIBLE_FINISH  or \
@@ -3434,7 +3438,9 @@ class Achievement:
         if self.achtype == AchievementType.MULTIPLE_PENETRATION:
             return "ezquakestats/img/ach_multiple_penetration.jpg"
         if self.achtype == AchievementType.LONG_LIVE_KING:
-            return "ezquakestats/img/ach_long_liver_king.jpg"            
+            return "ezquakestats/img/ach_long_liver_king.jpg"
+        if self.achtype == AchievementType.HULK_SMASH:
+            return "ezquakestats/img/ach_hulk_smash.jpg"            
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -3506,6 +3512,13 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDa
             if pl.deaths < (int)(avgDeathsCount * 0.5):
                 pl.achievements.append( Achievement(AchievementType.DEATH_CHEATER, "died only {0:d} times ({1:5.3}% of the average)".format(pl.deaths, (float(pl.deaths) / float(avgDeathsCount) * 100))) )
 
+    # HULK_SMASH
+    if len(allplayers) >= 2:
+        sortedByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+        if sortedByFrags[0].frags() >= sortedByFrags[1].frags()*1.75:
+            sortedByFrags[0].achievements.append( Achievement(AchievementType.HULK_SMASH, "frags number {0:d} much more that the 2nd place({1:d})".format(sortedByFrags[0].frags(), sortedByFrags[1].frags())) )
+                
+                
 class Team:
     def __init__(self, teamname):
         self.name = teamname
