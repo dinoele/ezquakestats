@@ -128,6 +128,8 @@ damageElements = []
 deathElements = []
 pickmapitemElements = []
 
+elementsByTime = [] # [timestamp, [elemen1, elemen2, .. , elementN]]
+
 sourceXML = open(options.inputFileXML)
 tree = ET.parse(sourceXML)
 root = tree.getroot()
@@ -138,6 +140,7 @@ k = 0
 damageCnt = 0
 deathCnt  = 0
 pickmapitemCnt = 0
+currentTS = -1
 for child in root:
     #print child.tag, child.attrib   
 
@@ -192,6 +195,8 @@ for child in root:
                         pl = Player( "", elem.attacker, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
                         xmlPlayers.append(pl)
 
+                    
+                        
                 if evtype.tag == "death":
                     deathCnt += 1
                     elem = DeathElement(evtype)
@@ -204,6 +209,15 @@ for child in root:
                     elements.append(elem)
                     pickmapitemElements.append(elem)
 
+                if evtype.tag == "drop_backpack" or evtype.tag == "pick_backpack":
+                    continue
+                    
+                if currentTS == -1 or currentTS != elem.time:
+                    currentTS = elem.time                    
+                    elementsByTime.append([currentTS, [elem]])
+                else:                  
+                    elementsByTime[len(elementsByTime)-1][1].append(elem)
+                    
 #                for evtags in evtype:
 #                    print evtags.tag, evtags.attrib, evtags.text
 
@@ -215,7 +229,7 @@ for child in root:
 
     
     i+=1
-
+       
 sourceXML.close()
 
 lastTimeStamp = elements[len(elements)-1].time
@@ -729,6 +743,100 @@ for element in elements:
 
 # all log lines are processed
 
+tmpComboStr = ""
+for i in xrange(len(elementsByTime)):
+    deaths = 0
+    for j in xrange(len(elementsByTime[i][1])):
+        if isinstance(elementsByTime[i][1][j], DeathElement):
+            deaths += 1
+    
+    tt = elementsByTime[i][0]
+    if deaths >= 2 and deaths < 3:       
+        attacker1 = ""
+        attacker2 = ""
+        target1 = ""
+        target2 = ""
+        for j in xrange(len(elementsByTime[i][1])):
+            if isinstance(elementsByTime[i][1][j], DeathElement):
+                if attacker1 == "" and target1 == "":
+                    attacker1 = elementsByTime[i][1][j].attacker
+                    target1 = elementsByTime[i][1][j].target
+                else:
+                    attacker2 = elementsByTime[i][1][j].attacker
+                    target2 = elementsByTime[i][1][j].target
+
+        isSuicide1 = attacker1 == target1
+        isSuicide2 = attacker2 == target2
+        isAttackerTheSame = attacker1 == attacker2
+        
+        if isAttackerTheSame:
+            if isSuicide1 or isSuicide2:                
+                if isSuicide1:
+                    attackPl = attacker1
+                    targetPl = target2
+                else: # isSuicide2
+                    attackPl = attacker2
+                    targetPl = target1
+                    
+                attackTeam = ""
+                targetTeam = ""
+                for pl in allplayers:
+                    if pl.name == attackPl:
+                        attackTeam = pl.teamname
+                    if pl.name == targetPl:
+                        targetTeam = pl.teamname
+                        
+                if attackTeam == targetTeam:
+                    # suicide + teamkill
+                    ezstatslib.logError("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                    tmpComboStr += ("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                else:
+                    # suicide + kill
+                    ezstatslib.logError("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                    tmpComboStr += ("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+            
+            else: # non suicide
+                attackTeam = ""
+                targetTeam1 = ""
+                targetTeam2 = ""
+                for pl in allplayers:
+                    if pl.name == target1:
+                        targetTeam1 = pl.teamname
+                    if pl.name == target2:
+                        targetTeam2 = pl.teamname
+                    if pl.name == attacker1:
+                        attackTeam = pl.teamname
+                
+                if attackTeam != targetTeam1 and attackTeam != targetTeam2:
+                    # kill + kill
+                    ezstatslib.logError("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                    tmpComboStr += ("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                elif attackTeam == targetTeam1 and attackTeam == targetTeam2:
+                    # teamkill + teamkill
+                    ezstatslib.logError("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                    tmpComboStr += ("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                else:
+                    # kill + teamkill
+                    ezstatslib.logError("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
+                    tmpComboStr += ("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
+            
+            
+        else:
+            # TODO mutual kill
+            ezstatslib.logError("OLOLO: %f mutual kill: (attacker1(%s), target1(%s)); (attacker2(%s), target2(%s))\n" % (tt, attacker1, target1, attacker2, target2))
+            tmpComboStr += ("OLOLO: %f mutual kill: (attacker1(%s), target1(%s)); (attacker2(%s), target2(%s))\n" % (tt, attacker1, target1, attacker2, target2))
+    
+    elif deaths >= 3:
+        # TODO
+        resStr = ""
+        deathNum = 1
+        for j in xrange(len(elementsByTime[i][1])):
+            if isinstance(elementsByTime[i][1][j], DeathElement):
+                resStr += "(attacker%d(%s), target%d(%s)); " % (deathNum, elementsByTime[i][1][j].attacker, deathNum, elementsByTime[i][1][j].target)
+                deathNum += 1
+                    
+        ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
+        tmpComboStr += ("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
 
 # validate score
 fragsSum1 = 0
@@ -1367,6 +1475,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     teamsStr = teamsStr[:-1]
     teamsStr += "\n"
     f.write("<!--\nGAME_TEAMS\n" + teamsStr + "-->\n")
+    
+    f.write("<!--\nCOMBOS\n" + tmpComboStr + "-->\n")  # TEMP!!
 
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % ("TEAM", mapName, matchdate)  # global values
