@@ -3161,6 +3161,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         KILL_STREAK = 45, # "Killing without rest" # 15+ kill streak   DONE
                         CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags" DONE
                         GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl  DONE
+                        BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"  DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3272,6 +3273,8 @@ class Achievement:
             return "Children are the flowers of our lives - no spawn frags"
         if self.achtype == AchievementType.GL_LOVER:
             return "Grenades is my passion!"
+        if self.achtype == AchievementType.BALANCED_PLAYER:
+            return "Balanced player - no one wants to lose"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3321,7 +3324,8 @@ class Achievement:
            self.achtype == AchievementType.UNIVERSAL_SOLDIER      or \
            self.achtype == AchievementType.LONG_LIVE_KING         or \
            self.achtype == AchievementType.HULK_SMASH             or \
-           self.achtype == AchievementType.KILL_STREAK:
+           self.achtype == AchievementType.KILL_STREAK            or \
+           self.achtype == AchievementType.BALANCED_PLAYER:
             return AchievementLevel.RARE_POSITIVE
       
         if self.achtype == AchievementType.HORRIBLE_FINISH  or \
@@ -3472,6 +3476,8 @@ class Achievement:
             return "ezquakestats/img/ach_child_lover.png"
         if self.achtype == AchievementType.GL_LOVER:
             return "ezquakestats/img/ach_gl_lover.jpg"
+        if self.achtype == AchievementType.BALANCED_PLAYER:
+            return "ezquakestats/img/ach_balanced_player.png"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -3548,6 +3554,41 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDa
         sortedByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
         if sortedByFrags[0].frags() >= sortedByFrags[1].frags()*1.75:
             sortedByFrags[0].achievements.append( Achievement(AchievementType.HULK_SMASH, "frags number {0:d} much more that the 2nd place({1:d})".format(sortedByFrags[0].frags(), sortedByFrags[1].frags())) )
+
+    # BALANCED_PLAYER
+    if len(allplayers) >= 3:
+        for pl in allplayers:
+            if pl.playTime() >= 180:
+                isAllDraws = True
+                isAllNonZeros = True
+                duelsNum = 0
+                for pl2 in allplayers:
+                    plKills = 0
+                    plTeam = ""
+                    for val in headToHead[pl.name]:
+                        if val[0] == pl2.name:
+                            plKills = val[1]
+                            plTeam = pl2.teamname
+                    
+                    plDeaths = 0
+                    for val in headToHead[pl2.name]:
+                        if val[0] == pl.name:
+                            plDeaths = val[1]               
+                    
+                    if isTeamGame and pl.teamname == plTeam:
+                        continue
+                    
+                    duelsNum += 1
+                    
+                    if plKills == 0 and plDeaths == 0:
+                        isAllNonZeros = False
+                    
+                    if plKills != plDeaths:
+                        isAllDraws = False
+                        break
+
+                if isAllNonZeros and isAllDraws:
+                    pl.achievements.append( Achievement(AchievementType.BALANCED_PLAYER, "all %d duels are draws" % (duelsNum)) )
                 
                 
 class Team:
