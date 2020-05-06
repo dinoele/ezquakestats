@@ -3062,8 +3062,12 @@ class Player:
             self.achievements.append( Achievement(AchievementType.DUEL_WINNER, "") )
 
         # SNIPER
-        if self.rlskill_dh >= 40:
-            self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
+        if len(self.rl_damages_gvn) != 0:
+            if (sum(1 for val in self.rl_damages_gvn if val[0] == 110) / float(len(self.rl_damages_gvn)) > 0.45 and len(self.rl_damages_gvn) > 30):
+                self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is {0:5.3}%".format((sum(1 for val in self.rl_damages_gvn if val[0] == 110) * 100) / float(len(self.rl_damages_gvn)))))
+        else:
+            if self.rlskill_dh >= 40:
+                self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
 
         # PERSONAL_STALKER
         if len(matchProgress) != 0 and len(matchProgress[0]) > 3:
