@@ -3162,6 +3162,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags" DONE
                         GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl  DONE
                         BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"  DONE
+                        LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3275,6 +3276,8 @@ class Achievement:
             return "Grenades is my passion!"
         if self.achtype == AchievementType.BALANCED_PLAYER:
             return "Balanced player - no one wants to lose"
+        if self.achtype == AchievementType.LIKE_AN_ANGEL:
+            return "Like an angel - NO damage to teammates at all!!"            
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3325,7 +3328,8 @@ class Achievement:
            self.achtype == AchievementType.LONG_LIVE_KING         or \
            self.achtype == AchievementType.HULK_SMASH             or \
            self.achtype == AchievementType.KILL_STREAK            or \
-           self.achtype == AchievementType.BALANCED_PLAYER:
+           self.achtype == AchievementType.BALANCED_PLAYER        or \
+           self.achtype == AchievementType.LIKE_AN_ANGEL:
             return AchievementLevel.RARE_POSITIVE
       
         if self.achtype == AchievementType.HORRIBLE_FINISH  or \
@@ -3478,6 +3482,8 @@ class Achievement:
             return "ezquakestats/img/ach_gl_lover.jpg"
         if self.achtype == AchievementType.BALANCED_PLAYER:
             return "ezquakestats/img/ach_balanced_player.png"
+        if self.achtype == AchievementType.LIKE_AN_ANGEL:
+            return "ezquakestats/img/ach_like_an_angel.png"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -3589,7 +3595,34 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDa
 
                 if isAllNonZeros and isAllDraws:
                     pl.achievements.append( Achievement(AchievementType.BALANCED_PLAYER, "all %d duels are draws" % (duelsNum)) )
-                
+
+    # LIKE_AN_ANGEL
+    if isTeamGame and not headToHeadDamage is None and headToHeadDamage != {}:
+        if len(allplayers) >= 3:
+            for pl in allplayers:
+                if pl.playTime() >= 180:
+                    isNoTeamDamage = True
+                    for pl2 in allplayers:
+                        plKillDamage = 0
+                        plTeam = ""
+                        for val in headToHeadDamage[pl.name]:
+                            if val[0] == pl2.name:
+                                plKillDamage = val[1]
+                                plTeam = pl2.teamname
+                        
+                        plDeathDamage = 0
+                        for val in headToHeadDamage[pl2.name]:
+                            if val[0] == pl.name:
+                                plDeathDamage = val[1]
+                        
+                        if pl.teamname == plTeam and pl.name != pl2.name:
+                            if plKillDamage != 0:
+                                isNoTeamDamage = False
+                                break
+                                
+                    if isNoTeamDamage:
+                        pl.achievements.append( Achievement(AchievementType.LIKE_AN_ANGEL) )
+
                 
 class Team:
     def __init__(self, teamname):
