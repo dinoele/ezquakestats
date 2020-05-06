@@ -2939,6 +2939,11 @@ class Player:
             if strk.count >= 10:
                 self.achievements.append( Achievement(AchievementType.DEATH_STREAK_PAIN, "%d deaths in a row during %d seconds" % (strk.count, strk.duration())) )
 
+        for strk in self.calculatedStreaks:
+            # KILL_STREAK
+            if strk.count >= 15:
+                self.achievements.append( Achievement(AchievementType.KILL_STREAK, "%d kills in a row during %d seconds" % (strk.count, strk.duration())) )
+                
         # HORRIBLE_FINISH, FINISH_GURU
         if len(matchProgress) >= 2:
             pos1 = 1
@@ -3145,6 +3150,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"  DONE
                         LONG_LIVE_KING = 43, #"Long Live and Prosper Like A King",  # the 1st 60 seconds without deaths  DONE
                         HULK_SMASH = 44, #"Hulk SMASH!!",  # the 1st place frags is twice bigger than the 2nd place  DONE
+                        KILL_STREAK = 45, # "Killing without rest" # 15+ kill streak   DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3249,7 +3255,9 @@ class Achievement:
         if self.achtype == AchievementType.LONG_LIVE_KING:
             return "Long Live and Prosper Like A King"
         if self.achtype == AchievementType.HULK_SMASH:
-            return "Hulk SMASH!!"            
+            return "Hulk SMASH!!"
+        if self.achtype == AchievementType.KILL_STREAK:
+            return "Killing without rest"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3296,7 +3304,8 @@ class Achievement:
            self.achtype == AchievementType.DEATH_CHEATER          or \
            self.achtype == AchievementType.UNIVERSAL_SOLDIER      or \
            self.achtype == AchievementType.LONG_LIVE_KING         or \
-           self.achtype == AchievementType.HULK_SMASH:
+           self.achtype == AchievementType.HULK_SMASH             or \
+           self.achtype == AchievementType.KILL_STREAK:
             return AchievementLevel.RARE_POSITIVE
       
         if self.achtype == AchievementType.HORRIBLE_FINISH  or \
@@ -3440,7 +3449,9 @@ class Achievement:
         if self.achtype == AchievementType.LONG_LIVE_KING:
             return "ezquakestats/img/ach_long_liver_king.jpg"
         if self.achtype == AchievementType.HULK_SMASH:
-            return "ezquakestats/img/ach_hulk_smash.jpg"            
+            return "ezquakestats/img/ach_hulk_smash.jpg"
+        if self.achtype == AchievementType.KILL_STREAK:
+            return "ezquakestats/img/ach_kill_streak.jpg"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
