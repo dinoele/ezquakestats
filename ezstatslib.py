@@ -3018,6 +3018,10 @@ class Player:
         if self.spawnfrags >= 10:
             self.achievements.append( Achievement(AchievementType.CHILD_KILLER, "%d spawn frags%s" % (self.spawnfrags, "" if self.spawnfrags < 15 else ". %d CARL!!" % (self.spawnfrags))) )
 
+        # CHILD_LOVER
+        if self.spawnfrags == 0:
+            self.achievements.append( Achievement(AchievementType.CHILD_LOVER, "NO spawn frags") )
+            
         # ALWAYS_THE_FIRST
         if len(matchProgress) >= 2:
             isFirst = True
@@ -3151,6 +3155,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         LONG_LIVE_KING = 43, #"Long Live and Prosper Like A King",  # the 1st 60 seconds without deaths  DONE
                         HULK_SMASH = 44, #"Hulk SMASH!!",  # the 1st place frags is twice bigger than the 2nd place  DONE
                         KILL_STREAK = 45, # "Killing without rest" # 15+ kill streak   DONE
+                        CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags" DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3258,6 +3263,8 @@ class Achievement:
             return "Hulk SMASH!!"
         if self.achtype == AchievementType.KILL_STREAK:
             return "Killing without rest"
+        if self.achtype == AchievementType.CHILD_LOVER:
+            return "Children are the flowers of our lives - no spawn frags"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3288,7 +3295,8 @@ class Achievement:
            self.achtype == AchievementType.WHITEWASH          or \
            self.achtype == AchievementType.FASTER_THAN_BULLET or \
            self.achtype == AchievementType.TEAMMATES_FAN      or \
-           self.achtype == AchievementType.NO_SUICIDES:
+           self.achtype == AchievementType.NO_SUICIDES        or \
+           self.achtype == AchievementType.CHILD_LOVER:
             return AchievementLevel.ADVANCE_POSITIVE            
             
         if self.achtype == AchievementType.SUICIDE_KING    or \
@@ -3452,6 +3460,8 @@ class Achievement:
             return "ezquakestats/img/ach_hulk_smash.jpg"
         if self.achtype == AchievementType.KILL_STREAK:
             return "ezquakestats/img/ach_kill_streak.jpg"
+        if self.achtype == AchievementType.CHILD_LOVER:
+            return "ezquakestats/img/ach_child_lover.png"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
