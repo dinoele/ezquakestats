@@ -3107,6 +3107,10 @@ class Player:
         if self.gl_kills >= 15 and ((float(self.gl_kills) / float(self.kills) * 100)) >= 45.0:
             self.achievements.append( Achievement(AchievementType.GL_LOVER, "{0:d} grenade launcher kills({1:5.3}%)".format(self.gl_kills, (float(self.gl_kills) / float(self.kills) * 100))) )
                                                  
+        # OVERTIME
+        if self.overtime_frags != -1:
+            self.achievements.append( Achievement(AchievementType.OVERTIME, "goes to the overtime with {0:d} frags".format(self.overtime_frags)) )                                                             
+                                                 
         if isTeamGame:
             # TEAMMATES_FAN
             if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
@@ -3122,7 +3126,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         FINISH_GURU = 6, # "Finish Guru", # 2+ places up during the last minute and win  DONE
                         HORRIBLE_FINISH = 7, # "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
                         ALWAYS_THE_FIRST = 8, # "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
-                        OVERTIME_REASON = 9, # "Overtime - 5 minutes of fight more",  # one of who didn't want to give up
+                        OVERTIME = 9, # "One of who didn't want to give up", # "Overtime - extra minutes of fight"  #DEATHMATCH_SPECIFIC  DONE
                         SECOND_OVERTIME_REASON = 10, # "The 2nd overtime!",  # one of who didn't want to give up once more time
                         HUNDRED_KILLS = 11, # "More than 100 kills", # 100++ kills  DONE tmp img
                         HUNDRED_DEATHS = 12, # "More than 100 deaths", # 100++ deaths  DONE tmp img
@@ -3198,8 +3202,8 @@ class Achievement:
             return "Horrible Finish - finished to play too early"
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
             return "Always the 1st"
-        if self.achtype == AchievementType.OVERTIME_REASON:
-            return "Overtime - 5 minutes of fight more"
+        if self.achtype == AchievementType.OVERTIME:
+            return "One of who didn't want to give up"
         if self.achtype == AchievementType.SECOND_OVERTIME_REASON:
             return "The 2nd overtime!"
         if self.achtype == AchievementType.HUNDRED_KILLS:
@@ -3277,7 +3281,7 @@ class Achievement:
         if self.achtype == AchievementType.BALANCED_PLAYER:
             return "Balanced player - no one wants to lose"
         if self.achtype == AchievementType.LIKE_AN_ANGEL:
-            return "Like an angel - NO damage to teammates at all!!"            
+            return "Like an angel - NO damage to teammates at all!!"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3301,7 +3305,7 @@ class Achievement:
             
         if self.achtype == AchievementType.LONG_LIVE          or \
            self.achtype == AchievementType.ALWAYS_THE_FIRST   or \
-           self.achtype == AchievementType.OVERTIME_REASON    or \
+           self.achtype == AchievementType.OVERTIME           or \
            self.achtype == AchievementType.DUEL_WINNER        or \
            self.achtype == AchievementType.SNIPER             or \
            self.achtype == AchievementType.PERSONAL_STALKER   or \
@@ -3484,6 +3488,8 @@ class Achievement:
             return "ezquakestats/img/ach_balanced_player.png"
         if self.achtype == AchievementType.LIKE_AN_ANGEL:
             return "ezquakestats/img/ach_like_an_angel.png"
+        if self.achtype == AchievementType.OVERTIME:
+            return "ezquakestats/img/ach_overtime.jpg"            
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
@@ -3494,8 +3500,6 @@ class Achievement:
             return "ezquakestats/img/ach_100_deaths_TMP.jpg"
         if self.achtype == AchievementType.HUNDRED_FRAGS:
             return "ezquakestats/img/ach_100_frags_TMP.jpg"
-        if self.achtype == AchievementType.OVERTIME_REASON:
-            return "ezquakestats/img/ach_overtime.jpg"
 
         return "NotImplemented"
 

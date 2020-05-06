@@ -26,7 +26,7 @@ def fillH2H(who,whom,minute):
                 elem[1] += 1
                 elem[2][minute] += 1
     except Exception, ex:
-        ezstatslib.logError("fillH2H: who=%s, whom=%s, minute=%d, ex=%s\n" % (who, whom, ex))
+        ezstatslib.logError("fillH2H: who=%s, whom=%s, minute=%d, ex=%s\n" % (who, whom, minute, ex))
             
 def clearZeroPlayer(pl):
     # TODO remove from headToHead
@@ -354,6 +354,16 @@ for matchPart in matchlog:
             matchProgressDict.append(progressLineDict)
             matchProgressDictEx.append(progressLineDict)
             battleProgressExtendedNextPoint += (int)(60 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            
+            if "overtime" in logline:
+                if len(allplayersByFrags) >= 2:
+                    if allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+                        allplayersByFrags[0].overtime_frags = allplayersByFrags[0].frags()
+                        allplayersByFrags[1].overtime_frags = allplayersByFrags[1].frags()
+                    else:
+                        ezstatslib.logError("ERROR: overtime calculation: currentMinute: %d, allplayersByFrags[0].frags(): %d, allplayersByFrags[1].frags(): %d" % \
+                         (currentMinute, allplayersByFrags[0].frags(), allplayersByFrags[1].frags()))
+            
             continue
         else:
             if newLogFormat and currentMatchTime > battleProgressExtendedNextPoint:
@@ -1596,6 +1606,8 @@ if "Number" in options.leagueName:
     leaguePrefix = "N%s_" % (options.leagueName.split(" ")[1])
  
 formatedDateTime = ""
+
+matchdate = matchdate.replace("\n","").replace("\r","")
 try:
     formatedDateTime = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S %Z').strftime('%Y-%m-%d_%H_%M_%S')
 except:
