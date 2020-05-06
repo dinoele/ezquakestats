@@ -2917,9 +2917,13 @@ class Player:
 
     # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
     def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead, isTeamGame):
+        # LONG_LIVE_KING
+        if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 60):
+            self.achievements.append( Achievement(AchievementType.LONG_LIVE_KING, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
+        else:
         # LONG_LIVE
-        if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
-            self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
+            if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
+                self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
 
         for strk in self.deathStreaks:
             # SUICIDE_MASTER & SUICIDE_KING
@@ -3139,6 +3143,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         NO_SUICIDES = 40, # "I love this life!! No suicides at all"  # no suicides  DONE
                         UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons"  DONE
                         MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"  DONE
+                        LONG_LIVE_KING = 43, #"Long Live and Prosper Like A King",  # the 1st 60 seconds without deaths  DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3240,6 +3245,8 @@ class Achievement:
             return 'Can handle any weapon'
         if self.achtype == AchievementType.MULTIPLE_PENETRATION:
             return 'So many different holes in your body:('
+        if self.achtype == AchievementType.LONG_LIVE_KING:
+            return "Long Live and Prosper Like A King"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3284,7 +3291,8 @@ class Achievement:
            self.achtype == AchievementType.FINISH_GURU            or \
            self.achtype == AchievementType.ELECTROMASTER          or \
            self.achtype == AchievementType.DEATH_CHEATER          or \
-           self.achtype == AchievementType.UNIVERSAL_SOLDIER:
+           self.achtype == AchievementType.UNIVERSAL_SOLDIER      or \
+           self.achtype == AchievementType.LONG_LIVE_KING:
             return AchievementLevel.RARE_POSITIVE
       
         if self.achtype == AchievementType.HORRIBLE_FINISH  or \
@@ -3425,6 +3433,8 @@ class Achievement:
             return "ezquakestats/img/ach_universal_soldier.jpg"
         if self.achtype == AchievementType.MULTIPLE_PENETRATION:
             return "ezquakestats/img/ach_multiple_penetration.jpg"
+        if self.achtype == AchievementType.LONG_LIVE_KING:
+            return "ezquakestats/img/ach_long_liver_king.jpg"            
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
