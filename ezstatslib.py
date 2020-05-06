@@ -3103,6 +3103,10 @@ class Player:
             self.achievements.append(Achievement(AchievementType.MULTIPLE_PENETRATION,
                                                  'Got killed with {} different weapons'.format(len(self.death_weapons))))
 
+        # GL_LOVER
+        if self.gl_kills >= 15 and ((float(self.gl_kills) / float(self.kills) * 100)) >= 45.0:
+            self.achievements.append( Achievement(AchievementType.GL_LOVER, "{0:d} grenade launcher kills({1:5.3}%)".format(self.gl_kills, (float(self.gl_kills) / float(self.kills) * 100))) )
+                                                 
         if isTeamGame:
             # TEAMMATES_FAN
             if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
@@ -3156,6 +3160,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         HULK_SMASH = 44, #"Hulk SMASH!!",  # the 1st place frags is twice bigger than the 2nd place  DONE
                         KILL_STREAK = 45, # "Killing without rest" # 15+ kill streak   DONE
                         CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags" DONE
+                        GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl  DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3265,6 +3270,8 @@ class Achievement:
             return "Killing without rest"
         if self.achtype == AchievementType.CHILD_LOVER:
             return "Children are the flowers of our lives - no spawn frags"
+        if self.achtype == AchievementType.GL_LOVER:
+            return "Grenades is my passion!"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3296,7 +3303,8 @@ class Achievement:
            self.achtype == AchievementType.FASTER_THAN_BULLET or \
            self.achtype == AchievementType.TEAMMATES_FAN      or \
            self.achtype == AchievementType.NO_SUICIDES        or \
-           self.achtype == AchievementType.CHILD_LOVER:
+           self.achtype == AchievementType.CHILD_LOVER        or \
+           self.achtype == AchievementType.GL_LOVER:
             return AchievementLevel.ADVANCE_POSITIVE            
             
         if self.achtype == AchievementType.SUICIDE_KING    or \
@@ -3462,6 +3470,8 @@ class Achievement:
             return "ezquakestats/img/ach_kill_streak.jpg"
         if self.achtype == AchievementType.CHILD_LOVER:
             return "ezquakestats/img/ach_child_lover.png"
+        if self.achtype == AchievementType.GL_LOVER:
+            return "ezquakestats/img/ach_gl_lover.jpg"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
