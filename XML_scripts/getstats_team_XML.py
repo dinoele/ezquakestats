@@ -129,7 +129,7 @@ deathElements = []
 pickmapitemElements = []
 
 elementsByTime = [] # [timestamp, [elemen1, elemen2, .. , elementN]]
-elementsCloseByTime = [] # [[timestamp1,..,timestampN], [elemen1, elemen2, .. , elementN]]  delta(timestamp1,..,timestampN) < 0.5
+elementsCloseByTime = [] # [[timestamp1,..,timestampN], [elemen1, elemen2, .. , elementN]]  delta(timestamp1,..,timestampN) < 0.2 sec
 
 sourceXML = open(options.inputFileXML)
 tree = ET.parse(sourceXML)
