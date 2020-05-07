@@ -837,48 +837,53 @@ for i in xrange(len(elementsByTime)):
                     attackPl = attacker2
                     targetPl = target1
 
-                attackTeam = ""
-                targetTeam = ""
-                for pl in allplayers:
-                    if pl.name == attackPl:
-                        attackTeam = pl.teamname
-                    if pl.name == targetPl:
-                        targetTeam = pl.teamname
+                # attackTeam = ""
+                # targetTeam = ""
+                # for pl in allplayers:
+                    # if pl.name == attackPl:
+                        # attackTeam = pl.teamname
+                    # if pl.name == targetPl:
+                        # targetTeam = pl.teamname
 
-                if attackTeam == targetTeam:
-                    # suicide + teamkill
-                    ezstatslib.logError("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
-                    tmpComboStr += ("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
-                else:
-                    # suicide + kill
-                    ezstatslib.logError("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
-                    tmpComboStr += ("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                # if attackTeam == targetTeam:
+                    # # suicide + teamkill
+                    # ezstatslib.logError("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                    # tmpComboStr += ("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                # else:
+                    # # suicide + kill
+                    # ezstatslib.logError("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                    # tmpComboStr += ("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                    
+                ezstatslib.logError("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                tmpComboStr += ("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
 
             else: # non suicide
-                attackTeam = ""
-                targetTeam1 = ""
-                targetTeam2 = ""
-                for pl in allplayers:
-                    if pl.name == target1:
-                        targetTeam1 = pl.teamname
-                    if pl.name == target2:
-                        targetTeam2 = pl.teamname
-                    if pl.name == attacker1:
-                        attackTeam = pl.teamname
+                # attackTeam = ""
+                # targetTeam1 = ""
+                # targetTeam2 = ""
+                # for pl in allplayers:
+                    # if pl.name == target1:
+                        # targetTeam1 = pl.teamname
+                    # if pl.name == target2:
+                        # targetTeam2 = pl.teamname
+                    # if pl.name == attacker1:
+                        # attackTeam = pl.teamname
 
-                if attackTeam != targetTeam1 and attackTeam != targetTeam2:
-                    # kill + kill
-                    ezstatslib.logError("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
-                    tmpComboStr += ("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
-                elif attackTeam == targetTeam1 and attackTeam == targetTeam2:
-                    # teamkill + teamkill
-                    ezstatslib.logError("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
-                    tmpComboStr += ("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
-                else:
-                    # kill + teamkill
-                    ezstatslib.logError("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
-                    tmpComboStr += ("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
+                # if attackTeam != targetTeam1 and attackTeam != targetTeam2:
+                    # # kill + kill
+                    # ezstatslib.logError("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                    # tmpComboStr += ("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                # elif attackTeam == targetTeam1 and attackTeam == targetTeam2:
+                    # # teamkill + teamkill
+                    # ezstatslib.logError("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                    # tmpComboStr += ("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                # else:
+                    # # kill + teamkill
+                    # ezstatslib.logError("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
+                    # tmpComboStr += ("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
 
+                ezstatslib.logError("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                tmpComboStr += ("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
 
         else:
             # TODO mutual kill
