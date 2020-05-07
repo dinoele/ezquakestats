@@ -129,6 +129,7 @@ deathElements = []
 pickmapitemElements = []
 
 elementsByTime = [] # [timestamp, [elemen1, elemen2, .. , elementN]]
+elementsCloseByTime = [] # [[timestamp1,..,timestampN], [elemen1, elemen2, .. , elementN]]  delta(timestamp1,..,timestampN) < 0.5
 
 sourceXML = open(options.inputFileXML)
 tree = ET.parse(sourceXML)
@@ -141,6 +142,7 @@ damageCnt = 0
 deathCnt  = 0
 pickmapitemCnt = 0
 currentTS = -1
+currentTS2 = -1
 for child in root:
     #print child.tag, child.attrib   
 
@@ -217,6 +219,14 @@ for child in root:
                     elementsByTime.append([currentTS, [elem]])
                 else:                  
                     elementsByTime[len(elementsByTime)-1][1].append(elem)
+
+                if evtype.tag == "death":
+                    if currentTS2 == -1 or elem.time - currentTS2 >= 0.2:
+                        currentTS2 = elem.time                    
+                        elementsCloseByTime.append([[currentTS2], [elem]])
+                    else:
+                        elementsCloseByTime[len(elementsCloseByTime)-1][0].append(elem.time)
+                        elementsCloseByTime[len(elementsCloseByTime)-1][1].append(elem)
                     
 #                for evtags in evtype:
 #                    print evtags.tag, evtags.attrib, evtags.text
@@ -838,6 +848,21 @@ for i in xrange(len(elementsByTime)):
         ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
         tmpComboStr += ("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
 
+tmpComboStr += "==========================================\n"        
+        
+debugLines = ""
+linesStr = ""     
+for i in xrange(len(elementsCloseByTime)):    
+    if len(elementsCloseByTime[i][0]) == 2 and elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][1]:
+        debugLines += "DEBUG: time: %s, delta: %s, attacker1(%s), target1(%s) <-> attacker2(%s), target2(%s)\n" % (str(elementsCloseByTime[i][0]), str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]), elementsCloseByTime[i][1][0].attacker, elementsCloseByTime[i][1][0].target, elementsCloseByTime[i][1][1].attacker, elementsCloseByTime[i][1][1].target)
+        if (elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target and elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker) or \
+           (elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker and elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target):
+           linesStr += "Mutual kill: %s vs. %s, time: %s, delta: %s\n" % (elementsCloseByTime[i][1][0].attacker, elementsCloseByTime[i][1][0].target, str(elementsCloseByTime[i][0]), str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]))
+
+tmpComboStr += debugLines
+tmpComboStr += "\n"
+tmpComboStr += linesStr
+           
 # validate score
 fragsSum1 = 0
 for pl in players1:
