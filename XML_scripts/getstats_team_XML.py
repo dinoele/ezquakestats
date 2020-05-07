@@ -766,14 +766,18 @@ for i in xrange(len(elementsByTime)):
         attacker2 = ""
         target1 = ""
         target2 = ""
+        wp1 = ""
+        wp2 = ""
         for j in xrange(len(elementsByTime[i][1])):
             if isinstance(elementsByTime[i][1][j], DeathElement):
                 if attacker1 == "" and target1 == "":
                     attacker1 = elementsByTime[i][1][j].attacker
                     target1 = elementsByTime[i][1][j].target
+                    wp1 = elementsByTime[i][1][j].type
                 else:
                     attacker2 = elementsByTime[i][1][j].attacker
                     target2 = elementsByTime[i][1][j].target
+                    wp2 = elementsByTime[i][1][j].type
 
         isSuicide1 = attacker1 == target1
         isSuicide2 = attacker2 == target2
@@ -798,12 +802,14 @@ for i in xrange(len(elementsByTime)):
                         
                 if attackTeam == targetTeam:
                     # suicide + teamkill
-                    ezstatslib.logError("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
-                    tmpComboStr += ("OLOLO: %f suicide + teamkill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                    ll = "OLOLO: %f suicide + teamkill(%s) by %s [wps: %s + %s]\n" % (tt, target2 if isSuicide1 else target1, attackPl, wp1 if isSuicide1 else wp2, wp2 if isSuicide1 else wp1)
+                    ezstatslib.logError(ll)
+                    tmpComboStr += ll
                 else:
                     # suicide + kill
-                    ezstatslib.logError("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
-                    tmpComboStr += ("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+                    ll = "OLOLO: %f suicide + kill(%s) by %s [wps: %s + %s]\n" % (tt, target2 if isSuicide1 else target1, attackPl, wp1 if isSuicide1 else wp2, wp2 if isSuicide1 else wp1)
+                    ezstatslib.logError(ll)
+                    tmpComboStr += ll
             
             else: # non suicide
                 attackTeam = ""
@@ -819,22 +825,26 @@ for i in xrange(len(elementsByTime)):
                 
                 if attackTeam != targetTeam1 and attackTeam != targetTeam2:
                     # kill + kill
-                    ezstatslib.logError("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
-                    tmpComboStr += ("OLOLO: %f kill(%s) + kill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                    ll = "OLOLO: %f kill(%s) + kill(%s) by %s [wps: %s + %s]\n" % (tt, target1, target2, attacker1, wp1, wp2)
+                    ezstatslib.logError(ll)
+                    tmpComboStr += ll
                 elif attackTeam == targetTeam1 and attackTeam == targetTeam2:
                     # teamkill + teamkill
-                    ezstatslib.logError("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
-                    tmpComboStr += ("OLOLO: %f teamkill(%s) + teamkill(%s) by %s\n" % (tt, target1, target2, attacker1))
+                    ll = "OLOLO: %f teamkill(%s) + teamkill(%s) by %s [wps: %s + %s]\n" % (tt, target1, target2, attacker1, wp1, wp2)
+                    ezstatslib.logError(ll)
+                    tmpComboStr += ll
                 else:
                     # kill + teamkill
-                    ezstatslib.logError("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
-                    tmpComboStr += ("OLOLO: %f kill(%s) + teamkill(%s) by %s\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1))
+                    ll = "OLOLO: %f kill(%s) + teamkill(%s) by %s [wps: %s + %s]\n" % (tt, target2 if attackTeam != targetTeam2 else target1, target2 if attackTeam == targetTeam2 else target1, attacker1, wp2 if attackTeam != targetTeam2 else wp1, wp2 if attackTeam == targetTeam2 else wp1)
+                    ezstatslib.logError(ll)
+                    tmpComboStr += ll
             
             
         else:
             # TODO mutual kill
-            ezstatslib.logError("OLOLO: %f mutual kill: (attacker1(%s), target1(%s)); (attacker2(%s), target2(%s))\n" % (tt, attacker1, target1, attacker2, target2))
-            tmpComboStr += ("OLOLO: %f mutual kill: (attacker1(%s), target1(%s)); (attacker2(%s), target2(%s))\n" % (tt, attacker1, target1, attacker2, target2))
+            ll = "OLOLO: %f mutual kill: (attacker1(%s), target1(%s), wp1(%s)); (attacker2(%s), target2(%s), wp2(%s)\n" % (tt, attacker1, target1, wp1, attacker2, target2, wp2)
+            ezstatslib.logError(ll)
+            tmpComboStr += ll
     
     elif deaths >= 3:
         # TODO
@@ -842,7 +852,7 @@ for i in xrange(len(elementsByTime)):
         deathNum = 1
         for j in xrange(len(elementsByTime[i][1])):
             if isinstance(elementsByTime[i][1][j], DeathElement):
-                resStr += "(attacker%d(%s), target%d(%s)); " % (deathNum, elementsByTime[i][1][j].attacker, deathNum, elementsByTime[i][1][j].target)
+                resStr += "(attacker%d(%s), target%d(%s), wp%s(%s)); " % (deathNum, elementsByTime[i][1][j].attacker, deathNum, elementsByTime[i][1][j].target, deathNum, elementsByTime[i][1][j].type)
                 deathNum += 1
                     
         ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
@@ -854,10 +864,26 @@ debugLines = ""
 linesStr = ""     
 for i in xrange(len(elementsCloseByTime)):    
     if len(elementsCloseByTime[i][0]) == 2 and elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][1]:
-        debugLines += "DEBUG: time: %s, delta: %s, attacker1(%s), target1(%s) <-> attacker2(%s), target2(%s)\n" % (str(elementsCloseByTime[i][0]), str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]), elementsCloseByTime[i][1][0].attacker, elementsCloseByTime[i][1][0].target, elementsCloseByTime[i][1][1].attacker, elementsCloseByTime[i][1][1].target)
+        debugLines += "DEBUG: time: %s, delta: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s)\n" % \
+                ( str(elementsCloseByTime[i][0]), \
+                  str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]), \
+                  elementsCloseByTime[i][1][0].attacker, \
+                  elementsCloseByTime[i][1][0].target, \
+                  elementsCloseByTime[i][1][0].type, \
+                  elementsCloseByTime[i][1][1].attacker, \
+                  elementsCloseByTime[i][1][1].target, \
+                  elementsCloseByTime[i][1][1].type
+                )
+                
         if (elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target and elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker) or \
            (elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker and elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target):
-           linesStr += "Mutual kill: %s vs. %s, time: %s, delta: %s\n" % (elementsCloseByTime[i][1][0].attacker, elementsCloseByTime[i][1][0].target, str(elementsCloseByTime[i][0]), str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]))
+           linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+                ( elementsCloseByTime[i][1][0].attacker, \
+                  elementsCloseByTime[i][1][0].type, \
+                  elementsCloseByTime[i][1][0].target, \
+                  elementsCloseByTime[i][1][1].type, \
+                  str(elementsCloseByTime[i][0]), \
+                  str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]))
 
 tmpComboStr += debugLines
 tmpComboStr += "\n"
