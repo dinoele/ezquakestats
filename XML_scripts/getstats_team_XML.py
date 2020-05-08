@@ -825,9 +825,14 @@ for i in xrange(len(elementsByTime)):
                 
                 if attackTeam != targetTeam1 and attackTeam != targetTeam2:
                     # kill + kill
+                    for pl in allplayers:
+                        if pl.name == attacker1:
+                            pl.double_kills.append([target1,target2,wp1])
+                    
                     ll = "OLOLO: %f kill(%s) + kill(%s) by %s [wps: %s + %s]\n" % (tt, target1, target2, attacker1, wp1, wp2)
                     ezstatslib.logError(ll)
                     tmpComboStr += ll
+                    
                 elif attackTeam == targetTeam1 and attackTeam == targetTeam2:
                     # teamkill + teamkill
                     ll = "OLOLO: %f teamkill(%s) + teamkill(%s) by %s [wps: %s + %s]\n" % (tt, target1, target2, attacker1, wp1, wp2)

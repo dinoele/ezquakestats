@@ -2485,6 +2485,8 @@ class Player:
         
         self.rl_attacks = -1
         
+        self.double_kills = []
+        
     def initPowerUpsByMinutes(self, minutesCnt):
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
@@ -3113,8 +3115,12 @@ class Player:
                                                  
         # OVERTIME
         if self.overtime_frags != -1:
-            self.achievements.append( Achievement(AchievementType.OVERTIME, "goes to the overtime with {0:d} frags".format(self.overtime_frags)) )                                                             
-                                                 
+            self.achievements.append( Achievement(AchievementType.OVERTIME, "goes to the overtime with {0:d} frags".format(self.overtime_frags)) )
+
+        # DOUBLE_KILL
+        for i in xrange(len(self.double_kills)):
+            self.achievements.append( Achievement(AchievementType.DOUBLE_KILL, "killed %s and %s with one %s shot!" % (self.double_kills[i][0], self.double_kills[i][1], self.double_kills[i][2])) )
+            
         if isTeamGame:
             # TEAMMATES_FAN
             if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
@@ -3170,7 +3176,8 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags" DONE
                         GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl  DONE
                         BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"  DONE
-                        LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC DONE
+                        LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC    DONE
+                        DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" #two kills with on shot  #XML_SPECIFIC    DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3286,6 +3293,8 @@ class Achievement:
             return "Balanced player - no one wants to lose"
         if self.achtype == AchievementType.LIKE_AN_ANGEL:
             return "Like an angel - NO damage to teammates at all!!"
+        if self.achtype == AchievementType.DOUBLE_KILL:
+            return "Two budgies slain with but a single missile"            
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3337,7 +3346,8 @@ class Achievement:
            self.achtype == AchievementType.HULK_SMASH             or \
            self.achtype == AchievementType.KILL_STREAK            or \
            self.achtype == AchievementType.BALANCED_PLAYER        or \
-           self.achtype == AchievementType.LIKE_AN_ANGEL:
+           self.achtype == AchievementType.LIKE_AN_ANGEL          or \
+           self.achtype == AchievementType.DOUBLE_KILL:
             return AchievementLevel.RARE_POSITIVE
       
         if self.achtype == AchievementType.HORRIBLE_FINISH  or \
@@ -3493,7 +3503,9 @@ class Achievement:
         if self.achtype == AchievementType.LIKE_AN_ANGEL:
             return "ezquakestats/img/ach_like_an_angel.png"
         if self.achtype == AchievementType.OVERTIME:
-            return "ezquakestats/img/ach_overtime.jpg"            
+            return "ezquakestats/img/ach_overtime.jpg"
+        if self.achtype == AchievementType.DOUBLE_KILL:
+            return "ezquakestats/img/ach_double_kill.png"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
