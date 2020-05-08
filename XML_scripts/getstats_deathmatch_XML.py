@@ -914,7 +914,9 @@ tmpComboStr += "==========================================\n"
 debugLines = ""
 linesStr = ""     
 for i in xrange(len(elementsCloseByTime)):    
-    if len(elementsCloseByTime[i][0]) == 2 and elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][1]:
+    if len(elementsCloseByTime[i][0]) == 1:
+        pass
+    elif len(elementsCloseByTime[i][0]) == 2 and elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][1]:
         debugLines += "DEBUG: time: %s, delta: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s)\n" % \
                 ( str(elementsCloseByTime[i][0]), \
                   str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]), \
@@ -935,6 +937,94 @@ for i in xrange(len(elementsCloseByTime)):
                   elementsCloseByTime[i][1][1].type, \
                   str(elementsCloseByTime[i][0]), \
                   str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]))
+
+    elif len(elementsCloseByTime[i][0]) == 3:
+        if elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][1] and elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][2] and elementsCloseByTime[i][0][1] != elementsCloseByTime[i][0][2]:
+            # all times are different
+            debugLines += "DEBUG: all times are different: time: %d\n" % (str(elementsCloseByTime[i][0])) 
+        else:
+            debugLines += "DEBUG: len(elementsCloseByTime[i][0]) = 3, time: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s) <-> attacker3(%s), target3(%s), wp3(%s)\n" % \
+                ( str(elementsCloseByTime[i][0]), \
+                  elementsCloseByTime[i][1][0].attacker, \
+                  elementsCloseByTime[i][1][0].target, \
+                  elementsCloseByTime[i][1][0].type, \
+                  elementsCloseByTime[i][1][1].attacker, \
+                  elementsCloseByTime[i][1][1].target, \
+                  elementsCloseByTime[i][1][1].type, \
+                  elementsCloseByTime[i][1][2].attacker, \
+                  elementsCloseByTime[i][1][2].target, \
+                  elementsCloseByTime[i][1][2].type
+                )
+        
+            if elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][1]:
+                # debugLines += "DEBUG: time: %s, delta: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s)\n" % \
+                    # ( str(elementsCloseByTime[i][0]), \
+                      # str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]), \
+                      # elementsCloseByTime[i][1][0].attacker, \
+                      # elementsCloseByTime[i][1][0].target, \
+                      # elementsCloseByTime[i][1][0].type, \
+                      # elementsCloseByTime[i][1][1].attacker, \
+                      # elementsCloseByTime[i][1][1].target, \
+                      # elementsCloseByTime[i][1][1].type
+                    # )
+                
+                if (elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target and elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker) or \
+                   (elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker and elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target):
+                   linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+                        ( elementsCloseByTime[i][1][0].attacker, \
+                          elementsCloseByTime[i][1][0].type, \
+                          elementsCloseByTime[i][1][0].target, \
+                          elementsCloseByTime[i][1][1].type, \
+                          str(elementsCloseByTime[i][0]), \
+                          str(elementsCloseByTime[i][0][1] - elementsCloseByTime[i][0][0]))
+    
+            elif elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][2]:
+                # debugLines += "DEBUG: time: %s, delta: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s)\n" % \
+                    # ( str(elementsCloseByTime[i][0]), \
+                      # str(elementsCloseByTime[i][0][2] - elementsCloseByTime[i][0][0]), \
+                      # elementsCloseByTime[i][1][0].attacker, \
+                      # elementsCloseByTime[i][1][0].target, \
+                      # elementsCloseByTime[i][1][0].type, \
+                      # elementsCloseByTime[i][1][2].attacker, \
+                      # elementsCloseByTime[i][1][2].target, \
+                      # elementsCloseByTime[i][1][2].type
+                    # )
+                
+                if (elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][2].target and elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][2].attacker) or \
+                   (elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][2].attacker and elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][2].target):
+                   linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+                        ( elementsCloseByTime[i][1][0].attacker, \
+                          elementsCloseByTime[i][1][0].type, \
+                          elementsCloseByTime[i][1][0].target, \
+                          elementsCloseByTime[i][1][2].type, \
+                          str(elementsCloseByTime[i][0]), \
+                          str(elementsCloseByTime[i][0][2] - elementsCloseByTime[i][0][0]))
+                          
+            else: # elementsCloseByTime[i][0][1] != elementsCloseByTime[i][0][2]:
+                # debugLines += "DEBUG: time: %s, delta: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s)\n" % \
+                    # ( str(elementsCloseByTime[i][0]), \
+                      # str(elementsCloseByTime[i][0][2] - elementsCloseByTime[i][0][1]), \
+                      # elementsCloseByTime[i][1][1].attacker, \
+                      # elementsCloseByTime[i][1][1].target, \
+                      # elementsCloseByTime[i][1][1].type, \
+                      # elementsCloseByTime[i][1][2].attacker, \
+                      # elementsCloseByTime[i][1][2].target, \
+                      # elementsCloseByTime[i][1][2].type
+                    # )
+                
+                if (elementsCloseByTime[i][1][1].attacker == elementsCloseByTime[i][1][2].target and elementsCloseByTime[i][1][1].target == elementsCloseByTime[i][1][2].attacker) or \
+                   (elementsCloseByTime[i][1][1].target == elementsCloseByTime[i][1][2].attacker and elementsCloseByTime[i][1][1].attacker == elementsCloseByTime[i][1][2].target):
+                   linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+                        ( elementsCloseByTime[i][1][1].attacker, \
+                          elementsCloseByTime[i][1][1].type, \
+                          elementsCloseByTime[i][1][1].target, \
+                          elementsCloseByTime[i][1][2].type, \
+                          str(elementsCloseByTime[i][0]), \
+                          str(elementsCloseByTime[i][0][2] - elementsCloseByTime[i][0][1]))         
+    
+    elif len(elementsCloseByTime[i][0]) > 3:
+        debugLines += "DEBUG: len(elementsCloseByTime[i][0]) = %d\n" % (len(elementsCloseByTime[i][0])) 
+                         
 
 tmpComboStr += debugLines
 tmpComboStr += "\n"
