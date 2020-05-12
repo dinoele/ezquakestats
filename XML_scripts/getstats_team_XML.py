@@ -899,7 +899,20 @@ for i in xrange(len(elementsCloseByTime)):
     elif len(elementsCloseByTime[i][0]) == 3:
         if elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][1] and elementsCloseByTime[i][0][0] != elementsCloseByTime[i][0][2] and elementsCloseByTime[i][0][1] != elementsCloseByTime[i][0][2]:
             # all times are different
-            debugLines += "DEBUG: all times are different: time: %d\n" % (str(elementsCloseByTime[i][0])) 
+            debugLines += "DEBUG: all 3 times are different: time: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s) <-> attacker3(%s), target3(%s), wp3(%s)\n" % \
+                ( str(elementsCloseByTime[i][0]), \
+                  elementsCloseByTime[i][1][0].attacker, \
+                  elementsCloseByTime[i][1][0].target, \
+                  elementsCloseByTime[i][1][0].type, \
+                  elementsCloseByTime[i][1][1].attacker, \
+                  elementsCloseByTime[i][1][1].target, \
+                  elementsCloseByTime[i][1][1].type, \
+                  elementsCloseByTime[i][1][2].attacker, \
+                  elementsCloseByTime[i][1][2].target, \
+                  elementsCloseByTime[i][1][2].type
+                )
+            # TODO find potential mutual pair
+                
         else:
             debugLines += "DEBUG: len(elementsCloseByTime[i][0]) = 3, time: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s) <-> attacker3(%s), target3(%s), wp3(%s)\n" % \
                 ( str(elementsCloseByTime[i][0]), \
