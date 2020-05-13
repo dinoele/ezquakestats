@@ -44,7 +44,7 @@ def fillH2H(who,whom):
 plPrevFragsDict = {}
 
 def getFragsLine(players):
-    playersByFrags = sorted(players, key=methodcaller("frags"), reverse=True)
+    playersByFrags = sorted(players, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
     s = "[%s]" % (players[0].teamname)
 
     fragsSum = 0
@@ -756,7 +756,7 @@ if options.withScripts:
     resultString += "</pre>TEAM_RESULTS\n<pre>"
 
 s1 = ""
-players1ByFrags = sorted(players1, key=methodcaller("frags"), reverse=True)
+players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 for pl in players1ByFrags:
     if s1 == "":
         s1 = "[%s]:\n" % (pl.teamname)
@@ -769,7 +769,7 @@ for pl in players1ByFrags:
 resultString += "\n"
 
 s2 = ""
-players2ByFrags = sorted(players2, key=methodcaller("frags"), reverse=True)
+players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 for pl in players2ByFrags:
     if s2 == "":
         s2 = "[%s]:\n" % (pl.teamname)
@@ -784,7 +784,7 @@ resultString += "\n"
 if options.withScripts:
     resultString += "</pre>PLAYERS_ACHIEVEMENTS_PLACE\n<pre>"
 
-allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
+allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 
 totalStreaksHtmlTable = \
     HTML.Table(header_row=["Kill streaks (%d+)\n" % (ezstatslib.KILL_STREAK_MIN_VALUE), "Death streaks (%d+)\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)],
