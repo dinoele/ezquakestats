@@ -2485,7 +2485,8 @@ class Player:
         
         self.rl_attacks = -1
         
-        self.double_kills = []
+        self.double_kills = []  # [[target1,target2,wp1],...]
+        self.mutual_kills = []  # [[time,target,kill_wp,death_wp],..]
         
     def initPowerUpsByMinutes(self, minutesCnt):
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
@@ -3121,6 +3122,10 @@ class Player:
         for i in xrange(len(self.double_kills)):
             self.achievements.append( Achievement(AchievementType.DOUBLE_KILL, "killed %s and %s with one %s shot!" % (self.double_kills[i][0], self.double_kills[i][1], self.double_kills[i][2])) )
             
+        # COMBO_MUTUAL_KILL
+        if len(self.mutual_kills) >= 3:
+            self.achievements.append( Achievement(AchievementType.COMBO_MUTUAL_KILL, "fought bravely until the last blood drop %d times" % (len(self.mutual_kills))) )
+            
         if isTeamGame:
             # TEAMMATES_FAN
             if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
@@ -3178,6 +3183,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"  DONE
                         LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC    DONE
                         DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" #two kills with on shot  #XML_SPECIFIC    DONE
+                        COMBO_MUTUAL_KILL = 51,  # "Fight to the death!!"  3+ mutual kills       #XML_SPECIFIC    DONE
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3296,7 +3302,9 @@ class Achievement:
         if self.achtype == AchievementType.LIKE_AN_ANGEL:
             return "Like an angel - NO damage to teammates at all!!"
         if self.achtype == AchievementType.DOUBLE_KILL:
-            return "Two budgies slain with but a single missile"            
+            return "Two budgies slain with but a single missile"
+        if self.achtype == AchievementType.COMBO_MUTUAL_KILL:
+            return "Fight to the death!!"              
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3349,7 +3357,8 @@ class Achievement:
            self.achtype == AchievementType.KILL_STREAK            or \
            self.achtype == AchievementType.BALANCED_PLAYER        or \
            self.achtype == AchievementType.LIKE_AN_ANGEL          or \
-           self.achtype == AchievementType.DOUBLE_KILL:
+           self.achtype == AchievementType.DOUBLE_KILL            or \
+           self.achtype == AchievementType.COMBO_MUTUAL_KILL:
             return AchievementLevel.RARE_POSITIVE
       
         if self.achtype == AchievementType.HORRIBLE_FINISH  or \
@@ -3508,6 +3517,8 @@ class Achievement:
             return path + "ach_overtime.jpg"
         if self.achtype == AchievementType.DOUBLE_KILL:
             return path + "ach_double_kill.png"
+        if self.achtype == AchievementType.COMBO_MUTUAL_KILL:
+            return path + "ach_combo_mutual_kill.png"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:

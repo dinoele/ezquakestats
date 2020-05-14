@@ -901,6 +901,12 @@ for i in xrange(len(elementsByTime)):
 
         else:
             # TODO mutual kill
+            for pl in allplayers:
+                if pl.name == attacker1:
+                    pl.mutual_kills.append([tt,target1,wp1,wp2])
+                if pl.name == attacker2:
+                    pl.mutual_kills.append([tt,target2,wp2,wp1])            
+            
             ll = "OLOLO: %f mutual kill: (attacker1(%s), target1(%s), wp1(%s)); (attacker2(%s), target2(%s), wp2(%s)\n" % (tt, attacker1, target1, wp1, attacker2, target2, wp2)
             ezstatslib.logError(ll)
             tmpComboStr += ll
@@ -938,7 +944,13 @@ for i in xrange(len(elementsCloseByTime)):
                 
         if (elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target and elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker) or \
            (elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker and elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target):
-           linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+            for pl in allplayers:
+                if pl.name == elementsCloseByTime[i][1][0].attacker:
+                    pl.mutual_kills.append([(elementsCloseByTime[i][0][1] + elementsCloseByTime[i][0][0]) / 2.0,elementsCloseByTime[i][1][0].target,elementsCloseByTime[i][1][0].type,elementsCloseByTime[i][1][1].type])
+                if pl.name == elementsCloseByTime[i][1][1].attacker:
+                    pl.mutual_kills.append([(elementsCloseByTime[i][0][1] + elementsCloseByTime[i][0][0]) / 2.0,elementsCloseByTime[i][1][1].target,elementsCloseByTime[i][1][1].type,elementsCloseByTime[i][1][0].type])
+           
+            linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
                 ( elementsCloseByTime[i][1][0].attacker, \
                   elementsCloseByTime[i][1][0].type, \
                   elementsCloseByTime[i][1][0].target, \
@@ -961,6 +973,8 @@ for i in xrange(len(elementsCloseByTime)):
                   elementsCloseByTime[i][1][2].target, \
                   elementsCloseByTime[i][1][2].type
                 )
+            # TODO find potential mutual pair
+                
         else:
             debugLines += "DEBUG: len(elementsCloseByTime[i][0]) = 3, time: %s, attacker1(%s), target1(%s), wp1(%s) <-> attacker2(%s), target2(%s), wp2(%s) <-> attacker3(%s), target3(%s), wp3(%s)\n" % \
                 ( str(elementsCloseByTime[i][0]), \
@@ -989,7 +1003,13 @@ for i in xrange(len(elementsCloseByTime)):
                 
                 if (elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target and elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker) or \
                    (elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][1].attacker and elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][1].target):
-                   linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+                    for pl in allplayers:
+                        if pl.name == elementsCloseByTime[i][1][0].attacker:
+                            pl.mutual_kills.append([(elementsCloseByTime[i][0][1] + elementsCloseByTime[i][0][0]) / 2.0,elementsCloseByTime[i][1][0].target,elementsCloseByTime[i][1][0].type,elementsCloseByTime[i][1][1].type])
+                        if pl.name == elementsCloseByTime[i][1][1].attacker:
+                            pl.mutual_kills.append([(elementsCloseByTime[i][0][1] + elementsCloseByTime[i][0][0]) / 2.0,elementsCloseByTime[i][1][1].target,elementsCloseByTime[i][1][1].type,elementsCloseByTime[i][1][0].type])
+                                      
+                    linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
                         ( elementsCloseByTime[i][1][0].attacker, \
                           elementsCloseByTime[i][1][0].type, \
                           elementsCloseByTime[i][1][0].target, \
@@ -1011,7 +1031,13 @@ for i in xrange(len(elementsCloseByTime)):
                 
                 if (elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][2].target and elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][2].attacker) or \
                    (elementsCloseByTime[i][1][0].target == elementsCloseByTime[i][1][2].attacker and elementsCloseByTime[i][1][0].attacker == elementsCloseByTime[i][1][2].target):
-                   linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+                    for pl in allplayers:
+                        if pl.name == elementsCloseByTime[i][1][0].attacker:
+                            pl.mutual_kills.append([(elementsCloseByTime[i][0][2] + elementsCloseByTime[i][0][0]) / 2.0,elementsCloseByTime[i][1][0].target,elementsCloseByTime[i][1][0].type,elementsCloseByTime[i][1][2].type])
+                        if pl.name == elementsCloseByTime[i][1][2].attacker:
+                            pl.mutual_kills.append([(elementsCloseByTime[i][0][2] + elementsCloseByTime[i][0][0]) / 2.0,elementsCloseByTime[i][1][2].target,elementsCloseByTime[i][1][2].type,elementsCloseByTime[i][1][0].type])
+                   
+                    linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
                         ( elementsCloseByTime[i][1][0].attacker, \
                           elementsCloseByTime[i][1][0].type, \
                           elementsCloseByTime[i][1][0].target, \
@@ -1033,7 +1059,13 @@ for i in xrange(len(elementsCloseByTime)):
                 
                 if (elementsCloseByTime[i][1][1].attacker == elementsCloseByTime[i][1][2].target and elementsCloseByTime[i][1][1].target == elementsCloseByTime[i][1][2].attacker) or \
                    (elementsCloseByTime[i][1][1].target == elementsCloseByTime[i][1][2].attacker and elementsCloseByTime[i][1][1].attacker == elementsCloseByTime[i][1][2].target):
-                   linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
+                    for pl in allplayers:
+                        if pl.name == elementsCloseByTime[i][1][1].attacker:
+                            pl.mutual_kills.append([(elementsCloseByTime[i][0][2] + elementsCloseByTime[i][0][1]) / 2.0,elementsCloseByTime[i][1][1].target,elementsCloseByTime[i][1][1].type,elementsCloseByTime[i][1][2].type])
+                        if pl.name == elementsCloseByTime[i][1][2].attacker:
+                            pl.mutual_kills.append([(elementsCloseByTime[i][0][2] + elementsCloseByTime[i][0][1]) / 2.0,elementsCloseByTime[i][1][2].target,elementsCloseByTime[i][1][2].type,elementsCloseByTime[i][1][1].type])
+                   
+                    linesStr += "Mutual kill: %s(%s) vs. %s(%s), time: %s, delta: %s\n" % \
                         ( elementsCloseByTime[i][1][1].attacker, \
                           elementsCloseByTime[i][1][1].type, \
                           elementsCloseByTime[i][1][1].target, \
@@ -1516,7 +1548,18 @@ for pl in allplayersByFrags:
         
     print "%s: streaks: %s" % (pl.name, strkStr)
 
-print resultString
+# mutual kills 
+resultString += "\nMutual kills: \n"
+for pl in allplayers:
+    if len(pl.mutual_kills) != 0:
+        resultString += "%s(%d): " % (pl.name, len(pl.mutual_kills))
+        for mk in pl.mutual_kills:
+            resultString += "%f: %s(%s,%s), " % (mk[0], mk[1], mk[2], mk[3])
+        resultString += "\n"
+           
+resultString += "\n"    
+    
+# print resultString  RESULTPRINT
 
 # ============================================================================================================
 
