@@ -3094,7 +3094,7 @@ class Player:
         # FASTER_THAN_BULLET
         for strk in self.calculatedStreaks:
             if strk.count >= 5 and (strk.end - strk.start > 0) and (float(strk.end - strk.start) / (float)(strk.count)) <= 3.0:
-                self.achievements.append( Achievement(AchievementType.FASTER_THAN_BULLET, "streak {0:d} kills in {1:d} seconds - only {2:.3} seconds per kill".format(strk.count, (strk.end - strk.start), (float(strk.end - strk.start) / (float)(strk.count)))) )
+                self.achievements.append( Achievement(AchievementType.FASTER_THAN_BULLET, "streak {0:d} kills in {1:.3} seconds - only {2:.3} seconds per kill".format(strk.count, float(strk.end - strk.start), (float(strk.end - strk.start) / (float)(strk.count)))) )
 
         # NO_SUICIDES
         if self.playTime() >= 300 and self.suicides == 0:
