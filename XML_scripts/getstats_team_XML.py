@@ -1496,20 +1496,20 @@ for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
 
 # H2HDamage stats
 resultString += "\n"
-resultString += "Head-to-Head stats (who :: whom)\n"
+resultString += "Head-to-HeadDamage stats (who :: whom)\n"
 resultString += "[%s]\n" % (team1.name)
 for pl in sorted(players1, key=attrgetter("kills"), reverse=True):
     resStr = ""
     for el in sorted(headToHeadDamage[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
-    resultString += "{0:20s} {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, resStr)
+    resultString += "{0:20s} {1:3d} - {2:3d} :: {3:100s}\n".format(pl.name, pl.gvn, pl.tkn, resStr)
 resultString += "\n"
 resultString += "[%s]\n" % (team2.name)
 for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
     resStr = ""
     for el in sorted(headToHeadDamage[pl.name], key=lambda x: x[1], reverse=True):
         resStr += "%s%s(%d)" % ("" if resStr == "" else ", ", el[0], el[1])
-    resultString += "{0:20s} {1:3d} :: {2:100s}\n".format(pl.name, pl.kills, resStr)	
+    resultString += "{0:20s} {1:3d} - {2:3d} :: {3:100s}\n".format(pl.name, pl.gvn, pl.tkn, resStr)
 	
     
 # Players duels table
