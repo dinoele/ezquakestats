@@ -3138,57 +3138,57 @@ class Player:
 
 
 # DO NOT FORGET TO ADD NEW ITEMS TO description() METHOD
-AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 seconds without deaths  DONE
-                        SUICIDE_MASTER = 2, # "Suicide Master",   # 2 suicides in a row  DONE
-                        SUICIDE_KING = 3, # "Suicide King",   # 3++ suicides in a row  DONE
-                        DEATH_STREAK_PAIN = 4, # "What do you know about the pain?...", # 10++ death streak  DONE
-                        GREAT_FINISH = 5, # "Great Finish", # 2+ places up during the last minute
-                        FINISH_GURU = 6, # "Finish Guru", # 2+ places up during the last minute and win  DONE
-                        HORRIBLE_FINISH = 7, # "Horrible Finish - finished to play too early", # -2 places up during the last minute  DONE
-                        ALWAYS_THE_FIRST = 8, # "Always the 1st", # the 1st place from the 1st minute until the finish  DONE tmp img
-                        OVERTIME = 9, # "One of who didn't want to give up", # "Overtime - extra minutes of fight"  #DEATHMATCH_SPECIFIC  DONE
-                        SECOND_OVERTIME_REASON = 10, # "The 2nd overtime!",  # one of who didn't want to give up once more time
-                        HUNDRED_KILLS = 11, # "More than 100 kills", # 100++ kills  DONE tmp img
-                        HUNDRED_DEATHS = 12, # "More than 100 deaths", # 100++ deaths  DONE tmp img
-                        HUNDRED_FRAGS = 13, # "More than 100 frags", # 100++ frags  DONE tmp img
-                        RED_ARMOR_EATER = 14, # "Red armor eater", # 10+ red armors  DONE
-                        GREEN_ARMOR_EATER = 15, # "Green armor eater", # 10+ green armors  DONE
-                        YELLOW_ARMOR_EATER = 16, # "Yellow armor eater", # 10+ yellow armors  DONE
-                        MEGA_HEALTH_EATER = 17, # "Mega healths eater", # 10+ mega healths  DONE
-                        RED_ARMOR_ALLERGY = 18, # "Red armor allergy", # No red armors  DONE
-                        GREEN_ARMOR_ALLERGY = 19, # "Green armor allergy", # No green armors  DONE
-                        YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors  DONE
-                        MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths  DONE
-                        CHILD_KILLER = 22, # "Child killer", # 10+ spawn frags  DONE
-                        ALWAYS_THE_LAST = 23, # "Always the last", # the last place from the 1st minute until the finish  DONE
-                        ROCKETS_LOVER = 24, # "Rockets lover", # all kills made via rocket launcher  DONE
-                        DUEL_WINNER = 25, # "Duel winner", # duel winner  DONE
-                        SNIPER = 26, # "Sniper", # direct hit > 40  DONE
-                        RAINBOW_FLAG = 27, # "Like rainbow flag - I hope today is not Aug 2",  # 10+ each of armors  DONE
-                        PERSONAL_STALKER = 28, # "Personal stalker", # killed one player more than all others taken together DONE
-                        SELF_DESTRUCTOR = 29, # "Self destructor - the main your enemy is yourself", # suicided more than killed any other player  DONE
-                        OVERTIME_LOOSERS = 30, # "Looooooosers go home", # both the 1st and the 2nd places before overtime are finally below the 2nd place
-                        PHENIX_BIRD = 31, # "Like a Phoenix bird", # won after the last place on the 4th minute
-                        TEAM_BEST_FRIEND_KILLER = 32, # "With friends like that, who needs enemies?" # maximum team kills  DONE
-                        TEAM_MAXIMUM_TEAMDEATHS = 33, # "My friends are THE BEST OF THE BEST!!" # maximum team deaths  DONE
-                        LUMBERJACK = 34, # "Lumberjack" # 3+ axe kills  DONE
-                        ELECTROMASTER = 35, # "Electomaster" # 40%+ and 20+ kills by shaft (thanks to Onanim)  DONE
-                        WHITEWASH = 36, # "Whitewash - full duel victory and total domination" # dry win duel  DONE
-                        FASTER_THAN_BULLET = 37,  # "Faster than bullet"  # streak 5+, 3.0- seconds per kill DONE
-                        DEATH_CHEATER = 38,  # "Death cheater"  # less than 50% of average deaths  DONE
-                        TEAMMATES_FAN = 39,  # "Teammates fan - no team deaths and no team kills"  # no teamkills and no teamdeaths  DONE
-                        NO_SUICIDES = 40, # "I love this life!! No suicides at all"  # no suicides  DONE
-                        UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons"  DONE
-                        MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"  DONE
-                        LONG_LIVE_KING = 43, #"Long Live and Prosper Like A King",  # the 1st 60 seconds without deaths  DONE
+AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 seconds without deaths                                  DONE
+                        SUICIDE_MASTER = 2, # "Suicide Master",   # 2 suicides in a row                                                 DONE
+                        SUICIDE_KING = 3, # "Suicide King",   # 3++ suicides in a row                                                   DONE
+                        DEATH_STREAK_PAIN = 4, # "What do you know about the pain?...", # 10++ death streak                             DONE
+                        GREAT_FINISH = 5, # "Great Finish", # 2+ places up during the last minute                                           #TODO
+                        FINISH_GURU = 6, # "Finish Guru", # 2+ places up during the last minute and win                                 DONE
+                        HORRIBLE_FINISH = 7, # "Horrible Finish - finished to play too early", # -2 places up during the last minute    DONE
+                        ALWAYS_THE_FIRST = 8, # "Always the 1st", # the 1st place from the 1st minute until the finish                  DONE
+                        OVERTIME = 9, # "One of who didn't want to give up", # "Overtime - extra minutes of fight" #DEATHMATCH_SPECIFIC DONE
+                        SECOND_OVERTIME_REASON = 10, # "The 2nd overtime!",  # one of who didn't want to give up once more time             #TODO
+                        HUNDRED_KILLS = 11, # "More than 100 kills", # 100++ kills                                                      DONE tmp img
+                        HUNDRED_DEATHS = 12, # "More than 100 deaths", # 100++ deaths                                                   DONE tmp img
+                        HUNDRED_FRAGS = 13, # "More than 100 frags", # 100++ frags                                                      DONE tmp img
+                        RED_ARMOR_EATER = 14, # "Red armor eater", # 10+ red armors                                                     DONE
+                        GREEN_ARMOR_EATER = 15, # "Green armor eater", # 10+ green armors                                               DONE
+                        YELLOW_ARMOR_EATER = 16, # "Yellow armor eater", # 10+ yellow armors                                            DONE
+                        MEGA_HEALTH_EATER = 17, # "Mega healths eater", # 10+ mega healths                                              DONE
+                        RED_ARMOR_ALLERGY = 18, # "Red armor allergy", # No red armors                                                  DONE
+                        GREEN_ARMOR_ALLERGY = 19, # "Green armor allergy", # No green armors                                            DONE
+                        YELLOW_ARMOR_ALLERGY = 20, # "Yellow armor allergy", # No yellow armors                                         DONE
+                        MEGA_HEALTH_ALLERGY = 21, # "Mega healths allergy", # No mega healths                                           DONE
+                        CHILD_KILLER = 22, # "Child killer", # 10+ spawn frags                                                          DONE
+                        ALWAYS_THE_LAST = 23, # "Always the last", # the last place from the 1st minute until the finish                DONE
+                        ROCKETS_LOVER = 24, # "Rockets lover", # all kills made via rocket launcher                                     DONE
+                        DUEL_WINNER = 25, # "Duel winner", # duel winner                                                                DONE
+                        SNIPER = 26, # "Sniper", # direct hit > 40                                                                      DONE
+                        RAINBOW_FLAG = 27, # "Like rainbow flag - I hope today is not Aug 2",  # 10+ each of armors                     DONE
+                        PERSONAL_STALKER = 28, # "Personal stalker", # killed one player more than all others taken together            DONE
+                        SELF_DESTRUCTOR = 29, # "Self destructor - the main your enemy is yourself", # suicided more than killed any other player               DONE
+                        OVERTIME_LOOSERS = 30, # "Looooooosers go home", # both the 1st and the 2nd places before overtime are finally below the 2nd place          #TODO
+                        PHENIX_BIRD = 31, # "Like a Phoenix bird", # won after the last place in the middle of the game                 #TODO
+                        TEAM_BEST_FRIEND_KILLER = 32, # "With friends like that, who needs enemies?" # maximum team kills               DONE
+                        TEAM_MAXIMUM_TEAMDEATHS = 33, # "My friends are THE BEST OF THE BEST!!" # maximum team deaths                   DONE
+                        LUMBERJACK = 34, # "Lumberjack" # 3+ axe kills                                                                  DONE
+                        ELECTROMASTER = 35, # "Electomaster" # 40%+ and 20+ kills by shaft (thanks to Onanim)                           DONE
+                        WHITEWASH = 36, # "Whitewash - full duel victory and total domination" # dry win duel                           DONE
+                        FASTER_THAN_BULLET = 37,  # "Faster than bullet"  # streak 5+, 3.0- seconds per kill                            DONE
+                        DEATH_CHEATER = 38,  # "Death cheater"  # less than 50% of average deaths                                       DONE
+                        TEAMMATES_FAN = 39,  # "Teammates fan - no team deaths and no team kills"  # no teamkills and no teamdeaths     DONE
+                        NO_SUICIDES = 40, # "I love this life!! No suicides at all"  # no suicides                                      DONE
+                        UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons"                                             DONE
+                        MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"                                              DONE
+                        LONG_LIVE_KING = 43, #"Long Live and Prosper Like A King",  # the 1st 60 seconds without deaths                 DONE
                         HULK_SMASH = 44, #"Hulk SMASH!!" : "frags number {0:d} much more that the 2nd place({1:d})"  # the 1st place frags is twice bigger than the 2nd place  DONE
-                        KILL_STREAK = 45, # "Killing without rest" # 15+ kill streak   DONE
-                        CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags" DONE
-                        GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl  DONE
-                        BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"  DONE
-                        LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC    DONE
+                        KILL_STREAK = 45, # "Killing without rest" # 15+ kill streak                                                    DONE
+                        CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags"                                    DONE
+                        GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl                                         DONE
+                        BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"                        DONE
+                        LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC                         DONE
                         COMBO_DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" : "killed %s and %s with one %s shot!"   #two kills with on shot  #XML_SPECIFIC    DONE
-                        COMBO_MUTUAL_KILL = 51,  # "Fight to the death!!" : "fought bravely until the last blood drop %d times"     3+ mutual kills   #XML_SPECIFIC    DONE
+                        COMBO_MUTUAL_KILL = 51,  # "Fight to the death!!" : "fought bravely until the last blood drop %d times"     3+ mutual kills   #XML_SPECIFIC                 DONE
                         COMBO_KAMIKAZE = 52,  # "Kamikaze - one way ticket!!" : "The sun on the wings - move forward! For the last time, the enemy will see the sunrise! One plane for one enemy! %d times..."  3+ suicide+kill   #XML_SPECIFIC    DONE
                         
                                             )
@@ -3531,10 +3531,10 @@ class Achievement:
             return path + "ach_combo_mutual_kill.png"
         if self.achtype == AchievementType.COMBO_KAMIKAZE:
             return path + "ach_combo_kamikaze.png"
+        if self.achtype == AchievementType.ALWAYS_THE_FIRST:
+            return path + "ach_always_the_first.jpg"            
 
         # temp images
-        if self.achtype == AchievementType.ALWAYS_THE_FIRST:
-            return path + "ach_always_the_first.jpg"
         if self.achtype == AchievementType.HUNDRED_KILLS:
             return path + "ach_100_kills_TMP.jpg"
         if self.achtype == AchievementType.HUNDRED_DEATHS:
