@@ -3118,9 +3118,9 @@ class Player:
         if self.overtime_frags != -1:
             self.achievements.append( Achievement(AchievementType.OVERTIME, "goes to the overtime with {0:d} frags".format(self.overtime_frags)) )
 
-        # DOUBLE_KILL
+        # COMBO_DOUBLE_KILL
         for i in xrange(len(self.double_kills)):
-            self.achievements.append( Achievement(AchievementType.DOUBLE_KILL, "killed %s and %s with one %s shot!" % (self.double_kills[i][0], self.double_kills[i][1], self.double_kills[i][2])) )
+            self.achievements.append( Achievement(AchievementType.COMBO_DOUBLE_KILL, "killed %s and %s with one %s shot!" % (self.double_kills[i][0], self.double_kills[i][1], self.double_kills[i][2])) )
             
         # COMBO_MUTUAL_KILL
         if len(self.mutual_kills) >= 3:
@@ -3182,8 +3182,9 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl  DONE
                         BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"  DONE
                         LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC    DONE
-                        DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" #two kills with on shot  #XML_SPECIFIC    DONE
+                        COMBO_DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" #two kills with on shot  #XML_SPECIFIC    DONE
                         COMBO_MUTUAL_KILL = 51,  # "Fight to the death!!"  3+ mutual kills       #XML_SPECIFIC    DONE
+                        
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
@@ -3301,7 +3302,7 @@ class Achievement:
             return "Balanced player - no one wants to lose"
         if self.achtype == AchievementType.LIKE_AN_ANGEL:
             return "Like an angel - NO damage to teammates at all!!"
-        if self.achtype == AchievementType.DOUBLE_KILL:
+        if self.achtype == AchievementType.COMBO_DOUBLE_KILL:
             return "Two budgies slain with but a single missile"
         if self.achtype == AchievementType.COMBO_MUTUAL_KILL:
             return "Fight to the death!!"              
@@ -3357,7 +3358,7 @@ class Achievement:
            self.achtype == AchievementType.KILL_STREAK            or \
            self.achtype == AchievementType.BALANCED_PLAYER        or \
            self.achtype == AchievementType.LIKE_AN_ANGEL          or \
-           self.achtype == AchievementType.DOUBLE_KILL            or \
+           self.achtype == AchievementType.COMBO_DOUBLE_KILL            or \
            self.achtype == AchievementType.COMBO_MUTUAL_KILL:
             return AchievementLevel.RARE_POSITIVE
       
@@ -3515,7 +3516,7 @@ class Achievement:
             return path + "ach_like_an_angel.png"
         if self.achtype == AchievementType.OVERTIME:
             return path + "ach_overtime.jpg"
-        if self.achtype == AchievementType.DOUBLE_KILL:
+        if self.achtype == AchievementType.COMBO_DOUBLE_KILL:
             return path + "ach_double_kill.png"
         if self.achtype == AchievementType.COMBO_MUTUAL_KILL:
             return path + "ach_combo_mutual_kill.png"
