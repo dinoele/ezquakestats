@@ -2327,16 +2327,24 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     # highcharts RL skill -->
     # div
-    rlSkillDivStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_DIV_AND_TABLE_TAG
-    tableRowsStr = ""
-    percentsVal = 100 / len(allplayersByFrags)
-    for pl in allplayersByFrags:
-       tRowStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_TABLE_ROW
-       tRowStr = tRowStr.replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))
-       tRowStr = tRowStr.replace("TD_WIDTH", "%d" % (percentsVal))
-       tableRowsStr += tRowStr
-       
-    rlSkillDivStr = rlSkillDivStr.replace("TABLE_ROWS", tableRowsStr)
+    rlSkillDivStrs = ""
+    rowsCount = (len(allplayersByFrags) / 3) + (0 if len(allplayersByFrags) % 3 == 0 else 1)
+    
+    print "rowsCount", rowsCount
+    
+    for rowNum in xrange(rowsCount):
+        rlSkillDivStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_DIV_AND_TABLE_TAG
+        tableRowsStr = ""
+        currentRowCount = 3 if rowNum < (rowsCount-1) or len(allplayersByFrags) % 3 == 0 else len(allplayersByFrags) % 3
+        percentsVal = 100 / currentRowCount
+        for j in xrange(currentRowCount):
+           tRowStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_TABLE_ROW
+           tRowStr = tRowStr.replace("PLAYERNAME", ezstatslib.escapePlayerName(allplayersByFrags[j+rowNum*3].name))
+           tRowStr = tRowStr.replace("TD_WIDTH", "%d" % (percentsVal))
+           tableRowsStr += tRowStr
+           
+        rlSkillDivStr = rlSkillDivStr.replace("TABLE_ROWS", tableRowsStr)
+        rlSkillDivStrs += rlSkillDivStr
     
     for pl in allplayersByFrags:
         rlSkillFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_FUNCTION_TEMPLATE).replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))    
@@ -2384,7 +2392,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("POWER_UPS_TIMELINE_PLACE", powerUpsTimelineDivStr)
     resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)
     resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_DEATHMATCH_PLAYERS_RANK_PROGRESS_DIV_TAG)    
-    resStr = resStr.replace("HIGHCHART_RL_SKILL_PLACE", rlSkillDivStr)
+    resStr = resStr.replace("HIGHCHART_RL_SKILL_PLACE", rlSkillDivStrs)
     
     f.write(resStr)
     

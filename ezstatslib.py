@@ -1881,7 +1881,7 @@ HTML_SCRIPT_HIGHCHARTS_RL_SKILL_DIV_AND_TABLE_TAG = \
 "TABLE_ROWS" \
 "        </tr>\n" \
 "      </table>\n" \
-"</div>"
+"</div>\n"
 
 HTML_SCRIPT_HIGHCHARTS_RL_SKILL_TABLE_ROW = \
 "          <td style=\"width: TD_WIDTH%\">\n" \
