@@ -812,6 +812,10 @@ for i in xrange(len(elementsByTime)):
                 else:
                     # suicide + kill
                     ll = "OLOLO: %f suicide + kill(%s) by %s [wps: %s + %s]\n" % (tt, target2 if isSuicide1 else target1, attackPl, wp1 if isSuicide1 else wp2, wp2 if isSuicide1 else wp1)
+                    for pl in allplayers:
+                        if pl.name == attackPl:
+                            pl.suicide_kills.append([tt,target2 if isSuicide1 else target1,wp2 if isSuicide1 else wp1])
+                    
                     ezstatslib.logError(ll)
                     tmpComboStr += ll
             

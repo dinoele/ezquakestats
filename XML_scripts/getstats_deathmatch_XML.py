@@ -784,10 +784,8 @@ for element in elements:
                             if pl.rl_damages_gvn[len(pl.rl_damages_gvn)-1][1] == whom: # the same whom
                                 pl.rl_damages_gvn[len(pl.rl_damages_gvn)-1][0] += value
                                 pl.rl_damages_gvn[len(pl.rl_damages_gvn)-1][2] = 0
-                                print "PISH"
                             else:
                                 pl.rl_damages_gvn.append([value,whom,element.armor]);
-                                print "PISH FAIL"
                         else:
                             pl.rl_damages_gvn.append([value,whom,element.armor]);
                     isFoundWho = True
@@ -861,6 +859,10 @@ for i in xrange(len(elementsByTime)):
                     # # suicide + kill
                     # ezstatslib.logError("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
                     # tmpComboStr += ("OLOLO: %f suicide + kill(%s) by %s\n" % (tt, target2 if isSuicide1 else target1, attackPl))
+
+                for pl in allplayers:
+                    if pl.name == attackPl:
+                        pl.suicide_kills.append([tt,target2 if isSuicide1 else target1,wp2 if isSuicide1 else wp1])
                     
                 ll = "OLOLO: %f suicide + kill(%s) by %s [wps: %s + %s]\n" % (tt, target2 if isSuicide1 else target1, attackPl, wp1 if isSuicide1 else wp2, wp2 if isSuicide1 else wp1)
                 ezstatslib.logError(ll)

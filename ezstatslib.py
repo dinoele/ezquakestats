@@ -2487,6 +2487,7 @@ class Player:
         
         self.double_kills = []  # [[target1,target2,wp1],...]
         self.mutual_kills = []  # [[time,target,kill_wp,death_wp],..]
+        self.suicide_kills = []  # [[time,target,wp],..]
         
     def initPowerUpsByMinutes(self, minutesCnt):
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
@@ -3126,6 +3127,10 @@ class Player:
         if len(self.mutual_kills) >= 3:
             self.achievements.append( Achievement(AchievementType.COMBO_MUTUAL_KILL, "fought bravely until the last blood drop %d times" % (len(self.mutual_kills))) )
             
+        # COMBO_KAMIKAZE
+        if len(self.suicide_kills) >= 3:
+            self.achievements.append( Achievement(AchievementType.COMBO_KAMIKAZE, "The sun on the wings - move forward! For the last time, the enemy will see the sunrise! One plane for one enemy! %d times..." % (len(self.suicide_kills))) )            
+            
         if isTeamGame:
             # TEAMMATES_FAN
             if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
@@ -3176,14 +3181,15 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         UNIVERSAL_SOLDIER = 41, # "Killed players with more than 5 weapons"  DONE
                         MULTIPLE_PENETRATION = 42, # "Got killed with more than 5 weapons"  DONE
                         LONG_LIVE_KING = 43, #"Long Live and Prosper Like A King",  # the 1st 60 seconds without deaths  DONE
-                        HULK_SMASH = 44, #"Hulk SMASH!!",  # the 1st place frags is twice bigger than the 2nd place  DONE
+                        HULK_SMASH = 44, #"Hulk SMASH!!" : "frags number {0:d} much more that the 2nd place({1:d})"  # the 1st place frags is twice bigger than the 2nd place  DONE
                         KILL_STREAK = 45, # "Killing without rest" # 15+ kill streak   DONE
                         CHILD_LOVER = 46, # "Children are the flowers of our lives - no spawn frags" DONE
                         GL_LOVER = 47,  # "Grenades is my passion!"  # 45%+ and 20+ kills by gl  DONE
                         BALANCED_PLAYER = 48, # "Balanced player - no one wants to lose: all %d duels are draws"  DONE
                         LIKE_AN_ANGEL = 49,  # "Like an angel - NO damage to teammates at all!!"  #XML_SPECIFIC    DONE
-                        COMBO_DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" #two kills with on shot  #XML_SPECIFIC    DONE
-                        COMBO_MUTUAL_KILL = 51,  # "Fight to the death!!"  3+ mutual kills       #XML_SPECIFIC    DONE
+                        COMBO_DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" : "killed %s and %s with one %s shot!"   #two kills with on shot  #XML_SPECIFIC    DONE
+                        COMBO_MUTUAL_KILL = 51,  # "Fight to the death!!" : "fought bravely until the last blood drop %d times"     3+ mutual kills   #XML_SPECIFIC    DONE
+                        COMBO_KAMIKAZE = 52,  # "Kamikaze - one way ticket!!" : "The sun on the wings - move forward! For the last time, the enemy will see the sunrise! One plane for one enemy! %d times..."  3+ suicide+kill   #XML_SPECIFIC    DONE
                         
                                             )
 
@@ -3305,7 +3311,9 @@ class Achievement:
         if self.achtype == AchievementType.COMBO_DOUBLE_KILL:
             return "Two budgies slain with but a single missile"
         if self.achtype == AchievementType.COMBO_MUTUAL_KILL:
-            return "Fight to the death!!"              
+            return "Fight to the death!!"
+        if self.achtype == AchievementType.COMBO_KAMIKAZE:
+            return "Kamikaze - one way ticket!!"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3338,7 +3346,8 @@ class Achievement:
            self.achtype == AchievementType.TEAMMATES_FAN      or \
            self.achtype == AchievementType.NO_SUICIDES        or \
            self.achtype == AchievementType.CHILD_LOVER        or \
-           self.achtype == AchievementType.GL_LOVER:
+           self.achtype == AchievementType.GL_LOVER           or \
+           self.achtype == AchievementType.COMBO_KAMIKAZE:
             return AchievementLevel.ADVANCE_POSITIVE            
             
         if self.achtype == AchievementType.SUICIDE_KING    or \
@@ -3520,6 +3529,8 @@ class Achievement:
             return path + "ach_double_kill.png"
         if self.achtype == AchievementType.COMBO_MUTUAL_KILL:
             return path + "ach_combo_mutual_kill.png"
+        if self.achtype == AchievementType.COMBO_KAMIKAZE:
+            return path + "ach_combo_kamikaze.png"
 
         # temp images
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
