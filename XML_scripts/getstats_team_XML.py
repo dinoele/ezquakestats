@@ -642,7 +642,7 @@ for element in elements:
             ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
             if weap == "lg_beam" or weap == "lg_dis":
                 weap = "lg"
-            elif weap == "stomp":
+            elif weap == "stomp" or weap == "lava":
                 weap = "other"  # TODO fall on the player  # TODO ULTRA RARE ACH
             else:
                 exit(0)
@@ -709,7 +709,7 @@ for element in elements:
             ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
             if weap == "lg_beam":
                 weap = "lg"
-            elif weap == "fall" or weap == "squish":
+            elif weap == "fall" or weap == "squish" or weap == "lava":
                 who = whom
                 weap = "other"  # TODO world -> whom
             elif weap == "stomp":

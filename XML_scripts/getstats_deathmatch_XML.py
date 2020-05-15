@@ -716,7 +716,7 @@ for element in elements:
             ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
             if weap == "lg_beam" or weap == "lg_dis":
                 weap = "lg"
-            elif weap == "stomp":
+            elif weap == "stomp" or weap == "squish" or weap == "lava":
                 weap = "other"  # TODO fall on the player  # TODO ULTRA RARE ACH
             else:
                 exit(0)
@@ -760,7 +760,7 @@ for element in elements:
             ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
             if weap == "lg_beam":
                 weap = "lg"
-            elif weap == "fall" or weap == "squish":
+            elif weap == "fall" or weap == "squish" or weap == "lava":
                 who = whom
                 weap = "other"  # TODO world -> whom
             elif weap == "stomp":
@@ -2482,7 +2482,7 @@ otherFiles = []
 
 for fname in files:
     if "html" in fname and len(fname) != 0 and fname[0] == "N":
-        logHeadStr = subprocess.check_output(["head.exe", "%s" % (ezstatslib.REPORTS_FOLDER + fname)])
+        logHeadStr = subprocess.check_output(["head.exe", "%s" % (ezstatslib.REPORTS_FOLDER + fname)])  # TODO check for win vs. linux
         if "GAME_PLAYERS" in logHeadStr:
             playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
                 
@@ -2632,7 +2632,7 @@ for el in sorted_filesMap: # el: (datetime.datetime(2016, 5, 5, 0, 0), [[], [ ['
         # logf = open("../" + alllist[i][0], "r")
         # linesCnt = 0        
         
-        logHeadStr = subprocess.check_output(["head.exe", "%s" % (ezstatslib.REPORTS_FOLDER + alllist[i][0])])
+        logHeadStr = subprocess.check_output(["head.exe", "%s" % (ezstatslib.REPORTS_FOLDER + alllist[i][0])])  # TODO check for win vs. linux
         if "GAME_PLAYERS" in logHeadStr:
             playsStr = logHeadStr.split("GAME_PLAYERS")[1].split("-->")[0]
                 
@@ -2840,7 +2840,7 @@ str += "]"
 
 jsonPath =  filePathFull.replace(ezstatslib.REPORTS_FOLDER, ezstatslib.REPORTS_FOLDER + "json/")
 jsonPath += ".json"
-jsonf = open(jsonPath, "w")
+jsonf = open(jsonPath, "w")  # TODO check and create folder if needed
 jsonf.write(str)
 jsonf.close()
 	
