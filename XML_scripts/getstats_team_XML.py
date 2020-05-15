@@ -1797,9 +1797,14 @@ def writeHtmlWithScripts(f, teams, resStr):
 
         rowLines += "data: [[0,0]"
 
-        for minEl in matchProgressDictEx2:
-            rowLines += ",[%d,%d]" % (minEl[tt.name][0], minEl[tt.name][1])  # TODO format, now is 0.500000
-
+        curSec = -1
+        curSevVal = -1
+        for minEl in matchProgressDictEx2:                        
+            if curSec == -1 or curSec != int(minEl[tt.name][0]):
+                curSec = int(minEl[tt.name][0])
+                curSevVal = minEl[tt.name][1]                
+            rowLines += ",[%d,%d]" % (minEl[tt.name][0], curSevVal)            
+            
         rowLines += "]\n"
 
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
