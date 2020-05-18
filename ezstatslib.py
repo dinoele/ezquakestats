@@ -3383,62 +3383,79 @@ class Achievement:
 
     @staticmethod    
     def getBorderColor(achlevel):
-        if achlevel == AchievementLevel.BASIC_POSITIVE:
+        # if achlevel == AchievementLevel.BASIC_POSITIVE:
+            # return "green"
+        # if achlevel == AchievementLevel.BASIC_NEGATIVE:
+            # return "#b32f25"  # dark red
+        # if achlevel == AchievementLevel.ADVANCE_POSITIVE:
+            # return "#09e9ed"  
+        # if achlevel == AchievementLevel.ADVANCE_NEGATIVE:
+            # return "#f02313"  # light red
+        # if achlevel == AchievementLevel.RARE_POSITIVE:
+            # return "gold"
+        # if achlevel == AchievementLevel.RARE_NEGATIVE:
+            # return "#391366"  # dark purple
+        # if achlevel == AchievementLevel.ULTRA_RARE:
+            # return "#cd0ceb"  # purple
+            
+        if achlevel == AchievementLevel.BASIC_POSITIVE or \
+           achlevel == AchievementLevel.BASIC_NEGATIVE:
             return "green"
-        if achlevel == AchievementLevel.BASIC_NEGATIVE:
-            return "#b32f25"  # dark red
-        if achlevel == AchievementLevel.ADVANCE_POSITIVE:
+            
+        if achlevel == AchievementLevel.ADVANCE_POSITIVE or \
+           achlevel == AchievementLevel.ADVANCE_NEGATIVE:
             return "#09e9ed"  
-        if achlevel == AchievementLevel.ADVANCE_NEGATIVE:
-            return "#f02313"  # light red
-        if achlevel == AchievementLevel.RARE_POSITIVE:
+        
+        if achlevel == AchievementLevel.RARE_POSITIVE or \
+           achlevel == AchievementLevel.RARE_NEGATIVE:
             return "gold"
-        if achlevel == AchievementLevel.RARE_NEGATIVE:
-            return "#391366"  # dark purple
+
         if achlevel == AchievementLevel.ULTRA_RARE:
-            return "#cd0ceb"  # purple
+            return "#cd0ceb"  # purple            
 
     @staticmethod
-    def generateAchievementsLevelLegendTable():
+    def generateAchievementsLevelLegendTable(oneLine = True):
         achLevelsHtmlTable = HTML.Table(border="0", cellspacing="0", style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt;")
-        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
-                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_NEGATIVE)),
-                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_POSITIVE)),
-                                    # HTML.TableCell("Basic level") ] ))
-        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
-                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_NEGATIVE)),
-                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_POSITIVE)),
-                                    # HTML.TableCell("Advanced level") ] ))
-        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
-                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_NEGATIVE)),
-                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_POSITIVE)),
-                                    # HTML.TableCell("Rare level") ] ))
-        # achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
-                                    # HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ULTRA_RARE)),
-                                    # HTML.TableCell("<pre> </pre>"),
-                                    # HTML.TableCell("UltraRare level") ] ))
 
-        achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
-                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_NEGATIVE)),
-                                    HTML.TableCell(" "),
-                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_POSITIVE)),
-                                    HTML.TableCell("Basic level"),
-                                    HTML.TableCell("<pre>   </pre>"),
-        
-                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_NEGATIVE)),
-                                    HTML.TableCell(" "),
-                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_POSITIVE)),
-                                    HTML.TableCell("Advanced level"),
-                                    HTML.TableCell("<pre>   </pre>"),
-        
-                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_NEGATIVE)),
-                                    HTML.TableCell(" "),
-                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_POSITIVE)),
-                                    HTML.TableCell("Rare level"),
-                                    HTML.TableCell("<pre>   </pre>"),
-        
-                                    HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ULTRA_RARE)),                                    
-                                    HTML.TableCell("UltraRare level") ] ))
+        if oneLine:
+            achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
+                                HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_NEGATIVE)),
+                                HTML.TableCell("Basic level"),
+                                HTML.TableCell("<pre>   </pre>"),
+    
+                                HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_NEGATIVE)),
+                                HTML.TableCell("Advanced level"),
+                                HTML.TableCell("<pre>   </pre>"),
+    
+                                HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_NEGATIVE)),                                
+                                HTML.TableCell("Rare level"),
+                                HTML.TableCell("<pre>   </pre>"),
+    
+                                HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ULTRA_RARE)),                                    
+                                HTML.TableCell("UltraRare level") ] ))
+
+        else:
+            achLevelsHtmlTable.rows.append( HTML.TableRow(cells=[ 
+                                        HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_NEGATIVE)),
+                                        HTML.TableCell(" "),
+                                        HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.BASIC_POSITIVE)),
+                                        HTML.TableCell("Basic level"),
+                                        HTML.TableCell("<pre>   </pre>"),
+            
+                                        HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_NEGATIVE)),
+                                        HTML.TableCell(" "),
+                                        HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ADVANCE_POSITIVE)),
+                                        HTML.TableCell("Advanced level"),
+                                        HTML.TableCell("<pre>   </pre>"),
+            
+                                        HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_NEGATIVE)),
+                                        HTML.TableCell(" "),
+                                        HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.RARE_POSITIVE)),
+                                        HTML.TableCell("Rare level"),
+                                        HTML.TableCell("<pre>   </pre>"),
+            
+                                        HTML.TableCell("<pre> </pre>", bgcolor=Achievement.getBorderColor(AchievementLevel.ULTRA_RARE)),                                    
+                                        HTML.TableCell("UltraRare level") ] ))
                                     
         return str(achLevelsHtmlTable)
                     
