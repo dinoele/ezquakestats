@@ -915,6 +915,26 @@ for i in xrange(len(elementsByTime)):
 
     elif deaths >= 3:
         # TODO
+        if deaths == 3:
+            attacker = ""            
+            isAttackerTheSame = True
+            targets = []
+            wps = []
+            for j in xrange(len(elementsByTime[i][1])):
+                if isinstance(elementsByTime[i][1][j], DeathElement):
+                    targets.append(elementsByTime[i][1][j].target)
+                    wps.append(elementsByTime[i][1][j].type)
+                    if attacker == "":
+                        attacker = elementsByTime[i][1][j].attacker
+                    else:
+                        if attacker != elementsByTime[i][1][j].attacker:
+                            isAttackerTheSame = False
+
+            if isAttackerTheSame:
+                for pl in allplayers:
+                    if pl.name == attacker:
+                        pl.triple_kills.append([tt,targets[0],targets[1],targets[2],wps[0]])
+        
         resStr = ""
         deathNum = 1
         for j in xrange(len(elementsByTime[i][1])):

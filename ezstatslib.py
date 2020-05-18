@@ -2486,6 +2486,7 @@ class Player:
         self.rl_attacks = -1
         
         self.double_kills = []  # [[target1,target2,wp1],...]
+        self.triple_kills = []  # [[time,target1,target2,target3,wp],...]
         self.mutual_kills = []  # [[time,target,kill_wp,death_wp],..]
         self.suicide_kills = []  # [[time,target,wp],..]
         
@@ -3131,6 +3132,10 @@ class Player:
         if len(self.suicide_kills) >= 3:
             self.achievements.append( Achievement(AchievementType.COMBO_KAMIKAZE, "The sun on the wings - move forward! For the last time, the enemy will see the sunrise! One plane for one enemy! %d times..." % (len(self.suicide_kills))) )            
             
+        # COMBO_TRIPLE_KILL
+        for i in xrange(len(self.triple_kills)):
+            self.achievements.append( Achievement(AchievementType.COMBO_TRIPLE_KILL, "killed %s, %s and %s with one %s shot!" % (self.triple_kills[i][1], self.triple_kills[i][2], self.triple_kills[i][3], self.triple_kills[i][4])) )
+            
         if isTeamGame:
             # TEAMMATES_FAN
             if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
@@ -3190,6 +3195,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         COMBO_DOUBLE_KILL = 50,  # "Two budgies slain with but a single missile" : "killed %s and %s with one %s shot!"   #two kills with on shot  #XML_SPECIFIC    DONE
                         COMBO_MUTUAL_KILL = 51,  # "Fight to the death!!" : "fought bravely until the last blood drop %d times"     3+ mutual kills   #XML_SPECIFIC                 DONE
                         COMBO_KAMIKAZE = 52,  # "Kamikaze - one way ticket!!" : "The sun on the wings - move forward! For the last time, the enemy will see the sunrise! One plane for one enemy! %d times..."  3+ suicide+kill   #XML_SPECIFIC    DONE
+                        COMBO_TRIPLE_KILL = 53,  # "Three enemies with a single shot" : "killed %s, %s and %s with one %s shot!"   #three kills with on shot  #XML_SPECIFIC    DONE
                         
                                             )
 
@@ -3314,6 +3320,8 @@ class Achievement:
             return "Fight to the death!!"
         if self.achtype == AchievementType.COMBO_KAMIKAZE:
             return "Kamikaze - one way ticket!!"
+        if self.achtype == AchievementType.COMBO_TRIPLE_KILL:
+            return "Three enemies with a single shot"            
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3378,7 +3386,8 @@ class Achievement:
             
         if self.achtype == AchievementType.HUNDRED_FRAGS or \
            self.achtype == AchievementType.RAINBOW_FLAG  or \
-           self.achtype == AchievementType.LUMBERJACK:
+           self.achtype == AchievementType.LUMBERJACK    or \
+           self.achtype == AchievementType.COMBO_TRIPLE_KILL:
             return AchievementLevel.ULTRA_RARE            
 
     @staticmethod    
@@ -3549,7 +3558,9 @@ class Achievement:
         if self.achtype == AchievementType.COMBO_KAMIKAZE:
             return path + "ach_combo_kamikaze.png"
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
-            return path + "ach_always_the_first.jpg"            
+            return path + "ach_always_the_first.jpg"
+        if self.achtype == AchievementType.COMBO_TRIPLE_KILL:
+            return path + "ach_combo_triple_kill.png"
 
         # temp images
         if self.achtype == AchievementType.HUNDRED_KILLS:
