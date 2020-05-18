@@ -1163,6 +1163,10 @@ for pl in allplayers:
     pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead, isTeamGame = False)
     
 ezstatslib.calculateCommonAchievements(allplayers, headToHead, isTeamGame = False)
+
+# sort by level
+for pl in allplayers:
+    pl.achievements = sorted(pl.achievements, key=lambda x: (x.achlevel), reverse=False)
     
 # generate output string
 resultString = ""
