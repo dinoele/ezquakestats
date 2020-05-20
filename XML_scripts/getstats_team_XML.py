@@ -437,7 +437,7 @@ def isTeamKill(element):
                 targetTeam = pl.teamname
 
         if attackerTeam == "" or targetTeam == "":
-            ezstatslib.logError("ERROR isTeamKill: death.attacker: %s, death.target" % (death.attacker, death.target))
+            ezstatslib.logError("ERROR isTeamKill: attacker: %s, target: %s" % (element.attacker, element.target))
             exit(-1)
         
         return attackerTeam == targetTeam        
@@ -539,6 +539,10 @@ for element in elements:
             # else:
                 # ezstatslib.logError("ERROR: overtime calculation: currentMinute: %d, minutesPlayedXML: %d, allplayersByFrags[0].frags(): %d, allplayersByFrags[1].frags(): %d" % \
                  # (currentMinute, minutesPlayedXML, allplayersByFrags[0].frags(), allplayersByFrags[1].frags()))
+               
+    # skip Damage and Death elements with target=None (door which is opened by the shot)
+    if (isinstance(element, DeathElement) or isinstance(element, DamageElement)) and element.target is None:
+        continue
                
     # telefrag
     if isinstance(element, DeathElement) and element.type == "tele1":        
