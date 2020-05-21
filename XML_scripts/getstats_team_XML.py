@@ -2321,7 +2321,7 @@ def writeHtmlWithScripts(f, teams, resStr):
 
     matchResultsStr = matchResultsStr.replace("ADD_STATS_ROWS", "['', %d,'%d','color: %s', '%s', %d,'%d','color: %s', '%s'],\n" % \
                                                    (teams[0].frags(), teams[0].frags(), color1, teamPlayersToString(players1), \
-                                                    teams[1].frags(), teams[1].frags(), color2, teamPlayersToString(players1)) )
+                                                    teams[1].frags(), teams[1].frags(), color2, teamPlayersToString(players2)) )
 
     f.write(matchResultsStr)
     # <-- match results
