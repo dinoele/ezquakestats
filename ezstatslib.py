@@ -2137,7 +2137,7 @@ HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_FUNCTION = \
 
 HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG = "<div id=\"highchart_player_lifetime_PLAYERNAME\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
  
-HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE = "  {color: 'LINE_COLOR', width: 3, value: LINE_VALUE },"
+HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE = "  {color: 'LINE_COLOR', width: 2, value: LINE_VALUE },"
   
 # =========================================================================================================================================================    
   
