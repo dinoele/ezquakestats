@@ -2291,15 +2291,15 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Players ranks")
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Rank")
     
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "")
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "")
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", "")
             
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \        
     
+    minRank = 10000
+    maxRank = -10000
     hcDelim = "}, {\n"
-    rowLines = ""        
+    rowLines = ""
     for pl in allplayersByFrags:
         if rowLines != "":
             rowLines += hcDelim
@@ -2311,6 +2311,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         k = 1
         while k < len(matchProgressDictEx):
             minEl = matchProgressDictEx[k]
+            minRank = min(minRank, minEl[pl.name][1])
+            maxRank = max(maxRank, minEl[pl.name][1])
             rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
             graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
             k += 2
@@ -2320,6 +2322,9 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         # add negative zone
         rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
         
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: %d," % (minRank))
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "      max: %d," % (maxRank))        
+  
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)    
     # tooltip style
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
