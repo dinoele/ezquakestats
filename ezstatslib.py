@@ -322,7 +322,7 @@ HTML_SCRIPT_TEAM_RESULTS_FUNCTION = \
 "ADD_STATS_ROWS" \
 "      ]);\n" \
 "      var options = {\n" \
-"        title: '',\n" \
+"        title: 'Game score',\n" \
 "        chartArea: {width: '100%'},\n" \
 "        hAxis: {\n" \
 "          title: '',\n" \
@@ -331,6 +331,11 @@ HTML_SCRIPT_TEAM_RESULTS_FUNCTION = \
 "        },\n" \
 "        isStacked: 'relative',\n" \
 "        legend: 'none',\n" \
+"animation:{\n" \
+"        duration: 500,\n" \
+"        easing: 'out',\n" \
+"        startup: true\n" \
+"      },\n" \
 "   annotations: {\n" \
 "    textStyle: {\n" \
 "      fontName: 'Times-Roman',\n" \

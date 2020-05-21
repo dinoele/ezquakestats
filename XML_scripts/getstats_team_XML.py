@@ -1280,21 +1280,17 @@ resultString += "\n"
 
 resultString += "teams:\n"
 
-s1 = ""
-for pl in players1:
-    sign = "" if s1 == "" else ", "
-    if s1 == "":
-        s1 = "[%s]: " % (pl.teamname)
-    s1 += "%s%s" % (sign, pl.name)
-resultString += s1 + "\n"
+def teamPlayersToString(players):
+    res = ""
+    for pl in players:
+        sign = "" if res == "" else ", "
+        if res == "":
+            res = "[%s]: " % (pl.teamname)
+        res += "%s%s" % (sign, pl.name)
+    return res
 
-s2 = ""
-for pl in players2:
-    sign = "" if s2 == "" else ", "
-    if s2 == "":
-        s2 = "[%s]: " % (pl.teamname)
-    s2 += "%s%s" % (sign, pl.name)
-resultString += s2 + "\n"
+resultString += teamPlayersToString(players1) + "\n"
+resultString += teamPlayersToString(players2) + "\n"
 
 # if options.withScripts:
 #     resultString += "</pre>MATCH_RESULTS_PLACE\n<pre>"
@@ -2238,7 +2234,7 @@ def writeHtmlWithScripts(f, teams, resStr):
 
     matchResultsStr = ezstatslib.HTML_SCRIPT_TEAM_RESULTS_FUNCTION
 
-    matchResultsStr = matchResultsStr.replace("ADD_HEADER_ROW", "['', '%s',{ role: 'annotation'},{ role: 'style'},'%s',{ role: 'annotation'},{role: 'style'}],\n" % (teams[0].name, teams[1].name))
+    matchResultsStr = matchResultsStr.replace("ADD_HEADER_ROW", "['', '%s',{ role: 'annotation'},{ role: 'style'},{ role: 'tooltip'},'%s',{ role: 'annotation'},{role: 'style'},{ role: 'tooltip'}],\n" % (teams[0].name, teams[1].name))
 
     color1 = ""
     color2 = ""
@@ -2252,7 +2248,9 @@ def writeHtmlWithScripts(f, teams, resStr):
         color1 = "red"
         color2 = "blue"
 
-    matchResultsStr = matchResultsStr.replace("ADD_STATS_ROWS", "['', %d,'%d','color: %s', %d,'%d','color: %s'],\n" % (teams[0].frags(), teams[0].frags(), color1, teams[1].frags(), teams[1].frags(), color2))
+    matchResultsStr = matchResultsStr.replace("ADD_STATS_ROWS", "['', %d,'%d','color: %s', '%s', %d,'%d','color: %s', '%s'],\n" % \
+                                                   (teams[0].frags(), teams[0].frags(), color1, teamPlayersToString(players1), \
+                                                    teams[1].frags(), teams[1].frags(), color2, teamPlayersToString(players1)) )
 
     f.write(matchResultsStr)
     # <-- match results
