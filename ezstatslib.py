@@ -2324,6 +2324,18 @@ class PowerUp:
     def __str__(self):
         return "%s [%d]" % (powerUpTypeToString(self.type), self.time)
 
+PlayerLifetimeDeathType = enum(NONE=0, COMMON=1, SUICIDE=2, TEAM_KILL=3)
+        
+class PlayerLifetimeElement:
+    def __init__(self, _time, _health, _armor, _deathType = PlayerLifetimeDeathType.NONE):
+        self.time = _time
+        self.health = _health
+        self.armor = _armor
+        self.deathType = _deathType
+        
+    def __str__(self):
+        return "time: %f, health: %d, armor: %d, deathType: %d" % (self.time, self.health, self.armor, self.deathType)
+        
 class Player:
     def __init__(self, teamname, name, score, origDelta, teamkills):
         self.teamname = teamname
@@ -2495,6 +2507,60 @@ class Player:
         self.mutual_kills = []  # [[time,target,kill_wp,death_wp],..]
         self.suicide_kills = []  # [[time,target,wp],..]
         
+        self.currentHealth = 100
+        self.currentArmor = 0
+        self.lifetime = []
+        self.lifetime.append( PlayerLifetimeElement(0,self.currentHealth,self.currentArmor) )        
+        
+    def addLifetimeItem(self, element):
+        if isinstance(element, DamageElement):
+            if element.armor == 1:
+                self.currentArmor -= element.value
+            else:
+                self.currentHealth -= element.value
+
+            if self.currentArmor < 0:
+                self.currentArmor = 0
+            
+            if self.currentHealth <= 0:
+                self.currentHealth = 100
+                self.currentArmor = 0
+            else:
+                self.lifetime.append( PlayerLifetimeElement(element.time,self.currentHealth,self.currentArmor) )
+            
+        if isinstance(element, PickMapItemElement):
+            if element.isArmor:
+                self.currentArmor += element.value
+                
+            elif element.isHealth:
+                self.currentHealth += element.value
+                
+            self.lifetime.append( PlayerLifetimeElement(element.time,self.currentHealth,self.currentArmor) )
+        
+    def correctLifetime(self, minutesPlayed):  # remove elements with one timestamp - the last one for same time should be left
+        correctedLT = []
+        # print "VVVVVVVVVVV %s VVVVVVVVVVVVV" % (self.name)
+        # for lt in self.lifetime:
+            # print str(lt)
+        for i in xrange(len(self.lifetime)):
+            if i + 1 < len(self.lifetime):
+                if self.lifetime[i].time == self.lifetime[i+1].time:
+                    pass
+                else:
+                    correctedLT.append(self.lifetime[i])
+            else:
+                # last element
+                correctedLT.append(self.lifetime[i])
+                
+        self.lifetime = correctedLT
+        
+        if self.lifetime[len(self.lifetime)-1].time != minutesPlayed*60:
+            self.lifetime.append( PlayerLifetimeElement(minutesPlayed*60, self.lifetime[len(self.lifetime)-1].health, self.lifetime[len(self.lifetime)-1].armor) )
+        # print "----------------------"
+        # for lt in self.lifetime:
+            # print str(lt)
+        # print "^^^^^^^^^^^^^^^^^^^^^^^"
+        
     def initPowerUpsByMinutes(self, minutesCnt):
         self.gaByMinutes = [0 for i in xrange(minutesCnt+1)]
         self.yaByMinutes = [0 for i in xrange(minutesCnt+1)]
@@ -2622,6 +2688,9 @@ class Player:
 
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
+        
+        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.COMMON) )
+        self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
 
     def incSuicides(self, time):
         self.suicides += 1
@@ -2632,6 +2701,9 @@ class Player:
 
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
+        
+        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.SUICIDE) )
+        self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
 
     def incTeamkill(self, time, who, whom):
         self.teamkills += 1
@@ -2650,6 +2722,9 @@ class Player:
 
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
+        
+        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.TEAM_KILL) )
+        self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
 
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
@@ -3952,8 +4027,9 @@ class PickMapItemElement:
 
         self.isArmor = False
         self.isMH = False
+        self.isHealth = False
         self.armorType = PowerUpType.UNKNOWN
-
+              
     def __init__(self, elem):
         self.time = float(elem.find("time").text)
         self.item =  elem.find("item").text
@@ -3961,7 +4037,14 @@ class PickMapItemElement:
         self.value = int(elem.find("value").text) 
 
         self.isArmor = "item_armor" in self.item
-        self.isMH    = self.item == "health_100"
+        
+        self.isMH = False
+        self.isHealth = False        
+        
+        if "health" in self.item:
+            if self.item == "health_100":
+                self.isMH = True
+            self.isHealth = True
         
         if self.isArmor:
             if self.item == "item_armor1":

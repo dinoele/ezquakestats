@@ -610,7 +610,7 @@ for element in elements:
         continue    
         
     # power ups
-    if isinstance(element, PickMapItemElement) and (element.isArmor or element.isMH):
+    if isinstance(element, PickMapItemElement) and (element.isArmor or element.isHealth):
         checkname = element.player
         if element.isMH:
             pwr = "mh"
@@ -628,6 +628,9 @@ for element in elements:
                 exec("pl.inc%s(%d,%d)" % (pwr, currentMinute, currentMatchTime))
                 exec("pl.%s += 1" % (pwr))
                 isFound = True
+                
+                pl.addLifetimeItem(element)
+                
                 break;
         if not isFound:
             ezstatslib.logError("ERROR: powerupDetection: no playername %s\n" % (checkname))
@@ -727,6 +730,7 @@ for element in elements:
             for pl in allplayers:
                 if pl.name == who:
                     exec("pl.%s_damage_self += %d" % (weap, value))
+                    pl.addLifetimeItem(element)
         else:
             isTK = isTeamKill(element)
         
@@ -751,6 +755,8 @@ for element in elements:
                     exec("pl.%s_damage_tkn += %d" % (weap, value))
                     exec("pl.%s_damage_tkn_cnt += 1" % (weap))
                     isFoundWhom = True
+                    
+                    pl.addLifetimeItem(element)
             
         fillH2HDamage(who,whom,value,currentMinute)
     
@@ -1269,6 +1275,10 @@ ezstatslib.calculateCommonAchievements(allplayers, headToHead, isTeamGame = True
 # sort by level
 for pl in allplayers:
     pl.achievements = sorted(pl.achievements, key=lambda x: (x.achlevel), reverse=False)
+    
+# remove elements with one timestamp - the last one for same time should be left    
+for pl in allplayers:
+    pl.correctLifetime(minutesPlayedXML)    
     
 # generate output string
 resultString = ""
