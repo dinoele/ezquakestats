@@ -1276,6 +1276,8 @@ if options.withScripts:
     resultString += "RL skill:\n"
     resultString += "\nHIGHCHART_RL_SKILL_PLACE\n"
 
+if options.withScripts:    
+    resultString += "\nHIGHCHART_PLAYER_LIFETIME_PLACE\n"
 # ============================================================================================================
 
 # # calculated streaks
@@ -2159,6 +2161,64 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle extended progress
     
+    # highcharts players lifetime -->
+    playersLifetimeDivStrs = ""
+    for pl in allplayers:
+        playersLifetimeDivStrs += ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG.replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))
+        playersLifetimeDivStrs += "<br>\n"
+    
+    highchartsPlayerLifetimeFunctionStrs = ""
+    for pl in allplayersByFrags:
+        highchartsPlayerLifetimeFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_FUNCTION).replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))    
+        
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("CHART_TITLE", "%s Lifetime" % (ezstatslib.escapePlayerName(pl.name)))
+    
+        tickPositions = ""
+        for k in xrange(matchMinutesCnt*60+1):
+            if k % 30 == 0:
+                tickPositions += "%d," % (k)
+                    
+        xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
+        xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
+        
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
+    
+        healthRows = ""
+        armorRows = ""
+        deathLines = ""
+        for lt in pl.lifetime:
+            if lt.deathType != ezstatslib.PlayerLifetimeDeathType.NONE:
+                deathLine = ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE.replace("LINE_VALUE", str(lt.time))
+                
+                lineColor = ""
+                if lt.deathType == ezstatslib.PlayerLifetimeDeathType.COMMON:
+                    lineColor = "red"
+                elif lt.deathType == ezstatslib.PlayerLifetimeDeathType.SUICIDE:
+                    lineColor = "green"
+                elif lt.deathType == ezstatslib.PlayerLifetimeDeathType.TEAM_KILL:
+                    lineColor = "purple"
+                else:
+                    lineColor = "gray"
+                    
+                deathLine = deathLine.replace("LINE_COLOR", lineColor)
+                deathLines += deathLine
+                
+            else:
+                healthRows += "[%f,%d]," % (lt.time,lt.health)
+                armorRows  += "[%f,%d]," % (lt.time,lt.armor)
+            
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("HEALTH_ROWS", healthRows)
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("ARMOR_ROWS", armorRows)
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("DEATH_LINES", deathLines)
+    
+        highchartsPlayerLifetimeFunctionStrs += highchartsPlayerLifetimeFunctionStr
+
+    # # tooltip style
+    # highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
+                
+    f.write(highchartsPlayerLifetimeFunctionStrs)
+    # <-- highcharts highcharts players lifetime 
+    
     # power ups timeline -->
     powerUpsTimelineFunctionStr = ezstatslib.HTML_SCRIPT_POWER_UPS_TIMELINE_FUNCTION
     
@@ -2413,6 +2473,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         rlSkillFunctionStr = rlSkillFunctionStr.replace("ADD_ROWS", rlSkillRowsStr)
         f.write(rlSkillFunctionStr)
     # <-- highcharts RL skill
+    
+
 
     # write expand/collapse function
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
@@ -2436,6 +2498,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)
     resStr = resStr.replace("HIGHCHART_PLAYERS_RANK_PROGRESS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_DEATHMATCH_PLAYERS_RANK_PROGRESS_DIV_TAG)    
     resStr = resStr.replace("HIGHCHART_RL_SKILL_PLACE", rlSkillDivStrs)
+    resStr = resStr.replace("HIGHCHART_PLAYER_LIFETIME_PLACE", playersLifetimeDivStrs)
     
     f.write(resStr)
     
@@ -3207,3 +3270,4 @@ print "isOverTime:", isOverTime
 print "timelimit:", timelimit
 print "duration:", duration
 print "minutesPlayedXML:", minutesPlayedXML
+        

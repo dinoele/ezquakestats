@@ -1520,6 +1520,9 @@ resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]" % (team2.nam
 resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                    team2.deaths, team2.getWeaponsDeaths(team2.deaths, weaponsCheck))
 resultString += "\n"
 
+if options.withScripts:    
+    resultString += "\nHIGHCHART_PLAYER_LIFETIME_PLACE\n"
+
 # if len(disconnectedplayers) != 0:
     # resultString += "\n"
     # resultString += "Disconnected players:" + str(disconnectedplayers) + "\n"
@@ -1877,6 +1880,64 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts battle extended progress
 
+    # highcharts players lifetime -->
+    playersLifetimeDivStrs = ""
+    for pl in allplayers:
+        playersLifetimeDivStrs += ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG.replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))
+        playersLifetimeDivStrs += "<br>\n"
+    
+    highchartsPlayerLifetimeFunctionStrs = ""
+    for pl in allplayersByFrags:
+        highchartsPlayerLifetimeFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_FUNCTION).replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))    
+        
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("CHART_TITLE", "%s Lifetime" % (ezstatslib.escapePlayerName(pl.name)))
+    
+        tickPositions = ""
+        for k in xrange(matchMinutesCnt*60+1):
+            if k % 30 == 0:
+                tickPositions += "%d," % (k)
+                    
+        xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
+        xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
+        
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
+    
+        healthRows = ""
+        armorRows = ""
+        deathLines = ""
+        for lt in pl.lifetime:
+            if lt.deathType != ezstatslib.PlayerLifetimeDeathType.NONE:
+                deathLine = ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE.replace("LINE_VALUE", str(lt.time))
+                
+                lineColor = ""
+                if lt.deathType == ezstatslib.PlayerLifetimeDeathType.COMMON:
+                    lineColor = "red"
+                elif lt.deathType == ezstatslib.PlayerLifetimeDeathType.SUICIDE:
+                    lineColor = "green"
+                elif lt.deathType == ezstatslib.PlayerLifetimeDeathType.TEAM_KILL:
+                    lineColor = "purple"
+                else:
+                    lineColor = "gray"
+                    
+                deathLine = deathLine.replace("LINE_COLOR", lineColor)
+                deathLines += deathLine
+                
+            else:
+                healthRows += "[%f,%d]," % (lt.time,lt.health)
+                armorRows  += "[%f,%d]," % (lt.time,lt.armor)
+            
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("HEALTH_ROWS", healthRows)
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("ARMOR_ROWS", armorRows)
+        highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("DEATH_LINES", deathLines)
+    
+        highchartsPlayerLifetimeFunctionStrs += highchartsPlayerLifetimeFunctionStr
+
+    # # tooltip style
+    # highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
+                
+    f.write(highchartsPlayerLifetimeFunctionStrs)
+    # <-- highcharts highcharts players lifetime     
+    
     # highcharts teams battle progress -->
     matchMinutesCnt = len(matchProgressDict)
 
@@ -2326,6 +2387,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     # resStr = resStr.replace("MATCH_RESULTS_PLACE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_MATCH_RESULTS_DIV_TAG)
     resStr = resStr.replace("TEAM_RESULTS", ezstatslib.HTML_TEAM_RESULTS_FUNCTION_DIV_TAG)
     resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)
+    
+    resStr = resStr.replace("HIGHCHART_PLAYER_LIFETIME_PLACE", playersLifetimeDivStrs)
 
     f.write(resStr)
 
