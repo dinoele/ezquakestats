@@ -624,13 +624,12 @@ for element in elements:
                                
         isFound = False
         for pl in allplayers:
-            if pl.name == checkname:                    
-                exec("pl.inc%s(%d,%d)" % (pwr, currentMinute, currentMatchTime))
-                exec("pl.%s += 1" % (pwr))
-                isFound = True
-                
+            if pl.name == checkname:
+                if element.isArmor or element.isMH:
+                    exec("pl.inc%s(%d,%d)" % (pwr, currentMinute, currentMatchTime))
+                    exec("pl.%s += 1" % (pwr))
+                isFound = True                
                 pl.addLifetimeItem(element)
-                
                 break;
         if not isFound:
             ezstatslib.logError("ERROR: powerupDetection: no playername %s\n" % (checkname))
