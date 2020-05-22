@@ -1991,13 +1991,12 @@ def writeHtmlWithScripts(f, teams, resStr):
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Players battle progress")
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
 
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "")
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "")
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", "")
 
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
 
+    maxFrags = -100
     hcDelim = "}, {\n"
     rowLines = ""
     for pl in players1:
@@ -2008,15 +2007,11 @@ def writeHtmlWithScripts(f, teams, resStr):
         # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
 
-        # graphGranularity = 1.0
-        # for minEl in matchProgressPlayers1Dict:
-        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
-        #     graphGranularity += 1.0
-
-        graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+        k = 1
         for minEl in matchProgressPlayers1DictEx:
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
-            graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            maxFrags = max(maxFrags, minEl[pl.name][0])
+            rowLines += ",[%d,%d]" % (k, minEl[pl.name][0])  # TODO format, now is 0.500000
+            k += 1
 
         rowLines += "]\n"
         rowLines += ",\ndashStyle: 'ShortDash',\n    lineWidth: 3"
@@ -2028,23 +2023,22 @@ def writeHtmlWithScripts(f, teams, resStr):
         rowLines += "name: '%s',\n" % (pl.name)
         # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
-
-        # graphGranularity = 1.0
-        # for minEl in matchProgressPlayers2Dict:
-        #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
-        #     graphGranularity += 1.0
-
-        graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+      
+        k = 1
         for minEl in matchProgressPlayers2DictEx:
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][0])  # TODO format, now is 0.500000
-            graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
+            maxFrags = max(maxFrags, minEl[pl.name][0])
+            rowLines += ",[%d,%d]" % (k, minEl[pl.name][0])  # TODO format, now is 0.500000
+            k += 1
 
         rowLines += "]\n"
 
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: -15,")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "      max: %d," % (int(maxFrags*1.2))) 
+        
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
 
     # tooltip style
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SIMPLE)
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)
 
     f.write(highchartsBattleProgressFunctionStr)
     # <-- highcharts players battle progress
@@ -2152,13 +2146,11 @@ def writeHtmlWithScripts(f, teams, resStr):
         #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
         #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
 
-        graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        k = 1
+        k = 0
         while k < len(matchProgressPlayers1DictEx):
             minEl = matchProgressPlayers1DictEx[k]
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
-            graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            k += 2
+            rowLines += ",[%d,%d]" % (k+1, minEl[pl.name][1])  # TODO format, now is 0.500000
+            k += 1
 
         rowLines += "]\n"
 
@@ -2205,13 +2197,11 @@ def writeHtmlWithScripts(f, teams, resStr):
         #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
         #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
 
-        graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        k = 1
+        k = 0
         while k < len(matchProgressPlayers2DictEx):
             minEl = matchProgressPlayers2DictEx[k]
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
-            graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            k += 2
+            rowLines += ",[%d,%d]" % (k+1, minEl[pl.name][1])  # TODO format, now is 0.500000
+            k += 1
 
         rowLines += "]\n"
 
