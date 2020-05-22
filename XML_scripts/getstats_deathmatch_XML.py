@@ -265,12 +265,12 @@ for elem in damageElements:
         print "%f  %s -> %s  %d \"%d\" splash: %d" % (elem.time, elem.attacker, elem.target, elem.armor, elem.value, elem.splash)
 
         for pl in xmlPlayers:
-            if pl.name == elem.attacker and elem.type != "tele1": # and elem.armor == 0:
+            if pl.name == elem.attacker and elem.type != "tele1" and elem.type != "trigger":
                 if elem.armor == 1:
                     pl.damageGvnArmor += elem.value
                 else:
                     pl.damageGvn += elem.value
-            if pl.name == elem.target and elem.type != "tele1": # and elem.armor == 0:
+            if pl.name == elem.target and elem.type != "tele1" and elem.type != "trigger": 
                 if elem.armor == 1:
                     pl.damageTknArmor += elem.value
                 else:
@@ -751,9 +751,9 @@ for element in elements:
         who = element.attacker
         whom = element.target
         weap = element.type
-     
+
         if weap == "trigger" or weap == "slime" or weap == "lg_dis":  # TODO
-            continue  
+            continue
 
         if element.type == "tele1":
             value = 0;
@@ -809,7 +809,7 @@ for element in elements:
         if who != whom and (not isFoundWho or not isFoundWhom):
             ezstatslib.logError("ERROR: damage calc %s-%s\n" % (who, whom))
 
-        continue            
+        continue
 
 # all log lines are processed
 
