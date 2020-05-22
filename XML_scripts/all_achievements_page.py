@@ -50,7 +50,7 @@ def writeHtmlWithScripts(f, allachievements, resStr):
     rownum = 1
     for i in xrange(len(allachievements)):
     
-        tableRow = HTML.TableRow(cells=[ HTML.TableCell(str(allachievements[i].toString()) + ": " + str(allachievements[i].description()), align="center", width=cellWidth) ])
+        tableRow = HTML.TableRow(cells=[ HTML.TableCell( "%s(%d): %s" % (str(allachievements[i].toString()), allachievements[i].achtype, str(allachievements[i].description())), align="center", width=cellWidth) ])
         tableRow.cells.append( HTML.TableCell(allachievements[i].generateHtmlEx("img/"), align="center" ) )
         achievementsHtmlTable.rows.append(tableRow)
         
@@ -85,6 +85,8 @@ for key in ezstatslib.AchievementType.__dict__.keys():
     if key != "__dict__" and key != "__doc__" and key != "__module__"and key != "__weakref__":
         exec("allachievements.append(  ezstatslib.Achievement(ezstatslib.AchievementType.%s, \"\" ) )" % (key))
 
+# sort by id
+allachievements = sorted(allachievements, key=lambda x: (x.achtype), reverse=False)        
        
 isFileNew = False
 if os.path.exists(filePathFull):
