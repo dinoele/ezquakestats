@@ -2796,28 +2796,28 @@ class Player:
             self.powerUps.append( PowerUp(PowerUpType.MH, time, self.name) )
 
     def incgaXML(self, time):
-        minuteNum = int(time/60) + 1
+        minuteNum = int(time/60) + 1 if time%60 != 0 else 0
 
         self.gaByMinutesXML[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.GA, time, self.name) )
 
     def incyaXML(self, time):
-        minuteNum = int(time/60) + 1
+        minuteNum = int(time/60) + 1 if time%60 != 0 else 0
     
         self.yaByMinutesXML[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.YA, time, self.name) )
 
     def incraXML(self, time):
-        minuteNum = int(time/60) + 1
+        minuteNum = int(time/60) + 1 if time%60 != 0 else 0
         
         self.raByMinutesXML[minuteNum] += 1
         if time != 0:
             self.powerUps.append( PowerUp(PowerUpType.RA, time, self.name) )
 
     def incmhXML(self, time):
-        minuteNum = int(time/60) + 1
+        minuteNum = int(time/60) + 1 if time%60 != 0 else 0
 
         self.mhByMinutesXML[minuteNum] += 1
         if time != 0:
