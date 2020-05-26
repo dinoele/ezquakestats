@@ -4159,6 +4159,8 @@ class DamageElement:
 
         self.isSelfDamage = self.attacker == self.target
 
+    def toString(self):
+        return "DamageElement: time=%f, attacker=%s, target=%s, type=%s, value=%f, armor=%d, isSelfDamage=%d\n" % (self.time,self.attacker,self.target,self.type,self.value,self.armor,self.isSelfDamage)
 
 #<death>
 #<time>18.817241</time>
@@ -4197,6 +4199,9 @@ class DeathElement:
         
         self.isSuicide = self.attacker == self.target
         self.isSpawnFrag = self.lifetime < 2.0
+        
+    def toString(self):
+        return "DeathElement: time=%f, attacker=%s, target=%s, type=%s, armorleft=%d, lifetime=%f, isSuicide=%d, isSpawnFrag=%d\n" % (self.time,self.attacker,self.target,self.type,self.armorleft,self.lifetime,self.isSuicide,self.isSpawnFrag)
 
         #<pick_mapitem>
 #        <time>15.715332</time>
