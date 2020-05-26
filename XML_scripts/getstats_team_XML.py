@@ -377,6 +377,8 @@ matchProgressPlayers1DictEx = []
 matchProgressPlayers2DictEx = []
 
 matchProgressDictEx2 = []
+matchProgressPlayers1DictEx2 = []
+matchProgressPlayers2DictEx2 = []
 
 players1 = []
 players2 = []
@@ -529,6 +531,18 @@ for element in elements:
         progressLineDict[team1.name] = [currentMatchTime, fr1]; # team1.frags()
         progressLineDict[team2.name] = [currentMatchTime, fr2]; # team2.frags()
         matchProgressDictEx2.append(progressLineDict)
+        
+        players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+        playersProgressLineDict1 = {}
+        for pl in players1ByFrags:
+            playersProgressLineDict1[pl.name] = [currentMatchTime, pl.frags(), pl.calcDelta()];                
+        matchProgressPlayers1DictEx2.append(playersProgressLineDict1)
+
+        players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+        playersProgressLineDict2 = {}
+        for pl in players2ByFrags:
+            playersProgressLineDict2[pl.name] = [currentMatchTime, pl.frags(), pl.calcDelta()];        
+        matchProgressPlayers2DictEx2.append(playersProgressLineDict2)
     
     # # overtime check
     # if isOverTime and currentMinute == minutesPlayedXML - overtimeMinutes:
@@ -1222,13 +1236,6 @@ progressLineDict = {}
 progressLineDict[team1.name] = [minsCount*60, team1.frags()];
 progressLineDict[team2.name] = [minsCount*60, team2.frags()];
 
-# correct final point if necessary
-if len(matchProgressDictEx2) != 0 and matchProgressDictEx2[len(matchProgressDictEx2)-1][team1.name][0] == minsCount*60:
-    matchProgressDictEx2[len(matchProgressDictEx2)-1] = progressLineDict
-else:
-    matchProgressDictEx2.append(progressLineDict)
-
-
 players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 playersProgressLineDict1 = {}
 for pl in players1ByFrags:
@@ -1236,12 +1243,30 @@ for pl in players1ByFrags:
 matchProgressPlayers1Dict.append(playersProgressLineDict1)
 matchProgressPlayers1DictEx.append(playersProgressLineDict1)
 
+playersProgressLineDict1Ex = {}
+for pl in players1ByFrags:
+    playersProgressLineDict1Ex[pl.name] = [minsCount*60, pl.frags(), pl.calcDelta()];
+
 players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
 playersProgressLineDict2 = {}
 for pl in players2ByFrags:
     playersProgressLineDict2[pl.name] = [pl.frags(), pl.calcDelta()];
 matchProgressPlayers2Dict.append(playersProgressLineDict2)
 matchProgressPlayers2DictEx.append(playersProgressLineDict2)
+
+playersProgressLineDict2Ex = {}
+for pl in players2ByFrags:
+    playersProgressLineDict2Ex[pl.name] = [minsCount*60, pl.frags(), pl.calcDelta()];
+
+# correct final point if necessary
+if len(matchProgressDictEx2) != 0 and matchProgressDictEx2[len(matchProgressDictEx2)-1][team1.name][0] == minsCount*60:
+    matchProgressDictEx2[len(matchProgressDictEx2)-1] = progressLineDict
+    matchProgressPlayers1DictEx2[len(matchProgressPlayers1DictEx2)-1] = playersProgressLineDict1Ex
+    matchProgressPlayers2DictEx2[len(matchProgressPlayers2DictEx2)-1] = playersProgressLineDict2Ex
+else:
+    matchProgressDictEx2.append(progressLineDict)
+    matchProgressPlayers1DictEx2.append(playersProgressLineDict1Ex)
+    matchProgressPlayers2DictEx2.append(playersProgressLineDict2Ex)
 
 fillExtendedBattleProgress()
 
@@ -2104,15 +2129,15 @@ def writeHtmlWithScripts(f, teams, resStr):
     minRank = 10000
     maxRank = -10000
     for pl in players1:
-        for minEl in matchProgressPlayers1DictEx:
-            minRank = min(minRank, minEl[pl.name][1])
-            maxRank = max(maxRank, minEl[pl.name][1])
+        for minEl in matchProgressPlayers1DictEx2:
+            minRank = min(minRank, minEl[pl.name][2])
+            maxRank = max(maxRank, minEl[pl.name][2])
 
     for pl in players2:
-        for minEl in matchProgressPlayers2DictEx:
-            minRank = min(minRank, minEl[pl.name][1])
-            maxRank = max(maxRank, minEl[pl.name][1])
-
+        for minEl in matchProgressPlayers2DictEx2:
+            minRank = min(minRank, minEl[pl.name][2])
+            maxRank = max(maxRank, minEl[pl.name][2])
+            
     # I -->
     highchartsBattleProgressFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION).replace("highchart_battle_progress", "players_rank1")
 
@@ -2121,7 +2146,6 @@ def writeHtmlWithScripts(f, teams, resStr):
 
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: %d," % (minRank))
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "      max: %d," % (maxRank))
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", "")
 
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
@@ -2146,16 +2170,34 @@ def writeHtmlWithScripts(f, teams, resStr):
         #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
         #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
 
-        k = 0
-        while k < len(matchProgressPlayers1DictEx):
-            minEl = matchProgressPlayers1DictEx[k]
-            rowLines += ",[%d,%d]" % (k+1, minEl[pl.name][1])  # TODO format, now is 0.500000
-            k += 1
+        # k = 0
+        # while k < len(matchProgressPlayers1DictEx):
+            # minEl = matchProgressPlayers1DictEx[k]
+            # rowLines += ",[%d,%d]" % (k+1, minEl[pl.name][1])  # TODO format, now is 0.500000
+            # k += 1
 
+        curSec = -1
+        curSecVal = -1
+        for minEl in matchProgressPlayers1DictEx2:                        
+            if curSec == -1 or curSec != int(minEl[pl.name][0]):
+                curSec = int(minEl[pl.name][0])
+                curSecVal = minEl[pl.name][2]                
+                rowLines += ",[%d,%d]" % (minEl[pl.name][0], curSecVal)            
+            
         rowLines += "]\n"
 
         # add negative zone
-        rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
+        rowLines += ",zones: [{ value: 0, dashStyle: 'ShortDot' }]"
+        
+    tickPositions = ""
+    for k in xrange(matchMinutesCnt*60+1):
+        if k % 60 == 0:
+            tickPositions += "%d," % (k)
+
+    xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
+    xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
 
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
     # tooltip style
@@ -2172,7 +2214,6 @@ def writeHtmlWithScripts(f, teams, resStr):
 
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: %d," % (minRank))
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "      max: %d," % (maxRank))
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", "")
 
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
@@ -2197,17 +2238,35 @@ def writeHtmlWithScripts(f, teams, resStr):
         #     rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
         #     graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
 
-        k = 0
-        while k < len(matchProgressPlayers2DictEx):
-            minEl = matchProgressPlayers2DictEx[k]
-            rowLines += ",[%d,%d]" % (k+1, minEl[pl.name][1])  # TODO format, now is 0.500000
-            k += 1
+        # k = 0
+        # while k < len(matchProgressPlayers2DictEx):
+            # minEl = matchProgressPlayers2DictEx[k]
+            # rowLines += ",[%d,%d]" % (k+1, minEl[pl.name][1])  # TODO format, now is 0.500000
+            # k += 1
+            
+        curSec = -1
+        curSecVal = -1
+        for minEl in matchProgressPlayers2DictEx2:                        
+            if curSec == -1 or curSec != int(minEl[pl.name][0]):
+                curSec = int(minEl[pl.name][0])
+                curSecVal = minEl[pl.name][2]                
+                rowLines += ",[%d,%d]" % (minEl[pl.name][0], curSecVal)               
 
         rowLines += "]\n"
 
         # add negative zone
-        rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
+        rowLines += ",zones: [{ value: 0, dashStyle: 'ShortDot' }]"
 
+    tickPositions = ""
+    for k in xrange(matchMinutesCnt*60+1):
+        if k % 60 == 0:
+            tickPositions += "%d," % (k)
+
+    xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
+    xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)        
+        
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
     # tooltip style
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("TOOLTIP_STYLE", ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_TOOLTIP_SORTED)

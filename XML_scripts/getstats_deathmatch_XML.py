@@ -622,7 +622,7 @@ for element in elements:
     if len(matchProgressDictEx2) == 0 or matchProgressDictEx2[len(matchProgressDictEx2)-1][allplayers[0].name][0] != currentMatchTime:
         progressLineDict = {}
         for pl in allplayersByFrags:
-            progressLineDict[pl.name] = [currentMatchTime, pl.frags()];
+            progressLineDict[pl.name] = [currentMatchTime, pl.frags(), pl.calcDelta()];
         matchProgressDictEx2.append(progressLineDict)
     
     # overtime check
@@ -1159,7 +1159,7 @@ matchProgressDictEx.append(progressLineDict)
 minsCount = len(matchProgressDict)
 progressLineDict = {}
 for pl in allplayersByFrags:
-    progressLineDict[pl.name] = [minsCount*60, pl.frags()];
+    progressLineDict[pl.name] = [minsCount*60, pl.frags(), pl.calcDelta()];
 
 # correct final point if necessary
 if len(matchProgressDictEx2) != 0 and matchProgressDictEx2[len(matchProgressDictEx2)-1][allplayers[0].name][0] == minsCount*60:
@@ -2120,12 +2120,12 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
             # rowLines += ",[%d,%d]" % (minEl[pl.name][0], minEl[pl.name][1])  # TODO format, now is 0.500000
 
         curSec = -1
-        curSevVal = -1
+        curSecVal = -1
         for minEl in matchProgressDictEx2:                        
             if curSec == -1 or curSec != int(minEl[pl.name][0]):
                 curSec = int(minEl[pl.name][0])
-                curSevVal = minEl[pl.name][1]                
-            rowLines += ",[%d,%d]" % (minEl[pl.name][0], curSevVal)
+                curSecVal = minEl[pl.name][1]                
+                rowLines += ",[%d,%d]" % (minEl[pl.name][0], curSecVal)
 
             
         rowLines += "]\n"        
@@ -2375,21 +2375,22 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         
         rowLines += "name: '%s',\n" % (pl.name)        
         rowLines += "data: [[0,0]"
+
+        curSec = -1
+        curSecVal = -1
+        for minEl in matchProgressDictEx2:
+            minRank = min(minRank, minEl[pl.name][2])
+            maxRank = max(maxRank, minEl[pl.name][2])
         
-        graphGranularity = 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        k = 1
-        while k < len(matchProgressDictEx):
-            minEl = matchProgressDictEx[k]
-            minRank = min(minRank, minEl[pl.name][1])
-            maxRank = max(maxRank, minEl[pl.name][1])
-            rowLines += ",[%f,%d]" % (graphGranularity, minEl[pl.name][1])  # TODO format, now is 0.500000
-            graphGranularity += 1.0*2 / (float)(ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            k += 2
+            if curSec == -1 or curSec != int(minEl[pl.name][0]):
+                curSec = int(minEl[pl.name][0])
+                curSecVal = minEl[pl.name][2]
+                rowLines += ",[%d,%d]" % (minEl[pl.name][0], curSecVal)
         
         rowLines += "]\n"
-        
+
         # add negative zone
-        rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
+        rowLines += ",zones: [{ value: 0, dashStyle: 'ShortDot' }]"
         
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: %d," % (minRank))
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "      max: %d," % (maxRank))        
