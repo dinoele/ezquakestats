@@ -3635,7 +3635,6 @@ class Achievement:
            self.achtype == AchievementType.ALWAYS_THE_FIRST   or \
            self.achtype == AchievementType.OVERTIME           or \
            self.achtype == AchievementType.DUEL_WINNER        or \
-           self.achtype == AchievementType.SNIPER             or \
            self.achtype == AchievementType.PERSONAL_STALKER   or \
            self.achtype == AchievementType.WHITEWASH          or \
            self.achtype == AchievementType.FASTER_THAN_BULLET or \
@@ -3656,6 +3655,7 @@ class Achievement:
            self.achtype == AchievementType.HUNDRED_KILLS          or \
            self.achtype == AchievementType.FINISH_GURU            or \
            self.achtype == AchievementType.ELECTROMASTER          or \
+           self.achtype == AchievementType.SNIPER                 or \
            self.achtype == AchievementType.DEATH_CHEATER          or \
            self.achtype == AchievementType.UNIVERSAL_SOLDIER      or \
            self.achtype == AchievementType.LONG_LIVE_KING         or \
