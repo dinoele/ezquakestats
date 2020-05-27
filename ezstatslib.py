@@ -2137,7 +2137,7 @@ HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_FUNCTION = \
 
 HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG = "<div id=\"highchart_player_lifetime_PLAYERNAME\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
  
-HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE = "  {color: 'LINE_COLOR', width: 2, value: LINE_VALUE },"
+HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE = "  {color: 'LINE_COLOR', width: 1, value: LINE_VALUE, label: { text: 'LINE_LABEL', verticalAlign: 'bottom', textAlign: 'right', style: { fontSize: 10, color: 'LABEL_COLOR' }} },"
   
 # =========================================================================================================================================================    
   
@@ -2528,14 +2528,15 @@ class PowerUp:
 PlayerLifetimeDeathType = enum(NONE=0, COMMON=1, SUICIDE=2, TEAM_KILL=3)
         
 class PlayerLifetimeElement:
-    def __init__(self, _time, _health, _armor, _deathType = PlayerLifetimeDeathType.NONE):
+    def __init__(self, _time, _health, _armor, _deathType = PlayerLifetimeDeathType.NONE, _killer = ""):
         self.time = _time
         self.health = _health
         self.armor = _armor
         self.deathType = _deathType
+        self.killer = _killer
         
     def __str__(self):
-        return "time: %f, health: %d, armor: %d, deathType: %d" % (self.time, self.health, self.armor, self.deathType)
+        return "time: %f, health: %d, armor: %d, deathType: %d, killer: %s" % (self.time, self.health, self.armor, self.deathType, self.killer)
         
 class Player:
     def __init__(self, teamname, name, score, origDelta, teamkills):
@@ -2890,7 +2891,7 @@ class Player:
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
         
-        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.COMMON) )
+        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.COMMON, who) )
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
 
     def incSuicides(self, time):
@@ -2903,7 +2904,7 @@ class Player:
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
         
-        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.SUICIDE) )
+        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.SUICIDE, "SELF") )
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
 
     def incTeamkill(self, time, who, whom):
@@ -2924,7 +2925,7 @@ class Player:
         if self.currentDeathStreak.start == 0: self.currentDeathStreak.start = time
         self.fillStreaks(time)
         
-        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.TEAM_KILL) )
+        self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.TEAM_KILL, "[MATE]%s" % (who)) )
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
 
     def frags(self):

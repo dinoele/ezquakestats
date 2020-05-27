@@ -1944,6 +1944,8 @@ def writeHtmlWithScripts(f, teams, resStr):
                     lineColor = "gray"
                     
                 deathLine = deathLine.replace("LINE_COLOR", lineColor)
+                deathLine = deathLine.replace("LABEL_COLOR", lineColor)
+                deathLine = deathLine.replace("LINE_LABEL", lt.killer)
                 deathLines += deathLine
                 
             else:
