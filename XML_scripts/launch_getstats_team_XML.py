@@ -15,7 +15,7 @@ stat_conf.read_config()
 
 # =================================================================================================
 path = stat_conf.nquakesv_root + "/ktx/demos"
-matchesPath = stat_conf.matches_dir + "/team"
+matchesPath = stat_conf.matches_dir + "team"
 # =================================================================================================
 
 parser = OptionParser(usage="", version="")
@@ -32,7 +32,7 @@ pathXML = ""
 for cdate, size, filePath in sorted(entriesXML, reverse=True):
     #print time.ctime(cdate), size, os.path.basename(path)	
 	#print "AAA", cdate, size, path
-	if size > 200000:
+	if size > 150000:
 		pathXML = filePath
 		break	
 
@@ -57,11 +57,16 @@ print "RES", pathTXT
 # os.system("python getstats_deathmatch_NEW.py --league Premier --fxml %s " % (pathXML))
 # os.system("cp %s /cygdrive/d/tmp/qstats/matches" % (pathXML))
 
-dateRes = re.search("(?<=]).*(?=.xml)", pathXML)
+# dateRes = re.search("(?<=]).*(?=.xml)", pathXML)
 
 os.system("python getstats_team_XML.py --fxml %s --fjson %s %s" % (pathXML, pathTXT, "--net-copy" if options.netCopy else ""))
 
-mPath = matchesPath + "/" + dateRes.group(0)
-os.system("mkdir %s" % (mPath))
-os.system("cp %s %s" % (pathXML, mPath))
-os.system("cp %s %s" % (pathTXT, mPath))
+if not os.path.exists(stat_conf.matches_dir):
+    os.system("mkdir %s" % (stat_conf.matches_dir))
+
+mPath = matchesPath
+if not os.path.exists(mPath):
+    os.system("mkdir %s" % (mPath))
+    
+os.system("mv %s %s" % (pathXML, mPath))
+os.system("mv %s %s" % (pathTXT, mPath))

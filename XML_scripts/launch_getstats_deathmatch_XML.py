@@ -17,7 +17,7 @@ stat_conf.read_config()
 
 # =================================================================================================
 path = stat_conf.nquakesv_root + "/ktx/demos"
-statsMatchesPath = stat_conf.matches_dir
+matchesPath = stat_conf.matches_dir + "dm"
 # =================================================================================================
 
 parser = OptionParser(usage="", version="")
@@ -59,5 +59,13 @@ print "RES", pathXML
 print "RES", pathTXT
 
 os.system("python getstats_deathmatch_XML.py --league Premier --fxml %s --fjson %s %s" % (pathXML, pathTXT, "--net-copy" if options.netCopy else ""))
-os.system("cp %s %s" % (pathXML, statsMatchesPath))
-os.system("cp %s %s" % (pathTXT, statsMatchesPath))
+
+if not os.path.exists(stat_conf.matches_dir):
+    os.system("mkdir %s" % (stat_conf.matches_dir))
+
+mPath = matchesPath
+if not os.path.exists(mPath):
+    os.system("mkdir %s" % (mPath))
+    
+os.system("mv %s %s" % (pathXML, mPath))
+os.system("mv %s %s" % (pathTXT, mPath))
