@@ -1085,7 +1085,13 @@ HTML_SCRIPT_HIGHCHARTS_TEAM_BATTLE_PROGRESS_FUNCTION = \
 "        },\n" \
 "        xAxis: {\n" \
 "            categories: [MINUTES],\n" \
-"            crosshair: true\n" \
+"            crosshair: true,\n" \
+"            labels: {\n" \
+"     formatter: function () {\n" \
+"       return (this.value).toString()\n" \
+"    },\n" \
+"},\n" \
+"            tickPositions: [TICK_POSITIONS_VALS]\n" \
 "        },\n" \
 "        yAxis: [{\n" \
 "            title: {\n" \

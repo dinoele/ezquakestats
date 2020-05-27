@@ -1971,7 +1971,12 @@ def writeHtmlWithScripts(f, teams, resStr):
     for i in xrange(1,matchMinutesCnt+1):
         minutesStr += "'%d'," % (i)
     minutesStr = minutesStr[:-1]
-
+    
+    tickPositions = ""
+    for i in xrange(0,matchMinutesCnt+1):
+        tickPositions += "%d," % (i)
+    tickPositions = tickPositions[:-1]
+    
     maxTotalFrags =  (sorted(teams, key=methodcaller("frags"), reverse=True))[0].frags()
     maxPlayerFrags = (sorted(allplayers, key=methodcaller("frags"), reverse=True))[0].frags()
 
@@ -2001,6 +2006,7 @@ def writeHtmlWithScripts(f, teams, resStr):
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("DIV_NAME", "team_progress%d" % (tn))
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("TEAM_NAME", tt.name)
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("MINUTES", minutesStr)
+        highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("TICK_POSITIONS_VALS", tickPositions)
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("ADD_ROWS", rowLines)
         highchartsTeamBattleProgressFunctionStr = highchartsTeamBattleProgressFunctionStr.replace("TEAM_POINTS", teamPointsStr)
 
