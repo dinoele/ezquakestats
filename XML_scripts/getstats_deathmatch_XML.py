@@ -126,8 +126,31 @@ elementsCloseByTime = [] # [[timestamp1,..,timestampN], [elemen1, elemen2, .. , 
 
 
 sourceXML = open(options.inputFileXML)
-tree = ET.parse(sourceXML)
-root = tree.getroot()
+
+try:
+    tree = ET.parse(sourceXML)
+    root = tree.getroot()
+except:
+    # try to cut XML - find the last "<?xml version="1.0" encoding="ISO-8859-1"?>" and take only text after
+    xmlLine = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+    
+    sourceXML = open(options.inputFileXML)
+    xmlLines = sourceXML.readlines()
+    
+    i = len(xmlLines)-1
+    isOver = False
+    while not isOver:
+        print i
+        if xmlLine in xmlLines[i]:
+            isOver = True            
+            break
+        i -= 1
+    
+    xmlText = ""
+    for j in xrange(i,len(xmlLines)):
+        xmlText += xmlLines[j]
+    
+    root = ET.fromstring(xmlText)
 
 i = 0
 j = 0
