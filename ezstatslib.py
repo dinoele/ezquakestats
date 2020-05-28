@@ -2914,6 +2914,8 @@ class Player:
         
         self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.COMMON, who) )
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
+        self.currentHealth = 100
+        self.currentArmor = 0
 
     def incSuicides(self, time):
         self.suicides += 1
@@ -2927,6 +2929,8 @@ class Player:
         
         self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.SUICIDE, "SELF") )
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
+        self.currentHealth = 100
+        self.currentArmor = 0
 
     def incTeamkill(self, time, who, whom):
         self.teamkills += 1
@@ -2948,6 +2952,8 @@ class Player:
         
         self.lifetime.append( PlayerLifetimeElement(time,-1,-1,PlayerLifetimeDeathType.TEAM_KILL, "[MATE]%s" % (who)) )
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
+        self.currentHealth = 100
+        self.currentArmor = 0
 
     def frags(self):
         return (self.kills - self.teamkills - self.suicides);
