@@ -2720,6 +2720,10 @@ class Player:
         self.lifetime = []
         self.lifetime.append( PlayerLifetimeElement(0,self.currentHealth,self.currentArmor) )        
         
+        self.lifetimeXML = 0.0
+        self.firstDeathXML = ""
+        self.lastDeathXML = ""
+        
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
             if element.armor == 1:
@@ -4189,7 +4193,7 @@ class DeathElement:
         self.quad = -1
         self.armorleft = -1
         self.killheight = -1
-        self.lifetime = -1
+        self.lifetime = 0.0
 
         self.isSuicide = False
         self.isSpawnFrag = False

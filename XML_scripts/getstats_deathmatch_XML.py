@@ -140,7 +140,6 @@ except:
     i = len(xmlLines)-1
     isOver = False
     while not isOver:
-        print i
         if xmlLine in xmlLines[i]:
             isOver = True            
             break
@@ -312,6 +311,10 @@ for elem in deathElements:
         for pl in xmlPlayers:
             if pl.name == elem.attacker:
                 pl.suicidesXML += 1
+                pl.lifetimeXML += elem.lifetime
+                if pl.firstDeathXML == "":
+                    pl.firstDeathXML = elem
+                pl.lastDeathXML = elem
     else:
 
         #print "%f  %s -> %s  \"%s\"  %f" % (elem.time, elem.attacker, elem.target, elem.type, elem.lifetime)
@@ -324,6 +327,10 @@ for elem in deathElements:
                     pl.spawnFragsXML += 1
             if pl.name == elem.target:
                 pl.deathsXML += 1
+                pl.lifetimeXML += elem.lifetime
+                if pl.firstDeathXML == "":
+                    pl.firstDeathXML = elem
+                pl.lastDeathXML = elem
 
 
 
@@ -1622,6 +1629,13 @@ for pl in allplayers:
         resultString += "\n"
            
 resultString += "\n"    
+
+# lifetimeXML
+resultString += "\nLifetime: \n"
+for pl in allplayers:    
+    resultString += "%s: %f, inactive time: %f,  1st death: time(%f), lifetime(%f)\n" % (pl.name, pl.lifetimeXML, (minutesPlayedXML*60 - pl.lifetimeXML), pl.firstDeathXML.time, pl.firstDeathXML.lifetime)
+
+resultString += "\n"
     
 # print resultString  RESULTPRINT
 
