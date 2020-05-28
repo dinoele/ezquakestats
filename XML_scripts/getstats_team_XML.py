@@ -1578,7 +1578,7 @@ resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                
 resultString += "\n"
 
 if options.withScripts:    
-    resultString += "\nHIGHCHART_PLAYER_LIFETIME_PLACE\n"
+    resultString += "\n</pre>HIGHCHART_PLAYER_LIFETIME_PLACE\n<pre>"
 
 # if len(disconnectedplayers) != 0:
     # resultString += "\n"
@@ -1948,7 +1948,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     playersLifetimeDivStrs = ""
     for pl in allplayersByFrags:
         playersLifetimeDivStrs += ezstatslib.HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG.replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))
-        playersLifetimeDivStrs += "<br>\n"
+        # playersLifetimeDivStrs += "<br>\n"
     
     highchartsPlayerLifetimeFunctionStrs = ""
     for pl in allplayersByFrags:

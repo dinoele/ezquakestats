@@ -2141,7 +2141,18 @@ HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_FUNCTION = \
 "});\n" \
 "});\n"
 
-HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG = "<div id=\"highchart_player_lifetime_PLAYERNAME\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+# HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG = "<div id=\"highchart_player_lifetime_PLAYERNAME\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"
+HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DIV_TAG = \
+"<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-closed\" id=\"highchart_player_lifetime_PLAYERNAME_folding\">\n" \
+  "    <h2 class=\"symple-toggle-trigger \">Lifetime of PLAYERNAME</h3>\n " \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "       <div id=\"highchart_player_lifetime_PLAYERNAME\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
  
 HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE = "  {color: 'LINE_COLOR', width: 1, value: LINE_VALUE, label: { text: 'LINE_LABEL', verticalAlign: 'bottom', textAlign: 'right', style: { fontSize: 10, color: 'LABEL_COLOR' }} },"
   
