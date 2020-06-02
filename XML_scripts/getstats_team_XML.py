@@ -437,7 +437,12 @@ for pl in jsonPlayers:
             pl.lifetimeXML = plXML.lifetimeXML + (minutesPlayedXML*60 - plXML.lastDeathXML.time)
             pl.lastDeathXML = plXML.lastDeathXML
             pl.firstDeathXML = plXML.firstDeathXML
-
+            
+            if len(rlAttacksByPlayers) != 0:
+                try:
+                    pl.rl_attacks = rlAttacksByPlayers[pl.name]
+                except:
+                    pass
 
     allplayers.append(pl)
     if pl.teamname == teamName1:
@@ -1541,7 +1546,6 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
     resultString += "\n"
     resultString += "\n"
 
-
 resultString += "Teams weapons:\n"
 resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]" % (team1.name), team1.kills,  team1.getWeaponsKills(team1.kills,   weaponsCheck))
 resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                    team1.deaths, team1.getWeaponsDeaths(team1.deaths, weaponsCheck))
@@ -1549,6 +1553,10 @@ resultString += "\n"
 resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]" % (team2.name), team2.kills,  team2.getWeaponsKills(team2.kills,   weaponsCheck))
 resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                    team2.deaths, team2.getWeaponsDeaths(team2.deaths, weaponsCheck))
 resultString += "\n"
+
+if options.withScripts:
+    resultString += "RL skill:\n"
+    resultString += "\nHIGHCHART_RL_SKILL_PLACE\n"
 
 if options.withScripts:    
     resultString += "\n</pre>HIGHCHART_PLAYER_LIFETIME_PLACE\n<pre>"
@@ -2397,6 +2405,51 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write(powerUpsTimelineVer2FunctionStr)
     # <-- power ups timeline ver2
 
+    # highcharts RL skill -->
+    # div
+    rlSkillDivStrs = ""
+    rowsCount = (len(allplayersByFrags) / 3) + (0 if len(allplayersByFrags) % 3 == 0 else 1)
+    
+    for rowNum in xrange(rowsCount):
+        rlSkillDivStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_DIV_AND_TABLE_TAG
+        tableRowsStr = ""
+        currentRowCount = 3 if rowNum < (rowsCount-1) or len(allplayersByFrags) % 3 == 0 else len(allplayersByFrags) % 3
+        percentsVal = 100 / currentRowCount
+        for j in xrange(currentRowCount):
+           tRowStr = ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_TABLE_ROW
+           tRowStr = tRowStr.replace("PLAYERNAME", ezstatslib.escapePlayerName(allplayersByFrags[j+rowNum*3].name))
+           tRowStr = tRowStr.replace("TD_WIDTH", "%d" % (percentsVal))
+           tableRowsStr += tRowStr
+           
+        rlSkillDivStr = rlSkillDivStr.replace("TABLE_ROWS", tableRowsStr)
+        rlSkillDivStrs += rlSkillDivStr
+    
+    for pl in allplayersByFrags:
+        rlSkillFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_RL_SKILL_FUNCTION_TEMPLATE).replace("PLAYERNAME", ezstatslib.escapePlayerName(pl.name))
+       
+        cnt = len(pl.rl_damages_gvn)
+        val110 = sum(1 for val in pl.rl_damages_gvn if val[0] == 110)
+        val100 = sum(1 for val in pl.rl_damages_gvn if val[0] < 110 and val[0] >= 100)
+        val90  = sum(1 for val in pl.rl_damages_gvn if val[0] < 100 and val[0] >= 90)
+        val75  = sum(1 for val in pl.rl_damages_gvn if val[0] < 90 and val[0] >= 75)
+        val55  = sum(1 for val in pl.rl_damages_gvn if val[0] < 75 and val[0] >= 55)
+        val0   = sum(1 for val in pl.rl_damages_gvn if val[0] < 55 and val[0] >= 0)
+        
+        rlSkillRowsStr = "['DirectHit110', %d],\n ['(110,100])', %d],\n ['(100,90]', %d], ['(90,75]', %d], ['(75,55]', %d], ['(55,0]', %d]" % (val110, val100, val90, val75, val55, val0)
+
+      # ['DirectHit110', 26.79],
+      # ['(110,100])', 0],
+      # ['(100,90]', 9.92],
+      # ['(90,75]', 26.78],
+      # ['(75,55]', 26.78],
+      # ['(55,0]', 10.71],
+
+        rlSkillFunctionStr = rlSkillFunctionStr.replace("CHART_TITLE", "[%s] %s<br>(%d / %d)" % (pl.teamname, pl.name, cnt, pl.rl_attacks))
+        rlSkillFunctionStr = rlSkillFunctionStr.replace("ADD_ROWS", rlSkillRowsStr)
+        f.write(rlSkillFunctionStr)
+    # <-- highcharts RL skill
+    
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
 
     # add divs
@@ -2419,6 +2472,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     resStr = resStr.replace("TEAM_RESULTS", ezstatslib.HTML_TEAM_RESULTS_FUNCTION_DIV_TAG)
     resStr = resStr.replace("POWER_UPS_TIMELINE_VER2_PLACE", powerUpsTimelineVer2DivStr)
     
+    resStr = resStr.replace("HIGHCHART_RL_SKILL_PLACE", rlSkillDivStrs)
     resStr = resStr.replace("HIGHCHART_PLAYER_LIFETIME_PLACE", playersLifetimeDivStrs)
 
     f.write(resStr)
