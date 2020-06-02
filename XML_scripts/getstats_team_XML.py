@@ -52,17 +52,29 @@ def fillH2HDamage(who,whom,value,minute):
     except Exception, ex:
         ezstatslib.logError("fillH2HDamage: who=%s, whom=%s, minute=%d, ex=%s\n" % (who, whom, minute, ex))		
 		
-plPrevFragsDict = {}
+def deltaToString(delta):
+    deltaStr = ""
+    if delta == 0:
+        deltaStr = "<sup>0  </sup>"
+    else:
+        if delta > 0:
+            deltaStr = "<sup>+%d%s</sup>" % (delta, " " if delta < 10 else "")
+        else:
+            deltaStr = "<sup>%d%s</sup>"  % (delta, " " if delta < 10 else "")
+    return deltaStr
 
+plPrevFragsDict = {}
+    
 def getFragsLine(players):
     playersByFrags = sorted(players, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
-    s = "[%s]" % (players[0].teamname)
+    s = "[%s]TEAM_DELTA" % (players[0].teamname)
 
     fragsSum = 0
     for pl in playersByFrags:
         fragsSum += pl.frags()
     s += " {0:3d}: ".format(fragsSum)
 
+    teamFragsDelta = 0
     for pl in playersByFrags:
         if not pl.name in plPrevFragsDict.keys():
             plFragsDelta = pl.frags()
@@ -70,15 +82,11 @@ def getFragsLine(players):
             plFragsDelta = pl.frags() - plPrevFragsDict[pl.name]
         plPrevFragsDict[pl.name] = pl.frags()
 
-        if plFragsDelta == 0:
-            deltaStr = "<sup>0  </sup>"
-        else:
-            if plFragsDelta > 0:
-                deltaStr = "<sup>+%d%s</sup>" % (plFragsDelta, " " if plFragsDelta < 10 else "")
-            else:
-                deltaStr = "<sup>%d%s</sup>"  % (plFragsDelta, " " if plFragsDelta < 10 else "")
-
+        teamFragsDelta += plFragsDelta
+        deltaStr = deltaToString(plFragsDelta)
         s += ( "{0:%ds}" % (20+len(deltaStr)) ).format(pl.name + "(" + str(pl.frags()) + ")" + deltaStr)
+    
+    s = s.replace("TEAM_DELTA", deltaToString(teamFragsDelta))
     s = s[:-1]
 
     return s
