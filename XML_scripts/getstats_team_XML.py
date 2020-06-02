@@ -31,20 +31,8 @@ import random
 import xml.etree.ElementTree as ET
 import json
 
-# TODO use ezstatslib.readLineWithCheck
-# TODO skip lines separate log
-# TODO make index file
-
 ezstatslib.REPORTS_FOLDER = stat_conf.reports_dir
 ezstatslib.LOGS_INDEX_FILE_NAME = "index.html"
-
-COMMAND_LOG_LOCAL_SMALL_DELIM = "__________";
-COMMAND_LOG_LOCAL_BIG_DELIM   = "___________________________________";
-
-COMMAND_LOG_NET_SMALL_DELIM   = "(========)";
-COMMAND_LOG_NET_BIG_DELIM     = "(=================================)";
-
-teammateTelefrags = [] # array of names who was telegragged by teammates
 
 def fillH2H(who,whom,minute):
     try:
@@ -259,13 +247,8 @@ for child in root:
 #                for evtags in evtype:
 #                    print evtags.tag, evtags.attrib, evtags.text
 
-
                 k+=1
-
-
             j+=1
-
-    
     i+=1
        
 sourceXML.close()
@@ -541,21 +524,6 @@ for element in elements:
         matchProgressPlayers2DictEx.append(playersProgressLineDict2)
 
         battleProgressExtendedNextPoint += (int)(60 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-        
-    # else:
-        # if currentMatchTime > battleProgressExtendedNextPoint:
-            # battleProgressExtendedNextPoint += (int)(60 / ezstatslib.HIGHCHARTS_BATTLE_PROGRESS_GRANULARITY)
-            # progressLineDict = {}
-            # fr1 = 0
-            # for pl in players1:
-                # fr1 += pl.frags()
-            # fr2 = 0
-            # for pl in players2:
-                # fr2 += pl.frags()
-                
-            # progressLineDict[team1.name] = fr1; # team1.frags()
-            # progressLineDict[team2.name] = fr2; # team2.frags()
-            # matchProgressDictEx.append(progressLineDict)
     
     if len(matchProgressDictEx2) == 0 or matchProgressDictEx2[len(matchProgressDictEx2)-1][team1.name][0] != currentMatchTime:
         progressLineDict = {}
@@ -634,8 +602,7 @@ for element in elements:
                     pl.death_weapons.add('tele')
                     isFoundWhom = True
              
-            if not isFoundWho or not isFoundWhom:
-                #print "ERROR: count telefrag", who, "-", whom, ":", logline
+            if not isFoundWho or not isFoundWhom:                
                 ezstatslib.logError("ERROR: count telefrag %s-%s\n" % (who, whom))
                 exit(0)
     
@@ -1314,9 +1281,6 @@ for pl in allplayers:
     pl.fillStreaks(currentMatchTime)
     pl.fillDeathStreaks(currentMatchTime)
 
-# TODO add teammateTelefrags to team score
-# print "teammateTelefrags:", teammateTelefrags
-
 powerUpsStatus = {}
 for pwrup in ["ra","ya","ga","mh"]:
     exec("powerUpsStatus[\"%s\"] = False" % (pwrup))
@@ -1626,58 +1590,6 @@ for pl in sorted(players2, key=attrgetter("kills"), reverse=True):
 	
     
 # Players duels table
-# allplayersByFrags = sorted(allplayers, key=methodcaller("frags"), reverse=True)
-# resultString += "\n"
-# resultString += "Players duels:<br>"
-# headerRow=['', 'Frags', 'Kills', 'Deaths']
-# playersNames = []
-# for pl in allplayersByFrags:
-#     headerRow.append(pl.name);
-#     playersNames.append(pl.name)
-#
-# colAlign=[]
-# for i in xrange(len(headerRow)):
-#     colAlign.append("center")
-#
-# htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
-#                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
-#
-# for pl in allplayersByFrags:
-#     tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
-#                                     ezstatslib.htmlBold(pl.frags()),
-#                                     ezstatslib.htmlBold(pl.kills),
-#                                     ezstatslib.htmlBold(pl.deaths)])
-#
-#     for plName in playersNames:
-#         if pl.name == plName:
-#             tableRow.cells.append( HTML.TableCell(str(pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY) )
-#         else:
-#             plKills = 0
-#             for val in headToHead[pl.name]:
-#                 if val[0] == plName:
-#                     plKills = val[1]
-#
-#             plDeaths = 0
-#             for val in headToHead[plName]:
-#                 if val[0] == pl.name:
-#                     plDeaths = val[1]
-#
-#             cellVal = "%s / %s" % (ezstatslib.htmlBold(plKills)  if plKills  > plDeaths else str(plKills),
-#                                    ezstatslib.htmlBold(plDeaths) if plDeaths > plKills  else str(plDeaths))
-#
-#             cellColor = ""
-#             if plKills == plDeaths:
-#                 cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
-#             elif plKills > plDeaths:
-#                 cellColor = ezstatslib.BG_COLOR_GREEN
-#             else:
-#                 cellColor = ezstatslib.BG_COLOR_RED
-#
-#             tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
-#
-#     htmlTable.rows.append(tableRow)
-#
-# resultString += str(htmlTable)
 
 def createDuelCell(rowPlayer, player, isDamage):
     plName = player.name
@@ -1764,8 +1676,6 @@ resultString += "Players damage duels:<br>"
 resultString += str( createPlayersDuelTable(team1, players1ByFrags, players2ByFrags, True) )
 resultString += "\n"
 resultString += str( createPlayersDuelTable(team2, players2ByFrags, players1ByFrags, True) )
-
-resultString += "\nTeammate telefrags: " + str(teammateTelefrags) + "\n"
 
 # mutual kills 
 resultString += "\nMutual kills: \n"
@@ -2149,17 +2059,6 @@ def writeHtmlWithScripts(f, teams, resStr):
     # isFirstTeam = False
     # isSecondTeam = False
     for pl in sorted(players1, key=methodcaller("frags"), reverse=True) + sorted(players2, key=methodcaller("frags"), reverse=True):
-
-        # if not isFirstTeam and pl.teamname == players1[0].teamname:
-        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % (pl.teamname)
-        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % (pl.teamname, matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
-        #     isFirstTeam = True
-        #
-        # if not isSecondTeam and pl.teamname == players2[0].teamname:
-        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,0,0,0,1), new Date(2016,1,1,0,0,0,0,2)  ],\n" % (pl.teamname)
-        #     currentRowsLines += "[ '[%s]', '', '', new Date(2016,1,1,0,%d,0,0,1), new Date(2016,1,1,0,%d,0,0,2) ],\n" % (pl.teamname, matchMinutesCnt, matchMinutesCnt)  # global value: matchMinutesCnt
-        #     isSecondTeam = True
-
         strkRes,maxStrk           = pl.getCalculatedStreaksFull(1)
         for strk in strkRes:
             hintStr = "<p>&nbsp&nbsp&nbsp<b>%d: %s</b>&nbsp&nbsp&nbsp</p>" \

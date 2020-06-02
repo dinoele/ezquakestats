@@ -31,8 +31,6 @@ import json
 from stat import S_ISREG, ST_CTIME, ST_MODE, ST_SIZE, ST_MTIME
 
 import xml.etree.ElementTree as ET
-#tree = ET.parse('country_data.xml')
-#root = tree.getroot()
 
 ezstatslib.REPORTS_FOLDER = stat_conf.reports_dir
 ezstatslib.LOGS_INDEX_FILE_NAME = "index.html"
@@ -245,13 +243,8 @@ for child in root:
 #                for evtags in evtype:
 #                    print evtags.tag, evtags.attrib, evtags.text
 
-
                 k+=1
-
-
-            j+=1
-
-    
+            j+=1    
     i+=1
 
 sourceXML.close()
@@ -380,200 +373,25 @@ if not options.inputFileJSON is None and options.inputFileJSON != "":
     isOverTime = minutesPlayedXML != timelimit;
     overtimeMinutes = minutesPlayedXML - timelimit
     
-    
-# line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
-
-
-# while not ezstatslib.isMatchStart(line):
-    # if ".mvd" in line:
-        # mapName = line.split("]")[0]
-        # mapName += "]"
-    
-    # if "telefrag" in line and not "teammate" in line: # telefrags before match start
-        # matchlog[0].append(line)
-
-    # if "matchdate" in line:
-        # if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
-            # matchStartStamp = int( line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[0] )
-            # line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
-            
-        # matchdate = line.split("matchdate: ")[1].split("\n")[0].split(" Russia")[0]
-
-    # line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
-
-# matchMinutesCnt = 1
-# line = f.readline()
-# readLinesNum += 1
-# while not ezstatslib.isMatchEnd(line):
-    # if line != "":
-        # matchlog[ matchMinutesCnt - 1 ].append(line)
-    # line = f.readline()
-    # readLinesNum += 1
-    # line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
-    
-    # if not newLogFormat and ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
-        # newLogFormat = True
-    
-    # rea[rbf] left the game with 23 frags
-    # if "left the game" in line:
-        # lineStriped = line
-        # lineStamp = -1
-        # if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
-            # lineStriped    = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
-            # lineStamp = int( line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[0] )
-        
-        # plname = lineStriped.split(" ")[0];
-        # pl = Player( "", plname, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
-        # pl.isDropped = True
-        # if lineStamp != -1:
-            # pl.disconnectTime = lineStamp - matchStartStamp
-        # dropedplayers.append(pl);  # TODO record number of frags for final output
-
-    # Majority votes for mapchange
-    # if "Majority votes for mapchange" in line:
-        # print "Majority votes for mapchange"
-        # ezstatslib.logError("Majority votes for mapchange\n")
-        # exit(1)
-        
-    # Match stopped by majority vote
-    # if "Match stopped by majority vote" in line:
-        # print "Match stopped by majority vote"
-        # ezstatslib.logError("Match stopped by majority vote\n")
-        # exit(1)
-        
-    # if "remaining" in line or "overtime" in line:  # [9] minutes remaining
-        # matchMinutesCnt += 1
-        # matchlog.append([])
-
-# while not "Player statistics" in line:
-   # line = f.readline()
-   # readLinesNum += 1
-    # line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
-    
-
-# line = f.readline()  # (=================================)
-# line = f.readline()  # Frags (rank) . efficiency
-# line = f.readline()
-# readLinesNum += 3
-
-# while not "top scorers" in line and not "Running" in line:
-    # if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
-        # line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
-    
-    # playerName = line.split(' ')[1].split(':')[0]  # zrkn:
-
-    # if playerName[0] == "_":
-        # playerName = playerName[1:]
-        # disconnectedplayers.append(playerName)
-
-
-    # line = f.readline()    # "  45 (2) 51.1%"
-    # readLinesNum += 1
-
-    # stats = line.split(' ')
-
-    # pl = Player( "", playerName, int(stats[2]), int( stats[3].split('(')[1].split(')')[0]), 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
-    # pl.initPowerUpsByMinutes(matchMinutesCnt)
-            
-    # line = f.readline() # Wp: rl52.1% sg12.2%
-    # readLinesNum += 1
-
-    # pl.parseWeapons(line)
-
-    # line = f.readline() # RL skill: ad:82.2 dh:25
-    # readLinesNum += 1
-    # pl.rlskill_ad = float(line.split("ad:")[1].split(" ")[0])
-    # pl.rlskill_dh = float(line.split("dh:")[1].split(" ")[0])
-
-    # line = f.readline() # Armr&mhs: ga:0 ya:4 ra:1 mh:1
-    # readLinesNum += 1
-    
-    # if not "Armr&mhs" in line:
-        # line = f.readline()
-        # readLinesNum += 1
-    
-    # pl.ga = int(line.split("ga:")[1].split(" ")[0])
-    # pl.ya = int(line.split("ya:")[1].split(" ")[0])
-    # pl.ra = int(line.split("ra:")[1].split(" ")[0])
-    # pl.mh = int(line.split("mh:")[1].split(" ")[0])
-
-    # line = f.readline() # Damage: Tkn:4279 Gvn:4217 Tm:284
-    # readLinesNum += 1
-    # pl.tkn = int(line.split("Tkn:")[1].split(" ")[0])
-    # pl.gvn = int(line.split("Gvn:")[1].split(" ")[0])
-    # pl.tm  = int(line.split("Tm:")[1].split(" ")[0])
-
-    # line = f.readline() # Streaks: Frags:3 QuadRun:0
-    # readLinesNum += 1
-    
-    # if "Streaks" in line:
-        # pl.streaks = int(line.split("Streaks: Frags:")[1].split(" ")[0])
-
-    # line = f.readline() # SpawnFrags: 4
-    # readLinesNum += 1
-    
-    # if "OverTime" in line:
-        # line = f.readline()
-        # readLinesNum += 1
-    
-    # line = f.readline() # SpawnFrags: 4
-    # readLinesNum += 1
-
-    # pl.spawnfrags = int(line.split("SpawnFrags: ")[1].split(" ")[0])
-
-    # allplayers.append(pl)
-
-    # while not "#" in line:
-        # if "top scorers" in line or "Running" in line:
-            # break;
-        # else:
-            # line = f.readline()
-            # readLinesNum += 1
-            # line,readLinesNum = ezstatslib.readLineWithCheck(f, readLinesNum)
-
-# check droped players and add them to allplayers collection
-# for pl1 in dropedplayers:
-    # exist = false
-    # for pl2 in allplayers: 
-        # if pl1.name == pl2.name:
-            # exist = true
-    # if not exist:
-        # pl1.initpowerupsbyminutes(matchminutescnt)
-        # allplayers.append(pl1);
-
-
-
+   
 # NEWPLAYERS
 for pl in xmlPlayers:
     if pl.name == "world":
         continue
     pl.initPowerUpsByMinutes(minutesPlayedXML)
-    #pl.parseWeapons(line)
-    #pl.rlskill_ad = float(line.split("ad:")[1].split(" ")[0])
-    #pl.rlskill_dh = float(line.split("dh:")[1].split(" ")[0])
-    pl.ga = pl.gaXML  #int(line.split("ga:")[1].split(" ")[0])
-    pl.ya = pl.yaXML  #int(line.split("ya:")[1].split(" ")[0])
-    pl.ra = pl.raXML  #int(line.split("ra:")[1].split(" ")[0])
-    pl.mh = pl.mhXML  #int(line.split("mh:")[1].split(" ")[0])
-    pl.tkn = pl.damageTknArmor + pl.damageTkn # int(line.split("Tkn:")[1].split(" ")[0])
-    pl.gvn = pl.damageGvnArmor + pl.damageGvn # int(line.split("Gvn:")[1].split(" ")[0])
-    #pl.tm  = int(line.split("Tm:")[1].split(" ")[0])
-    #pl.streaks = int(line.split("Streaks: Frags:")[1].split(" ")[0])
-    pl.spawnfrags = pl.spawnFragsXML # int(line.split("SpawnFrags: ")[1].split(" ")[0])
+    pl.ga = pl.gaXML
+    pl.ya = pl.yaXML
+    pl.ra = pl.raXML
+    pl.mh = pl.mhXML
+    pl.tkn = pl.damageTknArmor + pl.damageTkn
+    pl.gvn = pl.damageGvnArmor + pl.damageGvn
+    pl.spawnfrags = pl.spawnFragsXML
     if len(rlAttacksByPlayers) != 0:
         try:
             pl.rl_attacks = rlAttacksByPlayers[pl.name]
         except:
             pass
     allplayers.append(pl)
-
-
-# map name
-#while not "top scorers" in line:
-#    line = f.readline()
-
-# if ezstatslib.LOG_TIMESTAMP_DELIMITER in line:  # TODO TIME
-    # line = line.split(ezstatslib.LOG_TIMESTAMP_DELIMITER)[1]
 
 if mapName == "":
     mapName = line.split(" ")[0]
@@ -1309,18 +1127,7 @@ if options.withScripts:
     resultString += "\n</pre>HIGHCHART_PLAYER_LIFETIME_PLACE\n<pre>"
 # ============================================================================================================
 
-# # calculated streaks
-# resultString += "\n"
-# resultString += "Players streaks (%d+):\n" % (ezstatslib.KILL_STREAK_MIN_VALUE)
-# resultString += str( ezstatslib.createStreaksHtmlTable(allplayers, ezstatslib.StreakType.KILL_STREAK) )
-# resultString += "\n"
-# 
-# # death streaks
-# resultString += "\n"
-# resultString += "Players death streaks (%d+):\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)
-# resultString += str( ezstatslib.createStreaksHtmlTable(allplayers, ezstatslib.StreakType.DEATH_STREAK) )
-# resultString += "\n"
-
+# calculated streaks
 totalStreaksHtmlTable = \
     HTML.Table(header_row=["Kill streaks (%d+)\n" % (ezstatslib.KILL_STREAK_MIN_VALUE), "Death streaks (%d+)\n" % (ezstatslib.DEATH_STREAK_MIN_VALUE)],
                rows=[ \
@@ -1532,10 +1339,6 @@ for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags
         resultString += "\t\t>> IT IS OVERTIME!! <<\n"
     
     i += 1
-    
-# POINT battle progress
-# if options.withScripts:
-#     resultString += "\nBP_PLACE\n"
     
 if options.withScripts:
     resultString += "\nHIGHCHART_BATTLE_PROGRESS_PLACE\n"
@@ -2235,6 +2038,27 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
                     lineColor = "purple"
                 else:
                     lineColor = "gray"
+  
+  # function azaza() {
+# {
+   # var chart=$("#highchart_player_lifetime_ssharok").highcharts();
+   
+   
+   # chart.xAxis[0].addPlotLine({
+    # value: 4.5,
+    # color: 'black',
+    # width: 20,
+    # id: 'first'
+  # })
+   
+   # var pl = [];
+   
+ # $.each( chart.xAxis[0].plotLinesAndBands , function( i, v ) { pl.push(v.id); } );
+ # $.each( pl , function( i, v ) { chart.xAxis[0].removePlotLine( v ); });
+   
+   
+# }
+# }
                     
                 deathLine = deathLine.replace("LINE_COLOR", lineColor)
                 deathLine = deathLine.replace("LABEL_COLOR", lineColor)
