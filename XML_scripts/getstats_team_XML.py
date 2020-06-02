@@ -177,17 +177,21 @@ for child in root:
                     matchdate = ev.text.split(" Russia")[0]
                     matchdateLog += "I matchdate = " + matchdate + "\n"
                 else:
+                    correctionHours = 2
                     try:
                         matchdate = ev.text.split(" Eur")[0]
                         matchdateLog += "II matchdate = " + matchdate + "\n"
                         dt = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S')
+                        correctionHours = 3
                     except:
                         datesplit = ev.text.split(" ")
                         matchdate = datesplit[0] + " " + datesplit[1]
                         matchdateLog += "III matchdate = " + matchdate + "\n"
                         dt = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S')
+                        if "CEST" in ev.text:
+                            correctionHours = 1
 
-                    dtcorrected = dt + timedelta(hours=3)
+                    dtcorrected = dt + timedelta(hours=correctionHours)
                     matchdate = dtcorrected.strftime('%Y-%m-%d %H:%M:%S')
                     matchdateLog += "RESULT: matchdate = " + matchdate + "\n"
                     

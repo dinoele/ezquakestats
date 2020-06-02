@@ -149,6 +149,8 @@ except:
     
     root = ET.fromstring(xmlText)
 
+matchdateLog = ""    
+    
 i = 0
 j = 0
 k = 0
@@ -165,22 +167,30 @@ for child in root:
             if ev.tag == "map":
                 mapName = "[" + ev.text + "]"
             if ev.tag == "timestamp":
+                matchdateLog += "ev.text = " + ev.text + "\n"
+            
                 if "Russia" in ev.text:
                     matchdate = ev.text.split(" Russia")[0]
+                    matchdateLog += "I matchdate = " + matchdate + "\n"
                 else:
+                    correctionHours = 2
                     try:
                         matchdate = ev.text.split(" Eur")[0]
+                        matchdateLog += "II matchdate = " + matchdate + "\n"
                         dt = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S')
+                        correctionHours = 3
                     except:
                         datesplit = ev.text.split(" ")
                         matchdate = datesplit[0] + " " + datesplit[1]
-
-                        print matchdate
-
+                        matchdateLog += "III matchdate = " + matchdate + "\n"
                         dt = datetime.strptime(matchdate, '%Y-%m-%d %H:%M:%S')
+                        if "CEST" in ev.text:
+                            correctionHours = 1
 
-                    dtcorrected = dt + timedelta(hours=3)
-                    matchdate = dtcorrected.strftime('%Y-%m-%d %H:%M:%S') 
+                    dtcorrected = dt + timedelta(hours=correctionHours)
+                    matchdate = dtcorrected.strftime('%Y-%m-%d %H:%M:%S')
+                    matchdateLog += "RESULT: matchdate = " + matchdate + "\n"
+                    
             if ev.tag == "mode":
                 gameMode = ev.text
         if gameMode != "":
@@ -1453,6 +1463,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write("<!--\nGAME_PLAYERS\n" + plStr + "-->\n")
     
     f.write("<!--\nCOMBOS\n" + tmpComboStr + "-->\n")  # TEMP!!
+    
+    f.write("<!--\nMATCHDATELOG\n" + matchdateLog + "-->\n")  # TEMP!!
     
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % (options.leagueName, mapName, matchdate)  # global values
