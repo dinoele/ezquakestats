@@ -361,14 +361,22 @@ for pl in xmlPlayers:
     print "    ya: %s" % (pl.yaByMinutesXML)
     print "    ra: %s" % (pl.raByMinutesXML)
     print "    mh: %s" % (pl.mhByMinutesXML)    
-    
-    
+
+timelimit = -1
+duration = -1
+isOverTime = False
+overtimeMinutes = -1
+rlAttacksByPlayers = {}
+
 # open json    
 jsonPlayers = []
 with open(options.inputFileJSON, 'r') as fjson:
     jsonStrRead = json.load(fjson)
     teamName1 = jsonStrRead["players"][0]["team"]
-    team1 = Team(teamName1)    
+    team1 = Team(teamName1)
+    
+    timelimit = int(jsonStrRead["tl"])
+    duration = int(jsonStrRead["duration"])
     
     for i in xrange(len(jsonStrRead["players"])):
         if jsonStrRead["players"][i]["team"] != teamName1:
@@ -377,7 +385,12 @@ with open(options.inputFileJSON, 'r') as fjson:
     
         pl = Player( jsonStrRead["players"][i]["team"], jsonStrRead["players"][i]["name"], 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
         pl.initPowerUpsByMinutes(minutesPlayedXML)
+        rlAttacksByPlayers[pl.name] = jsonStrRead["players"][i]["weapons"]["rl"]["acc"]["attacks"];
+        
         jsonPlayers.append(pl)
+
+isOverTime = minutesPlayedXML != timelimit;
+overtimeMinutes = minutesPlayedXML - timelimit    
         
 for pl in jsonPlayers:
     print pl.name, " - ", pl.teamname     
@@ -550,17 +563,7 @@ for element in elements:
         for pl in players2ByFrags:
             playersProgressLineDict2[pl.name] = [currentMatchTime, pl.frags(), pl.calcDelta()];        
         matchProgressPlayers2DictEx2.append(playersProgressLineDict2)
-    
-    # # overtime check
-    # if isOverTime and currentMinute == minutesPlayedXML - overtimeMinutes:
-        # if len(allplayersByFrags) >= 2:
-            # if allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
-                # allplayersByFrags[0].overtime_frags = allplayersByFrags[0].frags()
-                # allplayersByFrags[1].overtime_frags = allplayersByFrags[1].frags()
-            # else:
-                # ezstatslib.logError("ERROR: overtime calculation: currentMinute: %d, minutesPlayedXML: %d, allplayersByFrags[0].frags(): %d, allplayersByFrags[1].frags(): %d" % \
-                 # (currentMinute, minutesPlayedXML, allplayersByFrags[0].frags(), allplayersByFrags[1].frags()))
-               
+
     # skip Damage and Death elements with target=None (door which is opened by the shot)
     if (isinstance(element, DeathElement) or isinstance(element, DamageElement)) and element.target is None:
         continue
@@ -1412,7 +1415,7 @@ if options.withScripts:
 i = 1
 resultString += "battle progress:\n"
 for p in progressStr:
-    resultString += "%d:%s %s\n" % (i, "" if i >= 10 else " ",  p)
+    resultString += "%d:%s %s%s\n" % (i, "" if i >= 10 else " ", p, " << IT IS OVERTIME!!" if isOverTime and i == timelimit else "")
     i += 1
 
 if totalScore[0][1] > totalScore[1][1]:
@@ -1847,13 +1850,21 @@ def writeHtmlWithScripts(f, teams, resStr):
         if k % 30 == 0:
             tickPositions += "%d," % (k)
 
-    xAxisLabels = \
-        "labels: {\n" \
-        "     formatter: function () {\n" \
-        "       return (this.value / 60).toFixed(1).toString()\n" \
-        "    },\n" \
-        "},\n"
-    xAxisLabels += "tickPositions: [%s]\n" % (tickPositions)
+    # xAxisLabels = \
+        # "labels: {\n" \
+        # "     formatter: function () {\n" \
+        # "       return (this.value / 60).toFixed(1).toString()\n" \
+        # "    },\n" \
+        # "},\n"
+    # xAxisLabels += "tickPositions: [%s]\n" % (tickPositions)
+    
+    xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
+    xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        xAxisLabels = xAxisLabels.replace("VERTICAL_LINE_POS", str((minutesPlayedXML-overtimeMinutes)*60))
+    
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
 
     # tooltip style
@@ -2566,3 +2577,8 @@ if os.path.exists(logsIndexPath):
 os.rename(tmpLogsIndexPath, logsIndexPath)
 
 print filePath
+
+print "isOverTime:", isOverTime
+print "timelimit:", timelimit
+print "duration:", duration
+print "minutesPlayedXML:", minutesPlayedXML
