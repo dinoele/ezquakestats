@@ -2070,9 +2070,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     highchartsBattleProgressFunctionStr = (ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION).replace("highchart_battle_progress", "highchart_battle_progress_players")
 
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Players battle progress")
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")
-
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", "")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Frags")    
 
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \
@@ -2085,36 +2083,55 @@ def writeHtmlWithScripts(f, teams, resStr):
             rowLines += hcDelim
 
         rowLines += "name: '%s',\n" % (pl.name)
-        # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
 
-        k = 1
-        for minEl in matchProgressPlayers1DictEx:
-            maxFrags = max(maxFrags, minEl[pl.name][0])
-            rowLines += ",[%d,%d]" % (k, minEl[pl.name][0])  # TODO format, now is 0.500000
-            k += 1
+        curSec = -1
+        curSevVal = -1
+        for minEl in matchProgressPlayers1DictEx2:
+            maxFrags = max(maxFrags, minEl[pl.name][1])
+            if curSec == -1 or curSec != int(minEl[pl.name][0]):
+                curSec = int(minEl[pl.name][0])
+                curSevVal = minEl[pl.name][1]
+                rowLines += ",[%d,%d]" % (minEl[pl.name][0], curSevVal)
 
         rowLines += "]\n"
-        rowLines += ",\ndashStyle: 'ShortDash',\n    lineWidth: 3"
+        rowLines += ",\ndashStyle: 'ShortDash'"
 
     for pl in players2:
         if rowLines != "":
             rowLines += hcDelim
 
         rowLines += "name: '%s',\n" % (pl.name)
-        # rowLines += "data: [0"
         rowLines += "data: [[0,0]"
-      
-        k = 1
-        for minEl in matchProgressPlayers2DictEx:
-            maxFrags = max(maxFrags, minEl[pl.name][0])
-            rowLines += ",[%d,%d]" % (k, minEl[pl.name][0])  # TODO format, now is 0.500000
-            k += 1
+
+        curSec = -1
+        curSevVal = -1
+        for minEl in matchProgressPlayers2DictEx2:
+            maxFrags = max(maxFrags, minEl[pl.name][1])
+            if curSec == -1 or curSec != int(minEl[pl.name][0]):
+                curSec = int(minEl[pl.name][0])
+                curSevVal = minEl[pl.name][1]
+                rowLines += ",[%d,%d]" % (minEl[pl.name][0], curSevVal)
 
         rowLines += "]\n"
 
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: -15,")
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "      max: %d," % (int(maxFrags*1.2))) 
+    matchMinutesCnt = len(matchProgressDict)
+    tickPositions = ""
+    for k in xrange(matchMinutesCnt*60+1):
+        if k % 30 == 0:
+            tickPositions += "%d," % (k)
+
+    xAxisLabels = \
+        "labels: {\n" \
+        "     formatter: function () {\n" \
+        "       return (this.value / 60).toFixed(1).toString()\n" \
+        "    },\n" \
+        "},\n"
+    xAxisLabels += "tickPositions: [%s]\n" % (tickPositions)
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)        
+        
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: -10,")
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MAX_PLAYER_FRAGS", "      max: %d," % (int(maxFrags*1.1)))
         
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
 
