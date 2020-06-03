@@ -1940,8 +1940,12 @@ def writeHtmlWithScripts(f, teams, resStr):
                 deathLines += deathLine
                 
             else:
-                healthRows += "[%f,%d]," % (lt.time,lt.health)
-                armorRows  += "[%f,%d]," % (lt.time,lt.armor)
+                if lt.health == 200 and lt.armor == 200:
+                    healthRows += "{x: %f, y: %d, color: \"gold\", marker: { enabled: true, symbol: 'url(ezquakestats/img/quake-icon.png)', height: 55, width: 55 }}," % (lt.time,lt.health)
+                    armorRows  += "{x: %f, y: %d, color: \"gold\", marker: { enabled: true, symbol: 'url(ezquakestats/img/quake-icon.png)', height: 55, width: 55 }}," % (lt.time,lt.armor)
+                else:
+                    healthRows += "[%f,%d]," % (lt.time,lt.health)
+                    armorRows  += "[%f,%d]," % (lt.time,lt.armor)
             
         highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("HEALTH_ROWS", healthRows)
         highchartsPlayerLifetimeFunctionStr = highchartsPlayerLifetimeFunctionStr.replace("ARMOR_ROWS", armorRows)
