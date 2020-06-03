@@ -225,8 +225,6 @@ for child in root:
                         pl = Player( "", elem.attacker, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
                         xmlPlayers.append(pl)
 
-                    
-                        
                 if evtype.tag == "death":
                     deathCnt += 1
                     elem = DeathElement(evtype)
@@ -1644,7 +1642,11 @@ def createDuelCell(rowPlayer, player, isDamage):
         return HTML.TableCell(cellVal, bgcolor=cellColor)
 
 def createPlayersDuelTable(team, teamPlayers, enemyPlayers, isDamage):
-    headerRow=["[" + team.name + "]", 'Frags', 'Kills', 'Deaths']
+    if isDamage:
+        headerRow=["[" + team.name + "]", 'Frags', 'Given', 'Taken']
+    else:
+        headerRow=["[" + team.name + "]", 'Frags', 'Kills', 'Deaths']
+        
     playersNames = []
     for pl in enemyPlayers:
         headerRow.append(pl.name);
@@ -1666,8 +1668,8 @@ def createPlayersDuelTable(team, teamPlayers, enemyPlayers, isDamage):
     for pl in teamPlayers:
         tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
                                         ezstatslib.htmlBold(pl.frags()),
-                                        ezstatslib.htmlBold(pl.kills),
-                                        ezstatslib.htmlBold(pl.deaths)])
+                                        ezstatslib.htmlBold(pl.gvn) if isDamage else ezstatslib.htmlBold(pl.kills),
+                                        ezstatslib.htmlBold(pl.tkn) if isDamage else ezstatslib.htmlBold(pl.deaths)])
 
         for pll in enemyPlayers:
             tableRow.cells.append( createDuelCell(pl, pll, isDamage) )
