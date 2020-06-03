@@ -3657,7 +3657,6 @@ class Achievement:
            self.achtype == AchievementType.OVERTIME           or \
            self.achtype == AchievementType.DUEL_WINNER        or \
            self.achtype == AchievementType.PERSONAL_STALKER   or \
-           self.achtype == AchievementType.WHITEWASH          or \
            self.achtype == AchievementType.FASTER_THAN_BULLET or \
            self.achtype == AchievementType.TEAMMATES_FAN      or \
            self.achtype == AchievementType.NO_SUICIDES        or \
@@ -3684,7 +3683,8 @@ class Achievement:
            self.achtype == AchievementType.KILL_STREAK            or \
            self.achtype == AchievementType.BALANCED_PLAYER        or \
            self.achtype == AchievementType.LIKE_AN_ANGEL          or \
-           self.achtype == AchievementType.COMBO_DOUBLE_KILL            or \
+           self.achtype == AchievementType.WHITEWASH              or \
+           self.achtype == AchievementType.COMBO_DOUBLE_KILL      or \
            self.achtype == AchievementType.COMBO_MUTUAL_KILL:
             return AchievementLevel.RARE_POSITIVE
       
