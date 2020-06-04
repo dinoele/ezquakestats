@@ -2167,7 +2167,7 @@ KILL_STREAK_MIN_VALUE  = 3
 DEATH_STREAK_MIN_VALUE = 3
 
 def escapePlayerName(s):
-    tokens = ["-", "[", "]", "\\", "^", "$", "*", ".", "?"]
+    tokens = ["-", "[", "]", "\\", "^", "$", "*", ".", "?", "(", ")"]
     for tkn in tokens:
         s = s.replace(tkn, "_")
     return s
