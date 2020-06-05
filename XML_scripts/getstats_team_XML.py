@@ -444,7 +444,8 @@ for pl in jsonPlayers:
             pl.damageGvnArmor = plXML.damageGvnArmor
             pl.damageTknArmor = plXML.damageTknArmor
             pl.damageSelfArmor = plXML.damageSelfArmor
-            pl.lifetimeXML = plXML.lifetimeXML + (minutesPlayedXML*60 - plXML.lastDeathXML.time)
+            # pl.lifetimeXML = plXML.lifetimeXML + (minutesPlayedXML*60 - plXML.lastDeathXML.time)
+            pl.lifetimeXML = plXML.lifetimeXML
             pl.lastDeathXML = plXML.lastDeathXML
             pl.firstDeathXML = plXML.firstDeathXML
             
@@ -1716,7 +1717,7 @@ resultString += "\n"
 # lifetimeXML
 resultString += "\nLifetime: \n"
 for pl in allplayers:    
-    resultString += "%s: %f, inactive time: %f,  1st death: time(%f), lifetime(%f)\n" % (pl.name, pl.lifetimeXML, (minutesPlayedXML*60 - pl.lifetimeXML), pl.firstDeathXML.time, pl.firstDeathXML.lifetime)
+    resultString += "%s: %f; inactive time: %f;  1st death: time(%f), lifetime(%f);   last death: time(%f), lifetime(%f)\n" % (pl.name, pl.lifetimeXML, (minutesPlayedXML*60 - pl.lifetimeXML), pl.firstDeathXML.time, pl.firstDeathXML.lifetime, pl.lastDeathXML.time, pl.lastDeathXML.lifetime)
 
 resultString += "\n"
 

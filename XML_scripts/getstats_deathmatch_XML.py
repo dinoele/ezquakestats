@@ -1446,7 +1446,7 @@ resultString += "\n"
 # lifetimeXML
 resultString += "\nLifetime: \n"
 for pl in allplayers:    
-    resultString += "%s: %f, inactive time: %f,  1st death: time(%f), lifetime(%f)\n" % (pl.name, pl.lifetimeXML, (minutesPlayedXML*60 - pl.lifetimeXML), pl.firstDeathXML.time, pl.firstDeathXML.lifetime)
+    resultString += "%s: %f; inactive time: %f;  1st death: time(%f), lifetime(%f);   last death: time(%f), lifetime(%f)\n" % (pl.name, pl.lifetimeXML, (minutesPlayedXML*60 - pl.lifetimeXML), pl.firstDeathXML.time, pl.firstDeathXML.lifetime, pl.lastDeathXML.time, pl.lastDeathXML.lifetime)
 
 resultString += "\n"
     
