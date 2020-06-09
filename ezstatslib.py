@@ -1475,7 +1475,7 @@ HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG = \
   "<div class=\"wpb_wrapper\">\n" \
   "  <div class=\"symple-toggle state-open\" id=\"achievements\">\n" \
   "  <h2 class=\"symple-toggle-trigger \">Achievements</h2>\n" \
-  "  <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "  <div class=\"symple-toggle-container symple-clearfix\" style='overflow-x:scroll;overflow-y:hidden'>\n" \
   "PLAYERS_ACHIEVEMENTS_TABLE" \
   "  </div>\n" \
   "  </div>\n" \
