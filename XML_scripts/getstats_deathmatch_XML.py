@@ -2225,8 +2225,18 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     for pl in sortedPlayers:
         if len(pl.achievements) != 0:
             tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(pl.name), align="center", width=cellWidth) ])  # TODO player name cell width
-            for ach in pl.achievements:
-                tableRow.cells.append( HTML.TableCell(ach.generateHtmlEx(), align="center" ) )
+            achIds = pl.getAchievementsIds()
+            i = 0
+            while i < len(pl.achievements):
+                if achIds.count(pl.achievements[i].achtype) == 1:
+                    tableRow.cells.append( HTML.TableCell(pl.achievements[i].generateHtmlEx(), align="center" ) )
+                    i += 1
+                else:
+                    totalExtraInfo = ""
+                    for j in xrange(achIds.count(pl.achievements[i].achtype)):
+                        totalExtraInfo += "%d) %s\n" % (j+1, pl.achievements[i+j].extra_info)
+                    tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(pl.achievements[i], totalExtraInfo, achIds.count(pl.achievements[i].achtype)), align="center" ) ) 
+                    i += achIds.count(pl.achievements[i].achtype)
             
             achievementsHtmlTable.rows.append(tableRow)
         

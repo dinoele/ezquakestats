@@ -3228,6 +3228,13 @@ class Player:
             res = res[:-1]
 
         return res
+        
+    def getAchievementsIds(self):
+        res = []
+        for ach in self.achievements:
+            res.append(ach.achtype)
+        return res
+        
 
     # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
     def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead, isTeamGame):
@@ -3526,8 +3533,20 @@ class Achievement:
         return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(path), self.description(), self.description(), self.extra_info, size, size)
         
     def generateHtmlEx(self, path = "ezquakestats/img/", size = 125, radius = 45, shadowSize = 8, shadowIntensity = 35):
-        return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;border: 8px solid %s; -webkit-border-radius: %d%%; -moz-border-radius: %d%%; border-radius: %d%%;box-shadow: 0px 0px %dpx %dpx rgba(0,0,0,0.%d);\">" % (self.getImgSrc(path), self.description(), self.description(), self.extra_info, size, size, Achievement.getBorderColor(self.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity)
-
+        return "<div style=\"position: relative;\">" \
+               "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;border: 8px solid %s; -webkit-border-radius: %d%%; -moz-border-radius: %d%%; border-radius: %d%%;box-shadow: 0px 0px %dpx %dpx rgba(0,0,0,0.%d);\">" \
+               "</div>" \
+               % (self.getImgSrc(path), self.description(), self.description(), self.extra_info, size, size, Achievement.getBorderColor(self.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity)
+               
+    @staticmethod
+    def generateHtmlExCnt(ach, extraInfo, count, path = "ezquakestats/img/", size = 125, radius = 45, shadowSize = 8, shadowIntensity = 35):
+        return "<div style=\"position: relative;\">" \
+               "<img src=\"%s\" alt=\"%s\" title=\"%s: \n%s\" style=\"width:%dpx;height:%dpx;border: 8px solid %s; -webkit-border-radius: %d%%; -moz-border-radius: %d%%; border-radius: %d%%;box-shadow: 0px 0px %dpx %dpx rgba(0,0,0,0.%d);\">" \
+               "<img style=\"background-color:%s;position: absolute; top: 0; right: 0;width:37px;height:37px;border: 0px solid black;-webkit-border-radius: 55%%; -moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"ezquakestats\\img\\nums\\num%d.png\" alt=\"\" >" \
+               "</div>" \
+               % (ach.getImgSrc(path), ach.description(), ach.description(), extraInfo, size, size, Achievement.getBorderColor(ach.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity, \
+                  Achievement.getBorderColor(ach.achlevel), count)
+    
     def description(self):
         if self.achtype == AchievementType.LONG_LIVE:
             return "Long Live and Prosper"
