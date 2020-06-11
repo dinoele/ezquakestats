@@ -103,9 +103,6 @@ isStart = False
 isEnd = False
 
 allplayers = []
-disconnectedplayers = []
-dropedplayers = []
-spectators = []
 
 readLinesNum = 0
 
@@ -1383,33 +1380,6 @@ if options.withScripts:
     
 if options.withScripts:
     resultString += "</pre>POWER_UPS_TIMELINE_VER2_PLACE\n<pre>"
-
-if len(dropedplayers) != 0:
-    dropedStr = ""
-    for pl in dropedplayers:
-        dropedStr += "%s(drop time: %d)," % (pl.name, pl.disconnectTime)
-
-    dropedStr = dropedStr[:-1]
-    resultString += "Droped players: " + dropedStr + "\n"
-
-if len(spectators) != 0:
-    resultString += "Spectators: " + str(spectators) + "\n"
-
-if len(disconnectedplayers) != 0:
-    resultString += "\n"
-    resultString += "Disconnected players: " + str(disconnectedplayers) + "\n"
-    resultString += "\n"
-    
-connectedPlayersStr = ""
-for pl in allplayersByFrags:
-    if pl.connectTime != 0:
-        connectedPlayersStr += "%s(connect time: %d), " % (pl.name, pl.connectTime)
-    
-if connectedPlayersStr != "":
-    connectedPlayersStr = connectedPlayersStr[:-1]
-    resultString += "\n"
-    resultString += "Connected players: " + connectedPlayersStr[:-1] + "\n"
-    resultString += "\n"
 
 print "currentMinute:", currentMinute
 print "matchMinutesCnt:", matchMinutesCnt

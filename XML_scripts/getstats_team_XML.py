@@ -425,7 +425,6 @@ matchProgressPlayers2DictEx2 = []
 players1 = []
 players2 = []
 allplayers = []
-# disconnectedplayers = []
 
 for pl in jsonPlayers:
     for plXML in xmlPlayers:
@@ -1572,10 +1571,6 @@ if options.withScripts:
 
 if options.withScripts:    
     resultString += "\n</pre>HIGHCHART_PLAYER_LIFETIME_PLACE\n<pre>"
-
-# if len(disconnectedplayers) != 0:
-    # resultString += "\n"
-    # resultString += "Disconnected players:" + str(disconnectedplayers) + "\n"
 
 # H2H stats
 resultString += "\n"
