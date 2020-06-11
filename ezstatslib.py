@@ -3247,13 +3247,14 @@ class Player:
 
     # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
     def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead, isTeamGame):
+        connectionTime = self.connectTime if self.connectTime != 0 else self.connectionTimeXML
         # LONG_LIVE_KING
-        if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 60):
-            self.achievements.append( Achievement(AchievementType.LONG_LIVE_KING, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
+        if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= connectionTime + 60):
+            self.achievements.append( Achievement(AchievementType.LONG_LIVE_KING, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if connectionTime == 0 else " (connected on %d sec)" % (connectionTime))) )
         else:
         # LONG_LIVE
-            if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= self.connectTime + 30):
-                self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if self.connectTime == 0 else " (connected on %d sec)" % (self.connectTime))) )
+            if (len(self.deathStreaks) != 0 and self.deathStreaks[0].start >= connectionTime + 30):
+                self.achievements.append( Achievement(AchievementType.LONG_LIVE, "first time is killed on second %d%s" % (self.deathStreaks[0].start, "" if connectionTime == 0 else " (connected on %d sec)" % (connectionTime))) )
 
         for strk in self.deathStreaks:
             # SUICIDE_MASTER & SUICIDE_KING
@@ -3325,19 +3326,19 @@ class Player:
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_EATER, "%d mega healths%s" % (self.mh, "" if self.mh < 15 else ". %d CARL!!" % (self.mh))) )
 
         # RED_ARMOR_ALLERGY
-        if powerUpsStatus["ra"] and self.ra == 0 and self.connectTime < 300:
+        if powerUpsStatus["ra"] and self.ra == 0 and self.playTimeXML() > ((len(matchProgress) / 2) * 60):
             self.achievements.append( Achievement(AchievementType.RED_ARMOR_ALLERGY) )
 
         # YELLOW_ARMOR_ALLERGY
-        if powerUpsStatus["ya"] and self.ya == 0 and self.connectTime < 300:
+        if powerUpsStatus["ya"] and self.ya == 0 and self.playTimeXML() > ((len(matchProgress) / 2) * 60):
             self.achievements.append( Achievement(AchievementType.YELLOW_ARMOR_ALLERGY) )
 
         # GREEN_ARMOR_ALLERGY
-        if powerUpsStatus["ga"] and self.ga == 0 and self.connectTime < 300:
+        if powerUpsStatus["ga"] and self.ga == 0 and self.playTimeXML() > ((len(matchProgress) / 2) * 60):
             self.achievements.append( Achievement(AchievementType.GREEN_ARMOR_ALLERGY) )
 
         # MEGA_HEALTH_ALLERGY
-        if powerUpsStatus["mh"] and self.mh == 0 and self.connectTime < 300:
+        if powerUpsStatus["mh"] and self.mh == 0 and self.playTimeXML() > ((len(matchProgress) / 2) * 60):
             self.achievements.append( Achievement(AchievementType.MEGA_HEALTH_ALLERGY) )
 
         # RAINBOW_FLAG
@@ -3369,7 +3370,7 @@ class Player:
 
         # ALWAYS_THE_LAST
         if len(matchProgress) >= 2:
-            if self.connectTime == 0:
+            if self.playTimeXML() > ((len(matchProgress)*3 / 4) * 60):
                 isFirst = True
                 alwaysTheLast = True
                 for el in matchProgress:
@@ -3424,7 +3425,7 @@ class Player:
                 self.achievements.append( Achievement(AchievementType.FASTER_THAN_BULLET, "streak {0:d} kills in {1:.3} seconds - only {2:.3} seconds per kill".format(strk.count, float(strk.end - strk.start), (float(strk.end - strk.start) / (float)(strk.count)))) )
 
         # NO_SUICIDES
-        if self.playTime() >= 300 and self.suicides == 0:
+        if self.playTimeXML() > ((len(matchProgress) / 2) * 60) and self.suicides == 0:
             self.achievements.append( Achievement(AchievementType.NO_SUICIDES, "") )
 
         # UNIVERSAL_SOLDIER
@@ -3463,7 +3464,7 @@ class Player:
             
         if isTeamGame:
             # TEAMMATES_FAN
-            if self.playTime() >= 300 and self.teamkills == 0 and self.teamdeaths == 0:
+            if self.playTimeXML() > ((len(matchProgress) / 2) * 60) and self.teamkills == 0 and self.teamdeaths == 0:
                 self.achievements.append( Achievement(AchievementType.TEAMMATES_FAN, "") )
 
 
@@ -3909,7 +3910,7 @@ class Achievement:
 
         return "NotImplemented"
 
-def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDamage = None):
+def calculateCommonAchievements(allplayers, headToHead, minutesPlayed, isTeamGame, headToHeadDamage = None):
     if isTeamGame:
         # TEAM_BEST_FRIEND_KILLER
         sortedByTeamkills = sorted(allplayers, key=attrgetter("teamkills"), reverse=True)
@@ -3928,10 +3929,9 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDa
                     pl.achievements.append( Achievement(AchievementType.TEAM_MAXIMUM_TEAMDEATHS, "was killed by teammates %d times" % (pl.teamdeaths)) )
 
     # WHITEWASH
-    # if len(matchProgress) != 0:
-    if True:  # TODO matchProgress or minutes count for team mode - can be taken from player.gaByMinutes
+    if minutesPlayed != 0:
         for pl in allplayers:
-            if pl.playTime() >= 300:
+            if pl.playTimeXML() > ((minutesPlayed / 2) * 60):
                 for plname,elem in headToHead.items():
                     for plElem in elem:
                         if plElem[0] == pl.name and plElem[1] == 0:
@@ -3946,22 +3946,22 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDa
                                 for pl2 in allplayers:
                                     if pl2.name == plname:
                                         isEnemy = pl2.teamname != pl.teamname
-                                        enemyPlayTime = pl2.playTime()
+                                        enemyPlayTime = pl2.playTimeXML()
                                         break
                                 if isEnemy or (pl.teamname == ""):
-                                    if enemyPlayTime >= 300:
+                                    if enemyPlayTime >= ((minutesPlayed / 2) * 60):
                                         pl.achievements.append( Achievement(AchievementType.WHITEWASH, "duel with %s is fully won, score is %d:0" % (plname, pnts)) )
 
     # DEATH_CHEATER
     deathsSum = 0
     for pl in allplayers:
-        if pl.playTime() >= 450:
+        if pl.playTimeXML() >= ((minutesPlayed*3 / 4) * 60):
             deathsSum += pl.deaths
 
     avgDeathsCount = deathsSum / len(allplayers)
 
     for pl in allplayers:
-        if pl.playTime() >= 450:
+        if pl.playTimeXML() >= ((minutesPlayed*3 / 4) * 60):
             if pl.deaths < (int)(avgDeathsCount * 0.5):
                 pl.achievements.append( Achievement(AchievementType.DEATH_CHEATER, "died only {0:d} times ({1:5.3}% of the average)".format(pl.deaths, (float(pl.deaths) / float(avgDeathsCount) * 100))) )
 
@@ -3974,7 +3974,7 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDa
     # BALANCED_PLAYER
     if len(allplayers) >= 3:
         for pl in allplayers:
-            if pl.playTime() >= 180:
+            if pl.playTimeXML() >= ((minutesPlayed / 4) * 60):
                 isAllDraws = True
                 isAllNonZeros = True
                 duelsNum = 0
@@ -4010,7 +4010,7 @@ def calculateCommonAchievements(allplayers, headToHead, isTeamGame, headToHeadDa
     if isTeamGame and not headToHeadDamage is None and headToHeadDamage != {}:
         if len(allplayers) >= 3:
             for pl in allplayers:
-                if pl.playTime() >= 180:
+                if pl.playTimeXML() >= ((minutesPlayed / 2) * 60):
                     isNoTeamDamage = True
                     for pl2 in allplayers:
                         plKillDamage = 0

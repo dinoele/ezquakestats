@@ -1048,7 +1048,7 @@ for pl in allplayers:
 for pl in allplayers:
     pl.calculateAchievements(matchProgress, powerUpsStatus, headToHead, isTeamGame = False)
     
-ezstatslib.calculateCommonAchievements(allplayers, headToHead, isTeamGame = False)
+ezstatslib.calculateCommonAchievements(allplayers, headToHead, minutesPlayedXML, isTeamGame = False, headToHeadDamage = headToHeadDamage)
 
 # sort by level
 for pl in allplayers:
