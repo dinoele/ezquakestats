@@ -2734,6 +2734,7 @@ class Player:
         self.lifetimeXML = 0.0
         self.firstDeathXML = ""
         self.lastDeathXML = ""
+        self.connectionTimeXML = 0
         
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
@@ -2853,6 +2854,14 @@ class Player:
                 playTime = self.disconnectTime - self.connectTime
             else:
                 playTime = (minutesCnt * 60) - self.connectTime
+        return playTime
+        
+    def playTimeXML(self):
+        playTime = 0
+        minutesCnt = len(self.gaByMinutes)  # TODO get minutes count
+        if minutesCnt != 0:
+            lastActionTime = self.lifetime[len(self.lifetime)-1].time
+            playTime = self.lifetimeXML + (lastActionTime - self.lastDeathXML.time)
         return playTime
 
     def recoverArmorStats(self):
@@ -4261,9 +4270,9 @@ class DeathElement:
 #    <item>health_100</item>
 #    <item>health_15</item>
 #    <item>health_25</item>
-#    <item>item_armor1</item>
-#    <item>item_armor2</item>
-#    <item>item_armorInv</item>
+#    <item>item_armor1</item>     <-- GA
+#    <item>item_armor2</item>     <-- YA
+#    <item>item_armorInv</item>   <-- RA
 #    <item>item_cells</item>
 #    <item>item_rockets</item>
 #    <item>weapon_grenadelauncher</item>
