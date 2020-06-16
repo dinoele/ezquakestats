@@ -67,5 +67,25 @@ mPath = matchesPath
 if not os.path.exists(mPath):
     os.system("mkdir %s" % (mPath))
     
-os.system("mv %s %s" % (pathXML, mPath))
-os.system("mv %s %s" % (pathTXT, mPath))
+nameXMLHead, nameXMLTail = os.path.split(pathXML)
+nameTXTHead, nameTXTTail = os.path.split(pathTXT)
+
+destPathXML = os.path.join(mPath, nameXMLTail)
+destPathTXT = os.path.join(mPath, nameTXTTail)
+
+if os.path.exists(destPathXML):
+    xmlStatDest = os.stat(destPathXML)
+    xmlStatSrc  = os.stat(pathXML)
+    if xmlStatDest[ST_SIZE] != xmlStatSrc[ST_SIZE]:    
+        nameXMLExtHead, nameXMLExtTail = os.path.splitext(destPathXML)
+        destPathXML = "%s_%d%s" % (nameXMLExtHead, int(time.time()), nameXMLExtTail)
+
+if os.path.exists(destPathTXT):
+    txtStatDest = os.stat(destPathTXT)
+    txtStatSrc  = os.stat(pathTXT)
+    if txtStatDest[ST_SIZE] != txtStatSrc[ST_SIZE]:            
+        nameTXTExtHead, nameTXTExtTail = os.path.splitext(destPathTXT)
+        destPathTXT = "%s_%d%s" % (nameTXTExtHead, int(time.time()), nameTXTExtTail)
+    
+os.system("mv %s %s" % (pathXML, destPathXML))
+os.system("mv %s %s" % (pathTXT, destPathTXT))
