@@ -948,7 +948,18 @@ for i in xrange(len(elementsByTime)):
                 if targetsTeam != "-1" and targetsTeam != "" and targetsTeam != attackTeam:
                     for pl in allplayers:
                         if pl.name == attacker:
-                            pl.triple_kills.append([tt,targets[0],targets[1],targets[2],wps[0]])
+                            if attacker != targets[0] and attacker != targets[1] and attacker != targets[2]:
+                                pl.triple_kills.append([tt,targets[0],targets[1],targets[2],wps[0]])
+                            else:
+                                target1 = ""
+                                target2 = ""
+                                for t in targets:
+                                    if t != attacker:
+                                        if target1 == "":
+                                            target1 = t
+                                        else:
+                                            target2 = t
+                                pl.double_kills.append([target1,target2,wps[0]])
         
         resStr = ""
         deathNum = 1
