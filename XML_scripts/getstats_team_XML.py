@@ -1318,9 +1318,9 @@ for pl in allplayers:
 
 ezstatslib.calculateCommonAchievements(allplayers, headToHead, minutesPlayedXML, isTeamGame = True, headToHeadDamage = headToHeadDamage)
 
-# sort by level
+# sort by level and type
 for pl in allplayers:
-    pl.achievements = sorted(pl.achievements, key=lambda x: (x.achlevel), reverse=False)
+    pl.achievements = sorted(pl.achievements, key=lambda x: (x.achlevel, x.achtype), reverse=False)
     
 # remove elements with one timestamp - the last one for same time should be left    
 for pl in allplayers:
