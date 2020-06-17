@@ -2859,8 +2859,8 @@ class Player:
     def playTimeXML(self):
         playTime = 0
         minutesCnt = len(self.gaByMinutes)  # TODO get minutes count
-        if minutesCnt != 0:
-            lastActionTime = self.lifetime[len(self.lifetime)-1].time
+        if minutesCnt != 0 and len(self.lifetime) > 2:
+            lastActionTime = self.lifetime[len(self.lifetime)-2].time  # last lifetime element is added in correctLifetime method 
             playTime = self.lifetimeXML + (lastActionTime - self.lastDeathXML.time)
         return playTime
 
