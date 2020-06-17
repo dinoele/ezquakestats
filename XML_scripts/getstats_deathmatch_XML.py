@@ -976,9 +976,136 @@ for i in xrange(len(elementsCloseByTime)):
         debugLines += "DEBUG: len(elementsCloseByTime[i][0]) = %d\n" % (len(elementsCloseByTime[i][0])) 
                          
 
+# kill stealing
+chainStartIndex = -1
+CHAIN_MAX_TIME = 20
+eli = 0
+chainsStr = ""
+# while eli < len(elements):
+    # if isinstance(elements[eli], DamageElement):        
+        # chainStartIndex = eli
+        # print "AAA: chainStartIndex", chainStartIndex
+        # chainCurrentIndex = chainStartIndex + 1
+        # chainElementsCount = 0
+        # chainStartTime = elements[eli].time
+        # chainStopTime = 0
+        # attackerDamage = 0
+        # nonAttackerDamage = {}
+        # targetKiller = ""
+        # isChainFinished = False
+        # attacker = elements[eli].attacker
+        # target = elements[eli].target
+        # while not isChainFinished and chainCurrentIndex < len(elements):
+            # if isinstance(elements[chainCurrentIndex], DamageElement) or isinstance(elements[chainCurrentIndex], DeathElement):
+                # if isinstance(elements[chainCurrentIndex], DamageElement) and elements[chainCurrentIndex].attacker == attacker and elements[chainCurrentIndex].target == target:
+                    # chainElementsCount += 1
+                    # attackerDamage += elements[chainCurrentIndex].value
+                    # chainCurrentIndex += 1
+                    
+                # elif isinstance(elements[chainCurrentIndex], DamageElement) and elements[chainCurrentIndex].target == target:
+                    # if not elements[chainCurrentIndex].attacker in nonAttackerDamage.keys():
+                        # nonAttackerDamage[elements[chainCurrentIndex].attacker] = elements[chainCurrentIndex].value
+                    # else:
+                        # nonAttackerDamage[elements[chainCurrentIndex].attacker] += elements[chainCurrentIndex].value
+                    # chainCurrentIndex += 1
+                        
+                # elif isinstance(elements[chainCurrentIndex], DeathElement) and elements[chainCurrentIndex].target == target:
+                    # isChainFinished = True
+                    # targetKiller = elements[chainCurrentIndex].attacker
+                    # chainStopTime = elements[chainCurrentIndex].time
+                    
+                # else:
+                    # chainCurrentIndex += 1
+            
+            # else:
+                # chainCurrentIndex += 1
+
+        # chainTime = chainStopTime - chainStartTime
+        # chainStr = "startTime: %f, attacker: %s, target: %s, killer: %s, time: %d, attackerDamage: %d, nonAttackerDamage: %s\n" % (chainStartTime, attacker, target, targetKiller, chainTime, attackerDamage, nonAttackerDamage)
+        # chainsStr += chainStr
+        
+        # eli = chainStartIndex + 1
+        
+            
+    # else: # isinstance(elements[eli], DamageElement):
+        # eli += 1
+
+chains = []        
+while eli < len(elements):
+    if isinstance(elements[eli], DeathElement):        
+        chainStartIndex = eli
+        chainCurrentIndex = chainStartIndex - 1
+        chainElementsCount = 0
+        chainStopTime = elements[eli].time
+        chainStartTime = 0
+        attackersDamage = {}        
+        isChainFinished = False
+        killer = elements[eli].attacker
+        target = elements[eli].target
+        while not isChainFinished and chainCurrentIndex > 0:
+            if isinstance(elements[chainCurrentIndex], DamageElement) or isinstance(elements[chainCurrentIndex], DeathElement):
+                if isinstance(elements[chainCurrentIndex], DamageElement) and elements[chainCurrentIndex].target == target:
+                    chainElementsCount += 1
+                    if not elements[chainCurrentIndex].attacker in attackersDamage.keys():
+                        attackersDamage[elements[chainCurrentIndex].attacker] = elements[chainCurrentIndex].value
+                    else:
+                        attackersDamage[elements[chainCurrentIndex].attacker] += elements[chainCurrentIndex].value
+                    chainCurrentIndex -= 1
+                        
+                elif isinstance(elements[chainCurrentIndex], DeathElement) and elements[chainCurrentIndex].target == target:
+                    isChainFinished = True
+                    chainStartTime = elements[chainCurrentIndex].time
+                    
+                else:
+                    chainCurrentIndex -= 1
+            
+            else:
+                chainCurrentIndex -= 1
+
+        chainTime = chainStopTime - chainStartTime
+        chains.append([chainStartTime, target, killer, chainTime, attackersDamage])
+        # chainStr = "startTime: %f, target: %s, killer: %s, time: %d, attackersDamage: %s\n" % (chainStartTime, target, killer, chainTime, attackersDamage)
+        # chainsStr += chainStr
+        
+        eli = chainStartIndex + 1
+                    
+    else: 
+        eli += 1
+
+for chain in chains:
+    chStartTime = chain[0]
+    chTarget = chain[1]
+    chKiller = chain[2]
+    chTime = chain[3]
+    chAttackers = chain[4]
+    if chKiller != chTarget and len(chAttackers) > 1:
+        killerDamage = 0
+        selfDamage = 0
+        nonKillerMaxDamage = 0
+        nonKillerDamage = 0
+        nonKillerMaxDamageName = ""
+        for attackerKey in chAttackers.keys():
+            if attackerKey == chKiller:
+                killerDamage = chAttackers[attackerKey]
+            elif attackerKey == chTarget:
+                selfDamage = chAttackers[attackerKey]
+            else:
+                if attackerKey != "world":
+                    nonKillerDamage += chAttackers[attackerKey]
+                if chAttackers[attackerKey] > nonKillerMaxDamage:
+                    nonKillerMaxDamage = chAttackers[attackerKey]
+                    nonKillerMaxDamageName = attackerKey
+                    
+        if (2*killerDamage < nonKillerMaxDamage or 3*killerDamage < nonKillerDamage) and killerDamage < 40:
+            chainStr = "KILL STEAL by %s: startTime: %f, target: %s, killer: %s, time: %d, attackersDamage: %s\n" % (nonKillerMaxDamageName, chStartTime, chTarget, chKiller, chTime, chAttackers)
+            chainsStr += chainStr
+        
+        
 tmpComboStr += debugLines
 tmpComboStr += "\n"
 tmpComboStr += linesStr        
+tmpComboStr += "\n"
+tmpComboStr += chainsStr        
 
 # check that there at least one kill
 killsSumOrig = 0
@@ -1433,6 +1560,8 @@ for pl in allplayers:
     resultString += "\tconnectionTime: %f, playTime: %f\n" % (pl.connectionTimeXML, pl.playTimeXML())
 
 resultString += "\n"
+
+resultString += chainsStr
     
 # print resultString  RESULTPRINT
 
