@@ -1080,7 +1080,7 @@ for chain in chains:
     chKiller = chain[2]
     chTime = chain[3]
     chAttackers = chain[4]
-    if chKiller != chTarget and len(chAttackers) > 1:
+    if chKiller != chTarget and len(chAttackers) > 1 and chKiller != "world":
         killerDamage = 0
         selfDamage = 0
         nonKillerMaxDamage = 0
@@ -1099,7 +1099,10 @@ for chain in chains:
                     nonKillerMaxDamageName = attackerKey
                     
         if (2*killerDamage < nonKillerMaxDamage or 3*killerDamage < nonKillerDamage) and killerDamage < 40:
-            chainStr = "KILL STEAL by %s: startTime: %f, target: %s, killer: %s, time: %d, attackersDamage: %s\n" % (nonKillerMaxDamageName, chStartTime, chTarget, chKiller, chTime, chAttackers)
+            chainStr = "KILL STEAL by %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, chStartTime, chTarget, chTime, chAttackers)
+            chainsStr += chainStr
+        elif (1.5*killerDamage < nonKillerMaxDamage or 2.5*killerDamage < nonKillerDamage) and killerDamage < 50:
+            chainStr = "POTENTIAL KILL STEAL by %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, chStartTime, chTarget, chTime, chAttackers)
             chainsStr += chainStr
         
         
