@@ -203,7 +203,9 @@ for child in root:
                 if evtype.tag == "damage":
                     damageCnt += 1
                     elem = DamageElement(evtype)
-
+                    
+                    if elem.target == None or elem.attacker == None:
+                        continue
 #                    print "IsSelf: %s" % (elem.isSelfDamage)
 
                     elements.append(elem)
