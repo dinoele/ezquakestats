@@ -2736,6 +2736,12 @@ class Player:
         self.lastDeathXML = ""
         self.connectionTimeXML = 0
         
+        self.health_15_cnt = 0
+        self.health_25_cnt = 0
+        
+        self.pickups_items = {}
+        self.pickups_weapons = {}       
+        
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
             if element.armor == 1:
@@ -3189,6 +3195,22 @@ class Player:
         otherstr= "" if not weaponsCheck.is_other or self.other_damage_gvn_cnt == 0 else "other:  {0:6.3}({1:3d}), ".format( (float(self.other_damage_gvn)  / float(self.other_damage_gvn_cnt) ), self.other_damage_gvn_cnt);
 
         resstr = "%s%s%s%s%s%s%s%s%s%s" % (rlstr, lgstr, glstr, sgstr, ssgstr, ngstr, sngstr, axestr, telestr, otherstr);
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr
+        
+    def getWeaponsPickUps(self):
+        resstr = ""
+        for weapon in sorted(self.pickups_weapons, key=self.pickups_weapons.get, reverse=True):
+            resstr += "%s(%d), " % (weapon, self.pickups_weapons[weapon])
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr
+        
+    def getAmmoPickUps(self):
+        resstr = ""
+        for ammo in sorted(self.pickups_items, key=self.pickups_items.get, reverse=True):
+            resstr += "%s(%d), " % (ammo, self.pickups_items[ammo])
         if len(resstr) > 2:
             resstr = resstr[:-2]
         return resstr
@@ -4259,7 +4281,7 @@ class DeathElement:
     def toString(self):
         return "DeathElement: time=%f, attacker=%s, target=%s, type=%s, armorleft=%d, lifetime=%f, isSuicide=%d, isSpawnFrag=%d\n" % (self.time,self.attacker,self.target,self.type,self.armorleft,self.lifetime,self.isSuicide,self.isSpawnFrag)
 
-        #<pick_mapitem>
+#<pick_mapitem>
 #        <time>15.715332</time>
 #        <item>item_armor1</item>
 #        <player>Sasha</player>
@@ -4273,11 +4295,16 @@ class DeathElement:
 #    <item>item_armor1</item>     <-- GA
 #    <item>item_armor2</item>     <-- YA
 #    <item>item_armorInv</item>   <-- RA
+
 #    <item>item_cells</item>
 #    <item>item_rockets</item>
+#    <item>item_spikes</item>
+
 #    <item>weapon_grenadelauncher</item>
 #    <item>weapon_lightning</item>
 #    <item>weapon_rocketlauncher</item>
+#    <item>weapon_supernailgun</item>
+#    <item>weapon_supershotgun</item>                                
 
 
 class PickMapItemElement:

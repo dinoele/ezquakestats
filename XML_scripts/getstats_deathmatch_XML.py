@@ -338,12 +338,31 @@ for elem in deathElements:
 
 
 
-# for elem in pickmapitemElements:
+for elem in pickmapitemElements:
     # #print "%f  %s -> %s  \"%s\"  %f" % (elem.time, elem.attacker, elem.target, elem.type, elem.lifetime)
     # #print "%f" % (elem.lifetime)
 
-    # for pl in xmlPlayers:
-        # if pl.name == elem.player:
+    if int(elem.time) == minutesPlayedXML*60:
+        elem.time = minutesPlayedXML*60 - 1  # correction for events in the match end with timestamp more than minPlayed*60
+
+    for pl in xmlPlayers:
+        if pl.name == elem.player:
+            if not elem.isArmor and not elem.isMH:
+                if "item_" in elem.item:
+                    itemName = elem.item.replace("item_", "")
+                    if not itemName in pl.pickups_items.keys():
+                        pl.pickups_items[itemName] = 1
+                    else:
+                        pl.pickups_items[itemName] += 1
+                elif "weapon_" in elem.item:
+                    weaponName = elem.item.replace("weapon_", "")
+                    if not weaponName in pl.pickups_weapons.keys():
+                        pl.pickups_weapons[weaponName] = 1
+                    else:
+                        pl.pickups_weapons[weaponName] += 1
+                elif "health_15" == elem.item or "health_25" == elem.item:
+                    exec("pl.%s_cnt += 1;" % (elem.item))
+                    
             # if elem.isArmor:
                 # if elem.armorType == ezstatslib.PowerUpType.RA:
                     # pl.raXML += 1
@@ -1248,13 +1267,17 @@ resultString += "SpawnFrags: " + " [ " + ezstatslib.sortPlayersBy(allplayers,"sp
 resultString += "\n"
 # resultString += "RL skill DH:" + " [ " + ezstatslib.sortPlayersBy(allplayers, "rlskill_dh") + " ]\n"
 # resultString += "RL skill AD:" + " [ " + ezstatslib.sortPlayersBy(allplayers, "rlskill_ad") + " ]\n"
-resultString += "\n"
+# resultString += "\n"
 # resultString += "Weapons:\n"
 # resultString += "RL:         " + " [ " + ezstatslib.sortPlayersBy(allplayers, "w_rl", units="%") + " ]\n"
 # resultString += "LG:         " + " [ " + ezstatslib.sortPlayersBy(allplayers, "w_lg", units="%") + " ]\n"
 # resultString += "GL:         " + " [ " + ezstatslib.sortPlayersBy(allplayers, "w_gl", units="%") + " ]\n"
 # resultString += "SG:         " + " [ " + ezstatslib.sortPlayersBy(allplayers, "w_sg", units="%") + " ]\n"
 # resultString += "SSG:        " + " [ " + ezstatslib.sortPlayersBy(allplayers, "w_ssg", units="%") + " ]\n"
+resultString += "\n"
+
+resultString += "Health15:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"health_15_cnt") + "]\n"
+resultString += "Health25:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"health_25_cnt") + "]\n"
 resultString += "\n"
 
 resultString += "Players weapons:\n"
@@ -1269,6 +1292,8 @@ for pl in allplayersByFrags:
     resultString += ("{0:%ds} self  {1:4d} :: {2:100s}\n" % (plNameMaxLen)).format("", pl.damageSelf+pl.damageSelfArmor, pl.getWeaponsDamageSelf(pl.damageSelf+pl.damageSelfArmor, weaponsCheck))
     # resultString += ("{0:%ds} avg damage :: {1:100s}\n" % (plNameMaxLen)).format("", pl.getWeaponsAccuracy(weaponsCheck))  TODO
     resultString += ("{0:%ds} rl skill   :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getRLSkill())
+    resultString += ("{0:%ds} pickups    :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getWeaponsPickUps())
+    resultString += ("{0:%ds} ammo       :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getAmmoPickUps())
     resultString += "\n"
     resultString += "\n"
 
