@@ -338,33 +338,33 @@ for elem in deathElements:
 
 
 
-for elem in pickmapitemElements:
-    #print "%f  %s -> %s  \"%s\"  %f" % (elem.time, elem.attacker, elem.target, elem.type, elem.lifetime)
-    #print "%f" % (elem.lifetime)
+# for elem in pickmapitemElements:
+    # #print "%f  %s -> %s  \"%s\"  %f" % (elem.time, elem.attacker, elem.target, elem.type, elem.lifetime)
+    # #print "%f" % (elem.lifetime)
 
-    for pl in xmlPlayers:
-        if pl.name == elem.player:
-            if elem.isArmor:
-                if elem.armorType == ezstatslib.PowerUpType.RA:
-                    pl.raXML += 1
-                    pl.incraXML(int(elem.time))
-                if elem.armorType == ezstatslib.PowerUpType.YA:
-                    pl.yaXML += 1
-                    pl.incyaXML(int(elem.time))
-                if elem.armorType == ezstatslib.PowerUpType.GA:
-                    pl.gaXML += 1
-                    pl.incgaXML(int(elem.time))
+    # for pl in xmlPlayers:
+        # if pl.name == elem.player:
+            # if elem.isArmor:
+                # if elem.armorType == ezstatslib.PowerUpType.RA:
+                    # pl.raXML += 1
+                    # pl.incraXML(int(elem.time))
+                # if elem.armorType == ezstatslib.PowerUpType.YA:
+                    # pl.yaXML += 1
+                    # pl.incyaXML(int(elem.time))
+                # if elem.armorType == ezstatslib.PowerUpType.GA:
+                    # pl.gaXML += 1
+                    # pl.incgaXML(int(elem.time))
 
-            if elem.isMH:
-                pl.mhXML += 1
-                pl.incmhXML(int(elem.time))
+            # if elem.isMH:
+                # pl.mhXML += 1
+                # pl.incmhXML(int(elem.time))
 
-for pl in xmlPlayers:
-    print "Player \"%s\": kills:  %d, deaths:  %d, suicides:  %d, spawns:  %d, ga: %d, ya: %d, ra: %d, mh: %d" % (pl.name, pl.killsXML, pl.deathsXML, pl.suicidesXML, pl.spawnFragsXML, pl.gaXML, pl.yaXML, pl.raXML, pl.mhXML)
-    print "    ga: %s" % (pl.gaByMinutesXML)
-    print "    ya: %s" % (pl.yaByMinutesXML)
-    print "    ra: %s" % (pl.raByMinutesXML)
-    print "    mh: %s" % (pl.mhByMinutesXML)
+# for pl in xmlPlayers:
+    # print "Player \"%s\": kills:  %d, deaths:  %d, suicides:  %d, spawns:  %d, ga: %d, ya: %d, ra: %d, mh: %d" % (pl.name, pl.killsXML, pl.deathsXML, pl.suicidesXML, pl.spawnFragsXML, pl.gaXML, pl.yaXML, pl.raXML, pl.mhXML)
+    # print "    ga: %s" % (pl.gaByMinutesXML)
+    # print "    ya: %s" % (pl.yaByMinutesXML)
+    # print "    ra: %s" % (pl.raByMinutesXML)
+    # print "    mh: %s" % (pl.mhByMinutesXML)
 
 
 timelimit = -1
@@ -561,6 +561,7 @@ for element in elements:
             if pl.name == checkname:                    
                 if element.isArmor or element.isMH:
                     exec("pl.inc%s(%d,%d)" % (pwr, currentMinute, currentMatchTime))
+                    exec("pl.%s += 1" % (pwr))
                 isFound = True
                 pl.addLifetimeItem(element)
                 break;
