@@ -22,7 +22,7 @@ import ezstatslib
 from ezstatslib import Team,Player
 from ezstatslib import enum,checkNew,htmlLink
 from ezstatslib import NEW_GIF_TAG as newGifTag
-from ezstatslib import PickMapItemElement,DamageElement,DeathElement
+from ezstatslib import PickMapItemElement,DamageElement,DeathElement,KillSteal
 
 import HTML
 
@@ -999,6 +999,7 @@ for i in xrange(len(elementsCloseByTime)):
                          
 
 # kill stealing
+killSteals = []
 chainStartIndex = -1
 CHAIN_MAX_TIME = 20
 eli = 0
@@ -1120,9 +1121,11 @@ for chain in chains:
                     
         if (2*killerDamage < nonKillerMaxDamage or 3*killerDamage < nonKillerDamage) and killerDamage < 40:
             chainStr = "KILL STEAL: %s stole from %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, nonKillerMaxDamageName, chStartTime, chTarget, chTime, chAttackers)
+            killSteals.append( KillSteal(chStartTime, chKiller, chTarget, nonKillerMaxDamageName, chAttackers, 1) );
             chainsStr += chainStr
         elif (1.5*killerDamage < nonKillerMaxDamage or 2.5*killerDamage < nonKillerDamage) and killerDamage < 50 and selfDamage < 45:
             chainStr = "50%% KILL STEAL: %s stole from %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, nonKillerMaxDamageName, chStartTime, chTarget, chTime, chAttackers)
+            killSteals.append( KillSteal(chStartTime, chKiller, chTarget, nonKillerMaxDamageName, chAttackers, 0.5) );
             chainsStr += chainStr
         
         
@@ -1131,6 +1134,14 @@ tmpComboStr += "\n"
 tmpComboStr += linesStr        
 tmpComboStr += "\n"
 tmpComboStr += chainsStr        
+
+# process kill steals
+for ks in killSteals:
+    for pl in allplayers:
+        if pl.name == ks.stealer:
+            pl.killsteals_stealer.append(ks)
+        if pl.name == ks.stealvictim:
+            pl.killsteals_victim.append(ks)
 
 # check that there at least one kill
 killsSumOrig = 0
