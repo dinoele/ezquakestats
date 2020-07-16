@@ -2754,6 +2754,8 @@ class Player:
         self.killsteals_stealer = []
         self.killsteals_victim = []
         
+        self.rl_dhs_selfdamage = []
+        
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
             if element.armor == 1:

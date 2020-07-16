@@ -997,7 +997,33 @@ for i in xrange(len(elementsCloseByTime)):
     elif len(elementsCloseByTime[i][0]) > 3:
         debugLines += "DEBUG: len(elementsCloseByTime[i][0]) = %d\n" % (len(elementsCloseByTime[i][0])) 
                          
-
+# DH at point-blank range
+dhCount = 0
+for i in xrange(len(elementsByTime)):
+    isDH = False
+    dhAttacker = ""
+    dhTarget = ""
+    for j in xrange(len(elementsByTime[i][1])):
+        if isinstance(elementsByTime[i][1][j], DamageElement):
+            if elementsByTime[i][1][j].value == 110 or (j+1 < len(elementsByTime[i][1]) and elementsByTime[i][1][j].armor == 1 and isinstance(elementsByTime[i][1][j+1], DamageElement) and elementsByTime[i][1][j+1].target == elementsByTime[i][1][j].target and elementsByTime[i][1][j].value + elementsByTime[i][1][j+1].value == 110):
+                dhCount += 1
+                isDH = True
+                dhAttacker = elementsByTime[i][1][j].attacker
+                dhTarget = elementsByTime[i][1][j].target
+                
+    if isDH:
+        selfDamage = 0
+        for j in xrange(len(elementsByTime[i][1])):
+            if isinstance(elementsByTime[i][1][j], DamageElement):
+                if elementsByTime[i][1][j].attacker == dhAttacker and elementsByTime[i][1][j].target == dhAttacker:
+                    selfDamage += elementsByTime[i][1][j].value
+                    
+        for pl in allplayers:
+            if pl.name == dhAttacker:
+                pl.rl_dhs_selfdamage.append(selfDamage)
+                                
+        debugLines += "DEBUG: DH: time: %f, attacker: %s, target: %s, selfDamage: %d\n" % (elementsByTime[i][0], dhAttacker, dhTarget, selfDamage)
+                  
 # kill stealing
 killSteals = []
 chainStartIndex = -1
@@ -1670,6 +1696,18 @@ for pl in allplayers:
 resultString += "\n"
 
 resultString += chainsStr
+
+resultString += "\n"
+resultString += "\nDHs self damages: \n"
+for pl in allplayers:
+    zeroCount = sum(1 for val in pl.rl_dhs_selfdamage if val == 0)
+    valFrom1To25 = sum(1 for val in pl.rl_dhs_selfdamage if val > 0 and val <= 25)
+    valFrom26To45 = sum(1 for val in pl.rl_dhs_selfdamage if val > 25 and val <= 45)
+    valFrom46To55 = sum(1 for val in pl.rl_dhs_selfdamage if val > 45 and val <= 55)
+    valFrom56 = sum(1 for val in pl.rl_dhs_selfdamage if val > 55)
+    
+    #resultString += "%s(%d): 0: %d, (0,25]: %d, (25,45]: %d, (45,55]: %d, >55: %d, %s\n" % (pl.name, len(pl.rl_dhs_selfdamage), zeroCount, valFrom1To25, valFrom26To45, valFrom46To55, valFrom56, pl.rl_dhs_selfdamage)
+    resultString += "{0:25s}: 0:{1:3d}, (0,25]:{2:3d}, (25,45]:{3:3d}, (45,55]:{4:3d}, >55:{5:3d}, {6}\n".format("%s(%d)" % (pl.name, len(pl.rl_dhs_selfdamage)), zeroCount, valFrom1To25, valFrom26To45, valFrom46To55, valFrom56, pl.rl_dhs_selfdamage)
     
 # print resultString  RESULTPRINT
 
