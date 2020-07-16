@@ -1539,8 +1539,8 @@ for pl in allplayersByFrags:
                 if val[0] == pl.name:
                     plDeaths = val[1]
             
-            plDamagePerKill = plDamageGvn / plKills
-            plDamagePerDeath = plDamageTkn / plDeaths
+            plDamagePerKill = (plDamageGvn / plKills) if plKills != 0 else 0
+            plDamagePerDeath = (plDamageTkn / plDeaths) if plDeaths != 0 else 0
             
             cellVal = "%s / %s" % (ezstatslib.htmlBold(plDamagePerKill)  if plDamagePerKill  > plDamagePerDeath else str(plDamagePerKill),
                                    ezstatslib.htmlBold(plDamagePerDeath) if plDamagePerDeath > plDamagePerKill  else str(plDamagePerDeath))
