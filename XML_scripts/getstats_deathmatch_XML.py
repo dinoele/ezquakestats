@@ -1481,6 +1481,72 @@ for pl in allplayersByFrags:
 
 resultString += str(htmlTable)
 
+# Players damage per kill duels table
+resultString += "\n"
+resultString += "Players damage per kill duels:<br>"
+headerRow=['', 'Kills', 'Deaths', 'Damage/kill', 'Damage/death']
+playersNames = []
+for pl in allplayersByFrags:
+    headerRow.append(pl.name);
+    playersNames.append(pl.name)
+
+colAlign=[]
+for i in xrange(len(headerRow)):
+    colAlign.append("center")
+
+htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_align=colAlign,
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+
+for pl in allplayersByFrags:
+    tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
+                                    ezstatslib.htmlBold(pl.kills),
+                                    ezstatslib.htmlBold(pl.deaths),
+                                    ezstatslib.htmlBold(pl.gvn / pl.kills),
+                                    ezstatslib.htmlBold(pl.tkn / pl.deaths)])
+        
+    for plName in playersNames:
+        if pl.name == plName:
+            tableRow.cells.append( HTML.TableCell(str((pl.damageSelf+pl.damageSelfArmor)/pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY) )
+        else:            
+            plDamageGvn = 0
+            for val in headToHeadDamage[pl.name]:
+                if val[0] == plName:
+                    plDamageGvn = val[1]
+            
+            plDamageTkn = 0
+            for val in headToHeadDamage[plName]:
+                if val[0] == pl.name:
+                    plDamageTkn = val[1]
+                    
+            plKills = 0
+            for val in headToHead[pl.name]:
+                if val[0] == plName:
+                    plKills = val[1]
+            
+            plDeaths = 0
+            for val in headToHead[plName]:
+                if val[0] == pl.name:
+                    plDeaths = val[1]
+            
+            plDamagePerKill = plDamageGvn / plKills
+            plDamagePerDeath = plDamageTkn / plDeaths
+            
+            cellVal = "%s / %s" % (ezstatslib.htmlBold(plDamagePerKill)  if plDamagePerKill  > plDamagePerDeath else str(plDamagePerKill),
+                                   ezstatslib.htmlBold(plDamagePerDeath) if plDamagePerDeath > plDamagePerKill  else str(plDamagePerDeath))
+            
+            cellColor = ""
+            if plDamagePerKill == plDamagePerDeath:
+                cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
+            elif plDamagePerKill > plDamagePerDeath:
+                cellColor = ezstatslib.BG_COLOR_GREEN
+            else:
+                cellColor = ezstatslib.BG_COLOR_RED
+            
+            tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+            
+    htmlTable.rows.append(tableRow)  
+
+resultString += str(htmlTable)
 
 
 i = 1
