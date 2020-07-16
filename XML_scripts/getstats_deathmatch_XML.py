@@ -1119,10 +1119,10 @@ for chain in chains:
                     nonKillerMaxDamageName = attackerKey
                     
         if (2*killerDamage < nonKillerMaxDamage or 3*killerDamage < nonKillerDamage) and killerDamage < 40:
-            chainStr = "KILL STEAL by %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, chStartTime, chTarget, chTime, chAttackers)
+            chainStr = "KILL STEAL: %s stole from %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, nonKillerMaxDamageName, chStartTime, chTarget, chTime, chAttackers)
             chainsStr += chainStr
-        elif (1.5*killerDamage < nonKillerMaxDamage or 2.5*killerDamage < nonKillerDamage) and killerDamage < 50:
-            chainStr = "POTENTIAL KILL STEAL by %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, chStartTime, chTarget, chTime, chAttackers)
+        elif (1.5*killerDamage < nonKillerMaxDamage or 2.5*killerDamage < nonKillerDamage) and killerDamage < 50 and selfDamage < 45:
+            chainStr = "50%% KILL STEAL: %s stole from %s: startTime: %f, target: %s, time: %d, attackersDamage: %s\n" % (chKiller, nonKillerMaxDamageName, chStartTime, chTarget, chTime, chAttackers)
             chainsStr += chainStr
         
         
