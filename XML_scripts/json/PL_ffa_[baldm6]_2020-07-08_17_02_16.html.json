@@ -1,0 +1,153 @@
+{"gamemode": "ffa","mapname": "ffa_[baldm6]","players": [{
+    "achievements": [
+        {
+            "achID": 15
+        }, 
+        {
+            "achID": 16
+        }, 
+        {
+            "achID": 17
+        }, 
+        {
+            "achID": 2
+        }, 
+        {
+            "achID": 9
+        }, 
+        {
+            "achID": 55
+        }, 
+        {
+            "achID": 50
+        }, 
+        {
+            "achID": 51
+        }
+    ], 
+    "rlskill": {
+        "DirectHit110": 41, 
+        ">55": 155, 
+        ">100": 47, 
+        "attacks": 531, 
+        ">75": 112, 
+        ">90": 70, 
+        "damagesCount": 184
+    }, 
+    "name": "AREXP", 
+    "ga": 24, 
+    "suicides": 5, 
+    "ya": 31, 
+    "frags": 80, 
+    "deaths": 69, 
+    "mh": 10, 
+    "ra": 2
+},{
+    "achievements": [
+        {
+            "achID": 15
+        }, 
+        {
+            "achID": 16
+        }, 
+        {
+            "achID": 9
+        }, 
+        {
+            "achID": 52
+        }, 
+        {
+            "achID": 54
+        }, 
+        {
+            "achID": 50
+        }, 
+        {
+            "achID": 51
+        }
+    ], 
+    "rlskill": {
+        "DirectHit110": 35, 
+        ">55": 142, 
+        ">100": 40, 
+        "attacks": 581, 
+        ">75": 95, 
+        ">90": 61, 
+        "damagesCount": 177
+    }, 
+    "name": "dinoel", 
+    "ga": 17, 
+    "suicides": 10, 
+    "ya": 26, 
+    "frags": 68, 
+    "deaths": 73, 
+    "mh": 7, 
+    "ra": 9
+},{
+    "achievements": [
+        {
+            "achID": 14
+        }, 
+        {
+            "achID": 15
+        }, 
+        {
+            "achID": 16
+        }, 
+        {
+            "achID": 27
+        }
+    ], 
+    "rlskill": {
+        "DirectHit110": 36, 
+        ">55": 161, 
+        ">100": 44, 
+        "attacks": 431, 
+        ">75": 103, 
+        ">90": 68, 
+        "damagesCount": 196
+    }, 
+    "name": "girgelezobeton", 
+    "ga": 36, 
+    "suicides": 10, 
+    "ya": 26, 
+    "frags": 62, 
+    "deaths": 84, 
+    "mh": 7, 
+    "ra": 17
+},{
+    "achievements": [
+        {
+            "achID": 14
+        }, 
+        {
+            "achID": 15
+        }, 
+        {
+            "achID": 16
+        }, 
+        {
+            "achID": 51
+        }, 
+        {
+            "achID": 27
+        }
+    ], 
+    "rlskill": {
+        "DirectHit110": 45, 
+        ">55": 160, 
+        ">100": 47, 
+        "attacks": 574, 
+        ">75": 98, 
+        ">90": 69, 
+        "damagesCount": 198
+    }, 
+    "name": "whathappened?", 
+    "ga": 26, 
+    "suicides": 11, 
+    "ya": 15, 
+    "frags": 60, 
+    "deaths": 80, 
+    "mh": 6, 
+    "ra": 15
+}]}
