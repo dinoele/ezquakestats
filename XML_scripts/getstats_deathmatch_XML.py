@@ -1543,7 +1543,7 @@ for pl in allplayersByFrags:
         
     for plName in playersNames:
         if pl.name == plName:
-            tableRow.cells.append( HTML.TableCell(str((pl.damageSelf+pl.damageSelfArmor)/pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY) )
+            tableRow.cells.append( HTML.TableCell(str((pl.damageSelf+pl.damageSelfArmor)/pl.suicides if pl.suicides != 0 else 0), bgcolor=ezstatslib.BG_COLOR_GRAY) )
         else:            
             plDamageGvn = 0
             for val in headToHeadDamage[pl.name]:
