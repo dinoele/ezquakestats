@@ -415,10 +415,13 @@ with open(options.inputFileJSON, 'r') as fjson:
         pl.initPowerUpsByMinutes(minutesPlayedXML)
         rlAttacksByPlayers[pl.name] = jsonStrRead["players"][i]["weapons"]["rl"]["acc"]["attacks"];
         
+        pl.speed_max = jsonStrRead["players"][i]["speed"]["max"];
+        pl.speed_avg = jsonStrRead["players"][i]["speed"]["avg"];
+        
         jsonPlayers.append(pl)
 
-isOverTime = minutesPlayedXML != timelimit;
-overtimeMinutes = minutesPlayedXML - timelimit    
+    isOverTime = minutesPlayedXML != timelimit;
+    overtimeMinutes = minutesPlayedXML - timelimit
         
 for pl in jsonPlayers:
     print pl.name, " - ", pl.teamname     
@@ -1577,6 +1580,10 @@ resultString += "\n"
 
 resultString += "Health15:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"health_15_cnt") + "]\n"
 resultString += "Health25:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"health_25_cnt") + "]\n"
+resultString += "\n"
+
+resultString += "Max speed:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"speed_max") + "]\n"
+resultString += "Avg speed:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"speed_avg") + "]\n"
 resultString += "\n"
 
 # TODO

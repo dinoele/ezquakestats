@@ -2756,6 +2756,9 @@ class Player:
         
         self.rl_dhs_selfdamage = []
         
+        self.speed_max = 0
+        self.speed_avg = 0
+        
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
             if element.armor == 1:

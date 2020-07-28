@@ -399,6 +399,11 @@ if not options.inputFileJSON is None and options.inputFileJSON != "":
         
         for pl in jsonStrRead["players"]:
             rlAttacksByPlayers[pl["name"]] = pl["weapons"]["rl"]["acc"]["attacks"];
+            
+            for pll in xmlPlayers:
+                if pll.name == pl["name"]:
+                    pll.speed_max = pl["speed"]["max"];
+                    pll.speed_avg = pl["speed"]["avg"];
 
     isOverTime = minutesPlayedXML != timelimit;
     overtimeMinutes = minutesPlayedXML - timelimit
@@ -1315,6 +1320,10 @@ resultString += "\n"
 
 resultString += "Health15:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"health_15_cnt") + "]\n"
 resultString += "Health25:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"health_25_cnt") + "]\n"
+resultString += "\n"
+
+resultString += "Max speed:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"speed_max") + "]\n"
+resultString += "Avg speed:   " + " [" +  ezstatslib.sortPlayersBy(allplayers,"speed_avg") + "]\n"
 resultString += "\n"
 
 resultString += "Players weapons:\n"
