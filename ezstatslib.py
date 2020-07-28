@@ -3253,7 +3253,29 @@ class Player:
                                          ((float(val55))  / float(cnt) * 100), val55,
                                           cnt,
                                           "    Attacks: {0:4d}".format(self.rl_attacks) if self.rl_attacks != -1 else "")
-                
+
+    def getRLSkillJSON(self):
+        cnt = len(self.rl_damages_gvn)
+        if cnt == 0:
+            return {}
+
+        val110 = sum(1 for val in pl.rl_damages_gvn if val[0] == 110)
+        val100 = sum(1 for val in pl.rl_damages_gvn if val[0] < 110 and val[0] >= 100)
+        val90  = sum(1 for val in pl.rl_damages_gvn if val[0] < 100 and val[0] >= 90)
+        val75  = sum(1 for val in pl.rl_damages_gvn if val[0] < 90 and val[0] >= 75)
+        val55  = sum(1 for val in pl.rl_damages_gvn if val[0] < 75 and val[0] >= 55)
+        val0   = sum(1 for val in pl.rl_damages_gvn if val[0] < 55 and val[0] >= 0)
+        
+        return { "attacks"      : self.rl_attacks,
+                 "damagesCount" : cnt,
+                 "DH110"   : val110,
+                 "100-110" : val100,
+                 "90-100"  : val90,
+                 "75-90"   : val75,
+                 "55-75"   : val55,
+                 "0-55"    : val0
+               }
+                                          
     def correctDelta(self):
         self.correctedDelta = self.origDelta + self.suicides
 
@@ -3283,6 +3305,11 @@ class Player:
             res.append(ach.achtype)
         return res
         
+    def getAchievementsJSON(self):
+        res = []
+        for ach in self.achievements:
+            res.append({"achID" : ach.achtype})
+        return res        
 
     # powerUpsStatus: dict: ["ra"] = True, ["ya"] = False, etc.
     def calculateAchievements(self, matchProgress, powerUpsStatus, headToHead, isTeamGame):

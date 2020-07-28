@@ -32,6 +32,8 @@ from stat import S_ISREG, ST_CTIME, ST_MODE, ST_SIZE, ST_MTIME
 
 import xml.etree.ElementTree as ET
 
+from collections import Counter
+
 ezstatslib.REPORTS_FOLDER = stat_conf.reports_dir
 ezstatslib.LOGS_INDEX_FILE_NAME = "index.html"
 
@@ -3085,27 +3087,33 @@ os.rename(tmpLogsIndexPath, logsIndexPath)
 
 # save to json
 def encode_Player(pl):
-    # if isinstance(z, complex):
-        # return (z.real, z.imag)
-    # else:
-        # type_name = z.__class__.__name__
-        # raise TypeError(f"Object of type '{type_name}' is not JSON serializable")
-	# return (pl.name, pl.frags, pl.ga, pl.suicides)
-	if isinstance(pl, Player):
-		return {"name":pl.name, "frags":pl.frags(), "ga":pl.ga, "suicides":pl.suicides, "deaths":pl.deaths, "ya":pl.ya, "ra":pl.ra, "mh":pl.mh}
-		# return (pl.name, pl.frags(), pl.ga, pl.suicides)
+    if isinstance(pl, Player):
+        return { "name"     : pl.name, 
+                 "frags"    : pl.frags(),
+                 "ga"       : pl.ga,
+                 "suicides" : pl.suicides,
+                 "deaths"   : pl.deaths,
+                 "ya"       : pl.ya,
+                 "ra"       : pl.ra, 
+                 "mh"       : pl.mh,
+                 "achievements" : pl.getAchievementsJSON(),
+                 "rlskill" : pl.getRLSkillJSON()
+               }
 
-str = "["
-# json.dump(allplayersByFrags, write_file, default=encode_Player)
+str = "{"        
+str += "\"gamemode\": \"%s\"," % (gameMode)
+str += "\"mapname\": \"%s\"," % (mapName)
+str += "\"players\": ["
 for pl in allplayersByFrags:
-	if str != "[":
-		str += ','
-	str += json.dumps(pl, default=encode_Player, indent=4)	
+    str += json.dumps(pl, default=encode_Player, indent=4)    
+    str += ','
+str = str[:-1]
 str += "]"
+str += "}"
 
 # with open("data_file.json", "w") as write_file:    
-	# for pl in allplayersByFrags:
-		# json.dump(pl, write_file, default=encode_Player, indent=4)	
+    # for pl in allplayersByFrags:
+        # json.dump(pl, write_file, default=encode_Player, indent=4)    
 
 # print str
 
@@ -3114,16 +3122,16 @@ jsonPath += ".json"
 jsonf = open(jsonPath, "w")  # TODO check and create folder if needed
 jsonf.write(str)
 jsonf.close()
-	
+    
 ooo = json.loads(str)
 
-print ooo
-for oo in ooo:
-	print oo
-	for o in oo:
-		print o, ":", oo[o]
-	
-print filePath    
+# print ooo
+# for oo in ooo:
+    # print oo
+    # for o in oo:
+        # print o, ":", oo[o]
+    
+print filePath
 
 jsonDirPath = ezstatslib.REPORTS_FOLDER + "json/"
 entries = (os.path.join(jsonDirPath, fn) for fn in os.listdir(jsonDirPath))
@@ -3132,123 +3140,172 @@ entries = ((os.stat(path), path) for path in entries if ".json" in path)
 entries = ((stat[ST_MTIME], stat[ST_SIZE], path) for stat, path in entries if S_ISREG(stat[ST_MODE]))
 
 class JsonPlayer:
-	def __init__(self):
-		self.name = ""
-		self.frags = 0
-		self.deaths = 0
-		self.suicides = 0
-		self.ra = 0
-		self.ya = 0
-		self.ga = 0
-		self.mh = 0
-		
-		self.matchesPlayed = 0
-		
-		self.fragsByMatches = []
-		self.fragsByMatchesPairs = []
-		
-		self.rankByMatches = []
-		self.rankByMatchesPairs = []
+    def __init__(self):
+        self.name = ""
+        self.frags = 0
+        self.deaths = 0
+        self.suicides = 0
+        self.ra = 0
+        self.ya = 0
+        self.ga = 0
+        self.mh = 0
+        
+        self.achievements = {}
+        self.rlskill = {}
+        
+        self.matchesPlayed = 0
+        
+        self.fragsByMatches = []
+        self.fragsByMatchesPairs = []
+        
+        self.rankByMatches = []
+        self.rankByMatchesPairs = []
 
 jsonPlayers = []
 allCDates = set()
-	
+    
 for cdate, size, path in sorted(entries, reverse=False):
-    #print time.ctime(cdate), size, os.path.basename(path)	
-	print "AAA", cdate, size, path
-	
-	dateRes = re.search("(?<=]_).*(?=.html.json)", path)                  
-	dt = datetime.strptime(dateRes.group(0), "%Y-%m-%d_%H_%M_%S")
-	dateStruct = datetime.strptime(dateRes.group(0).split("_")[0], "%Y-%m-%d")
-	
-	allCDates.add(dt)	
-	
-	with open(path, 'r') as f:
-		jsonStrRead = json.load(f)
-		print "JJJ", jsonStrRead
-		for oo in jsonStrRead:
-			currentJsonPlayer = JsonPlayer()
-			currentJsonPlayer.matchesPlayed = 1
-			for o in oo:
-				print o, ":", oo[o]
-				# exec("currentJsonPlayer.%s = %s" % (o, oo[o]))
-				if o == "name":
-					currentJsonPlayer.name = oo[o]
-				if o == "frags":
-					currentJsonPlayer.frags = oo[o]
-				if o == "suicides":
-					currentJsonPlayer.suicides = oo[o]
-				if o == "ga":
-					currentJsonPlayer.ga = oo[o]
-				if o == "ya":
-					currentJsonPlayer.ya = oo[o]
-				if o == "ra":
-					currentJsonPlayer.ra = oo[o]
-				if o == "mh":
-					currentJsonPlayer.mh = oo[o]
-				if o == "deaths":
-					currentJsonPlayer.deaths = oo[o]
+    #print time.ctime(cdate), size, os.path.basename(path)    
+    print "AAA", cdate, size, path
+    
+    dateRes = re.search("(?<=]_).*(?=.html.json)", path)                  
+    dt = datetime.strptime(dateRes.group(0), "%Y-%m-%d_%H_%M_%S")
+    dateStruct = datetime.strptime(dateRes.group(0).split("_")[0], "%Y-%m-%d")
+    
+    allCDates.add(dt)    
+    
+    with open(path, 'r') as f:        
+        jsonStrRead = json.load(f)
+        print "JJJ", jsonStrRead
+        for ooo in jsonStrRead:
+            print ooo
+            if ooo == "mapname":
+                pass
 
-				
-			isFound = False
-			for plJson in jsonPlayers:
-				if plJson.name == currentJsonPlayer.name:
-					isFound = True
-					plJson.frags += currentJsonPlayer.frags
-					plJson.suicides += currentJsonPlayer.suicides
-					plJson.ga += currentJsonPlayer.ga
-					plJson.ra += currentJsonPlayer.ra
-					plJson.ya += currentJsonPlayer.ya
-					plJson.mh += currentJsonPlayer.mh
-					plJson.deaths += currentJsonPlayer.deaths
-					plJson.matchesPlayed += currentJsonPlayer.matchesPlayed
-					plJson.fragsByMatches.append(currentJsonPlayer.frags)
-					plJson.fragsByMatchesPairs.append([dt, currentJsonPlayer.frags])
-					plJson.rankByMatches.append(currentJsonPlayer.frags-currentJsonPlayer.deaths)
-					plJson.rankByMatchesPairs.append([dt, currentJsonPlayer.frags-currentJsonPlayer.deaths])
-	
-			if not isFound:
-				currentJsonPlayer.fragsByMatches.append(currentJsonPlayer.frags)
-				currentJsonPlayer.fragsByMatchesPairs.append([dt, currentJsonPlayer.frags])
-				currentJsonPlayer.rankByMatches.append(currentJsonPlayer.frags-currentJsonPlayer.deaths)
-				currentJsonPlayer.rankByMatchesPairs.append([dt, currentJsonPlayer.frags-currentJsonPlayer.deaths])
-				jsonPlayers.append(currentJsonPlayer)
+            if ooo == "gamemode":
+                pass
 
-				
-				
+            if ooo == "players":
+                for oo in jsonStrRead[ooo]:
+                    currentJsonPlayer = JsonPlayer()
+                    currentJsonPlayer.matchesPlayed = 1
+                    for o in oo:
+                        print o
+                        # exec("currentJsonPlayer.%s = %s" % (o, oo[o]))
+                        if o == "name":
+                            currentJsonPlayer.name = oo[o]
+                        if o == "frags":
+                            currentJsonPlayer.frags = oo[o]
+                        if o == "suicides":
+                            currentJsonPlayer.suicides = oo[o]
+                        if o == "ga":
+                            currentJsonPlayer.ga = oo[o]
+                        if o == "ya":
+                            currentJsonPlayer.ya = oo[o]
+                        if o == "ra":
+                            currentJsonPlayer.ra = oo[o]
+                        if o == "mh":
+                            currentJsonPlayer.mh = oo[o]
+                        if o == "deaths":
+                            currentJsonPlayer.deaths = oo[o]
+                        if o == "achievements":
+                            for ach in oo[o]:
+                                if isinstance(ach,int):
+                                    achID = ach
+                                    if not achID in currentJsonPlayer.achievements:
+                                        currentJsonPlayer.achievements[achID] = 1
+                                    else:
+                                        currentJsonPlayer.achievements[achID] += 1
+                                else:
+                                    for acho in ach:
+                                        if acho == "achID":
+                                            achID = ach[acho]
+                                            if not achID in currentJsonPlayer.achievements:
+                                                currentJsonPlayer.achievements[achID] = 1
+                                            else:
+                                                currentJsonPlayer.achievements[achID] += 1
+                        if o == "rlskill":
+                            currentJsonPlayer.rlskill = oo[o]
+                        
+                    isFound = False
+                    for plJson in jsonPlayers:
+                        if plJson.name == currentJsonPlayer.name:
+                            isFound = True
+                            plJson.frags += currentJsonPlayer.frags
+                            plJson.suicides += currentJsonPlayer.suicides
+                            plJson.ga += currentJsonPlayer.ga
+                            plJson.ra += currentJsonPlayer.ra
+                            plJson.ya += currentJsonPlayer.ya
+                            plJson.mh += currentJsonPlayer.mh
+                            plJson.deaths += currentJsonPlayer.deaths
+                            plJson.matchesPlayed += currentJsonPlayer.matchesPlayed
+                            plJson.achievements = dict(Counter(plJson.achievements) + Counter(currentJsonPlayer.achievements))
+                            plJson.rlskill = dict(Counter(plJson.rlskill) + Counter(currentJsonPlayer.rlskill))
+                            
+                            plJson.fragsByMatches.append(currentJsonPlayer.frags)
+                            plJson.fragsByMatchesPairs.append([dt, currentJsonPlayer.frags])
+                            plJson.rankByMatches.append(currentJsonPlayer.frags-currentJsonPlayer.deaths)
+                            plJson.rankByMatchesPairs.append([dt, currentJsonPlayer.frags-currentJsonPlayer.deaths])
+            
+                    if not isFound:
+                        currentJsonPlayer.fragsByMatches.append(currentJsonPlayer.frags)
+                        currentJsonPlayer.fragsByMatchesPairs.append([dt, currentJsonPlayer.frags])
+                        currentJsonPlayer.rankByMatches.append(currentJsonPlayer.frags-currentJsonPlayer.deaths)
+                        currentJsonPlayer.rankByMatchesPairs.append([dt, currentJsonPlayer.frags-currentJsonPlayer.deaths])
+                        jsonPlayers.append(currentJsonPlayer)
+
+                
+                
 for pl in jsonPlayers:
-	correctedFragsByMatches = []
-	for cdate in sorted(allCDates):
-		isFound = False
-		fragsVal = -1
-		for fragsPair in pl.fragsByMatchesPairs:
-			if fragsPair[0] == cdate:
-				fragsVal =  fragsPair[1]
-				break		
-		correctedFragsByMatches.append(fragsVal)
-	pl.fragsByMatches = correctedFragsByMatches
-	
-	correctedRankByMatches = []
-	for cdate in sorted(allCDates):
-		isFound = False
-		rankVal = -10000
-		for rankPair in pl.rankByMatchesPairs:
-			if rankPair[0] == cdate:
-				rankVal =  rankPair[1]
-				break		
-		correctedRankByMatches.append(rankVal)
-	pl.rankByMatches = correctedRankByMatches
-				
+    correctedFragsByMatches = []
+    for cdate in sorted(allCDates):
+        isFound = False
+        fragsVal = -1
+        for fragsPair in pl.fragsByMatchesPairs:
+            if fragsPair[0] == cdate:
+                fragsVal =  fragsPair[1]
+                break        
+        correctedFragsByMatches.append(fragsVal)
+    pl.fragsByMatches = correctedFragsByMatches
+    
+    correctedRankByMatches = []
+    for cdate in sorted(allCDates):
+        isFound = False
+        rankVal = -10000
+        for rankPair in pl.rankByMatchesPairs:
+            if rankPair[0] == cdate:
+                rankVal =  rankPair[1]
+                break        
+        correctedRankByMatches.append(rankVal)
+    pl.rankByMatches = correctedRankByMatches
+                
 totalsStr = "===== TOTALS (%d) =====" % (len(jsonPlayers))
 totalsStr += "<hr>\n"
 for plJson in jsonPlayers:
-	totalsStr += "\t%s: matches:%d, frags:%d, deaths: %d, suicides: %d, ga: %d, ya: %d, ra: %d, mh: %d" % (plJson.name, plJson.matchesPlayed, plJson.frags, plJson.deaths, plJson.suicides, plJson.ga, plJson.ya, plJson.ra, plJson.mh)
-	totalsStr += "<br>\n"
-	totalsStr += "\tavg per match: frags:%f, deaths: %f, suicides: %f, ga: %f, ya: %f, ra: %f, mh: %f" % (float(plJson.frags)/plJson.matchesPlayed, float(plJson.deaths)/plJson.matchesPlayed, float(plJson.suicides)/plJson.matchesPlayed, float(plJson.ga)/plJson.matchesPlayed, float(plJson.ya)/plJson.matchesPlayed, float(plJson.ra)/plJson.matchesPlayed, float(plJson.mh)/plJson.matchesPlayed)
-	totalsStr += "<br>\n"
-	totalsStr += "frags by matches: %s" % (plJson.fragsByMatches)
-	totalsStr += "<hr>\n"
-				
+    totalsStr += "\t%s: matches:%d, frags:%d, deaths: %d, suicides: %d, ga: %d, ya: %d, ra: %d, mh: %d" % (plJson.name, plJson.matchesPlayed, plJson.frags, plJson.deaths, plJson.suicides, plJson.ga, plJson.ya, plJson.ra, plJson.mh)
+    
+    totalsStr += "<br>\n"
+    
+    totalsStr += "\tachievements: "
+    for achID in plJson.achievements.keys():
+        ach = ezstatslib.Achievement(achID)
+        totalsStr += "%s(%d)," % (ach.toString(), plJson.achievements[achID])
+    totalsStr = totalsStr[:-1]
+    
+    totalsStr += "<br>\n"
+    
+    totalsStr += "\tRLSkill: "
+    for rlkey in plJson.rlskill.keys():
+        totalsStr += "%s(%d)," % (rlkey, plJson.rlskill[rlkey])
+    totalsStr = totalsStr[:-1]
+    
+    totalsStr += "<br>\n"
+    
+    totalsStr += "\tavg per match: frags:%f, deaths: %f, suicides: %f, ga: %f, ya: %f, ra: %f, mh: %f" % (float(plJson.frags)/plJson.matchesPlayed, float(plJson.deaths)/plJson.matchesPlayed, float(plJson.suicides)/plJson.matchesPlayed, float(plJson.ga)/plJson.matchesPlayed, float(plJson.ya)/plJson.matchesPlayed, float(plJson.ra)/plJson.matchesPlayed, float(plJson.mh)/plJson.matchesPlayed)
+    totalsStr += "<br>\n"
+    totalsStr += "frags by matches: %s" % (plJson.fragsByMatches)
+    totalsStr += "<hr>\n"
+                
 logsf = open(totalsPath, "w")
 #logsf.write(ezstatslib.HTML_HEADER_STR)
 
@@ -3276,21 +3333,21 @@ highchartsTotalsFragsFunctionStr = highchartsTotalsFragsFunctionStr.replace("EXT
 hcDelim = "}, {\n"
 rowLines = ""        
 for plJson in jsonPlayers:
-	if rowLines != "":
-		rowLines += hcDelim
-	
-	rowLines += "name: '%s (%d)',\n" % (plJson.name, plJson.matchesPlayed)
-	# rowLines += "data: [0"
-	rowLines += "data: [[0,0]"
-	
-	graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_FRAGS_PROGRESS_GRANULARITY)
-	for fr in plJson.fragsByMatches:
-		# rowLines += ",%d" % (minEl[pl.name])
-		if fr != -1:
-			rowLines += ",[%f,%d]" % (graphGranularity, fr)  # TODO format, now is 0.500000
-		graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_FRAGS_PROGRESS_GRANULARITY)
-		
-	rowLines += "]\n"        
+    if rowLines != "":
+        rowLines += hcDelim
+    
+    rowLines += "name: '%s (%d)',\n" % (plJson.name, plJson.matchesPlayed)
+    # rowLines += "data: [0"
+    rowLines += "data: [[0,0]"
+    
+    graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_FRAGS_PROGRESS_GRANULARITY)
+    for fr in plJson.fragsByMatches:
+        # rowLines += ",%d" % (minEl[pl.name])
+        if fr != -1:
+            rowLines += ",[%f,%d]" % (graphGranularity, fr)  # TODO format, now is 0.500000
+        graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_FRAGS_PROGRESS_GRANULARITY)
+        
+    rowLines += "]\n"        
     
 highchartsTotalsFragsFunctionStr = highchartsTotalsFragsFunctionStr.replace("ADD_STAT_ROWS", rowLines)
     
@@ -3316,28 +3373,28 @@ highchartsTotalsAvgFragsFunctionStr = highchartsTotalsAvgFragsFunctionStr.replac
 hcDelim = "}, {\n"
 rowLines = ""        
 for plJson in jsonPlayers:
-	if rowLines != "":
-		rowLines += hcDelim
-	
-	rowLines += "name: '%s (%d)',\n" % (plJson.name, plJson.matchesPlayed)
-	# rowLines += "data: [0"
-	rowLines += "data: [[0,0]"
-		
-	graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_GRANULARITY)
-	avgFragsVal = 0.0
-	currentMatchesCnt = 0
-	currentFragsSum = 0
-	for fr in plJson.fragsByMatches:
-		# rowLines += ",%d" % (minEl[pl.name])
-		if fr != -1:
-			currentMatchesCnt += 1
-			currentFragsSum += fr
-			avgFragsVal = float(currentFragsSum) / currentMatchesCnt
-				
-			rowLines += ",[%f,%f]" % (graphGranularity, avgFragsVal)  # TODO format, now is 0.500000
-		graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_GRANULARITY)
-		
-	rowLines += "]\n"        
+    if rowLines != "":
+        rowLines += hcDelim
+    
+    rowLines += "name: '%s (%d)',\n" % (plJson.name, plJson.matchesPlayed)
+    # rowLines += "data: [0"
+    rowLines += "data: [[0,0]"
+        
+    graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_GRANULARITY)
+    avgFragsVal = 0.0
+    currentMatchesCnt = 0
+    currentFragsSum = 0
+    for fr in plJson.fragsByMatches:
+        # rowLines += ",%d" % (minEl[pl.name])
+        if fr != -1:
+            currentMatchesCnt += 1
+            currentFragsSum += fr
+            avgFragsVal = float(currentFragsSum) / currentMatchesCnt
+                
+            rowLines += ",[%f,%f]" % (graphGranularity, avgFragsVal)  # TODO format, now is 0.500000
+        graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_GRANULARITY)
+        
+    rowLines += "]\n"        
     
 highchartsTotalsAvgFragsFunctionStr = highchartsTotalsAvgFragsFunctionStr.replace("ADD_STAT_ROWS", rowLines)
     
@@ -3363,26 +3420,26 @@ highchartsTotalsRankFunctionStr = highchartsTotalsRankFunctionStr.replace("EXTRA
 hcDelim = "}, {\n"
 rowLines = ""        
 for plJson in jsonPlayers:
-	if rowLines != "":
-		rowLines += hcDelim
-	
-	rowLines += "name: '%s (%d)',\n" % (plJson.name, plJson.matchesPlayed)
-	# rowLines += "data: [0"
-	rowLines += "data: [[0,0]"
-		
-	graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_RANK_PROGRESS_GRANULARITY)
-	totalRank = 0
-	for rank in plJson.rankByMatches:
-		# rowLines += ",%d" % (minEl[pl.name])
-		if rank != -10000:
-			totalRank += rank
-			rowLines += ",[%f,%d]" % (graphGranularity, totalRank)  # TODO format, now is 0.500000
-		graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_RANK_PROGRESS_GRANULARITY)
-		
-	rowLines += "]\n"        
-	
-	# add negative zone
-	rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
+    if rowLines != "":
+        rowLines += hcDelim
+    
+    rowLines += "name: '%s (%d)',\n" % (plJson.name, plJson.matchesPlayed)
+    # rowLines += "data: [0"
+    rowLines += "data: [[0,0]"
+        
+    graphGranularity = 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_RANK_PROGRESS_GRANULARITY)
+    totalRank = 0
+    for rank in plJson.rankByMatches:
+        # rowLines += ",%d" % (minEl[pl.name])
+        if rank != -10000:
+            totalRank += rank
+            rowLines += ",[%f,%d]" % (graphGranularity, totalRank)  # TODO format, now is 0.500000
+        graphGranularity += 1.0 / (float)(ezstatslib.HIGHCHARTS_TOTALS_RANK_PROGRESS_GRANULARITY)
+        
+    rowLines += "]\n"        
+    
+    # add negative zone
+    rowLines += ",zones: [{ value: 0, dashStyle: 'Dash' }]"
     
 highchartsTotalsRankFunctionStr = highchartsTotalsRankFunctionStr.replace("ADD_STAT_ROWS", rowLines)
     
@@ -3413,13 +3470,13 @@ logsf.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)
 logsf.write(ezstatslib.HTML_FOOTER_NO_PRE)
 
 # logsf.write(ezstatslib.HTML_FOOTER_STR)
-logsf.close()			
+logsf.close()            
 
 print "allCDates.size =", len(allCDates)
 
 for pl in jsonPlayers:
-	print "count:", len(pl.fragsByMatches)
-	
+    print "count:", len(pl.fragsByMatches)
+    
 print allCDates
 print sorted(allCDates)
 
