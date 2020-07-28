@@ -3259,12 +3259,12 @@ class Player:
         if cnt == 0:
             return {}
 
-        val110 = sum(1 for val in pl.rl_damages_gvn if val[0] == 110)
-        val100 = sum(1 for val in pl.rl_damages_gvn if val[0] < 110 and val[0] >= 100)
-        val90  = sum(1 for val in pl.rl_damages_gvn if val[0] < 100 and val[0] >= 90)
-        val75  = sum(1 for val in pl.rl_damages_gvn if val[0] < 90 and val[0] >= 75)
-        val55  = sum(1 for val in pl.rl_damages_gvn if val[0] < 75 and val[0] >= 55)
-        val0   = sum(1 for val in pl.rl_damages_gvn if val[0] < 55 and val[0] >= 0)
+        val110 = sum(1 for val in self.rl_damages_gvn if val[0] == 110)
+        val100 = sum(1 for val in self.rl_damages_gvn if val[0] < 110 and val[0] >= 100)
+        val90  = sum(1 for val in self.rl_damages_gvn if val[0] < 100 and val[0] >= 90)
+        val75  = sum(1 for val in self.rl_damages_gvn if val[0] < 90 and val[0] >= 75)
+        val55  = sum(1 for val in self.rl_damages_gvn if val[0] < 75 and val[0] >= 55)
+        val0   = sum(1 for val in self.rl_damages_gvn if val[0] < 55 and val[0] >= 0)
         
         return { "attacks"      : self.rl_attacks,
                  "damagesCount" : cnt,
