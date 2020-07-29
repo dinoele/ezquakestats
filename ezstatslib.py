@@ -3618,12 +3618,34 @@ class Achievement:
                
     @staticmethod
     def generateHtmlExCnt(ach, extraInfo, count, path = "ezquakestats/img/", size = 125, radius = 45, shadowSize = 8, shadowIntensity = 35):
-        return "<div style=\"position: relative;\">" \
+        res = "<div style=\"position: relative;\">" \
                "<img src=\"%s\" alt=\"%s\" title=\"%s: \n%s\" style=\"width:%dpx;height:%dpx;border: 8px solid %s; -webkit-border-radius: %d%%; -moz-border-radius: %d%%; border-radius: %d%%;box-shadow: 0px 0px %dpx %dpx rgba(0,0,0,0.%d);\">" \
-               "<img style=\"background-color:%s;position: absolute; top: 0; right: 0;width:37px;height:37px;border: 0px solid black;-webkit-border-radius: 55%%; -moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
-               "</div>" \
-               % (ach.getImgSrc(path), ach.description(), ach.description(), extraInfo, size, size, Achievement.getBorderColor(ach.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity, \
-                  Achievement.getBorderColor(ach.achlevel), path, count)
+               % (ach.getImgSrc(path), ach.description(), ach.description(), extraInfo, size, size, Achievement.getBorderColor(ach.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity)
+    
+        if count >= 0 and count < 10:
+            res += "<img style=\"background-color:%s;position: absolute; top: 0; right: 0;width:37px;height:37px;border: 0px solid black;-webkit-border-radius: 55%%; -moz-border-radius: 55%%;" \
+                   "border-radius:    55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
+                   % (Achievement.getBorderColor(ach.achlevel), path, count)
+        elif count >= 10 and count < 100:
+            res += "<div>" \
+                   "<img style=\"background-color:%s;position: absolute; top: 0; right: 0;width:57px;height:37px;border: 0px solid black;-webkit-border-radius: 55%%;" \
+                   "-moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"\" alt=\"\" >" \
+                   "<img style=\"position: absolute; top: 3px; right: 24px;width:27px;height:33px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
+                   "<img style=\"position: absolute; top: 3px; right: 5px;width:27px;height:33px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
+                   "</div>" \
+                   % (Achievement.getBorderColor(ach.achlevel), path, count / 10, path, count % 10)
+        elif count >= 100 and count < 1000:
+            res += "<div>" \
+                   "<img style=\"background-color:%s;position: absolute; top: 0; right: 0;width:57px;height:37px;border: 0px solid black;-webkit-border-radius: 55%%;" \
+                   "-moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"\" alt=\"\" >" \
+                   "<img style=\"position: absolute; top: 6px; right: 35px;width:22px;height:28px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
+                   "<img style=\"position: absolute; top: 6px; right: 20px;width:22px;height:28px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
+                   "<img style=\"position: absolute; top: 6px; right: 3px;width:22px;height:28px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
+                   "</div>" \
+                   % (Achievement.getBorderColor(ach.achlevel), path, count / 100, path, (count % 100) / 10, path, (count % 100) % 10)
+        
+        res += "</div>"
+        return res
     
     def description(self):
         if self.achtype == AchievementType.LONG_LIVE:
