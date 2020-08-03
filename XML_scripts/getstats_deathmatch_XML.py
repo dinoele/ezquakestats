@@ -1265,6 +1265,31 @@ for pl in allplayers:
 for pl in allplayers:
     pl.correctLifetime(minutesPlayedXML)
     
+# fill players duels
+for pl in allplayers:
+    for pl1 in headToHead.keys():
+        if pl1 == pl.name:
+            for h2hElem in headToHead[pl1]:
+                pl.duels[h2hElem[0]] = [h2hElem[1],-1 if pl.name != h2hElem[0] else h2hElem[1]]
+    
+    for pl1 in headToHead.keys():    
+        if pl1 != pl.name:
+            # ezstatslib.logError("EEE: pl.name: " + pl.name + "\n")
+            # ezstatslib.logError("EEE: pl1: " + pl1 + "\n")            
+            # ezstatslib.logError("EEE: " + str(headToHead[pl1]) + "\n")
+            for h2hElem in headToHead[pl1]:
+                # ezstatslib.logError("EEE: " + h2hElem[0] + "\n")
+                # ezstatslib.logError(pl.name + " / " + pl1 + " : " + str(headToHead[pl1]))
+                # exit(0)
+                
+                if h2hElem[0] == pl.name:
+                    # ezstatslib.logError("EEE: " + pl.name + " , " + h2hElem[0] + " , " + str(h2hElem[1]) + "\n")
+                    pl.duels[pl1][1] = h2hElem[1]
+        
+
+# for pl in allplayers:
+#     ezstatslib.logError(pl.name + " : " + str(pl.duels) + "\n")
+            
 # generate output string
 resultString = ""
 
@@ -3084,6 +3109,7 @@ logsf.close()
 if os.path.exists(logsIndexPath):
     os.remove(logsIndexPath)
 os.rename(tmpLogsIndexPath, logsIndexPath)
+ 
 
 # save to json
 def encode_Player(pl):
@@ -3097,19 +3123,26 @@ def encode_Player(pl):
                  "ra"       : pl.ra, 
                  "mh"       : pl.mh,
                  "achievements" : pl.getAchievementsJSON(),
-                 "rlskill" : pl.getRLSkillJSON()
+                 "rlskill"  : pl.getRLSkillJSON(),
+                 "duels"    : pl.getDuelsJson()
                }
 
-str = "{"        
-str += "\"gamemode\": \"%s\"," % (gameMode)
-str += "\"mapname\": \"%s\"," % (mapName)
-str += "\"players\": ["
+jsonStr = "{\n"
+jsonStr += "\"matchdate\": \"%s\",\n" % (matchdate)
+jsonStr += "\"gamemode\": \"%s\",\n"  % (gameMode)
+jsonStr += "\"mapname\": \"%s\",\n"   % (mapName)
+jsonStr += "\"players\": [\n"
+resPlace = 1
 for pl in allplayersByFrags:
-    str += json.dumps(pl, default=encode_Player, indent=4)    
-    str += ','
-str = str[:-1]
-str += "]"
-str += "}"
+    jsonStr += json.dumps(pl, 1, default=encode_Player, indent=4)
+    jsonStr = jsonStr[:-1]
+    jsonStr += ",\"resultPlace\": %d,\n" % (resPlace)
+    jsonStr += "\"isLast\": %d }\n" % (1 if resPlace == len(allplayersByFrags) else 0)
+    resPlace += 1
+    jsonStr += ','
+jsonStr = jsonStr[:-1]
+jsonStr += "]"
+jsonStr += "}"
 
 # with open("data_file.json", "w") as write_file:    
     # for pl in allplayersByFrags:
@@ -3120,10 +3153,10 @@ str += "}"
 jsonPath =  filePathFull.replace(ezstatslib.REPORTS_FOLDER, ezstatslib.REPORTS_FOLDER + "json/")
 jsonPath += ".json"
 jsonf = open(jsonPath, "w")  # TODO check and create folder if needed
-jsonf.write(str)
+jsonf.write(jsonStr)
 jsonf.close()
     
-ooo = json.loads(str)
+ooo = json.loads(jsonStr)
 
 # print ooo
 # for oo in ooo:
@@ -3138,6 +3171,28 @@ entries = (os.path.join(jsonDirPath, fn) for fn in os.listdir(jsonDirPath))
 entries = ((os.stat(path), path) for path in entries if ".json" in path)
 
 entries = ((stat[ST_MTIME], stat[ST_SIZE], path) for stat, path in entries if S_ISREG(stat[ST_MODE]))
+
+class JsonPlayerMatch:
+    def __init__(self):
+        self.dt = 0
+        self.mapname = ""
+        self.gamemode = ""
+        
+        self.frags = 0
+        self.deaths = 0
+        self.suicides = 0
+        self.ra = 0
+        self.ya = 0
+        self.ga = 0
+        self.mh = 0
+        
+        self.achievements = {}
+        self.rlskill = {}
+        
+        self.resultPlace = 0
+        self.isLast = False
+        
+        self.duels = {}
 
 class JsonPlayer:
     def __init__(self):
@@ -3160,6 +3215,15 @@ class JsonPlayer:
         
         self.rankByMatches = []
         self.rankByMatchesPairs = []
+        
+        self.resultPlace = 0
+        self.isLast = False
+        self.resultPlacesByMatches = {}
+        
+        self.duels = {}
+        
+        
+        self.matches = {}
 
 jsonPlayers = []
 allCDates = set()
@@ -3177,17 +3241,28 @@ for cdate, size, path in sorted(entries, reverse=False):
     with open(path, 'r') as f:        
         jsonStrRead = json.load(f)
         print "JJJ", jsonStrRead
+        mapname = ""
+        gamemode = ""
         for ooo in jsonStrRead:
             print ooo
-            if ooo == "mapname":
+            if ooo == "matchdate":
                 pass
+            
+            if ooo == "mapname":
+                mapname = jsonStrRead[ooo]
 
             if ooo == "gamemode":
-                pass
+                gamemode = jsonStrRead[ooo]
 
             if ooo == "players":
                 for oo in jsonStrRead[ooo]:
                     currentJsonPlayer = JsonPlayer()
+                    
+                    currentJsonMatch = JsonPlayerMatch()
+                    currentJsonMatch.dt = dt
+                    currentJsonMatch.mapname = mapname
+                    currentJsonMatch.gamemode = gamemode
+                    
                     currentJsonPlayer.matchesPlayed = 1
                     for o in oo:
                         print o
@@ -3196,37 +3271,58 @@ for cdate, size, path in sorted(entries, reverse=False):
                             currentJsonPlayer.name = oo[o]
                         if o == "frags":
                             currentJsonPlayer.frags = oo[o]
+                            currentJsonMatch.frags  = oo[o]
                         if o == "suicides":
                             currentJsonPlayer.suicides = oo[o]
+                            currentJsonMatch.suicides  = oo[o]
                         if o == "ga":
                             currentJsonPlayer.ga = oo[o]
+                            currentJsonMatch.ga  = oo[o]
                         if o == "ya":
                             currentJsonPlayer.ya = oo[o]
+                            currentJsonMatch.ya  = oo[o]
                         if o == "ra":
                             currentJsonPlayer.ra = oo[o]
+                            currentJsonMatch.ra  = oo[o]
                         if o == "mh":
                             currentJsonPlayer.mh = oo[o]
+                            currentJsonMatch.mh  = oo[o]
                         if o == "deaths":
                             currentJsonPlayer.deaths = oo[o]
+                            currentJsonMatch.deaths  = oo[o]
                         if o == "achievements":
                             for ach in oo[o]:
                                 if isinstance(ach,int):
                                     achID = ach
                                     if not achID in currentJsonPlayer.achievements:
                                         currentJsonPlayer.achievements[achID] = 1
+                                        currentJsonMatch.achievements[achID] = 1                                        
                                     else:
                                         currentJsonPlayer.achievements[achID] += 1
+                                        currentJsonMatch.achievements[achID] += 1
                                 else:
                                     for acho in ach:
                                         if acho == "achID":
                                             achID = ach[acho]
                                             if not achID in currentJsonPlayer.achievements:
                                                 currentJsonPlayer.achievements[achID] = 1
+                                                currentJsonMatch.achievements[achID] = 1
                                             else:
                                                 currentJsonPlayer.achievements[achID] += 1
+                                                currentJsonMatch.achievements[achID] += 1
                         if o == "rlskill":
                             currentJsonPlayer.rlskill = oo[o]
-                        
+                            currentJsonMatch.rlskill = oo[o]
+                        if o == "resultPlace":
+                            currentJsonPlayer.resultPlace = oo[o]
+                            currentJsonMatch.resultPlace = oo[o]
+                        if o == "isLast":
+                            currentJsonPlayer.isLast = oo[o]
+                            currentJsonMatch.isLast = oo[o]
+                        if o == "duels":
+                            currentJsonPlayer.duels = oo[o]
+                            currentJsonMatch.isLast = oo[o]
+                    
                     isFound = False
                     for plJson in jsonPlayers:
                         if plJson.name == currentJsonPlayer.name:
@@ -3246,12 +3342,28 @@ for cdate, size, path in sorted(entries, reverse=False):
                             plJson.fragsByMatchesPairs.append([dt, currentJsonPlayer.frags])
                             plJson.rankByMatches.append(currentJsonPlayer.frags-currentJsonPlayer.deaths)
                             plJson.rankByMatchesPairs.append([dt, currentJsonPlayer.frags-currentJsonPlayer.deaths])
+                            
+                            plJson.resultPlacesByMatches[dt] = currentJsonPlayer.resultPlace
+                            
+                            for currKey in currentJsonPlayer.duels.keys():
+                                if not currKey in plJson.duels.keys():
+                                    plJson.duels[currKey] = currentJsonPlayer.duels[currKey]
+                                else:
+                                    plJson.duels[currKey][0] += currentJsonPlayer.duels[currKey][0]
+                                    plJson.duels[currKey][1] += currentJsonPlayer.duels[currKey][1]
+                                    
+                            plJson.matches[dt] = currentJsonMatch
             
                     if not isFound:
                         currentJsonPlayer.fragsByMatches.append(currentJsonPlayer.frags)
                         currentJsonPlayer.fragsByMatchesPairs.append([dt, currentJsonPlayer.frags])
                         currentJsonPlayer.rankByMatches.append(currentJsonPlayer.frags-currentJsonPlayer.deaths)
                         currentJsonPlayer.rankByMatchesPairs.append([dt, currentJsonPlayer.frags-currentJsonPlayer.deaths])
+                        
+                        currentJsonPlayer.resultPlacesByMatches[dt] = currentJsonPlayer.resultPlace
+                        
+                        currentJsonPlayer.matches[dt] = currentJsonMatch
+                        
                         jsonPlayers.append(currentJsonPlayer)
 
                 
@@ -3471,6 +3583,134 @@ logsf.write(ezstatslib.HTML_FOOTER_NO_PRE)
 
 # logsf.write(ezstatslib.HTML_FOOTER_STR)
 logsf.close()            
+
+
+
+
+
+# PLAYERS PAGES
+for plJson in jsonPlayers:
+    playerPagePath = ezstatslib.REPORTS_FOLDER + plJson.name + ".html"
+
+    playerText = "<h1>===== %s =====</h1>" % (plJson.name)
+    playerText += "\t%s: matches:%d [%d], frags:%d, deaths: %d, suicides: %d, ga: %d, ya: %d, ra: %d, mh: %d" % (plJson.name, plJson.matchesPlayed, len(plJson.matches), plJson.frags, plJson.deaths, plJson.suicides, plJson.ga, plJson.ya, plJson.ra, plJson.mh)
+    
+    playerText += "<hr>"
+    
+    # playerText += "\tachievements: "
+    # for achID in plJson.achievements.keys():
+        # ach = ezstatslib.Achievement(achID)
+        # playerText += "%s(%d)," % (ach.toString(), plJson.achievements[achID])
+    # playerText = playerText[:-1]
+    
+    playerText += "<br>\n"
+    
+    playerText += "\tRLSkill: "
+    for rlkey in plJson.rlskill.keys():
+        playerText += "%s(%d)," % (rlkey, plJson.rlskill[rlkey])
+    playerText = playerText[:-1]
+    
+    playerText += "<br>\n"
+    
+    playerText += "\tavg per match: frags:%f, deaths: %f, suicides: %f, ga: %f, ya: %f, ra: %f, mh: %f" % (float(plJson.frags)/plJson.matchesPlayed, float(plJson.deaths)/plJson.matchesPlayed, float(plJson.suicides)/plJson.matchesPlayed, float(plJson.ga)/plJson.matchesPlayed, float(plJson.ya)/plJson.matchesPlayed, float(plJson.ra)/plJson.matchesPlayed, float(plJson.mh)/plJson.matchesPlayed)
+    playerText += "<br>\n"    
+    #playerText += "\tgame positions: %s" % (plJson.resultPlacesByMatches)
+    #playerText += "<br>\n"
+    
+    places = {}
+    for match in plJson.matches.values():
+        if match.resultPlace in places.keys():
+            places[match.resultPlace] += 1
+        else:
+            places[match.resultPlace] = 1
+    playerText += "\tpositions sum: %s" % (places)
+    playerText += "<br>\n"
+    
+    isLastCount = 0
+    for match in plJson.matches.values():
+        if match.isLast == True:
+            isLastCount += 1
+    playerText += "\tisLast count: %d\n" % (isLastCount)
+    playerText += "<br>\n"
+        
+    #playerText += "\tfrags by matches: %s" % (plJson.fragsByMatches)
+    #playerText += "<br>\n"
+    playerText += "\tduels: %s" % (plJson.duels)
+    playerText += "<hr>\n"
+    
+    playerText += "Sorted matches:\n"
+    for dt in sorted(plJson.matches.keys(), reverse=True):
+        playerText += "\tdt: %s, map: %s, place: %d\n" % (str(dt), plJson.matches[dt].mapname, plJson.matches[dt].resultPlace)
+    playerText += "<hr>\n"    
+    
+    playerText += "</pre>PLAYERS_ACHIEVEMENTS_PLACE\n<pre>"
+    
+    # players achievements -->
+    playersAchievementsStr = ezstatslib.HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG    
+    cellWidth = "20px"
+    achievementsHtmlTable = HTML.Table(border="0", cellspacing="0", style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+    if len(pl.achievements) != 0:
+        tableRowBasic     = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("Basic"), align="center", width=cellWidth) ])
+        tableRowAdvanced  = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("Advanced"), align="center", width=cellWidth) ])
+        tableRowRare      = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("Rare"), align="center", width=cellWidth) ])
+        tableRowUltraRare = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("UltraRare"), align="center", width=cellWidth) ])
+        tableRowLegendary = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("Legendary"), align="center", width=cellWidth) ])
+        for achID in plJson.achievements.keys():
+            ach = ezstatslib.Achievement(achID)
+            # playerText += "%s(%d)," % (ach.toString(), plJson.achievements[achID])
+            
+            if ach.achlevel == ezstatslib.AchievementLevel.BASIC_POSITIVE or ach.achlevel == ezstatslib.AchievementLevel.BASIC_NEGATIVE:
+                tableRowBasic.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(ach, "", plJson.achievements[achID]), align="center" ) )
+            elif ach.achlevel == ezstatslib.AchievementLevel.ADVANCE_POSITIVE or ach.achlevel == ezstatslib.AchievementLevel.ADVANCE_NEGATIVE:
+                tableRowAdvanced.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(ach, "", plJson.achievements[achID]), align="center" ) )
+            elif ach.achlevel == ezstatslib.AchievementLevel.RARE_POSITIVE or ach.achlevel == ezstatslib.AchievementLevel.RARE_NEGATIVE:
+                tableRowRare.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(ach, "", plJson.achievements[achID]), align="center" ) )
+            elif ach.achlevel == ezstatslib.AchievementLevel.ULTRA_RARE:
+                tableRowUltraRare.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(ach, "", plJson.achievements[achID]), align="center" ) )
+            # elif ach.achlevel == ezstatslib.AchievementLevel.LEGENDARY:
+            #     tableRowLegendary.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(ach, "", plJson.achievements[achID]), align="center" ) )
+                
+        if len(tableRowBasic.cells) != 1:
+            achievementsHtmlTable.rows.append(tableRowBasic)
+            
+        if len(tableRowAdvanced.cells) != 1:
+            achievementsHtmlTable.rows.append(tableRowAdvanced)
+            
+        if len(tableRowRare.cells) != 1:
+            achievementsHtmlTable.rows.append(tableRowRare)
+        
+        if len(tableRowUltraRare.cells) != 1:        
+            achievementsHtmlTable.rows.append(tableRowUltraRare)
+        # achievementsHtmlTable.rows.append(tableRowLegendary)
+        
+    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable)) # + ezstatslib.Achievement.generateAchievementsLevelLegendTable())
+    # <-- players achievements
+    
+    playerText = playerText.replace("PLAYERS_ACHIEVEMENTS_PLACE", playersAchievementsStr)
+                
+    playerPage = open(playerPagePath, "w")
+
+    
+    pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
+    pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", "%s stats" % (plJson.name))
+    
+    playerPage.write(pageHeaderStr)
+
+    playerPage.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
+
+    playerPage.write(playerText)
+
+    playerPage.write(ezstatslib.HTML_PRE_CLOSE_TAG)
+    # playerPage.write(ezstatslib.HTML_SCRIPT_HIGHCHARTS_TOTALS_FRAGS_PROGRESS_DIV_TAG)
+    # playerPage.write(ezstatslib.HTML_SCRIPT_HIGHCHARTS_TOTALS_RANK_PROGRESS_DIV_TAG)
+    # playerPage.write(ezstatslib.HTML_SCRIPT_HIGHCHARTS_TOTALS_AVG_FRAGS_PROGRESS_DIV_TAG)
+
+    # add script section for folding
+    playerPage.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)    
+        
+    playerPage.write(ezstatslib.HTML_FOOTER_NO_PRE)
+
+
 
 print "allCDates.size =", len(allCDates)
 

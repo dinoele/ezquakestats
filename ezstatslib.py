@@ -2759,6 +2759,8 @@ class Player:
         self.speed_max = 0
         self.speed_avg = 0
         
+        self.duels = {}
+        
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
             if element.armor == 1:
@@ -3275,7 +3277,10 @@ class Player:
                  "55-75"   : val55,
                  "0-55"    : val0
                }
-                                          
+                
+    def getDuelsJson(self):
+        return self.duels
+                
     def correctDelta(self):
         self.correctedDelta = self.origDelta + self.suicides
 
