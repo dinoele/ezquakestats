@@ -3649,7 +3649,7 @@ for plJson in jsonPlayers:
     playersAchievementsStr = ezstatslib.HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG    
     cellWidth = "20px"
     achievementsHtmlTable = HTML.Table(border="0", cellspacing="0", style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
-    if len(pl.achievements) != 0:
+    if len(plJson.achievements) != 0:
         tableRowBasic     = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("Basic"), align="center", width=cellWidth) ])
         tableRowAdvanced  = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("Advanced"), align="center", width=cellWidth) ])
         tableRowRare      = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold("Rare"), align="center", width=cellWidth) ])
