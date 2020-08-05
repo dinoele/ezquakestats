@@ -2761,6 +2761,11 @@ class Player:
         
         self.duels = {}
         
+        self.killsByMinutes = []
+        self.deathsByMinutes = []
+        self.suicidesByMinutes = []
+
+        
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
             if element.armor == 1:
@@ -2822,6 +2827,10 @@ class Player:
         self.raByMinutesXML = [0 for i in xrange(minutesCnt+1)]
         self.mhByMinutesXML = [0 for i in xrange(minutesCnt+1)]
         
+    def initEventsByMinutes(self, minutesCnt):
+        self.killsByMinutes    = [0 for i in xrange(minutesCnt+1)]
+        self.deathsByMinutes   = [0 for i in xrange(minutesCnt+1)]
+        self.suicidesByMinutes = [0 for i in xrange(minutesCnt+1)]
         
     def incga(self, minuteNum, time = 0):
         self.gaByMinutes[minuteNum] += 1
@@ -2935,6 +2944,11 @@ class Player:
 
         if self.currentStreak.start == 0: self.currentStreak.start = time
         self.fillDeathStreaks(time)
+        
+        currentMin = int(time / 60)+1
+        if currentMin >= len(self.killsByMinutes):
+            currentMin = len(self.killsByMinutes)-1
+        self.killsByMinutes[currentMin] += 1
 
     def incDeath(self, time, who, whom):
         self.deaths += 1
@@ -2950,6 +2964,11 @@ class Player:
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
         self.currentHealth = 100
         self.currentArmor = 0
+        
+        currentMin = int(time / 60)+1
+        if currentMin >= len(self.killsByMinutes):
+            currentMin = len(self.killsByMinutes)-1
+        self.deathsByMinutes[currentMin] += 1
 
     def incSuicides(self, time):
         self.suicides += 1
@@ -2965,6 +2984,11 @@ class Player:
         self.lifetime.append( PlayerLifetimeElement(time + 0.0001,100,0) )
         self.currentHealth = 100
         self.currentArmor = 0
+        
+        currentMin = int(time / 60)+1
+        if currentMin >= len(self.killsByMinutes):
+            currentMin = len(self.killsByMinutes)-1
+        self.suicidesByMinutes[currentMin] += 1
 
     def incTeamkill(self, time, who, whom):
         self.teamkills += 1
@@ -3280,7 +3304,40 @@ class Player:
                 
     def getDuelsJson(self):
         return self.duels
-                
+
+    def getStreaksJSON(self, streakType):
+        res = []
+        for strk in self.deathStreaks if streakType == StreakType.DEATH_STREAK else self.calculatedStreaks:
+            res.append(
+                { "count" : strk.count,
+                  "duration" : strk.duration()
+                })
+        return res
+        
+    def getKillStreaksJSON(self):
+        return self.getStreaksJSON(StreakType.KILL_STREAK)
+        
+    def getDeathStreaksJSON(self):
+        return self.getStreaksJSON(StreakType.DEATH_STREAK)
+
+    def getKillStealsDuelsJSON(self):
+        res = {}
+        for ksteal in self.killsteals_stealer:
+            if self.name == ksteal.stealer:
+                if ksteal.stealvictim in res.keys():
+                    res[ksteal.stealvictim][0] += 1
+                else:
+                    res[ksteal.stealvictim] = [1,0]
+
+        for ksteal in self.killsteals_victim:
+            if self.name == ksteal.stealvictim:
+                if ksteal.stealer in res.keys():
+                    res[ksteal.stealer][1] += 1
+                else:
+                    res[ksteal.stealer] = [0,1]
+
+        return res
+        
     def correctDelta(self):
         self.correctedDelta = self.origDelta + self.suicides
 

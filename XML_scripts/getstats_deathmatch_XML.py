@@ -416,6 +416,7 @@ for pl in xmlPlayers:
     if pl.name == "world":
         continue
     pl.initPowerUpsByMinutes(minutesPlayedXML)
+    pl.initEventsByMinutes(minutesPlayedXML)
     pl.ga = pl.gaXML
     pl.ya = pl.yaXML
     pl.ra = pl.raXML
@@ -3124,13 +3125,29 @@ def encode_Player(pl):
                  "mh"       : pl.mh,
                  "achievements" : pl.getAchievementsJSON(),
                  "rlskill"  : pl.getRLSkillJSON(),
-                 "duels"    : pl.getDuelsJson()
+                 "duels"    : pl.getDuelsJson(),
+                 "rl_dhs_selfdamage" : pl.rl_dhs_selfdamage,
+                 "spawnFrags" :  pl.spawnfrags,
+                 "maxspeed"   :  pl.speed_max,
+                 "avgspeed"   :  pl.speed_avg,
+                 "givenDamage":  pl.gvn,
+                 "takenDamage":  pl.tkn,
+                 "selfDamage" :  pl.damageSelf + pl.damageSelfArmor,
+                 "playTime"   :  pl.playTimeXML(),
+                 "connectionTime" :  pl.connectionTimeXML,
+                 "killStreaks":  pl.getKillStreaksJSON(),
+                 "deathStreaks":  pl.getDeathStreaksJSON(),
+                 "killStealsDuels" : pl.getKillStealsDuelsJSON(),
+                 "killsByMinutes"  : pl.killsByMinutes,
+                 "deathsByMinutes" : pl.deathsByMinutes,
+                 "suicidesByMinutes" : pl.suicidesByMinutes
                }
 
 jsonStr = "{\n"
 jsonStr += "\"matchdate\": \"%s\",\n" % (matchdate)
 jsonStr += "\"gamemode\": \"%s\",\n"  % (gameMode)
 jsonStr += "\"mapname\": \"%s\",\n"   % (mapName)
+jsonStr += "\"reportname\": \"%s\",\n"   % (filePath)
 jsonStr += "\"players\": [\n"
 resPlace = 1
 for pl in allplayersByFrags:
@@ -3177,6 +3194,7 @@ class JsonPlayerMatch:
         self.dt = 0
         self.mapname = ""
         self.gamemode = ""
+        self.reportname = ""
         
         self.frags = 0
         self.deaths = 0
@@ -3193,6 +3211,28 @@ class JsonPlayerMatch:
         self.isLast = False
         
         self.duels = {}
+        
+        self.spawnFrags = 0
+        self.maxspeed = 0        
+        self.avgspeed = 0
+        self.givenDamage = 0
+        self.takenDamage = 0
+        self.selfDamage = 0
+        self.playTime = 0
+        self.connectionTime = 0
+        
+        self.rl_dhs_selfdamage = []
+        
+        self.killStreaks = []
+        self.deathStreaks = []
+        
+        self.killStealsDuels = {}
+        
+        self.killsByMinutes = []
+        self.deathsByMinutes = []
+        self.suicidesByMinutes = []
+
+
 
 class JsonPlayer:
     def __init__(self):
@@ -3204,6 +3244,11 @@ class JsonPlayer:
         self.ya = 0
         self.ga = 0
         self.mh = 0
+        
+        self.spawnFrags = 0
+        self.givenDamage = 0
+        self.takenDamage = 0
+        self.selfDamage = 0
         
         self.achievements = {}
         self.rlskill = {}
@@ -3221,6 +3266,9 @@ class JsonPlayer:
         self.resultPlacesByMatches = {}
         
         self.duels = {}
+        self.killStealsDuels = {}
+        
+        self.rl_dhs_selfdamage = []
         
         
         self.matches = {}
@@ -3243,6 +3291,7 @@ for cdate, size, path in sorted(entries, reverse=False):
         print "JJJ", jsonStrRead
         mapname = ""
         gamemode = ""
+        reportname = ""
         for ooo in jsonStrRead:
             print ooo
             if ooo == "matchdate":
@@ -3253,6 +3302,9 @@ for cdate, size, path in sorted(entries, reverse=False):
 
             if ooo == "gamemode":
                 gamemode = jsonStrRead[ooo]
+                
+            if ooo == "reportname":
+                reportname = jsonStrRead[ooo]
 
             if ooo == "players":
                 for oo in jsonStrRead[ooo]:
@@ -3262,6 +3314,7 @@ for cdate, size, path in sorted(entries, reverse=False):
                     currentJsonMatch.dt = dt
                     currentJsonMatch.mapname = mapname
                     currentJsonMatch.gamemode = gamemode
+                    currentJsonMatch.reportname = reportname
                     
                     currentJsonPlayer.matchesPlayed = 1
                     for o in oo:
@@ -3321,8 +3374,44 @@ for cdate, size, path in sorted(entries, reverse=False):
                             currentJsonMatch.isLast = oo[o]
                         if o == "duels":
                             currentJsonPlayer.duels = oo[o]
-                            currentJsonMatch.isLast = oo[o]
-                    
+                            currentJsonMatch.duels = oo[o]
+                        if o == "spawnFrags":
+                            currentJsonPlayer.spawnFrags = oo[o]
+                            currentJsonMatch.spawnFrags = oo[o]
+                        if o == "maxspeed":
+                            #currentJsonPlayer.maxspeed = oo[o]
+                            currentJsonMatch.maxspeed = oo[o]
+                        if o == "avgspeed":
+                            #currentJsonPlayer.avgspeed = oo[o]
+                            currentJsonMatch.avgspeed = oo[o]
+                        if o == "givenDamage":
+                            currentJsonPlayer.givenDamage = oo[o]
+                            currentJsonMatch.givenDamage = oo[o]
+                        if o == "takenDamage":
+                            currentJsonPlayer.takenDamage = oo[o]
+                            currentJsonMatch.takenDamage = oo[o]
+                        if o == "selfDamage":
+                            currentJsonPlayer.selfDamage = oo[o]
+                            currentJsonMatch.selfDamage = oo[o]
+                        if o == "playTime":
+                            #currentJsonPlayer.playTime = oo[o]
+                            currentJsonMatch.playTime = oo[o]
+                        if o == "connectionTime":
+                            #currentJsonPlayer.connectionTime = oo[o]
+                            currentJsonMatch.connectionTime = oo[o]
+                        if o == "rl_dhs_selfdamage":
+                            currentJsonPlayer.rl_dhs_selfdamage = oo[o]
+                            currentJsonMatch.rl_dhs_selfdamage = oo[o]
+                        if o == "killStreaks":
+                            #currentJsonPlayer.killStreaks = oo[o]
+                            currentJsonMatch.killStreaks = oo[o]
+                        if o == "deathStreaks":
+                            #currentJsonPlayer.deathStreaks = oo[o]
+                            currentJsonMatch.deathStreaks = oo[o]
+                        if o == "killStealsDuels":
+                            currentJsonPlayer.killStealsDuels = oo[o]
+                            currentJsonMatch.killStealsDuels = oo[o]                            
+
                     isFound = False
                     for plJson in jsonPlayers:
                         if plJson.name == currentJsonPlayer.name:
@@ -3335,6 +3424,12 @@ for cdate, size, path in sorted(entries, reverse=False):
                             plJson.mh += currentJsonPlayer.mh
                             plJson.deaths += currentJsonPlayer.deaths
                             plJson.matchesPlayed += currentJsonPlayer.matchesPlayed
+                            plJson.spawnFrags += currentJsonPlayer.spawnFrags
+                            plJson.givenDamage += currentJsonPlayer.givenDamage
+                            plJson.takenDamage += currentJsonPlayer.takenDamage
+                            plJson.selfDamage += currentJsonPlayer.selfDamage
+                            plJson.rl_dhs_selfdamage += currentJsonPlayer.rl_dhs_selfdamage
+                            
                             plJson.achievements = dict(Counter(plJson.achievements) + Counter(currentJsonPlayer.achievements))
                             plJson.rlskill = dict(Counter(plJson.rlskill) + Counter(currentJsonPlayer.rlskill))
                             
@@ -3351,6 +3446,13 @@ for cdate, size, path in sorted(entries, reverse=False):
                                 else:
                                     plJson.duels[currKey][0] += currentJsonPlayer.duels[currKey][0]
                                     plJson.duels[currKey][1] += currentJsonPlayer.duels[currKey][1]
+                                    
+                            for currKey in currentJsonPlayer.killStealsDuels.keys():
+                                if not currKey in plJson.killStealsDuels.keys():
+                                    plJson.killStealsDuels[currKey] = currentJsonPlayer.killStealsDuels[currKey]
+                                else:
+                                    plJson.killStealsDuels[currKey][0] += currentJsonPlayer.killStealsDuels[currKey][0]
+                                    plJson.killStealsDuels[currKey][1] += currentJsonPlayer.killStealsDuels[currKey][1]                                    
                                     
                             plJson.matches[dt] = currentJsonMatch
             
@@ -3597,11 +3699,11 @@ for plJson in jsonPlayers:
     
     playerText += "<hr>"
     
-    # playerText += "\tachievements: "
-    # for achID in plJson.achievements.keys():
-        # ach = ezstatslib.Achievement(achID)
-        # playerText += "%s(%d)," % (ach.toString(), plJson.achievements[achID])
-    # playerText = playerText[:-1]
+    playerText += "\tachievements: "
+    for achID in plJson.achievements.keys():
+        ach = ezstatslib.Achievement(achID)
+        playerText += "%s(%d)," % (ach.toString(), plJson.achievements[achID])
+    playerText = playerText[:-1]
     
     playerText += "<br>\n"
     
@@ -3636,11 +3738,17 @@ for plJson in jsonPlayers:
     #playerText += "\tfrags by matches: %s" % (plJson.fragsByMatches)
     #playerText += "<br>\n"
     playerText += "\tduels: %s" % (plJson.duels)
+    playerText += "<br>\n"
+    playerText += "\tkillStealDuels: %s" % (plJson.killStealsDuels)
     playerText += "<hr>\n"
     
     playerText += "Sorted matches:\n"
     for dt in sorted(plJson.matches.keys(), reverse=True):
-        playerText += "\tdt: %s, map: %s, place: %d\n" % (str(dt), plJson.matches[dt].mapname, plJson.matches[dt].resultPlace)
+        playerText += "\tdt: %s, map: %s, place: %d, report: %s\n" %  \
+                           ( str(dt), \
+                             plJson.matches[dt].mapname, \
+                             plJson.matches[dt].resultPlace, \
+                             htmlLink(plJson.matches[dt].reportname, isBreak = False) )
     playerText += "<hr>\n"    
     
     playerText += "</pre>PLAYERS_ACHIEVEMENTS_PLACE\n<pre>"
