@@ -2966,8 +2966,9 @@ class Player:
         self.currentArmor = 0
         
         currentMin = int(time / 60)+1
-        if currentMin >= len(self.killsByMinutes):
-            currentMin = len(self.killsByMinutes)-1
+        if currentMin >= len(self.deathsByMinutes):
+            currentMin = len(self.deathsByMinutes)-1
+            
         self.deathsByMinutes[currentMin] += 1
 
     def incSuicides(self, time):
@@ -2986,8 +2987,8 @@ class Player:
         self.currentArmor = 0
         
         currentMin = int(time / 60)+1
-        if currentMin >= len(self.killsByMinutes):
-            currentMin = len(self.killsByMinutes)-1
+        if currentMin >= len(self.suicidesByMinutes):
+            currentMin = len(self.suicidesByMinutes)-1
         self.suicidesByMinutes[currentMin] += 1
 
     def incTeamkill(self, time, who, whom):
