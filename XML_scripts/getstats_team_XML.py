@@ -454,6 +454,7 @@ for pl in jsonPlayers:
             pl.gvn = plXML.damageGvnArmor + plXML.damageGvn 
             pl.spawnfrags = plXML.spawnFragsXML
             pl.initPowerUpsByMinutes(minutesPlayedXML)
+            pl.initEventsByMinutes(minutesPlayedXML)
             pl.ga = pl.gaXML  #int(line.split("ga:")[1].split(" ")[0])
             pl.ya = pl.yaXML  #int(line.split("ya:")[1].split(" ")[0])
             pl.ra = pl.raXML  #int(line.split("ra:")[1].split(" ")[0])
