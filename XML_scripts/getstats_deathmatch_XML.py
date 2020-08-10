@@ -1594,8 +1594,8 @@ for pl in allplayersByFrags:
     tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
                                     ezstatslib.htmlBold(pl.kills),
                                     ezstatslib.htmlBold(pl.deaths),
-                                    ezstatslib.htmlBold(pl.gvn / pl.kills),
-                                    ezstatslib.htmlBold(pl.tkn / pl.deaths)])
+                                    ezstatslib.htmlBold(pl.gvn / pl.kills if pl.kills != 0 else 0),
+                                    ezstatslib.htmlBold(pl.tkn / pl.deaths if pl.deaths != 0 else 0)])
         
     for plName in playersNames:
         if pl.name == plName:

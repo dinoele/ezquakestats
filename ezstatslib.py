@@ -3552,7 +3552,7 @@ class Player:
             self.achievements.append( Achievement(AchievementType.LUMBERJACK, "%d axe kills" % (self.axe_kills)) )
 
         # ELECTROMASTER
-        if (self.kills > 0 and self.lg_kills >= 15 and ((float(self.lg_kills) / float(self.kills) * 100)) >= 40.0) or (((float(self.lg_kills) / float(self.kills) * 100)) >= 75.0):
+        if (self.kills > 0 and self.lg_kills >= 15 and ( ((float(self.lg_kills) / float(self.kills) * 100) >= 40.0) or (((float(self.lg_kills) / float(self.kills) * 100)) >= 75.0))):
             self.achievements.append( Achievement(AchievementType.ELECTROMASTER, "{0:d} lazer gun kills({1:5.3}%)".format(self.lg_kills, (float(self.lg_kills) / float(self.kills) * 100))) )
 
         # FASTER_THAN_BULLET
