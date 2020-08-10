@@ -2677,6 +2677,7 @@ class Player:
         #self.TODO_damage_gvn = 0
 
         self.rl_damages_gvn = []
+        self.rl_damages_tkn = []
 
         self.rl_damage_tkn = 0
         self.lg_damage_tkn = 0
@@ -2763,7 +2764,7 @@ class Player:
         
         self.killsByMinutes = []
         self.deathsByMinutes = []
-        self.suicidesByMinutes = []
+        self.suicidesByMinutes = []       
 
         
     def addLifetimeItem(self, element):
@@ -3259,18 +3260,18 @@ class Player:
             resstr = resstr[:-2]
         return resstr
 
-    def getRLSkill(self):
-        cnt = len(self.rl_damages_gvn)
+    def getRLSkill(self, rl_damages):
+        cnt = len(rl_damages)
         if cnt == 0:
             return "NA"
 
-        val110 = sum(1 for val in self.rl_damages_gvn if val[0] == 110)
-        val100 = sum(1 for val in self.rl_damages_gvn if val[0] >= 100)
-        val90  = sum(1 for val in self.rl_damages_gvn if val[0] >= 90)
-        val75  = sum(1 for val in self.rl_damages_gvn if val[0] >= 75)
-        val55  = sum(1 for val in self.rl_damages_gvn if val[0] >= 55)
+        val110 = sum(1 for val in rl_damages if val[0] == 110)
+        val100 = sum(1 for val in rl_damages if val[0] >= 100)
+        val90  = sum(1 for val in rl_damages if val[0] >= 90)
+        val75  = sum(1 for val in rl_damages if val[0] >= 75)
+        val55  = sum(1 for val in rl_damages if val[0] >= 55)
 
-        #valmore110 = sum(1 for val in self.rl_damages_gvn if val[0] > 110)
+        #valmore110 = sum(1 for val in rl_damages if val[0] > 110)
 
         return "DirectHit110: {0:5.4}%({1:3d}),  >100: {2:5.4}%({3:3d}),  >90: {4:5.4}%({5:3d}),  >75: {6:5.4}%({7:3d}),  >55: {8:5.4}%({9:3d})    Total: {10:4d}{11}".format(
                                          ((float(val110)) / float(cnt) * 100), val110, 
@@ -3280,6 +3281,12 @@ class Player:
                                          ((float(val55))  / float(cnt) * 100), val55,
                                           cnt,
                                           "    Attacks: {0:4d}".format(self.rl_attacks) if self.rl_attacks != -1 else "")
+    
+    def getRLSkillGvn(self):
+        return self.getRLSkill(self.rl_damages_gvn)
+    
+    def getRLSkillTkn(self):                                          
+        return self.getRLSkill(self.rl_damages_tkn)
 
     def getRLSkillJSON(self):
         cnt = len(self.rl_damages_gvn)

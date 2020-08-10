@@ -830,6 +830,15 @@ for element in elements:
                 if pl.name == whom:
                     exec("pl.%s_damage_tkn += %d" % (weap, value))
                     exec("pl.%s_damage_tkn_cnt += 1" % (weap))
+                    if weap == "rl":
+                        if len(pl.rl_damages_tkn) > 0 and pl.rl_damages_tkn[len(pl.rl_damages_tkn)-1][2] == 1: # armor 
+                            if pl.rl_damages_tkn[len(pl.rl_damages_tkn)-1][1] == who: # the same whom
+                                pl.rl_damages_tkn[len(pl.rl_damages_tkn)-1][0] += value
+                                pl.rl_damages_tkn[len(pl.rl_damages_tkn)-1][2] = 0
+                            else:
+                                pl.rl_damages_tkn.append([value,who,element.armor]);
+                        else:
+                            pl.rl_damages_tkn.append([value,who,element.armor]);
                     isFoundWhom = True
                     
                     pl.addLifetimeItem(element)
@@ -1610,7 +1619,8 @@ for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
     resultString += ("{0:%ds} taken {1:4d} :: {2:100s}\n" % (plNameMaxLen)).format("", pl.damageTkn+pl.damageTknArmor, pl.getWeaponsDamageTkn(pl.damageTkn+pl.damageTknArmor, weaponsCheck))
     resultString += ("{0:%ds} self  {1:4d} :: {2:100s}\n" % (plNameMaxLen)).format("", pl.damageSelf+pl.damageSelfArmor, pl.getWeaponsDamageSelf(pl.damageSelf+pl.damageSelfArmor, weaponsCheck))
     # resultString += ("{0:%ds} avg damage :: {1:100s}\n" % (plNameMaxLen)).format("", pl.getWeaponsAccuracy(weaponsCheck))  TODO
-    resultString += ("{0:%ds} rl skill   :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getRLSkill())
+    resultString += ("{0:%ds} rl gvn     :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getRLSkillGvn())
+    resultString += ("{0:%ds} rl tkn     :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getRLSkillTkn())
     resultString += ("{0:%ds} pickups    :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getWeaponsPickUps())
     resultString += ("{0:%ds} ammo       :: {1:200s}\n" % (plNameMaxLen)).format("", pl.getAmmoPickUps())
     resultString += "\n"
