@@ -452,6 +452,9 @@ for pl in jsonPlayers:
         if pl.name == plXML.name:
             pl.tkn = plXML.damageTknArmor + plXML.damageTkn 
             pl.gvn = plXML.damageGvnArmor + plXML.damageGvn 
+            pl.killsXML = plXML.killsXML
+            pl.deathsXML = plXML.deathsXML
+            pl.suicidesXML = plXML.suicidesXML
             pl.spawnfrags = plXML.spawnFragsXML
             pl.initPowerUpsByMinutes(minutesPlayedXML)
             pl.initEventsByMinutes(minutesPlayedXML)
@@ -483,6 +486,10 @@ for pl in jsonPlayers:
                 except:
                     pass
 
+    # exclude players with no kills and no deaths
+    if pl.killsXML == 0 and pl.deathsXML == 0 and pl.suicidesXML == 0:
+        continue
+                    
     allplayers.append(pl)
     if pl.teamname == teamName1:
         players1.append(pl)

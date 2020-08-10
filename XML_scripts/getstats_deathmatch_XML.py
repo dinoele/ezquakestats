@@ -213,7 +213,7 @@ for child in root:
                     elements.append(elem)
                     damageElements.append(elem)
                     if elem.target not in xmlPlayersStr:
-                        xmlPlayersStr.append(elem.target)                        
+                        xmlPlayersStr.append(elem.target)
                         pl = Player( "", elem.target, 0, 0, 0 )  #def __init__(self, teamname, name, score, origDelta, teamkills):
                         xmlPlayers.append(pl)
 
@@ -415,6 +415,11 @@ if not options.inputFileJSON is None and options.inputFileJSON != "":
 for pl in xmlPlayers:
     if pl.name == "world":
         continue
+        
+    # exclude players with no kills and no deaths
+    if pl.killsXML == 0 and pl.deathsXML == 0 and pl.suicidesXML == 0:
+        continue
+        
     pl.initPowerUpsByMinutes(minutesPlayedXML)
     pl.initEventsByMinutes(minutesPlayedXML)
     pl.ga = pl.gaXML
