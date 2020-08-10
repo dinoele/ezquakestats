@@ -3736,11 +3736,15 @@ def addTableColumn(htmlTable, columnNum, duels):
         trow.cells[columnNum].bgcolor = cellColor
         
 
+currentDatetime = datetime.now()
 # PLAYERS PAGES
 for plJson in jsonPlayers:
     playerPagePath = ezstatslib.REPORTS_FOLDER + plJson.name + ".html"
 
-    playerText = "<h1>===== %s =====</h1>" % (plJson.name)
+    playerText = ""
+    
+    playerText += "<i><p style=\"text-align:right;font-size: 4\">Last update: %s</p></i>" % (str(currentDatetime))
+    playerText += "<h1><p style=\"text-align:center;\"> ===== %s =====</p></h1>" % (plJson.name)
     playerText += "\t%s: matches:%d [%d], frags:%d, deaths: %d, suicides: %d, ga: %d, ya: %d, ra: %d, mh: %d" % (plJson.name, plJson.matchesPlayed, len(plJson.matches), plJson.frags, plJson.deaths, plJson.suicides, plJson.ga, plJson.ya, plJson.ra, plJson.mh)
     
     playerText += "<hr>"
