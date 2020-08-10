@@ -13,6 +13,7 @@ import fileinput
 import os.path
 
 import stat_conf
+import copy
 
 stat_conf.read_config()
 
@@ -3429,7 +3430,7 @@ for cdate, size, path in sorted(entries, reverse=False):
                         if o == "killStealsDuels":
                             currentJsonPlayer.killStealsDuels = oo[o]
                             currentJsonMatch.killStealsDuels = oo[o]                            
-
+                            
                     isFound = False
                     for plJson in jsonPlayers:
                         if plJson.name == currentJsonPlayer.name:
@@ -3460,7 +3461,9 @@ for cdate, size, path in sorted(entries, reverse=False):
                             
                             for currKey in currentJsonPlayer.duels.keys():
                                 if not currKey in plJson.duels.keys():
-                                    plJson.duels[currKey] = currentJsonPlayer.duels[currKey]
+                                    plJson.duels[currKey] = [0,0]
+                                    plJson.duels[currKey][0] = currentJsonPlayer.duels[currKey][0]
+                                    plJson.duels[currKey][1] = currentJsonPlayer.duels[currKey][1]
                                 else:
                                     plJson.duels[currKey][0] += currentJsonPlayer.duels[currKey][0]
                                     plJson.duels[currKey][1] += currentJsonPlayer.duels[currKey][1]
@@ -3475,16 +3478,18 @@ for cdate, size, path in sorted(entries, reverse=False):
                             plJson.matches[dt] = currentJsonMatch
             
                     if not isFound:
-                        currentJsonPlayer.fragsByMatches.append(currentJsonPlayer.frags)
-                        currentJsonPlayer.fragsByMatchesPairs.append([dt, currentJsonPlayer.frags])
-                        currentJsonPlayer.rankByMatches.append(currentJsonPlayer.frags-currentJsonPlayer.deaths)
-                        currentJsonPlayer.rankByMatchesPairs.append([dt, currentJsonPlayer.frags-currentJsonPlayer.deaths])
+                        newJsonPlayer = copy.deepcopy(currentJsonPlayer)
                         
-                        currentJsonPlayer.resultPlacesByMatches[dt] = currentJsonPlayer.resultPlace
+                        newJsonPlayer.fragsByMatches.append(newJsonPlayer.frags)
+                        newJsonPlayer.fragsByMatchesPairs.append([dt, newJsonPlayer.frags])
+                        newJsonPlayer.rankByMatches.append(newJsonPlayer.frags-newJsonPlayer.deaths)
+                        newJsonPlayer.rankByMatchesPairs.append([dt, newJsonPlayer.frags-newJsonPlayer.deaths])
                         
-                        currentJsonPlayer.matches[dt] = currentJsonMatch
+                        newJsonPlayer.resultPlacesByMatches[dt] = newJsonPlayer.resultPlace
                         
-                        jsonPlayers.append(currentJsonPlayer)
+                        newJsonPlayer.matches[dt] = currentJsonMatch
+                        
+                        jsonPlayers.append(newJsonPlayer)
 
                 
                 
@@ -3706,7 +3711,30 @@ logsf.close()
 
 
 
-
+def addTableColumn(htmlTable, columnNum, duels):
+    for trow in htmlTable.rows:
+        plName = trow.cells[0].replace("<b>","").replace("</b>","")
+        
+        if not plName in duels.keys():
+            continue
+        
+        kills  = duels[plName][0]
+        deaths = duels[plName][1]
+        
+        cellVal = "%s / %s" % (ezstatslib.htmlBold(kills)  if kills  > deaths else str(kills),
+                               ezstatslib.htmlBold(deaths) if deaths > kills  else str(deaths))
+             
+        cellColor = ""
+        if kills == deaths:
+            cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
+        elif kills > deaths:
+            cellColor = ezstatslib.BG_COLOR_GREEN
+        else:
+            cellColor = ezstatslib.BG_COLOR_RED
+         
+        trow.cells[columnNum].text = cellVal
+        trow.cells[columnNum].bgcolor = cellColor
+        
 
 # PLAYERS PAGES
 for plJson in jsonPlayers:
@@ -3757,6 +3785,94 @@ for plJson in jsonPlayers:
     #playerText += "<br>\n"
     playerText += "\tduels: %s" % (plJson.duels)
     playerText += "<br>\n"
+        
+    headerRow=['Name', 'Last match', 'Last 5 matches', 'Last 10 matches', 'Total']
+    colAlign=[]
+    for i in xrange(len(headerRow)):
+        colAlign.append("center")
+
+    htmlTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", col_align=colAlign,
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+                       
+    totalNum = len(plJson.duels.keys())
+    for duelKey in plJson.duels.keys():
+        if duelKey == plJson.name:
+            continue
+    
+        tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(duelKey)])
+        for i in xrange(len(headerRow)-1):
+            tableRow.cells.append( HTML.TableCell("") )
+        htmlTable.rows.append(tableRow)        
+        
+    sortedDTs = sorted(plJson.matches.keys(), reverse=True)
+    lastDuels = plJson.matches[ sortedDTs[0] ].duels
+    
+    # ezstatslib.logError("== %s ==\n" % (plJson.name))
+    # for currKey in plJson.matches[ sortedDTs[0] ].duels:
+            # ezstatslib.logError("currKey: %s, %d - %d\n" % (currKey, plJson.matches[ sortedDTs[0] ].duels[currKey][0], plJson.matches[ sortedDTs[0] ].duels[currKey][1]))
+    
+    # ezstatslib.logError("------------------\n")
+    
+    # for currKey in plJson.matches[ sortedDTs[1] ].duels:
+            # ezstatslib.logError("currKey: %s, %d - %d\n" % (currKey, plJson.matches[ sortedDTs[1] ].duels[currKey][0], plJson.matches[ sortedDTs[1] ].duels[currKey][1]))
+            
+    
+    addTableColumn(htmlTable, 1, lastDuels)
+    matchNum = 1
+    
+    while matchNum <= 5 and matchNum < len(sortedDTs):
+    
+        for currKey in plJson.matches[ sortedDTs[matchNum] ].duels:
+            ezstatslib.logError("currKey: %s, %d - %d\n" % (currKey, plJson.matches[ sortedDTs[matchNum] ].duels[currKey][0], plJson.matches[ sortedDTs[matchNum] ].duels[currKey][1]))
+        
+        for currKey in plJson.matches[ sortedDTs[matchNum] ].duels:
+            if not currKey in lastDuels.keys():
+                lastDuels[currKey] = plJson.matches[ sortedDTs[matchNum] ].duels[currKey]
+            else:
+                lastDuels[currKey][0] += plJson.matches[ sortedDTs[matchNum] ].duels[currKey][0]
+                lastDuels[currKey][1] += plJson.matches[ sortedDTs[matchNum] ].duels[currKey][1]
+        matchNum += 1
+                
+    addTableColumn(htmlTable, 2, lastDuels)
+    
+    while matchNum <= 10 and matchNum < len(sortedDTs):
+        for currKey in plJson.matches[ sortedDTs[matchNum] ].duels:
+            if not currKey in lastDuels.keys():
+                lastDuels[currKey] = plJson.matches[ sortedDTs[matchNum] ].duels[currKey]
+            else:
+                lastDuels[currKey][0] += plJson.matches[ sortedDTs[matchNum] ].duels[currKey][0]
+                lastDuels[currKey][1] += plJson.matches[ sortedDTs[matchNum] ].duels[currKey][1]
+        matchNum += 1        
+    addTableColumn(htmlTable, 3, lastDuels)
+    
+    addTableColumn(htmlTable, 4, plJson.duels)
+
+    # for duelKey in plJson.duels.keys():
+        # if duelKey == plJson.name:
+            # continue
+            
+        # tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(duelKey)])
+        
+        # kills  = plJson.duels[duelKey][0]
+        # deaths = plJson.duels[duelKey][1]
+        
+        # cellVal = "%s / %s" % (ezstatslib.htmlBold(kills)  if kills  > deaths else str(kills),
+                               # ezstatslib.htmlBold(deaths) if deaths > kills  else str(deaths))
+            
+        # cellColor = ""
+        # if kills == deaths:
+            # cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
+        # elif kills > deaths:
+            # cellColor = ezstatslib.BG_COLOR_GREEN
+        # else:
+            # cellColor = ezstatslib.BG_COLOR_RED
+        
+        # tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+           
+        # htmlTable.rows.append(tableRow)  
+
+    playerText += str(htmlTable)
+    
     playerText += "\tkillStealDuels: %s" % (plJson.killStealsDuels)
     playerText += "<hr>\n"
     
