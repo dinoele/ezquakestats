@@ -3957,6 +3957,69 @@ for plJson in jsonPlayers:
     playerPage.write(ezstatslib.HTML_FOOTER_NO_PRE)
 
 
+# all players page
+allPlayersPagePath = ezstatslib.REPORTS_FOLDER + "allplayers.html"
+allPlayersPageText = ""
+
+allPlayersPageText += "<div align=\"center\"><h1> == ALL PLAYERS == </h1></div>\n"
+
+allPlayersDuelsHeaderRow=['', 'Frags', 'Deaths']
+for pl in jsonPlayers:
+    allPlayersDuelsHeaderRow.append(pl.name);    
+
+colAlign=[]
+for i in xrange(len(allPlayersDuelsHeaderRow)):
+    colAlign.append("center")
+
+    htmlTable = HTML.Table(header_row=allPlayersDuelsHeaderRow, border="1", cellspacing="3", col_align=colAlign,
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt; border-collapse: collapse; border: 4px solid black")
+
+for pl in jsonPlayers:
+    tableRow = HTML.TableRow(cells=[htmlLink(pl.name + ".html", linkText=ezstatslib.htmlBold(pl.name)),
+                                    ezstatslib.htmlBold(pl.frags),
+                                    ezstatslib.htmlBold(pl.deaths)])
+        
+    for i in xrange(3,len(allPlayersDuelsHeaderRow)):
+        if allPlayersDuelsHeaderRow[i] in pl.duels.keys():
+            if allPlayersDuelsHeaderRow[i] == pl.name:
+                tableRow.cells.append( HTML.TableCell(str(pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY) )
+            else:
+                kills  = pl.duels[allPlayersDuelsHeaderRow[i]][0]
+                deaths = pl.duels[allPlayersDuelsHeaderRow[i]][1]
+        
+                cellVal = "%s / %s" % (ezstatslib.htmlBold(kills)  if kills  > deaths else str(kills),
+                                       ezstatslib.htmlBold(deaths) if deaths > kills  else str(deaths))
+             
+                cellColor = ""
+                if kills == deaths:
+                    cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
+                elif kills > deaths:
+                    cellColor = ezstatslib.BG_COLOR_GREEN
+                else:
+                    cellColor = ezstatslib.BG_COLOR_RED
+                 
+                tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+                
+        else:
+            tableRow.cells.append( HTML.TableCell(""))
+                 
+    htmlTable.rows.append(tableRow)  
+
+allPlayersPageText += str(htmlTable)
+    
+        
+allPlayersPage = open(allPlayersPagePath, "w")        
+allPlayersPageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
+allPlayersPageHeaderStr = allPlayersPageHeaderStr.replace("PAGE_TITLE", "All players stats")
+allPlayersPage.write(allPlayersPageHeaderStr)
+allPlayersPage.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
+allPlayersPage.write(allPlayersPageText)
+allPlayersPage.write(ezstatslib.HTML_PRE_CLOSE_TAG)   
+# add script section for folding
+allPlayersPage.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)    
+allPlayersPage.write(ezstatslib.HTML_FOOTER_NO_PRE)    
+    
+    
 
 print "allCDates.size =", len(allCDates)
 
