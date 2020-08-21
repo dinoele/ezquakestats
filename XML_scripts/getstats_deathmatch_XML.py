@@ -3114,6 +3114,8 @@ logsf.write(htmlLink(ezstatslib.TEAM_LOGS_INDEX_FILE_NAME, linkText = "Team matc
 logsf.write("<hr>")
 logsf.write(htmlLink(ezstatslib.TOTALS_FILE_NAME, linkText = "Totals"))
 logsf.write("<hr>")
+logsf.write(htmlLink(ezstatslib.ALLPLAYERS_FILE_NAME, linkText = "All players page", gifPath=newGifTag))
+logsf.write("<hr>")
 logsf.write(str(filesTable))
 
 logsf.write("<hr>")
@@ -3735,7 +3737,6 @@ def addTableColumn(htmlTable, columnNum, duels):
         trow.cells[columnNum].text = cellVal
         trow.cells[columnNum].bgcolor = cellColor
         
-
 currentDatetime = datetime.now()
 # PLAYERS PAGES
 for plJson in jsonPlayers:
@@ -3958,7 +3959,7 @@ for plJson in jsonPlayers:
 
 
 # all players page
-allPlayersPagePath = ezstatslib.REPORTS_FOLDER + "allplayers.html"
+allPlayersPagePath = ezstatslib.REPORTS_FOLDER + ezstatslib.ALLPLAYERS_FILE_NAME
 allPlayersPageText = ""
 
 allPlayersPageText += "<div align=\"center\"><h1> == ALL PLAYERS == </h1></div>\n"
