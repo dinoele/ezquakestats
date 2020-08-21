@@ -174,7 +174,7 @@ class TableRow (object):
 
     def __init__(self, cells=None, bgcolor=None, header=False, attribs=None,
                 col_align=None, col_valign=None, col_char=None,
-                col_charoff=None, col_styles=None):
+                col_charoff=None, col_styles=None, style=None):
         """TableCell constructor"""
         self.bgcolor     = bgcolor
         self.cells       = cells
@@ -184,6 +184,7 @@ class TableRow (object):
         self.col_char    = col_char
         self.col_charoff = col_charoff
         self.col_styles  = col_styles
+        self.style       = style
         self.attribs     = attribs
         if attribs==None:
             self.attribs = {}
@@ -192,6 +193,7 @@ class TableRow (object):
         """return the HTML code for the table row as a string"""
         attribs_str = ""
         if self.bgcolor: self.attribs['bgcolor'] = self.bgcolor
+        if self.style:   self.attribs['style']   = self.style
         for attr in self.attribs:
             attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
         result = ' <TR%s>\n' % attribs_str
