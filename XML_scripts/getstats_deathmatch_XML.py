@@ -3752,7 +3752,17 @@ for plJson in jsonPlayers:
 
     playerText = ""
     
-    playerText += "<i><p style=\"text-align:right;font-size: 4\">Last update: %s</p></i>" % (str(currentDatetime))
+    playerText += "<table style=\"width: 100%\">"
+    playerText += "<tr>"
+    playerText += "<td>"
+    playerText += "<p style=\"text-align:left;font-size: 4\"> %s </p>" % (htmlLink(ezstatslib.ALLPLAYERS_FILE_NAME, linkText = "<-- All Players page", isBreak=False))
+    playerText += "</td>"
+    playerText += "<td>"
+    playerText += "<i><p style=\"text-align:right;font-size: 4\">Last update: %s</p></i>" % ( str(currentDatetime))
+    playerText += "</td>"
+    playerText += "</tr>"
+    playerText += "</table>"
+    
     playerText += "<h1><p style=\"text-align:center;\"> ===== %s =====</p></h1>" % (plJson.name)
     playerText += "\tmatches:%d [%d], frags:%d, deaths: %d, suicides: %d, ga: %d, ya: %d, ra: %d, mh: %d" % (plJson.matchesPlayed, len(plJson.matches), plJson.frags, plJson.deaths, plJson.suicides, plJson.ga, plJson.ya, plJson.ra, plJson.mh)
     
