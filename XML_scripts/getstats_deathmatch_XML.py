@@ -1318,7 +1318,11 @@ resultString += "map: " + mapName + "\n"
 resultString += "\n"
 
 for pl in allplayersByFrags:
-    resultString += ("{0:%ds} {1:3d}    ({2:s})\n" % (plNameMaxLen)).format(pl.name, pl.calcDelta(), pl.getFormatedStats_noTeamKills())
+    plLine = htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name), isBreak=False)
+    plLine += ("{0:%ds}" % (plNameMaxLen + 5 - len(pl.name))).format(" ")
+    #plLine += ("{0:%ds} {1:3d}    ({2:s})\n" % (plNameMaxLen)).format("NAME", pl.calcDelta(), pl.getFormatedStats_noTeamKills())
+    plLine += ("{0:3d}    ({1:s})\n").format(pl.calcDelta(), pl.getFormatedStats_noTeamKills())
+    resultString += plLine
 
 # if options.withScripts:
 #     resultString += "</pre>MAIN_STATS_PLACE\n<pre>"
@@ -1483,7 +1487,7 @@ htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_al
                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
 for pl in allplayersByFrags:
-    tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(pl.name),
+    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name)),
                                     ezstatslib.htmlBold(pl.frags()),
                                     ezstatslib.htmlBold(pl.kills),
                                     ezstatslib.htmlBold(pl.deaths)])
@@ -2539,7 +2543,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     for pl in sortedPlayers:
         if len(pl.achievements) != 0:
-            tableRow = HTML.TableRow(cells=[ HTML.TableCell(ezstatslib.htmlBold(pl.name), align="center", width=cellWidth) ])  # TODO player name cell width
+            tableRow = HTML.TableRow(cells=[ HTML.TableCell(htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name), isBreak=False),
+                                                            align="center", width=cellWidth) ])  # TODO player name cell width
             achIds = pl.getAchievementsIds()
             i = 0
             while i < len(pl.achievements):
@@ -3740,7 +3745,7 @@ def addTableColumn(htmlTable, columnNum, duels):
 currentDatetime = datetime.now()
 # PLAYERS PAGES
 for plJson in jsonPlayers:
-    playerPagePath = ezstatslib.REPORTS_FOLDER + plJson.name + ".html"
+    playerPagePath = ezstatslib.REPORTS_FOLDER + ezstatslib.escapePlayerName(plJson.name) + ".html"
 
     playerText = ""
     
@@ -3797,14 +3802,14 @@ for plJson in jsonPlayers:
         colAlign.append("center")
 
     htmlTable = HTML.Table(header_row=headerRow, border="1", cellspacing="3", col_align=colAlign,
-                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
+                       style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt; border-collapse: collapse; border: 4px solid black")
                        
     totalNum = len(plJson.duels.keys())
     for duelKey in plJson.duels.keys():
         if duelKey == plJson.name:
             continue
     
-        tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(duelKey)])
+        tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(duelKey)], style="border:4px solid black")
         for i in xrange(len(headerRow)-1):
             tableRow.cells.append( HTML.TableCell("") )
         htmlTable.rows.append(tableRow)        
@@ -3976,7 +3981,7 @@ for i in xrange(len(allPlayersDuelsHeaderRow)):
                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt; border-collapse: collapse; border: 4px solid black")
 
 for pl in jsonPlayers:
-    tableRow = HTML.TableRow(cells=[htmlLink(pl.name + ".html", linkText=ezstatslib.htmlBold(pl.name)),
+    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name)),
                                     ezstatslib.htmlBold(pl.frags),
                                     ezstatslib.htmlBold(pl.deaths)])
         
