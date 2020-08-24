@@ -3930,6 +3930,29 @@ for plJson in jsonPlayers:
     playerPage.write(ezstatslib.HTML_FOOTER_NO_PRE)
 
 
+    
+    
+def getRankTableRow(parameterName, parameterDescription, players):
+    valPairs = []
+    
+    for pl in players:
+        if pl.matchesPlayed >= 5:
+            exec("valPairs.append([pl.name, float(pl.%s)/pl.matchesPlayed])" % (parameterName))
+            
+    valRow = ezstatslib.HTML_SCRIPT_ALL_PLAYERS_RATING_TABLE_ROW.replace("PARAMETERNAME", parameterName)
+    valRow = valRow.replace("PARAMETERDESCRIPTION", parameterDescription)
+
+    valPairsSorted = sorted(valPairs, key=lambda x: x[1], reverse=True)
+
+    valRow = valRow.replace("GOLD_PLAYER_NAME",   htmlLink(ezstatslib.escapePlayerName(valPairsSorted[0][0]) + ".html", \
+                                                          linkText=ezstatslib.htmlBold("%s (%.2f)" % (valPairsSorted[0][0], valPairsSorted[0][1])), isBreak=False))
+    valRow = valRow.replace("SILVER_PLAYER_NAME", htmlLink(ezstatslib.escapePlayerName(valPairsSorted[1][0]) + ".html", \
+                                                           linkText=ezstatslib.htmlBold("%s (%.2f)" % (valPairsSorted[1][0], valPairsSorted[1][1])), isBreak=False))
+    valRow = valRow.replace("BRONZE_PLAYER_NAME", htmlLink(ezstatslib.escapePlayerName(valPairsSorted[2][0]) + ".html", \
+                                                           linkText=ezstatslib.htmlBold("%s (%.2f)" % (valPairsSorted[2][0], valPairsSorted[2][1])), isBreak=False))
+
+    return valRow
+    
 # all players page
 allPlayersPagePath = ezstatslib.REPORTS_FOLDER + ezstatslib.ALLPLAYERS_FILE_NAME
 allPlayersPageText = ""
@@ -3948,7 +3971,7 @@ for i in xrange(len(allPlayersDuelsHeaderRow)):
                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt; border-collapse: collapse; border: 4px solid black")
 
 for pl in jsonPlayers:
-    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name)),
+    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText="%s [%d]" % (ezstatslib.htmlBold(pl.name), pl.matchesPlayed)),
                                     ezstatslib.htmlBold(pl.frags),
                                     ezstatslib.htmlBold(pl.deaths)])
         
@@ -3979,6 +4002,16 @@ for pl in jsonPlayers:
     htmlTable.rows.append(tableRow)  
 
 allPlayersPageText += str(htmlTable)
+
+allPlayersPageText += "</pre>\n"
+
+allPlayersPageText += "<table>\n"
+allPlayersPageText += getRankTableRow("frags", "Avg. Frags", jsonPlayers)
+allPlayersPageText += getRankTableRow("ra", "Avg. Red Armors", jsonPlayers)
+allPlayersPageText += getRankTableRow("ya", "Avg. Yellow Armors", jsonPlayers)
+allPlayersPageText += getRankTableRow("ga", "Avg. Green Armors", jsonPlayers)
+allPlayersPageText += getRankTableRow("mh", "Avg. Mega Health", jsonPlayers)
+allPlayersPageText += "</table>\n"
     
         
 allPlayersPage = open(allPlayersPagePath, "w")        

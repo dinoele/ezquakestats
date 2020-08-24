@@ -2159,6 +2159,36 @@ HTML_SCRIPT_HIGHCHARTS_PLAYER_LIFETIME_DEATH_LINE_TEMPLATE = "  {color: 'LINE_CO
   
 # =========================================================================================================================================================    
   
+HTML_SCRIPT_ALL_PLAYERS_RATING_TABLE_ROW = \
+"<tr style=\"height:80px;text-align:center\">\n" \
+"<td style=\"width:80px\">\n" \
+"<img src=\"ezquakestats\img\\total_page_imgs\PARAMETERNAME_1_1_noBG.png\" alt=\"PARAMETERDESCRIPTION\" title=\"PARAMETERDESCRIPTION\" width=\"65\" height=\"65\">\n" \
+"</td>\n" \
+"<td style=\"width:120px;text-align:right\">\n" \
+"<img src=\"ezquakestats\img\\total_page_imgs\medal1_noBG.png\" alt=\"PARAMETERDESCRIPTION\" title=\"PARAMETERDESCRIPTION\" width=\"36\" height=\"44\">\n" \
+"</td>\n" \
+"<td style=\"width:20px;\"></td>\n" \
+"<td style=\"width:200px; text-align:left\">\n" \
+"<p>GOLD_PLAYER_NAME</p>\n" \
+"</td>\n" \
+"<td style=\"width:120px;text-align:right\">\n" \
+"<img src=\"ezquakestats\img\\total_page_imgs\medal2_noBG.png\" alt=\"PARAMETERDESCRIPTION\" title=\"PARAMETERDESCRIPTION\" width=\"36\"  height=\"44\">\n" \
+"</td>\n" \
+"<td style=\"width:20px;\"></td>\n" \
+"<td style=\"width:200px; text-align:left\">\n" \
+"<p>SILVER_PLAYER_NAME</p>\n" \
+"</td>\n" \
+"<td style=\"width:120px;text-align:right\">\n" \
+"<img src=\"ezquakestats\img\\total_page_imgs\medal3_noBG.png\" alt=\"PARAMETERDESCRIPTION\" title=\"PARAMETERDESCRIPTION\" width=\"36\" height=\"44\">\n" \
+"</td>\n" \
+"<td style=\"width:20px;\"></td>\n" \
+"<td style=\"width:200px; text-align:left\">\n" \
+"<p>BRONZE_PLAYER_NAME</p>\n" \
+"</td>\n" \
+"</tr>\n"
+  
+  
+  
 BG_COLOR_GRAY  = "#bfbfbf"
 BG_COLOR_LIGHT_GRAY = "#e6e6e6"
 BG_COLOR_GREEN = "#00ff00"
