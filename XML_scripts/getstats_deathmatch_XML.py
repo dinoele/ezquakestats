@@ -3751,17 +3751,16 @@ for plJson in jsonPlayers:
     
     playerText += "<i><p style=\"text-align:right;font-size: 4\">Last update: %s</p></i>" % (str(currentDatetime))
     playerText += "<h1><p style=\"text-align:center;\"> ===== %s =====</p></h1>" % (plJson.name)
-    playerText += "\t%s: matches:%d [%d], frags:%d, deaths: %d, suicides: %d, ga: %d, ya: %d, ra: %d, mh: %d" % (plJson.name, plJson.matchesPlayed, len(plJson.matches), plJson.frags, plJson.deaths, plJson.suicides, plJson.ga, plJson.ya, plJson.ra, plJson.mh)
-    
-    playerText += "<hr>"
-    
-    playerText += "\tachievements: "
-    for achID in plJson.achievements.keys():
-        ach = ezstatslib.Achievement(achID)
-        playerText += "%s(%d)," % (ach.toString(), plJson.achievements[achID])
-    playerText = playerText[:-1]
+    playerText += "\tmatches:%d [%d], frags:%d, deaths: %d, suicides: %d, ga: %d, ya: %d, ra: %d, mh: %d" % (plJson.matchesPlayed, len(plJson.matches), plJson.frags, plJson.deaths, plJson.suicides, plJson.ga, plJson.ya, plJson.ra, plJson.mh)
     
     playerText += "<br>\n"
+    
+    # playerText += "\tachievements: "
+    # for achID in plJson.achievements.keys():
+        # ach = ezstatslib.Achievement(achID)
+        # playerText += "%s(%d)," % (ach.toString(), plJson.achievements[achID])
+    # playerText = playerText[:-1]    
+    # playerText += "<br>\n"
     
     playerText += "\tRLSkill: "
     for rlkey in plJson.rlskill.keys():
@@ -3793,8 +3792,8 @@ for plJson in jsonPlayers:
         
     #playerText += "\tfrags by matches: %s" % (plJson.fragsByMatches)
     #playerText += "<br>\n"
-    playerText += "\tduels: %s" % (plJson.duels)
-    playerText += "<br>\n"
+    # playerText += "\tduels: %s" % (plJson.duels)
+    # playerText += "<br>\n"
         
     headerRow=['Name', 'Last match', 'Last 5 matches', 'Last 10 matches', 'Total']
     colAlign=[]
@@ -3815,17 +3814,7 @@ for plJson in jsonPlayers:
         htmlTable.rows.append(tableRow)        
         
     sortedDTs = sorted(plJson.matches.keys(), reverse=True)
-    lastDuels = plJson.matches[ sortedDTs[0] ].duels
-    
-    # ezstatslib.logError("== %s ==\n" % (plJson.name))
-    # for currKey in plJson.matches[ sortedDTs[0] ].duels:
-            # ezstatslib.logError("currKey: %s, %d - %d\n" % (currKey, plJson.matches[ sortedDTs[0] ].duels[currKey][0], plJson.matches[ sortedDTs[0] ].duels[currKey][1]))
-    
-    # ezstatslib.logError("------------------\n")
-    
-    # for currKey in plJson.matches[ sortedDTs[1] ].duels:
-            # ezstatslib.logError("currKey: %s, %d - %d\n" % (currKey, plJson.matches[ sortedDTs[1] ].duels[currKey][0], plJson.matches[ sortedDTs[1] ].duels[currKey][1]))
-            
+    lastDuels = plJson.matches[ sortedDTs[0] ].duels          
     
     addTableColumn(htmlTable, 1, lastDuels)
     matchNum = 1
@@ -3857,36 +3846,14 @@ for plJson in jsonPlayers:
     
     addTableColumn(htmlTable, 4, plJson.duels)
 
-    # for duelKey in plJson.duels.keys():
-        # if duelKey == plJson.name:
-            # continue
-            
-        # tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(duelKey)])
-        
-        # kills  = plJson.duels[duelKey][0]
-        # deaths = plJson.duels[duelKey][1]
-        
-        # cellVal = "%s / %s" % (ezstatslib.htmlBold(kills)  if kills  > deaths else str(kills),
-                               # ezstatslib.htmlBold(deaths) if deaths > kills  else str(deaths))
-            
-        # cellColor = ""
-        # if kills == deaths:
-            # cellColor = ezstatslib.BG_COLOR_LIGHT_GRAY
-        # elif kills > deaths:
-            # cellColor = ezstatslib.BG_COLOR_GREEN
-        # else:
-            # cellColor = ezstatslib.BG_COLOR_RED
-        
-        # tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
-           
-        # htmlTable.rows.append(tableRow)  
-
     playerText += str(htmlTable)
+    
+    playerText += "<br>"
     
     playerText += "\tkillStealDuels: %s" % (plJson.killStealsDuels)
     playerText += "<hr>\n"
     
-    playerText += "Sorted matches:\n"
+    playerText += "Sorted matches (%d):\n" % (plJson.matchesPlayed)
     for dt in sorted(plJson.matches.keys(), reverse=True):
         playerText += "\tdt: %s, map: %s, place: %d, report: %s\n" %  \
                            ( str(dt), \
