@@ -3720,7 +3720,10 @@ logsf.close()
 
 def addTableColumn(htmlTable, columnNum, duels):
     for trow in htmlTable.rows:
-        plName = trow.cells[0].replace("<b>","").replace("</b>","")
+        #plName = trow.cells[0].replace("<b>","").replace("</b>","")
+        plNameRe = re.search("(?<=<b>).*(?=</b>)", trow.cells[0])
+        plName = plNameRe.group(0)
+        
         
         if not plName in duels.keys():
             continue
@@ -3808,7 +3811,8 @@ for plJson in jsonPlayers:
         if duelKey == plJson.name:
             continue
     
-        tableRow = HTML.TableRow(cells=[ezstatslib.htmlBold(duelKey)], style="border:4px solid black")
+        tableRow = HTML.TableRow(cells=[ htmlLink(ezstatslib.escapePlayerName(duelKey) + ".html", linkText=ezstatslib.htmlBold(duelKey), isBreak=False) ], style="border:4px solid black")
+        #tableRow = HTML.TableRow(cells=[ duelKey ], style="border:4px solid black")
         for i in xrange(len(headerRow)-1):
             tableRow.cells.append( HTML.TableCell("") )
         htmlTable.rows.append(tableRow)        
@@ -3820,10 +3824,6 @@ for plJson in jsonPlayers:
     matchNum = 1
     
     while matchNum <= 5 and matchNum < len(sortedDTs):
-    
-        for currKey in plJson.matches[ sortedDTs[matchNum] ].duels:
-            ezstatslib.logError("currKey: %s, %d - %d\n" % (currKey, plJson.matches[ sortedDTs[matchNum] ].duels[currKey][0], plJson.matches[ sortedDTs[matchNum] ].duels[currKey][1]))
-        
         for currKey in plJson.matches[ sortedDTs[matchNum] ].duels:
             if not currKey in lastDuels.keys():
                 lastDuels[currKey] = plJson.matches[ sortedDTs[matchNum] ].duels[currKey]
