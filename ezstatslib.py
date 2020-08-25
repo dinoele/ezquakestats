@@ -3691,6 +3691,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         COMBO_TRIPLE_KILL = 53,  # "Three enemies with a single shot" : "killed %s, %s and %s with one %s shot!"   #three kills with on shot  #XML_SPECIFIC    DONE
                         KILLSTEAL_STEALER = 54,  # "King of theft" : "stole %d kills" # maximum kill steals - stealer                                           #DEATHMATCH_SPECIFIC   DONE
                         KILLSTEAL_VICTIM = 55,   # "Too unlucky and carefree..." : "honestly earned kills were stolen %d times" # maximum kill steals - victim  #DEATHMATCH_SPECIFIC   DONE
+                        FAST_AND_FURIOUS = 56,   # "Fast and Furious!" : "the fastest player with %d max and %d avg speed"      DONE
                         
                                             )
 
@@ -3855,6 +3856,8 @@ class Achievement:
             return "King of theft"
         if self.achtype == AchievementType.KILLSTEAL_VICTIM:
             return "Too unlucky and carefree..."
+        if self.achtype == AchievementType.FAST_AND_FURIOUS:
+            return "Fast and Furious!"
 
     # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
     def level(self):
@@ -3887,7 +3890,8 @@ class Achievement:
            self.achtype == AchievementType.CHILD_LOVER        or \
            self.achtype == AchievementType.GL_LOVER           or \
            self.achtype == AchievementType.COMBO_KAMIKAZE     or \
-           self.achtype == AchievementType.KILLSTEAL_STEALER:
+           self.achtype == AchievementType.KILLSTEAL_STEALER  or \
+           self.achtype == AchievementType.FAST_AND_FURIOUS:
             return AchievementLevel.ADVANCE_POSITIVE            
             
         if self.achtype == AchievementType.SUICIDE_KING    or \
@@ -4100,6 +4104,8 @@ class Achievement:
             return path + "ach_killsteal_stealer.png"
         if self.achtype == AchievementType.KILLSTEAL_VICTIM:
             return path + "ach_killsteal_victim.png"
+        if self.achtype == AchievementType.FAST_AND_FURIOUS:
+            return path + "ach_fast_and_furious.png"
 
         # temp images
         if self.achtype == AchievementType.HUNDRED_KILLS:
@@ -4250,6 +4256,25 @@ def calculateCommonAchievements(allplayers, headToHead, minutesPlayed, isTeamGam
                 pl.achievements.append( Achievement(AchievementType.KILLSTEAL_STEALER, "stole %d kills" % (len(pl.killsteals_stealer))) )
             if maxStealsVictim >= 3 and len(pl.killsteals_victim) == maxStealsVictim:
                 pl.achievements.append( Achievement(AchievementType.KILLSTEAL_VICTIM, "honestly earned kills were stolen %d times" % (len(pl.killsteals_victim))) )
+                
+    # FAST_AND_FURIOUS
+    maxSpeedMaxVal = -1
+    avgSpeedMaxVal = -1
+    maxSpeedMaxPlayer = ""
+    avgSpeedMaxPlayer = ""
+    for pl in allplayers:
+        if pl.speed_max >= maxSpeedMaxVal:
+            maxSpeedMaxVal = pl.speed_max
+            maxSpeedMaxPlayer = pl.name
+        if pl.speed_avg >= avgSpeedMaxVal:
+            avgSpeedMaxVal = pl.speed_avg
+            avgSpeedMaxPlayer = pl.name
+    
+    if maxSpeedMaxPlayer == avgSpeedMaxPlayer:
+        for pl in allplayers:
+            if pl.name == maxSpeedMaxPlayer:
+                pl.achievements.append( Achievement(AchievementType.FAST_AND_FURIOUS, "the fastest player with %d max and %d avg speed" % (pl.speed_max, pl.speed_avg)) )
+            
                 
 class Team:
     def __init__(self, teamname):
