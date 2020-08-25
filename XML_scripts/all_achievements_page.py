@@ -52,6 +52,17 @@ def writeHtmlWithScripts(f, allachievements, resStr):
     
         tableRow = HTML.TableRow(cells=[ HTML.TableCell( "%s(%d): %s" % (str(allachievements[i].toString()), allachievements[i].achtype, str(allachievements[i].description())), align="center", width=cellWidth) ])
         tableRow.cells.append( HTML.TableCell(allachievements[i].generateHtmlEx("img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 4, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 10, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 19, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 30, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 70, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 99, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 100, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 111, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 369, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 145, path = "img/"), align="center" ) )
+        tableRow.cells.append( HTML.TableCell(ezstatslib.Achievement.generateHtmlExCnt(allachievements[i], "", 188, path = "img/"), align="center" ) )
         achievementsHtmlTable.rows.append(tableRow)
         
         rownum += 1
