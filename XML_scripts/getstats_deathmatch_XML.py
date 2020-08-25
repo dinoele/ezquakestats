@@ -606,12 +606,13 @@ for element in elements:
         weap = element.type
     
         if not weap in ezstatslib.possibleWeapons:
-            ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
             if weap == "lg_beam" or weap == "lg_dis":
                 weap = "lg"
             elif weap == "stomp" or weap == "squish" or weap == "lava" or weap == "suicide":
+                ezstatslib.logError("ERROR: weapon is treated as 'other': %s\n" % (weap))
                 weap = "other"  # TODO fall on the player  # TODO ULTRA RARE ACH
             else:
+                ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
                 exit(0)
     
         isFoundWho = False
@@ -648,19 +649,22 @@ for element in elements:
         else:
             value = element.value
         
-        if not weap in ezstatslib.possibleWeapons:
-            ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
+        if not weap in ezstatslib.possibleWeapons:            
             if weap == "lg_beam":
                 weap = "lg"
             elif weap == "fall" or weap == "squish" or weap == "lava":
+                ezstatslib.logError("ERROR: damage weapon is treated as 'other': %s\n" % (weap))
                 who = whom
                 weap = "other"  # TODO world -> whom
             elif weap == "suicide":
+                ezstatslib.logError("ERROR: damage weapon is treated as 'other': %s\n" % (weap))
                 weap = "other"
                 value = 0
             elif weap == "stomp":
+                ezstatslib.logError("ERROR: damage weapon is treated as 'other': %s\n" % (weap))
                 weap = "other"  # TODO fall on the player
             else:
+                ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
                 exit(0)
 
         isFoundWho = False
@@ -772,7 +776,7 @@ for i in xrange(len(elementsByTime)):
                         pl.suicide_kills.append([tt,target2 if isSuicide1 else target1,wp2 if isSuicide1 else wp1])
                     
                 ll = "OLOLO: %f suicide + kill(%s) by %s [wps: %s + %s]\n" % (tt, target2 if isSuicide1 else target1, attackPl, wp1 if isSuicide1 else wp2, wp2 if isSuicide1 else wp1)
-                ezstatslib.logError(ll)
+                # ezstatslib.logError(ll)
                 tmpComboStr += ll
 
             else: # non suicide
@@ -860,7 +864,7 @@ for i in xrange(len(elementsByTime)):
                 resStr += "(attacker%d(%s), target%d(%s), wp%s(%s)); " % (deathNum, elementsByTime[i][1][j].attacker, deathNum, elementsByTime[i][1][j].target, deathNum, elementsByTime[i][1][j].type)
                 deathNum += 1
 
-        ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
+        # ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
         tmpComboStr += ("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
         
 tmpComboStr += "==========================================\n"        
