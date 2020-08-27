@@ -2773,8 +2773,8 @@ class Player:
         self.lifetime.append( PlayerLifetimeElement(0,self.currentHealth,self.currentArmor) )        
         
         self.lifetimeXML = 0.0
-        self.firstDeathXML = ""
-        self.lastDeathXML = ""
+        self.firstDeathXML = DeathElement()
+        self.lastDeathXML = DeathElement()
         self.connectionTimeXML = 0
         
         self.health_15_cnt = 0
@@ -2926,8 +2926,8 @@ class Player:
         playTime = 0
         minutesCnt = len(self.gaByMinutes)  # TODO get minutes count
         if minutesCnt != 0 and len(self.lifetime) > 2:
-            lastActionTime = self.lifetime[len(self.lifetime)-2].time  # last lifetime element is added in correctLifetime method 
-            playTime = self.lifetimeXML + (lastActionTime - self.lastDeathXML.time)
+            lastActionTime = self.lifetime[len(self.lifetime)-2].time  # last lifetime element is added in correctLifetime method
+            playTime = 0 if self.lifetimeXML == 0 else self.lifetimeXML + (lastActionTime - self.lastDeathXML.time)
         return playTime
 
     def recoverArmorStats(self):
@@ -3691,7 +3691,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         COMBO_TRIPLE_KILL = 53,  # "Three enemies with a single shot" : "killed %s, %s and %s with one %s shot!"   #three kills with on shot  #XML_SPECIFIC    DONE
                         KILLSTEAL_STEALER = 54,  # "King of theft" : "stole %d kills" # maximum kill steals - stealer                                           #DEATHMATCH_SPECIFIC   DONE
                         KILLSTEAL_VICTIM = 55,   # "Too unlucky and carefree..." : "honestly earned kills were stolen %d times" # maximum kill steals - victim  #DEATHMATCH_SPECIFIC   DONE
-                        FAST_AND_FURIOUS = 56,   # "Fast and Furious!" : "the fastest player with %d max and %d avg speed"      DONE
+                        FAST_AND_FURIOUS = 56,   # "Fast and Furious!" : "the fastest player with %d max and %d avg speed"      #XML_SPECIFIC   DONE
                         
                                             )
 
@@ -4485,7 +4485,7 @@ class DeathElement:
         self.isSuicide = False
         self.isSpawnFrag = False
 
-    def __init__(self, elem):
+    def Init(self, elem):
         self.time = float(elem.find("time").text)
         self.attacker = elem.find("attacker").text
         self.target = elem.find("target").text

@@ -229,7 +229,8 @@ for child in root:
 
                 if evtype.tag == "death":
                     deathCnt += 1
-                    elem = DeathElement(evtype)
+                    elem = DeathElement()
+                    elem.Init(evtype)
                     elements.append(elem)
                     deathElements.append(elem)
 
