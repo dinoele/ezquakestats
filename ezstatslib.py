@@ -3561,7 +3561,7 @@ class Player:
 
         # SNIPER
         if len(self.rl_damages_gvn) != 0:
-            if (sum(1 for val in self.rl_damages_gvn if val[0] == 110) / float(len(self.rl_damages_gvn)) > 0.45 and len(self.rl_damages_gvn) > 30):
+            if (sum(1 for val in self.rl_damages_gvn if val[0] == 110) / float(len(self.rl_damages_gvn)) > 0.35 and len(self.rl_damages_gvn) > 30):
                 self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is {0:5.3}%".format((sum(1 for val in self.rl_damages_gvn if val[0] == 110) * 100) / float(len(self.rl_damages_gvn)))))
         else:
             if self.rlskill_dh >= 40:
