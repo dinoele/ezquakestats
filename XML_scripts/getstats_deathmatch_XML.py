@@ -810,7 +810,7 @@ for i in xrange(len(elementsByTime)):
                         pl.double_kills.append([target1,target2,wp1])
                     
                 ll = "OLOLO: %f kill(%s) + kill(%s) by %s [wps: %s + %s]\n" % (tt, target1, target2, attacker1, wp1, wp2)
-                ezstatslib.logError(ll)
+                # ezstatslib.logError(ll)
                 tmpComboStr += ll
 
         else:
@@ -822,11 +822,10 @@ for i in xrange(len(elementsByTime)):
                     pl.mutual_kills.append([tt,target2,wp2,wp1])            
             
             ll = "OLOLO: %f mutual kill: (attacker1(%s), target1(%s), wp1(%s)); (attacker2(%s), target2(%s), wp2(%s)\n" % (tt, attacker1, target1, wp1, attacker2, target2, wp2)
-            ezstatslib.logError(ll)
+            # ezstatslib.logError(ll)
             tmpComboStr += ll
 
     elif deaths >= 3:
-        # TODO
         if deaths == 3:
             attacker = ""            
             isAttackerTheSame = True
