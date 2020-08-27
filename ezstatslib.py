@@ -2484,8 +2484,8 @@ def createStreaksHtmlTable(sortedPlayers, streakType):
         strkRes,maxStrk,strkNames = pl.getCalculatedStreaks() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaks()
         streaksList.append( [pl.name, strkRes, strkNames] )
         maxCnt = max(maxCnt,len(strkRes))
-        if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
-            logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+        # if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
+            # logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
 
     cellWidth = "20px"
     streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
@@ -2524,8 +2524,8 @@ def createFullStreaksHtmlTable(sortedPlayers, streakType):
         strkRes,maxStrk = pl.getCalculatedStreaksFull() if streakType == StreakType.KILL_STREAK else pl.getDeatchStreaksFull()
         streaksList.append( [pl.name, strkRes] )
         maxCnt = max(maxCnt,len(strkRes))
-        if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
-            logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
+        # if streakType == StreakType.KILL_STREAK and maxStrk != pl.streaks:
+            # logError("WARNING: for players %s calculated streak(%d) is NOT equal to given streak(%d)\n" % (pl.name, maxStrk, pl.streaks))
 
     cellWidth = "20px"
     streaksHtmlTable = HTML.Table(border="1", cellspacing="1",
@@ -3517,7 +3517,7 @@ class Player:
             self.achievements.append( Achievement(AchievementType.CHILD_KILLER, "%d spawn frags%s" % (self.spawnfrags, "" if self.spawnfrags < 15 else ". %d CARL!!" % (self.spawnfrags))) )
 
         # CHILD_LOVER
-        if self.spawnfrags == 0:
+        if self.playTimeXML() > ((len(matchProgress) / 2) * 60) and self.spawnfrags == 0:
             self.achievements.append( Achievement(AchievementType.CHILD_LOVER, "NO spawn frags") )
             
         # ALWAYS_THE_FIRST
@@ -3552,7 +3552,7 @@ class Player:
                     self.achievements.append( Achievement(AchievementType.ALWAYS_THE_LAST, "the last place from the 1st minute until the finish") )
 
         # ROCKETS_LOVER
-        if self.kills != 0 and self.kills == self.rl_kills:
+        if self.kills != 0 and self.playTimeXML() > ((len(matchProgress) / 2) * 60) and self.kills == self.rl_kills:
             self.achievements.append( Achievement(AchievementType.ROCKETS_LOVER, "all %d kills made via rocket launcher" % (self.rl_kills)) )
 
         # DUEL_WINNER
@@ -3568,7 +3568,7 @@ class Player:
                 self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
 
         # PERSONAL_STALKER
-        if len(matchProgress) != 0 and len(matchProgress[0]) > 3:
+        if self.playTimeXML() > ((len(matchProgress) / 2) * 60) and len(matchProgress) != 0 and len(matchProgress[0]) > 3:
             sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
             if sortedHeadToHead[0][0] != self.name and sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
                 self.achievements.append( Achievement(AchievementType.PERSONAL_STALKER, "killed %s %d times what more than all others taken together(%d)" % (sortedHeadToHead[0][0], sortedHeadToHead[0][1], (self.kills - sortedHeadToHead[0][1]))) )
