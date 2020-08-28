@@ -3567,7 +3567,7 @@ class Player:
             if self.rlskill_dh >= 40:
                 self.achievements.append( Achievement(AchievementType.SNIPER, "direct hit is %d" % (self.rlskill_dh)) )
 
-        # PERSONAL_STALKER
+        # PERSONAL_STALKER  # TODO check that there are more than 3 players which played more than 1/2 of the match
         if self.playTimeXML() > ((len(matchProgress) / 2) * 60) and len(matchProgress) != 0 and len(matchProgress[0]) > 3:
             sortedHeadToHead = sorted(headToHead[self.name], key=lambda x: x[1], reverse=True)
             if sortedHeadToHead[0][0] != self.name and sortedHeadToHead[0][1] > (self.kills - sortedHeadToHead[0][1]):
@@ -3739,7 +3739,7 @@ class Achievement:
         elif count >= 100 and count < 1000:
             res += "<div>" \
                    "<img style=\"background-color:%s;position: absolute; top: 0; right: 0;width:57px;height:37px;border: 0px solid black;-webkit-border-radius: 55%%;" \
-                   "-moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"\" alt=\"\" >" \
+                   "-moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==\">" \
                    "<img style=\"position: absolute; top: 6px; right: 35px;width:22px;height:28px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
                    "<img style=\"position: absolute; top: 6px; right: 20px;width:22px;height:28px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
                    "<img style=\"position: absolute; top: 6px; right: 3px;width:22px;height:28px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
