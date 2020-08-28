@@ -1521,25 +1521,37 @@ HTML_BODY_FOLDING_SCRIPT = \
   "<script src=\"https://code.highcharts.com/modules/accessibility.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/modules/series-label.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/modules/export-data.js\"></script>\n" \
-  "<script type='text/javascript'>\n" \
-  "  var timelineSliderOnChange = function() { drawAllStreakTimelines(timelineSliderObj.getValue()); console.log(timelineSliderObj.getValue()) }\n" \
-  "  var timelineSliderObj = $('#timeline_slider').slider({\n" \
-  "   min  : 1,\n" \
-  "   max  : 25,\n" \
-  "  value: 3,\n" \
-  "  ticks: [1,5,10,15,20],\n" \
-  "  ticks_labels: ['1','5','10','15','20'],\n" \
-  "  orientation: 'vertical',\n" \
-  "  tooltip_position:'left',\n" \
-  "  tooltip: 'always'\n" \
-  "}).on('change', timelineSliderOnChange).data('slider');\n" \
-  "</script>" \
   "<script type='text/javascript'>" \
   "jQuery(function($){$(document).ready(function(){$(\"h1.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "jQuery(function($){$(document).ready(function(){$(\"h2.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "jQuery(function($){$(document).ready(function(){$(\"h3.symple-toggle-trigger\").click(function(){$(this).toggleClass(\"active\").next().slideToggle(\"fast\");return false;});});});\n" \
   "</script>\n"
 
+HTML_BODY_SLIDER_SCRIPT = \
+  "<script type='text/javascript'>\n" \
+  "  var timelineSliderOnChange = function() { SLIDER_ONCHANGE_FUNC_NAME(timelineSliderObj.getValue()); console.log(timelineSliderObj.getValue()) }\n" \
+  "  var timelineSliderObj = $('#SLIDER_NAME').slider({\n" \
+  "   min  : 1,\n" \
+  "   max  : SLIDER_MAX_VALUE,\n" \
+  "  value : SLIDER_DEFAULT_VALUE,\n" \
+  "  ticks: [SLIDER_TICKS],\n" \
+  "  ticks_labels: [SLIDER_LABELS],\n" \
+  "  orientation: 'vertical',\n" \
+  "  tooltip_position: 'left',\n" \
+  "  tooltip: 'always'\n" \
+  "}).on('change', timelineSliderOnChange).data('slider');\n" \
+  "</script>" \
+ 
+def GET_TIMELINE_SLIDER_SCRIPT():
+    res = HTML_BODY_SLIDER_SCRIPT
+    res = res.replace("SLIDER_ONCHANGE_FUNC_NAME", "drawAllStreakTimelines")
+    res = res.replace("SLIDER_NAME", "timeline_slider")    
+    res = res.replace("SLIDER_MAX_VALUE", "25")
+    res = res.replace("SLIDER_DEFAULT_VALUE", "3")
+    res = res.replace("SLIDER_TICKS", "1,5,10,15,20")
+    res = res.replace("SLIDER_LABELS", "'1','5','10','15','20'")
+    return res
+    
 # =========================================================================================================================================================
   
 HTML_SCRIPT_HIGHCHARTS_TOTALS_FRAGS_PROGRESS_DIV_TAG = "<div id=\"highchart_totals_frags\" style=\"min-width: 310px; height: 500px; margin: 0 auto\"></div>"

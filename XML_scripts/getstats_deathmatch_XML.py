@@ -2709,7 +2709,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(ezstatslib.HTML_PRE_CLOSE_TAG)
     
     # add script section for folding
-    f.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)    
+    f.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)
+    f.write(ezstatslib.GET_TIMELINE_SLIDER_SCRIPT())
     
     f.write(ezstatslib.HTML_FOOTER_NO_PRE)
 
