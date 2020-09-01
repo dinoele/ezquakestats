@@ -55,17 +55,6 @@ def fillH2HDamage(who,whom,value,minute):
                 elem[2][minute] += value
     except Exception, ex:
         ezstatslib.logError("fillH2HDamage: who=%s, whom=%s, minute=%d, ex=%s\n" % (who, whom, minute, ex))
-
-def clearZeroPlayer(pl):
-    # TODO remove from headToHead
-    
-    # clear battle progress
-    for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags],..]
-        for mp in mpline:        # mp:     [pl1_name,pl1_frags]
-            if pl.name == mp[0]:
-                mpline.remove(mp)       # TODO REMOVE
-                                        # (n for n in n_list if n !=3)  # ifilter
-                                        # https://docs.python.org/2.7/library/stdtypes.html#mutable-sequence-types
         
 
 usageString = "" 
@@ -107,10 +96,6 @@ isEnd = False
 
 allplayers = []
 
-readLinesNum = 0
-
-newLogFormat = False # if at least one LOG_TIMESTAMP_DELIMITER in logs
-
 xmlPlayersStr = []
 xmlPlayers = []
 
@@ -121,7 +106,6 @@ pickmapitemElements = []
 
 elementsByTime = [] # [timestamp, [elemen1, elemen2, .. , elementN]]
 elementsCloseByTime = [] # [[timestamp1,..,timestampN], [elemen1, elemen2, .. , elementN]]  delta(timestamp1,..,timestampN) < 0.2 sec
-
 
 sourceXML = open(options.inputFileXML)
 
