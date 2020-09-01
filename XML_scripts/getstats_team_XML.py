@@ -396,6 +396,10 @@ duration = -1
 isOverTime = False
 overtimeMinutes = -1
 rlAttacksByPlayers = {}
+isMoreThanOneOvertimes = False
+isOverTime_2nd = False
+isOverTime_3rd = False
+overtimeMinutesVal = -1
 
 # open json    
 jsonPlayers = []
@@ -423,6 +427,13 @@ with open(options.inputFileJSON, 'r') as fjson:
 
     isOverTime = minutesPlayedXML != timelimit;
     overtimeMinutes = minutesPlayedXML - timelimit
+    overtimeMinutesVal = overtimeMinutes
+    
+    # check for more than 1 overtime
+    # overtime is expected to be 30-50%
+    if overtimeMinutes >= timelimit*0.5:
+        # there is at least the 2nd overtime
+        isMoreThanOneOvertimes = True    
         
 for pl in jsonPlayers:
     print pl.name, " - ", pl.teamname     
@@ -550,38 +561,40 @@ for element in elements:
         currentMatchTime -= 2  # 2 sec is correction for events in the match end with timestamp more than minPlayed*60, used in minutesPlayedXML calculation
 
     allplayersByFrags = sorted(allplayers, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+    
+    team1Frags = 0
+    for pl in players1:
+        team1Frags += pl.frags()
+    team2Frags = 0
+    for pl in players2:
+        team2Frags += pl.frags()
+        
+    players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+    players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+    
     # battle progress    
     if currentMatchTime > currentMinute*60:
         currentMinute += 1                    
         progressLine = []
         progressLineDict = {}
-
-        fr1 = 0
-        for pl in players1:
-            fr1 += pl.frags()
-        fr2 = 0
-        for pl in players2:
-            fr2 += pl.frags()
         
-        if fr1 == fr2:
+        if team1Frags == team2Frags:
             progressStr.append("tie")
         else:
-            progressStr.append("[%s]%s" % (teamName1 if fr1 > fr2 else teamName2, fr1-fr2 if fr1 > fr2 else fr2-fr1))
+            progressStr.append("[%s]%s" % (teamName1 if team1Frags > team2Frags else teamName2, team1Frags-team2Frags if team1Frags > team2Frags else team2Frags-team1Frags))
         fillExtendedBattleProgress()
         
-        progressLineDict[team1.name] = fr1;  # team1.frags()
-        progressLineDict[team2.name] = fr2; # team2.frags()        
+        progressLineDict[team1.name] = team1Frags;
+        progressLineDict[team2.name] = team2Frags;
         matchProgressDict.append(progressLineDict)
         matchProgressDictEx.append(progressLineDict)
-
-        players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+        
         playersProgressLineDict1 = {}
         for pl in players1ByFrags:
             playersProgressLineDict1[pl.name] = [pl.frags(), pl.calcDelta()];        
         matchProgressPlayers1Dict.append(playersProgressLineDict1)
         matchProgressPlayers1DictEx.append(playersProgressLineDict1)
-
-        players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
+        
         playersProgressLineDict2 = {}
         for pl in players2ByFrags:
             playersProgressLineDict2[pl.name] = [pl.frags(), pl.calcDelta()];
@@ -592,30 +605,43 @@ for element in elements:
     
     if len(matchProgressDictEx2) == 0 or matchProgressDictEx2[len(matchProgressDictEx2)-1][team1.name][0] != currentMatchTime:
         progressLineDict = {}
-        
-        fr1 = 0
-        for pl in players1:
-            fr1 += pl.frags()
-        fr2 = 0
-        for pl in players2:
-            fr2 += pl.frags()
-            
-        progressLineDict[team1.name] = [currentMatchTime, fr1]; # team1.frags()
-        progressLineDict[team2.name] = [currentMatchTime, fr2]; # team2.frags()
+
+        progressLineDict[team1.name] = [currentMatchTime, team1Frags];
+        progressLineDict[team2.name] = [currentMatchTime, team2Frags];
         matchProgressDictEx2.append(progressLineDict)
         
-        players1ByFrags = sorted(players1, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
         playersProgressLineDict1 = {}
         for pl in players1ByFrags:
             playersProgressLineDict1[pl.name] = [currentMatchTime, pl.frags(), pl.calcDelta()];                
         matchProgressPlayers1DictEx2.append(playersProgressLineDict1)
 
-        players2ByFrags = sorted(players2, key=lambda x: (x.frags(), x.kills, x.calcDelta()), reverse=True)
         playersProgressLineDict2 = {}
         for pl in players2ByFrags:
             playersProgressLineDict2[pl.name] = [currentMatchTime, pl.frags(), pl.calcDelta()];        
         matchProgressPlayers2DictEx2.append(playersProgressLineDict2)
 
+    # additional overtime check
+    if isOverTime and isMoreThanOneOvertimes and currentMinute > minutesPlayedXML - overtimeMinutes:
+        # check for 2 overtimes
+        if overtimeMinutes % 2 == 0:
+            overtimeMinutesVal = overtimeMinutes / 2
+            if currentMinute == timelimit + overtimeMinutesVal and team1Frags == team2Frags:
+                isOverTime_2nd = True
+                allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
+                allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
+               
+        # check for 3 overtimes 0_o
+        elif overtimeMinutes % 3 == 0:
+            overtimeMinutesVal = overtimeMinutes / 3
+            if currentMinute == timelimit + overtimeMinutesVal and team1Frags == team2Frags:
+               isOverTime_2nd = True
+               allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
+               allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
+            elif currentMinute == timelimit + 2*overtimeMinutesVal and team1Frags == team2Frags:
+               isOverTime_3rd = True
+               allplayersByFrags[0].overtime_3rd_frags = allplayersByFrags[0].frags()
+               allplayersByFrags[1].overtime_3rd_frags = allplayersByFrags[1].frags()        
+        
     # skip Damage and Death elements with target=None (door which is opened by the shot)
     if (isinstance(element, DeathElement) or isinstance(element, DamageElement)) and element.target is None:
         continue
@@ -1490,9 +1516,21 @@ if options.withScripts:
 i = 1
 resultString += "battle progress:\n"
 for p in progressStr:
-    resultString += "%d:%s %s%s\n" % (i, "" if i >= 10 else " ", p, " << IT IS OVERTIME!!" if isOverTime and i == timelimit else "")
+    resultString += "%d:%s %s" % (i, "" if i >= 10 else " ", p)
+    
+    if isOverTime and i == timelimit:
+        resultString += "  >> IT IS OVERTIME!!"
+        
+    if isOverTime_2nd and not isOverTime_3rd and i == timelimit + overtimeMinutesVal:
+        resultString += "  >> IT IS THE 2ND OVERTIME!!!!!"
+        
+    if isOverTime_2nd and isOverTime_3rd and i == timelimit + 2*overtimeMinutesVal:
+        resultString += "  >> OMG!! IT IS THE 3RD OVERTIME!!!1111adinadin"
+
+    resultString += "\n"
     i += 1
 
+    
 if totalScore[0][1] > totalScore[1][1]:
     resultString += "%d: [%s]%d\n" % (i, totalScore[0][0], (totalScore[0][1] - totalScore[1][1]))
 else:
@@ -1953,10 +1991,28 @@ def writeHtmlWithScripts(f, teams, resStr):
     
     xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
     xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
+
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_BEGIN
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str(timelimit * 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#FF0000")
+        xAxisLabels += verticalLineLabel
+        
+    if isOverTime_2nd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#C80000")
+        xAxisLabels += verticalLineLabel
+
+    if isOverTime_3rd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + 2*overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#AF0000")
+        xAxisLabels += verticalLineLabel        
     
     if isOverTime:
-        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
-        xAxisLabels = xAxisLabels.replace("VERTICAL_LINE_POS", str((minutesPlayedXML-overtimeMinutes)*60))
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_END
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
 
@@ -2145,7 +2201,30 @@ def writeHtmlWithScripts(f, teams, resStr):
         "       return (this.value / 60).toFixed(1).toString()\n" \
         "    },\n" \
         "},\n"
-    xAxisLabels += "tickPositions: [%s]\n" % (tickPositions)
+    xAxisLabels += "tickPositions: [%s],\n" % (tickPositions)
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_BEGIN
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str(timelimit * 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#FF0000")
+        xAxisLabels += verticalLineLabel
+        
+    if isOverTime_2nd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#C80000")
+        xAxisLabels += verticalLineLabel
+
+    if isOverTime_3rd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + 2*overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#AF0000")
+        xAxisLabels += verticalLineLabel        
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_END
+    
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)        
         
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("MIN_PLAYER_FRAGS", "      min: -10,")
@@ -2277,6 +2356,28 @@ def writeHtmlWithScripts(f, teams, resStr):
     xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
     xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
     
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_BEGIN
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str(timelimit * 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#FF0000")
+        xAxisLabels += verticalLineLabel
+        
+    if isOverTime_2nd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#C80000")
+        xAxisLabels += verticalLineLabel
+
+    if isOverTime_3rd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + 2*overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#AF0000")
+        xAxisLabels += verticalLineLabel        
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_END
+
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
 
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("ADD_STAT_ROWS", rowLines)
@@ -2344,6 +2445,28 @@ def writeHtmlWithScripts(f, teams, resStr):
 
     xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS
     xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_BEGIN
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str(timelimit * 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#FF0000")
+        xAxisLabels += verticalLineLabel
+        
+    if isOverTime_2nd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#C80000")
+        xAxisLabels += verticalLineLabel
+
+    if isOverTime_3rd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + 2*overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#AF0000")
+        xAxisLabels += verticalLineLabel        
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_END
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)        
         

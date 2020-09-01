@@ -379,6 +379,10 @@ duration = -1
 isOverTime = False
 overtimeMinutes = -1
 rlAttacksByPlayers = {}
+isMoreThanOneOvertimes = False
+isOverTime_2nd = False
+isOverTime_3rd = False
+overtimeMinutesVal = -1
 if not options.inputFileJSON is None and options.inputFileJSON != "":
     with open(options.inputFileJSON, 'r') as fjson:
         jsonStrRead = json.load(fjson)
@@ -395,8 +399,14 @@ if not options.inputFileJSON is None and options.inputFileJSON != "":
 
     isOverTime = minutesPlayedXML != timelimit;
     overtimeMinutes = minutesPlayedXML - timelimit
+    overtimeMinutesVal = overtimeMinutes
     
-   
+    # check for more than 1 overtime
+    # overtime is expected to be 30-50%
+    if overtimeMinutes >= timelimit*0.5:
+        # there is at least the 2nd overtime
+        isMoreThanOneOvertimes = True
+        
 zeroStatsPlayers = []
 # NEWPLAYERS
 for pl in xmlPlayers:
@@ -511,6 +521,32 @@ for element in elements:
             else:
                 ezstatslib.logError("ERROR: overtime calculation: currentMinute: %d, minutesPlayedXML: %d, allplayersByFrags[0].frags(): %d, allplayersByFrags[1].frags(): %d" % \
                  (currentMinute, minutesPlayedXML, allplayersByFrags[0].frags(), allplayersByFrags[1].frags()))
+                 
+    # additional overtime check
+    if isOverTime and isMoreThanOneOvertimes and currentMinute > minutesPlayedXML - overtimeMinutes:
+        # check for 2 overtimes
+        if overtimeMinutes % 2 == 0:
+            overtimeMinutesVal = overtimeMinutes / 2
+            if currentMinute == timelimit + overtimeMinutesVal and \
+               allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+                    isOverTime_2nd = True
+                    allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
+                    allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
+               
+        # check for 3 overtimes 0_o
+        elif overtimeMinutes % 3 == 0:
+            overtimeMinutesVal = overtimeMinutes / 3
+            if currentMinute == timelimit + overtimeMinutesVal and \
+               allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+               isOverTime_2nd = True
+               allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
+               allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
+            elif currentMinute == timelimit + 2*overtimeMinutesVal and \
+               allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+               isOverTime_3rd = True
+               allplayersByFrags[0].overtime_3rd_frags = allplayersByFrags[0].frags()
+               allplayersByFrags[1].overtime_3rd_frags = allplayersByFrags[1].frags()
+        
 
     # skip Damage and Death elements with target=None (door which is opened by the shot)
     if (isinstance(element, DeathElement) or isinstance(element, DamageElement)) and element.target is None:
@@ -701,7 +737,7 @@ for element in elements:
             ezstatslib.logError("ERROR: damage calc %s-%s\n" % (who, whom))
 
         continue
-
+        
 # all log lines are processed
 
 tmpComboStr = ""
@@ -1663,6 +1699,12 @@ for mpline in matchProgress: # mpline: [[pl1_name,pl1_frags],[pl2_name,pl2_frags
         
     if isOverTime and i == timelimit:
         resultString += "\t\t>> IT IS OVERTIME!! <<\n"
+        
+    if isOverTime_2nd and not isOverTime_3rd and i == timelimit + overtimeMinutesVal:
+        resultString += "\t\t>> IT IS THE 2ND OVERTIME!!!!! <<\n"
+        
+    if isOverTime_2nd and isOverTime_3rd and i == timelimit + 2*overtimeMinutesVal:
+        resultString += "\t\t>> OMG!! IT IS THE 3RD OVERTIME!!!1111adinadin <<\n"
     
     i += 1
     
@@ -2305,8 +2347,26 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     xAxisLabels = xAxisLabels.replace("TICK_POSITIONS_VALS", tickPositions)
     
     if isOverTime:
-        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
-        xAxisLabels = xAxisLabels.replace("VERTICAL_LINE_POS", str((minutesPlayedXML-overtimeMinutes)*60))
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_BEGIN
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str(timelimit * 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#FF0000")
+        xAxisLabels += verticalLineLabel
+        
+    if isOverTime_2nd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#C80000")
+        xAxisLabels += verticalLineLabel
+
+    if isOverTime_3rd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + 2*overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#AF0000")
+        xAxisLabels += verticalLineLabel        
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_END
     
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
     
@@ -2554,7 +2614,30 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("GRAPH_TITLE", "Players ranks")
     highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("Y_AXIS_TITLE", "Rank")
     
-    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", "")
+    if isOverTime:
+        xAxisLabels = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_BEGIN
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str(timelimit * 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#FF0000")
+        xAxisLabels += verticalLineLabel
+        
+    if isOverTime_2nd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#C80000")
+        xAxisLabels += verticalLineLabel
+
+    if isOverTime_3rd:
+        verticalLineLabel = ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_POS", str((timelimit + 2*overtimeMinutesVal)* 60))
+        verticalLineLabel = verticalLineLabel.replace("VERTICAL_LINE_COLOR", "#AF0000")
+        xAxisLabels += verticalLineLabel        
+    
+    if isOverTime:
+        xAxisLabels += ezstatslib.HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_END
+    
+    highchartsBattleProgressFunctionStr = highchartsBattleProgressFunctionStr.replace("EXTRA_XAXIS_OPTIONS", xAxisLabels)
+    
             
     # " name: 'rea[rbf]',\n" \
     # " data: [0,7,13,18,22,24,29,36,38,42,48]\n" \        

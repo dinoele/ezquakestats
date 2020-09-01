@@ -1065,12 +1065,18 @@ HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_TICK_POSITIONS = \
 "},\n" \
 "tickPositions: [TICK_POSITIONS_VALS],\n"
 
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_BEGIN = \
+"    plotLines: [\n"
+
 HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE = \
-"    plotLines: [{\n" \
-"        color: '#FF0000', // Red\n" \
+"    {\n" \
+"        color: 'VERTICAL_LINE_COLOR',\n" \
 "        width: 7,\n" \
 "        value: VERTICAL_LINE_POS // Position, you'll have to translate this to the values on your x axis\n" \
-"    }]\n"
+"    },\n"
+
+HTML_SCRIPT_HIGHCHARTS_BATTLE_PROGRESS_FUNCTION_X_AXIS_LABELS_VERTICAL_LINE_END = \
+"    ]\n"
 
 # =========================================================================================================================================================
 # "            categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']\n" \
@@ -2771,6 +2777,8 @@ class Player:
         #self.TODO_damage_self = 0
 
         self.overtime_frags = -1
+        self.overtime_2nd_frags = -1
+        self.overtime_3rd_frags = -1
         
         self.rl_attacks = -1
         
