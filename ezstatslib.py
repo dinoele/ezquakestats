@@ -4278,22 +4278,23 @@ def calculateCommonAchievements(allplayers, headToHead, minutesPlayed, isTeamGam
                 pl.achievements.append( Achievement(AchievementType.KILLSTEAL_VICTIM, "honestly earned kills were stolen %d times" % (len(pl.killsteals_victim))) )
                 
     # FAST_AND_FURIOUS
-    maxSpeedMaxVal = -1
-    avgSpeedMaxVal = -1
-    maxSpeedMaxPlayer = ""
-    avgSpeedMaxPlayer = ""
-    for pl in allplayers:
-        if pl.speed_max >= maxSpeedMaxVal:
-            maxSpeedMaxVal = pl.speed_max
-            maxSpeedMaxPlayer = pl.name
-        if pl.speed_avg >= avgSpeedMaxVal:
-            avgSpeedMaxVal = pl.speed_avg
-            avgSpeedMaxPlayer = pl.name
-    
-    if maxSpeedMaxPlayer == avgSpeedMaxPlayer:
+    if (len(allplayers) > 2):
+        maxSpeedMaxVal = -1
+        avgSpeedMaxVal = -1
+        maxSpeedMaxPlayer = ""
+        avgSpeedMaxPlayer = ""
         for pl in allplayers:
-            if pl.name == maxSpeedMaxPlayer:
-                pl.achievements.append( Achievement(AchievementType.FAST_AND_FURIOUS, "the fastest player with %d max and %d avg speed" % (pl.speed_max, pl.speed_avg)) )
+            if pl.speed_max >= maxSpeedMaxVal:
+                maxSpeedMaxVal = pl.speed_max
+                maxSpeedMaxPlayer = pl.name
+            if pl.speed_avg >= avgSpeedMaxVal:
+                avgSpeedMaxVal = pl.speed_avg
+                avgSpeedMaxPlayer = pl.name
+        
+        if maxSpeedMaxPlayer == avgSpeedMaxPlayer:
+            for pl in allplayers:
+                if pl.name == maxSpeedMaxPlayer:
+                    pl.achievements.append( Achievement(AchievementType.FAST_AND_FURIOUS, "the fastest player with %d max and %d avg speed" % (pl.speed_max, pl.speed_avg)) )
             
                 
 class Team:
