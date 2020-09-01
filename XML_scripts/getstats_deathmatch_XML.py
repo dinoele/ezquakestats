@@ -397,6 +397,7 @@ if not options.inputFileJSON is None and options.inputFileJSON != "":
     overtimeMinutes = minutesPlayedXML - timelimit
     
    
+zeroStatsPlayers = []
 # NEWPLAYERS
 for pl in xmlPlayers:
     if pl.name == "world":
@@ -404,6 +405,7 @@ for pl in xmlPlayers:
         
     # exclude players with no kills and no deaths
     if pl.killsXML == 0 and pl.deathsXML == 0 and pl.suicidesXML == 0:
+        zeroStatsPlayers.append(pl.name)
         continue
         
     pl.initPowerUpsByMinutes(minutesPlayedXML)
@@ -421,7 +423,7 @@ for pl in xmlPlayers:
         except:
             pass
     allplayers.append(pl)
-
+    
 if mapName == "":
     mapName = line.split(" ")[0]
 
@@ -559,6 +561,10 @@ for element in elements:
     # power ups
     if isinstance(element, PickMapItemElement) and (element.isArmor or element.isHealth):
         checkname = element.player
+        
+        if checkname in zeroStatsPlayers:
+            continue
+        
         if element.isMH:
             pwr = "mh"
         if element.isArmor:
@@ -624,6 +630,9 @@ for element in elements:
         who = element.attacker
         whom = element.target
         weap = element.type
+        
+        if who in zeroStatsPlayers or whom in zeroStatsPlayers:
+            continue
 
         if weap == "trigger" or weap == "slime" or weap == "lg_dis":  # TODO
             continue
