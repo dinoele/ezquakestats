@@ -536,7 +536,6 @@ for element in elements:
     
         if not isFoundWho or not isFoundWhom:
             ezstatslib.logError("ERROR: count telefrag %s-%s: %s\n" % (who, whom, logline))
-            exit(0)
     
         continue
     
@@ -555,7 +554,6 @@ for element in elements:
                 break;
         if not isFound:
             ezstatslib.logError("ERROR: count suicides\n")
-            exit(0)    
         continue    
         
     # power ups
@@ -586,7 +584,6 @@ for element in elements:
                 break;
         if not isFound:
             ezstatslib.logError("ERROR: powerupDetection: no playername %s\n" % (checkname))
-            exit(0)
     
         continue            
     
@@ -604,7 +601,6 @@ for element in elements:
                 weap = "other"  # TODO fall on the player  # TODO ULTRA RARE ACH
             else:
                 ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
-                exit(0)
     
         isFoundWho = False
         isFoundWhom = False
@@ -659,7 +655,6 @@ for element in elements:
                 weap = "other"  # TODO fall on the player
             else:
                 ezstatslib.logError("ERROR: unknown weapon: %s\n" % (weap))
-                exit(0)
 
         isFoundWho = False
         isFoundWhom = False
