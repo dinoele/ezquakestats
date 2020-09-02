@@ -3632,6 +3632,10 @@ class Player:
         # OVERTIME
         if self.overtime_frags != -1:
             self.achievements.append( Achievement(AchievementType.OVERTIME, "goes to the overtime with {0:d} frags".format(self.overtime_frags)) )
+        
+        # SECOND_OVERTIME
+        if self.overtime_2nd_frags != -1:
+            self.achievements.append( Achievement(AchievementType.SECOND_OVERTIME, "goes to the 2nd overtime with {0:d} frags".format(self.overtime_2nd_frags)) )
 
         # COMBO_DOUBLE_KILL
         for i in xrange(len(self.double_kills)):
@@ -3665,7 +3669,7 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         HORRIBLE_FINISH = 7, # "Horrible Finish - finished to play too early", # -2 places up during the last minute    DONE
                         ALWAYS_THE_FIRST = 8, # "Always the 1st", # the 1st place from the 1st minute until the finish                  DONE
                         OVERTIME = 9, # "One of who didn't want to give up", # "Overtime - extra minutes of fight" #DEATHMATCH_SPECIFIC DONE
-                        SECOND_OVERTIME_REASON = 10, # "The 2nd overtime!",  # one of who didn't want to give up once more time             #TODO
+                        SECOND_OVERTIME = 10, # "The 2nd overtime - one of who didn't want to give up AGAIN"       #DEATHMATCH_SPECIFIC DONE
                         HUNDRED_KILLS = 11, # "More than 100 kills", # 100++ kills                                                      DONE tmp img
                         HUNDRED_DEATHS = 12, # "More than 100 deaths", # 100++ deaths                                                   DONE tmp img
                         HUNDRED_FRAGS = 13, # "More than 100 frags", # 100++ frags                                                      DONE tmp img
@@ -3786,8 +3790,8 @@ class Achievement:
             return "Always the 1st"
         if self.achtype == AchievementType.OVERTIME:
             return "One of who didn't want to give up"
-        if self.achtype == AchievementType.SECOND_OVERTIME_REASON:
-            return "The 2nd overtime!"
+        if self.achtype == AchievementType.SECOND_OVERTIME:
+            return "The 2nd overtime - one of who didn't want to give up AGAIN"
         if self.achtype == AchievementType.HUNDRED_KILLS:
             return "More than 100 kills"
         if self.achtype == AchievementType.HUNDRED_DEATHS:
@@ -3921,7 +3925,7 @@ class Achievement:
             return AchievementLevel.ADVANCE_NEGATIVE            
                
         if self.achtype == AchievementType.GREAT_FINISH           or \
-           self.achtype == AchievementType.SECOND_OVERTIME_REASON or \
+           self.achtype == AchievementType.SECOND_OVERTIME        or \
            self.achtype == AchievementType.HUNDRED_KILLS          or \
            self.achtype == AchievementType.FINISH_GURU            or \
            self.achtype == AchievementType.ELECTROMASTER          or \
@@ -4126,6 +4130,8 @@ class Achievement:
             return path + "ach_killsteal_victim.png"
         if self.achtype == AchievementType.FAST_AND_FURIOUS:
             return path + "ach_fast_and_furious.png"
+        if self.achtype == AchievementType.SECOND_OVERTIME:
+            return path + "ach_2nd_overtime.png"            
 
         # temp images
         if self.achtype == AchievementType.HUNDRED_KILLS:
