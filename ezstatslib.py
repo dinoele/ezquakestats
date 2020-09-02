@@ -3755,7 +3755,7 @@ class Achievement:
         elif count >= 10 and count < 100:
             res += "<div>" \
                    "<img style=\"background-color:%s;position: absolute; top: 0; right: 0;width:57px;height:37px;border: 0px solid black;-webkit-border-radius: 55%%;" \
-                   "-moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"\" alt=\"\" >" \
+                   "-moz-border-radius: 55%%; border-radius: 55%%;box-shadow: 0px 0px 6px 6px rgba(0,0,0,0.25);\" src=\"data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==\">" \
                    "<img style=\"position: absolute; top: 3px; right: 24px;width:27px;height:33px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
                    "<img style=\"position: absolute; top: 3px; right: 5px;width:27px;height:33px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
                    "</div>" \
