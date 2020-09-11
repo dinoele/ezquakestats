@@ -1883,6 +1883,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     deathsLine   = "['Deaths'"    
     suicidesLine = "['Suicides'"
     
+    maxVal = -1
     for pl in sortedPlayers:
         namesLine    += ", '%s'" % (pl.name)
         fragsLine    += ", %d" % (pl.frags())
@@ -1890,6 +1891,11 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
         deathsLine   += ", %d" % (pl.deaths)
         suicidesLine += ", %d" % (pl.suicides)
         
+        maxVal = max(maxVal, pl.frags())
+        maxVal = max(maxVal, pl.kills)
+        maxVal = max(maxVal, pl.deaths)
+        maxVal = max(maxVal, pl.suicides)
+
         if isAnnotations:
             namesLine += ", {type: 'string', role: 'annotation'}"
             fragsLine    += ", '%d'" % (pl.frags())
@@ -1904,7 +1910,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     suicidesLine += "]\n"
     
     mainStatsBarsStr = mainStatsBarsStr.replace("ADD_HEADER_ROW", namesLine)
-    mainStatsBarsStr = mainStatsBarsStr.replace("ADD_STATS_ROWS", fragsLine + killsLine + deathsLine + suicidesLine)    
+    mainStatsBarsStr = mainStatsBarsStr.replace("ADD_STATS_ROWS", fragsLine + killsLine + deathsLine + suicidesLine)
+    mainStatsBarsStr = mainStatsBarsStr.replace("MAX_VALUE", str(maxVal + 10))
 
     f.write(mainStatsBarsStr)
     # <-- main stats bars

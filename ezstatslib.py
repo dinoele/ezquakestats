@@ -233,7 +233,8 @@ HTML_SCRIPT_MAIN_STATS_BARS_FUNCTION = \
     "    minValue: 0,\n" \
     "  },\n" \
     "  vAxis: {\n" \
-    "    title: ''\n" \
+    "    title: '',\n" \
+    "    maxValue: MAX_VALUE,\n" \
     "  },\n" \
     "  annotations: {\n" \
     "    alwaysOutside: true,\n" \
