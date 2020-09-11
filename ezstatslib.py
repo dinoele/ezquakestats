@@ -3716,6 +3716,9 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         KILLSTEAL_STEALER = 54,  # "King of theft" : "stole %d kills" # maximum kill steals - stealer                                           #DEATHMATCH_SPECIFIC   DONE
                         KILLSTEAL_VICTIM = 55,   # "Too unlucky and carefree..." : "honestly earned kills were stolen %d times" # maximum kill steals - victim  #DEATHMATCH_SPECIFIC   DONE
                         FAST_AND_FURIOUS = 56,   # "Fast and Furious!" : "the fastest player with %d max and %d avg speed"      #XML_SPECIFIC   DONE
+                        # TODO win with low speed or simply too slow
+                        # kill + teamkill
+                        # suicide + teamkill
                         
                                             )
 
@@ -3736,11 +3739,16 @@ class Achievement:
     def generateHtml(self, path = "ezquakestats/img/", size = 150):
         return "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;\">" % (self.getImgSrc(path), self.description(), self.description(), self.extra_info, size, size)
         
-    def generateHtmlEx(self, path = "ezquakestats/img/", size = 125, radius = 45, shadowSize = 8, shadowIntensity = 35):
-        return "<div style=\"position: relative;\">" \
-               "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;border: 8px solid %s; -webkit-border-radius: %d%%; -moz-border-radius: %d%%; border-radius: %d%%;box-shadow: 0px 0px %dpx %dpx rgba(0,0,0,0.%d);\">" \
-               "</div>" \
-               % (self.getImgSrc(path), self.description(), self.description(), self.extra_info, size, size, Achievement.getBorderColor(self.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity)
+    def generateHtmlEx(self, path = "ezquakestats/img/", size = 125, radius = 45, shadowSize = 8, shadowIntensity = 35, extraStyleParams = ""):
+        res =  "<div style=\"position: relative;\">" \
+               "<img src=\"%s\" alt=\"%s\" title=\"%s: %s\" style=\"width:%dpx;height:%dpx;border: 8px solid %s; -webkit-border-radius: %d%%; -moz-border-radius: %d%%; border-radius: %d%%;box-shadow: 0px 0px %dpx %dpx rgba(0,0,0,0.%d);%s\">" \
+               % (self.getImgSrc(path), self.description(), self.description(), self.extra_info, size, size, Achievement.getBorderColor(self.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity, extraStyleParams)
+               
+        if self.isNew():
+            res += Achievement.generateNewIconHtml()
+        
+        res += "</div>"
+        return res
                
     @staticmethod
     def generateHtmlExCnt(ach, extraInfo, count, path = "ezquakestats/img/", size = 125, radius = 45, shadowSize = 8, shadowIntensity = 35):
@@ -3769,9 +3777,28 @@ class Achievement:
                    "<img style=\"position: absolute; top: 6px; right: 3px;width:22px;height:28px;\" src=\"%s\\nums\\num%d.png\" alt=\"\" >" \
                    "</div>" \
                    % (Achievement.getBorderColor(ach.achlevel), path, count / 100, path, (count % 100) / 10, path, (count % 100) % 10)
+                   
+        if ach.isNew():
+            res += Achievement.generateNewIconHtml()
         
         res += "</div>"
         return res
+    
+    @staticmethod
+    def generateNewIconHtml(path = "ezquakestats/img/"):
+        return "<img style=\"position: absolute; top: 0px; right: 88px; width: 59px; height: 39px; border: 0px solid black;\" src=\"%snew-icon.png\" >" \
+                %(path)
+    
+    def isNew(self, lastAchievementsCount = 4):
+        allachievements = []
+        for key in AchievementType.__dict__.keys():
+            if key != "__dict__" and key != "__doc__" and key != "__module__"and key != "__weakref__":
+                exec("allachievements.append(  Achievement(AchievementType.%s, \"\" ) )" % (key))
+
+        # sort by id
+        allachievements = sorted(allachievements, key=lambda x: (x.achtype), reverse=False)
+        maxVal = allachievements[len(allachievements)-1].achtype
+        return self.achtype >= maxVal - lastAchievementsCount
     
     def description(self):
         if self.achtype == AchievementType.LONG_LIVE:
