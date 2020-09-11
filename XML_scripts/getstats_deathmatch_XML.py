@@ -513,22 +513,25 @@ for element in elements:
         matchProgressDictEx2.append(progressLineDict)
     
     # overtime check
-    if isOverTime and currentMinute == minutesPlayedXML - overtimeMinutes:
-        if len(allplayersByFrags) >= 2:
-            if allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
-                allplayersByFrags[0].overtime_frags = allplayersByFrags[0].frags()
-                allplayersByFrags[1].overtime_frags = allplayersByFrags[1].frags()
-            else:
-                ezstatslib.logError("ERROR: overtime calculation: currentMinute: %d, minutesPlayedXML: %d, allplayersByFrags[0].frags(): %d, allplayersByFrags[1].frags(): %d" % \
-                 (currentMinute, minutesPlayedXML, allplayersByFrags[0].frags(), allplayersByFrags[1].frags()))
+    if isOverTime and currentMinute == minutesPlayedXML - overtimeMinutes and \
+       (currentMatchTime >= ((currentMinute*60) - 4) and currentMatchTime <= ((currentMinute*60) + 1)) and len(allplayersByFrags) >= 2:
+    
+        if allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+            allplayersByFrags[0].overtime_frags = allplayersByFrags[0].frags()
+            allplayersByFrags[1].overtime_frags = allplayersByFrags[1].frags()
+        else:
+            ezstatslib.logError("ERROR: overtime calculation: currentMinute: %d, minutesPlayedXML: %d, allplayersByFrags[0].frags(): %d, allplayersByFrags[1].frags(): %d\n" % \
+             (currentMinute, minutesPlayedXML, allplayersByFrags[0].frags(), allplayersByFrags[1].frags()))
                  
     # additional overtime check
-    if isOverTime and isMoreThanOneOvertimes and currentMinute > minutesPlayedXML - overtimeMinutes:
+    if isOverTime and isMoreThanOneOvertimes and currentMinute > minutesPlayedXML - overtimeMinutes  and \
+       (currentMatchTime >= ((currentMinute*60) - 4) and currentMatchTime <= ((currentMinute*60) + 1)) and len(allplayersByFrags) >= 2:
+
         # check for 2 overtimes
         if overtimeMinutes % 2 == 0:
             overtimeMinutesVal = overtimeMinutes / 2
-            if currentMinute == timelimit + overtimeMinutesVal and \
-               allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+            if currentMinute == timelimit + overtimeMinutesVal:
+                if allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
                     isOverTime_2nd = True
                     allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
                     allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
@@ -536,16 +539,16 @@ for element in elements:
         # check for 3 overtimes 0_o
         elif overtimeMinutes % 3 == 0:
             overtimeMinutesVal = overtimeMinutes / 3
-            if currentMinute == timelimit + overtimeMinutesVal and \
-               allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
-               isOverTime_2nd = True
-               allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
-               allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
-            elif currentMinute == timelimit + 2*overtimeMinutesVal and \
-               allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
-               isOverTime_3rd = True
-               allplayersByFrags[0].overtime_3rd_frags = allplayersByFrags[0].frags()
-               allplayersByFrags[1].overtime_3rd_frags = allplayersByFrags[1].frags()
+            if currentMinute == timelimit + overtimeMinutesVal:
+                if allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+                    isOverTime_2nd = True
+                    allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
+                    allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
+            elif currentMinute == timelimit + 2*overtimeMinutesVal:
+                if allplayersByFrags[0].frags() == allplayersByFrags[1].frags():
+                    isOverTime_3rd = True
+                    allplayersByFrags[0].overtime_3rd_frags = allplayersByFrags[0].frags()
+                    allplayersByFrags[1].overtime_3rd_frags = allplayersByFrags[1].frags()
         
 
     # skip Damage and Death elements with target=None (door which is opened by the shot)
@@ -888,7 +891,8 @@ for i in xrange(len(elementsByTime)):
                 resStr += "(attacker%d(%s), target%d(%s), wp%s(%s)); " % (deathNum, elementsByTime[i][1][j].attacker, deathNum, elementsByTime[i][1][j].target, deathNum, elementsByTime[i][1][j].type)
                 deathNum += 1
 
-        # ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
+        # ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))    
+        # OLOLO: 247.862579 deaths(3) >= 3: (attacker1(Sasha), target1(dinoel), wp1(rl)); (attacker2(Sasha), target2(Andrey), wp2(rl)); (attacker3(dinoel), target3(Sasha), wp3(rl));
         tmpComboStr += ("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
         
 tmpComboStr += "==========================================\n"        

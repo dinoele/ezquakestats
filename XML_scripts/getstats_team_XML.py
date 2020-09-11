@@ -619,28 +619,23 @@ for element in elements:
         for pl in players2ByFrags:
             playersProgressLineDict2[pl.name] = [currentMatchTime, pl.frags(), pl.calcDelta()];        
         matchProgressPlayers2DictEx2.append(playersProgressLineDict2)
-
+        
     # additional overtime check
-    if isOverTime and isMoreThanOneOvertimes and currentMinute > minutesPlayedXML - overtimeMinutes:
+    if isOverTime and isMoreThanOneOvertimes and currentMinute > minutesPlayedXML - overtimeMinutes and \
+        (currentMatchTime >= ((currentMinute*60) - 4) and currentMatchTime <= ((currentMinute*60) + 1)):
         # check for 2 overtimes
         if overtimeMinutes % 2 == 0:
             overtimeMinutesVal = overtimeMinutes / 2
             if currentMinute == timelimit + overtimeMinutesVal and team1Frags == team2Frags:
                 isOverTime_2nd = True
-                allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
-                allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
                
         # check for 3 overtimes 0_o
         elif overtimeMinutes % 3 == 0:
             overtimeMinutesVal = overtimeMinutes / 3
             if currentMinute == timelimit + overtimeMinutesVal and team1Frags == team2Frags:
                isOverTime_2nd = True
-               allplayersByFrags[0].overtime_2nd_frags = allplayersByFrags[0].frags()
-               allplayersByFrags[1].overtime_2nd_frags = allplayersByFrags[1].frags()
             elif currentMinute == timelimit + 2*overtimeMinutesVal and team1Frags == team2Frags:
                isOverTime_3rd = True
-               allplayersByFrags[0].overtime_3rd_frags = allplayersByFrags[0].frags()
-               allplayersByFrags[1].overtime_3rd_frags = allplayersByFrags[1].frags()        
         
     # skip Damage and Death elements with target=None (door which is opened by the shot)
     if (isinstance(element, DeathElement) or isinstance(element, DamageElement)) and element.target is None:
