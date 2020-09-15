@@ -4049,7 +4049,7 @@ allPlayersPageText += "<div align=\"center\"><h1> == ALL PLAYERS == </h1></div>\
 
 jsonPlayersByRank = sorted(jsonPlayers, key=lambda x: (x.rank()), reverse=True)
 
-allPlayersDuelsHeaderRow=['', 'Rank', 'Frags', 'Deaths']
+allPlayersDuelsHeaderRow=['', 'Matches', 'Rank', 'Frags', 'Deaths']
 for pl in jsonPlayersByRank:
     allPlayersDuelsHeaderRow.append(pl.name);    
 
@@ -4057,19 +4057,24 @@ colAlign=[]
 for i in xrange(len(allPlayersDuelsHeaderRow)):
     colAlign.append("center")
 
-    htmlTable = HTML.Table(header_row=allPlayersDuelsHeaderRow, border="1", cellspacing="3", col_align=colAlign,
+    htmlTable = HTML.Table(header_row=allPlayersDuelsHeaderRow, border="1", cellspacing="3", col_align=colAlign, id="duels_table",
                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt; border-collapse: collapse; border: 4px solid black")
 
+maxPlayedMatchesCount = 0
 for pl in jsonPlayersByRank:
-    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText="%s [%d]" % (ezstatslib.htmlBold(pl.name), pl.matchesPlayed)),
+    if pl.matchesPlayed >= maxPlayedMatchesCount:
+        maxPlayedMatchesCount = pl.matchesPlayed
+
+    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText="%s" % (ezstatslib.htmlBold(pl.name))),
+                                    ezstatslib.htmlBold(pl.matchesPlayed),
                                     HTML.TableCell(ezstatslib.htmlBold(pl.rank()), bgcolor=ezstatslib.BG_COLOR_GREEN if pl.rank() >= 0 else ezstatslib.BG_COLOR_RED),
                                     ezstatslib.htmlBold(pl.frags),
                                     ezstatslib.htmlBold(pl.deaths)])
         
-    for i in xrange(4,len(allPlayersDuelsHeaderRow)):
+    for i in xrange(5,len(allPlayersDuelsHeaderRow)):
         if allPlayersDuelsHeaderRow[i] in pl.duels.keys():
             if allPlayersDuelsHeaderRow[i] == pl.name:
-                tableRow.cells.append( HTML.TableCell(str(pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY) )
+                tableRow.cells.append( HTML.TableCell(str(pl.suicides), bgcolor=ezstatslib.BG_COLOR_GRAY, id=allPlayersDuelsHeaderRow[i]) )
             else:
                 kills  = pl.duels[allPlayersDuelsHeaderRow[i]][0]
                 deaths = pl.duels[allPlayersDuelsHeaderRow[i]][1]
@@ -4085,14 +4090,14 @@ for pl in jsonPlayersByRank:
                 else:
                     cellColor = ezstatslib.BG_COLOR_RED
                  
-                tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor) )
+                tableRow.cells.append( HTML.TableCell(cellVal, bgcolor=cellColor, id=allPlayersDuelsHeaderRow[i]) )
                 
         else:
-            tableRow.cells.append( HTML.TableCell(""))
+            tableRow.cells.append( HTML.TableCell("", id=allPlayersDuelsHeaderRow[i]) )
                  
     htmlTable.rows.append(tableRow)  
 
-allPlayersPageText += str(htmlTable)
+allPlayersPageText += ezstatslib.HTML_SCRIPT_ALL_PLAYERS_DUELS_TABLE_DIV_TAG.replace("DUELS_TABLE", str(htmlTable))
 
 allPlayersPageText += "</pre>\n"
 
@@ -4105,15 +4110,18 @@ allPlayersPageText += getRankTableRow("mh", "Avg. Mega Health", jsonPlayers)
 allPlayersPageText += "</table>\n"
     
         
-allPlayersPage = open(allPlayersPagePath, "w")        
+allPlayersPage = open(allPlayersPagePath, "w")
 allPlayersPageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
 allPlayersPageHeaderStr = allPlayersPageHeaderStr.replace("PAGE_TITLE", "All players stats")
+allPlayersPageHeaderStr = allPlayersPageHeaderStr.replace("SLIDER_STYLE", ezstatslib.HTML_SLIDER_STYLE_HORIZONTAL)
 allPlayersPage.write(allPlayersPageHeaderStr)
+allPlayersPage.write(ezstatslib.HTML_SCRIPT_ALLPLAYERS_DUELS_TABLE_FUNCTION)
 allPlayersPage.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
 allPlayersPage.write(allPlayersPageText)
 allPlayersPage.write(ezstatslib.HTML_PRE_CLOSE_TAG)   
 # add script section for folding
-allPlayersPage.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)    
+allPlayersPage.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)
+allPlayersPage.write(ezstatslib.GET_ALLPLAYERS_DUELS_TABLE_SLIDER_SCRIPT(maxPlayedMatchesCount))
 allPlayersPage.write(ezstatslib.HTML_FOOTER_NO_PRE)    
     
     
@@ -4131,3 +4139,4 @@ allPlayersPage.write(ezstatslib.HTML_FOOTER_NO_PRE)
 # print "duration:", duration
 # print "minutesPlayedXML:", minutesPlayedXML
         
+# https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_slideshow

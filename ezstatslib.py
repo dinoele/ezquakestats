@@ -863,6 +863,10 @@ HTML_SCRIPT_ALL_STREAK_TIMELINE_DIV_TAG = \
   "        <tr style=\"height: 30px;\"></tr>\n" \
   "      </table>\n"
 #  "<input type=\"range\" min=\"1\" max=\"15\" step=\"1\" value=\"3\" size=\"100\" onchange=\"drawAllStreakTimelines(this.value)\">\n"
+  
+HTML_SCRIPT_ALL_PLAYERS_DUELS_TABLE_DIV_TAG = \
+ "      <div><input id=\"all_players_duels_slider\"></div>\n" \
+ "      DUELS_TABLE\n"
 
 # =========================================================================================================================================================
 
@@ -1588,6 +1592,72 @@ def GET_TIMELINE_SLIDER_SCRIPT():
     res = res.replace("SLIDER_POSITIONS", "1,25,50,75,100")
     res = res.replace("SLIDER_ORIENTATION", "vertical")
     return res
+    
+def GET_ALLPLAYERS_DUELS_TABLE_SLIDER_SCRIPT(maxVal, ticks=None, defVal = 3):
+    if ticks == None:
+        # generate ticks
+        ticks = []
+        i = 3
+        while i < maxVal:
+            ticks.append(i)
+            i += maxVal / 5
+        ticks.append(i)
+
+    ticksStr = ""
+    ticksLabelsStr = ""
+    ticksPositionsStr = ""
+    for tick in ticks:
+        ticksStr += "%d," % (tick)
+        ticksLabelsStr += "'%d'," % (tick)
+        ticksPositionsStr += "%f," % ((tick*100)/maxVal)
+    ticksStr = ticksStr[:-1]
+    ticksLabelsStr = ticksLabelsStr[:-1]
+    ticksPositionsStr = ticksPositionsStr[:-1]
+        
+    res = HTML_BODY_SLIDER_SCRIPT
+    res = res.replace("SLIDER_ONCHANGE_FUNC_NAME", "drawDuelsTable")
+    res = res.replace("SLIDER_NAME", "all_players_duels_slider")
+    res = res.replace("SLIDER_MAX_VALUE", "%d" % (maxVal))
+    res = res.replace("SLIDER_DEFAULT_VALUE", "%d" % (defVal))
+    res = res.replace("SLIDER_TICKS", ticksStr)
+    res = res.replace("SLIDER_LABELS", ticksLabelsStr)
+    res = res.replace("SLIDER_POSITIONS", ticksPositionsStr)
+    res = res.replace("SLIDER_ORIENTATION", "horizontal")
+    return res    
+    
+HTML_SCRIPT_ALLPLAYERS_DUELS_TABLE_FUNCTION = \
+    "function drawDuelsTable(num) {\n" \
+    "if (num == undefined) { num = 3 }\n" \
+    "  var table = document.getElementById(\"duels_table\")  \n" \
+"  for (var i1 = 0; i1 < table.rows.length;i1++)\n" \
+"  {\n" \
+"      for (var i2 = 0; i2 < table.rows[i1].cells.length;i2++)\n" \
+"      {\n" \
+"           table.rows[i1].cells.item(i2).style.display = \"\";\n" \
+"      }\n" \
+"  }\n" \
+"  \n" \
+"  for (var i = 0; i < table.rows.length;i++)\n" \
+"  {\n" \
+"    var plName = table.rows[i].children[0].innerText\n" \
+"    plName = plName.replace(/(\\r\\n|\\n|\\r)/gm, \"\");\n" \
+"    var plMatchesCnt = parseInt(table.rows[i].children[1].innerText)\n" \
+"    \n" \
+"    if (plMatchesCnt < num)\n" \
+"    {\n" \
+"        for (var i1 = 0; i1 < table.rows.length;i1++)\n" \
+"        {\n" \
+"            for (var i2 = 0; i2 < table.rows[i1].cells.length;i2++)\n" \
+"            {\n" \
+"                if (table.rows[i1].cells.item(i2).id == plName || i1 == i || (i1 == 0 && table.rows[i1].cells.item(i2).innerText == plName))\n" \
+"                {\n" \
+"                    table.rows[i1].cells.item(i2).style.display = \"none\";\n" \
+"                }\n" \
+"            }\n" \
+"        }\n" \
+"    }\n" \
+"  }\n" \
+   "}"    
     
 # =========================================================================================================================================================
   
