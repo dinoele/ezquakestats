@@ -117,7 +117,7 @@ class TableCell (object):
     """
 
     def __init__(self, text="", bgcolor=None, header=False, width=None,
-                align=None, char=None, charoff=None, valign=None, style=None,
+                align=None, char=None, charoff=None, valign=None, style=None, id=None,
                 attribs=None):
         """TableCell constructor"""
         self.text    = text
@@ -129,6 +129,7 @@ class TableCell (object):
         self.charoff = charoff
         self.valign  = valign
         self.style   = style
+        self.id      = id
         self.attribs = attribs
         if attribs==None:
             self.attribs = {}
@@ -143,6 +144,7 @@ class TableCell (object):
         if self.charoff: self.attribs['charoff'] = self.charoff
         if self.valign:  self.attribs['valign']  = self.valign
         if self.style:   self.attribs['style']   = self.style
+        if self.id:      self.attribs['id']      = self.id
         for attr in self.attribs:
             attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
         if self.text:
@@ -174,8 +176,8 @@ class TableRow (object):
 
     def __init__(self, cells=None, bgcolor=None, header=False, attribs=None,
                 col_align=None, col_valign=None, col_char=None,
-                col_charoff=None, col_styles=None, style=None):
-        """TableCell constructor"""
+                col_charoff=None, col_styles=None, style=None, id=None):
+        """TableRow constructor"""
         self.bgcolor     = bgcolor
         self.cells       = cells
         self.header      = header
@@ -185,6 +187,7 @@ class TableRow (object):
         self.col_charoff = col_charoff
         self.col_styles  = col_styles
         self.style       = style
+        self.id          = id
         self.attribs     = attribs
         if attribs==None:
             self.attribs = {}
@@ -194,6 +197,7 @@ class TableRow (object):
         attribs_str = ""
         if self.bgcolor: self.attribs['bgcolor'] = self.bgcolor
         if self.style:   self.attribs['style']   = self.style
+        if self.id:      self.attribs['id']      = self.id
         for attr in self.attribs:
             attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
         result = ' <TR%s>\n' % attribs_str
@@ -244,7 +248,7 @@ class Table (object):
     def __init__(self, rows=None, border='1', style=None, width=None,
                 cellspacing=None, cellpadding=4, attribs=None, header_row=None,
                 col_width=None, col_align=None, col_valign=None,
-                col_char=None, col_charoff=None, col_styles=None):
+                col_char=None, col_charoff=None, col_styles=None, id=None):
         """TableCell constructor"""
         self.border = border
         self.style = style
@@ -264,6 +268,7 @@ class Table (object):
         self.col_charoff = col_charoff
         self.col_valign  = col_valign
         self.col_styles  = col_styles
+        self.id          = id
 
     def __str__(self):
         """return the HTML code for the table as a string"""
@@ -273,6 +278,7 @@ class Table (object):
         if self.width:  self.attribs['width'] = self.width
         if self.cellspacing:  self.attribs['cellspacing'] = self.cellspacing
         if self.cellpadding:  self.attribs['cellpadding'] = self.cellpadding
+        if self.id:     self.attribs['id'] = self.id
         for attr in self.attribs:
             attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
         result = '<TABLE%s>\n' % attribs_str
