@@ -1819,6 +1819,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % (options.leagueName, mapName, matchdate)  # global values
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
+    pageHeaderStr = pageHeaderStr.replace("SLIDER_STYLE", ezstatslib.HTML_SLIDER_STYLE_VERTICAL)
     pageHeaderStr += ezstatslib.HTML_HEADER_SCRIPT_GOOGLE_CHARTS_LOAD
     
     f.write(pageHeaderStr)
@@ -3632,6 +3633,7 @@ logsf = open(totalsPath, "w")
 pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
 #pageTitle = "%s %s %s" % (options.leagueName, mapName, matchdate)  # global values
 pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", "TOTALS")
+pageHeaderStr = pageHeaderStr.replace("SLIDER_STYLE", "")
 #pageHeaderStr += ezstatslib.HTML_HEADER_SCRIPT_GOOGLE_CHARTS_LOAD
     
 logsf.write(pageHeaderStr)
@@ -3997,6 +3999,7 @@ for plJson in jsonPlayers:
     
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", "%s stats" % (plJson.name))
+    pageHeaderStr = pageHeaderStr.replace("SLIDER_STYLE", "")
     
     playerPage.write(pageHeaderStr)
 

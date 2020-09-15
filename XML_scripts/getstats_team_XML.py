@@ -1848,6 +1848,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % ("TEAM", mapName, matchdate)  # global values
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", pageTitle)
+    pageHeaderStr = pageHeaderStr.replace("SLIDER_STYLE", ezstatslib.HTML_SLIDER_STYLE_VERTICAL)
     pageHeaderStr += \
         "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
         "google.charts.setOnLoadCallback(drawAllStreakTimelines);\n" \

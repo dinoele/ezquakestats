@@ -71,29 +71,56 @@ HTML_HEADER_SCRIPT_SECTION = \
     "<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\" />" \
     "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
-    "<style>\n" \
-    ".tooltip {position:absolute;z-index:1070;display:block;font-size:12px;line-height:1.4;visibility:visible;filter:alpha(opacity=0);opacity:0}\n" \
-    ".tooltip.in{filter:alpha(opacity=90);opacity:.9}\n" \
-    ".tooltip.top{padding:5px 0;margin-top:-3px}.\n" \
-    "tooltip.right{padding:0 5px;margin-left:3px}\n" \
-    ".tooltip.bottom{padding:5px 0;margin-top:3px}\n" \
-    ".tooltip.left{padding:0 5px;margin-left:-3px}\n" \
-    ".tooltip-inner{max-width:200px;padding:3px 8px;color:#fff;text-align:center;text-decoration:none;background-color:#000;border-radius:4px}\n" \
-    ".tooltip-arrow{position:absolute;width:0;height:0;border-color:transparent;border-style:solid}\n" \
-    ".tooltip.top \n" \
-    ".tooltip-arrow{bottom:0;left:50%;margin-left:-5px;border-width:5px 5px 0;border-top-color:#000}\n" \
-    ".tooltip.top-left \n" \
-    ".tooltip-arrow{bottom:0;left:5px;border-width:5px 5px 0;border-top-color:#000}\n" \
-    ".tooltip.top-right .tooltip-arrow{right:5px;bottom:0;border-width:5px 5px 0;border-top-color:#000}\n" \
-    ".tooltip.right .tooltip-arrow{top:50%;left:0;margin-top:-5px;border-width:5px 5px 5px 0;border-right-color:#000}\n" \
-    ".tooltip.left .tooltip-arrow{top:50%;right:0;margin-top:-5px;border-width:5px 0 5px 5px;border-left-color:#000}\n" \
-    ".tooltip.bottom .tooltip-arrow{top:0;left:50%;margin-left:-5px;border-width:0 5px 5px;border-bottom-color:#000}\n" \
-    ".tooltip.bottom-left .tooltip-arrow{top:0;left:5px;border-width:0 5px 5px;border-bottom-color:#000}\n" \
-    ".tooltip.bottom-right .tooltip-arrow{top:0;right:5px;border-width:0 5px 5px;border-bottom-color:#000}\n" \
-    "</style>\n" \
     "<link href=\"http://seiyria.com/bootstrap-slider/css/bootstrap-slider.css\" rel=\"stylesheet\">\n"\
+    "<style>\n" \
+    "SLIDER_STYLE" \
+    "</style>\n" \
     "<script type=\"text/javascript\">\n"
-    
+
+HTML_SLIDER_STYLE_HORIZONTAL = \
+    ".slider-handle::after{\n" \
+    "    content: attr(aria-valuenow);\n" \
+    "    position: absolute;\n" \
+    "    bottom: calc(100% + 0.5em);\n" \
+    "    left: 50%;\n" \
+    "    transform: translateX(-50%);\n" \
+    "    font-size: 0.95em;\n" \
+    "    font-weight: 900;\n" \
+    "    color: #393f50;\n" \
+    "    background-color: white;\n" \
+    "    box-shadow: 0px 0px 9px 0px rgba(182, 182, 182, 0.8);\n" \
+    "    display: flex;\n" \
+    "    justify-content: center;\n" \
+    "    align-items: center;\n" \
+    "    border-radius: 0.5em;\n" \
+    "    width: 4em;\n" \
+    "    height: 2.5em;\n" \
+    "}\n" \
+    "   .slider.slider-horizontal {\n" \
+    "       width: 80%;\n" \
+    "       height: 20px;\n" \
+    "  }\n"   
+
+HTML_SLIDER_STYLE_VERTICAL = \
+" .slider-handle::after{\n" \
+"     content: attr(aria-valuenow);\n" \
+"     position: absolute;\n" \
+"     bottom: calc(100% + 0.5em);\n" \
+"     left: 50%;\n" \
+"     transform: translateY(115%)  translateX(-130%);\n" \
+"     font-size: 0.95em;\n" \
+"     font-weight: 900;\n" \
+"     color: #393f50;\n" \
+"     background-color: white;\n" \
+"     box-shadow: 0px 0px 9px 0px rgba(182, 182, 182, 0.8);\n" \
+"     display: flex;\n" \
+"     justify-content: center;\n" \
+"     align-items: center;\n" \
+"     border-radius: 0.5em;\n" \
+"     width: 2.0em;\n" \
+"     height: 1.8em;\n" \
+" }\n"
+
 HTML_HEADER_SCRIPT_SECTION = HTML_HEADER_SCRIPT_SECTION.replace("HTML_CURRENT_VERSION_PLACE", HTML_CURRENT_VERSION)   
 
 HTML_HEADER_SCRIPT_GOOGLE_CHARTS_LOAD = \
@@ -1543,9 +1570,10 @@ HTML_BODY_SLIDER_SCRIPT = \
   "  value : SLIDER_DEFAULT_VALUE,\n" \
   "  ticks: [SLIDER_TICKS],\n" \
   "  ticks_labels: [SLIDER_LABELS],\n" \
-  "  orientation: 'vertical',\n" \
+  "  ticks_positions: [SLIDER_POSITIONS]," \
+  "  orientation: 'SLIDER_ORIENTATION',\n" \
   "  tooltip_position: 'left',\n" \
-  "  tooltip: 'always'\n" \
+  "  tooltip: 'hide'\n" \
   "}).on('change', timelineSliderOnChange).data('slider');\n" \
   "</script>" \
  
@@ -1557,6 +1585,8 @@ def GET_TIMELINE_SLIDER_SCRIPT():
     res = res.replace("SLIDER_DEFAULT_VALUE", "3")
     res = res.replace("SLIDER_TICKS", "1,5,10,15,20")
     res = res.replace("SLIDER_LABELS", "'1','5','10','15','20'")
+    res = res.replace("SLIDER_POSITIONS", "1,25,50,75,100")
+    res = res.replace("SLIDER_ORIENTATION", "vertical")
     return res
     
 # =========================================================================================================================================================
