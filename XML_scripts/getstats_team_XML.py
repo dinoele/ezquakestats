@@ -2776,6 +2776,7 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write(allPlayerKillsByMinutesStr)
     # <-- players kills by minutes
     
+    f.write(ezstatslib.HTML_SCRIPT_ON_PAGE_LOAD_FUNCTION.replace("FUNCTIONS",""))
     
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
 

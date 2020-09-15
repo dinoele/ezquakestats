@@ -2767,6 +2767,8 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     f.write(ezstatslib.HTML_EXPAND_CHECKBOX_FUNCTION)
     f.write(ezstatslib.HTML_EXPAND_POWER_UPS_CHECKBOX_FUNCTION)
     
+    f.write(ezstatslib.HTML_SCRIPT_ON_PAGE_LOAD_FUNCTION.replace("FUNCTIONS",""))
+    
     f.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
     
     # add divs
@@ -3770,6 +3772,7 @@ highchartsTotalsRankFunctionStr = highchartsTotalsRankFunctionStr.replace("TOOLT
 logsf.write(highchartsTotalsRankFunctionStr)
 # <-- highcharts totals rank progress
 
+logsf.write(ezstatslib.HTML_SCRIPT_ON_PAGE_LOAD_FUNCTION.replace("FUNCTIONS",""))
 logsf.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
 
 logsf.write(totalsStr)
@@ -4116,6 +4119,7 @@ allPlayersPageHeaderStr = allPlayersPageHeaderStr.replace("PAGE_TITLE", "All pla
 allPlayersPageHeaderStr = allPlayersPageHeaderStr.replace("SLIDER_STYLE", ezstatslib.HTML_SLIDER_STYLE_HORIZONTAL)
 allPlayersPage.write(allPlayersPageHeaderStr)
 allPlayersPage.write(ezstatslib.HTML_SCRIPT_ALLPLAYERS_DUELS_TABLE_FUNCTION)
+allPlayersPage.write(ezstatslib.HTML_SCRIPT_ON_PAGE_LOAD_FUNCTION.replace("FUNCTIONS", "drawDuelsTable(3);\n"))
 allPlayersPage.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
 allPlayersPage.write(allPlayersPageText)
 allPlayersPage.write(ezstatslib.HTML_PRE_CLOSE_TAG)   

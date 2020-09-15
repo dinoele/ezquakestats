@@ -61,7 +61,15 @@ SKIPED_LINES_FILE_NAME = "skiped_lines"
 
 HTML_CURRENT_VERSION = "<!-- CURRENT_VERSION: " + CURRENT_VERSION + " -->\n"
 
-HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\"/>\n" + HTML_CURRENT_VERSION + "</head>\n<body>\n<pre>"
+HTML_BODY_OPEN = "<body onload=\"onPageLoad();\">\n"
+
+HTML_SCRIPT_ON_PAGE_LOAD_FUNCTION = \
+    "function onPageLoad() {\n" \
+    "FUNCTIONS" \
+    "}\n"
+    
+
+HTML_HEADER_STR = "<!DOCTYPE html>\n<html>\n<head>\n<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\"/>\n" + HTML_CURRENT_VERSION + "<script>" + HTML_SCRIPT_ON_PAGE_LOAD_FUNCTION.replace("FUNCTIONS","") + "</script>" + "</head>\n" + HTML_BODY_OPEN + "<pre>"
 HTML_FOOTER_STR = "</pre>\n</body>\n</html>"
 
 HTML_HEADER_SCRIPT_SECTION = \
@@ -1544,7 +1552,7 @@ HTML_EXPAND_POWER_UPS_CHECKBOX_TAG = "<input type=\"checkbox\" id=\"expandPowerU
 HTML_HEAD_FOLDING_LINKS = \
   "<link rel='stylesheet' id='symple_shortcode_styles-css'  href='symple_shortcodes_styles.css' type='text/css' media='all' />\n"
 
-HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n<body>\n<pre>"
+HTML_SCRIPT_SECTION_FOOTER = "</script>\n" + HTML_HEAD_FOLDING_LINKS + "</head>\n" + HTML_BODY_OPEN + "<pre>"
 
 HTML_FOOTER_NO_PRE = "</body>\n</html>"
 
