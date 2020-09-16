@@ -4129,6 +4129,106 @@ allPlayersPage.write(ezstatslib.GET_ALLPLAYERS_DUELS_TABLE_SLIDER_SCRIPT(maxPlay
 allPlayersPage.write(ezstatslib.HTML_FOOTER_NO_PRE)    
     
     
+    
+# all achievements page    
+allAchievementsPagePath = ezstatslib.REPORTS_FOLDER + ezstatslib.ALLACHIEVEMENTS_FILE_NAME    
+
+allachievements = []
+for key in ezstatslib.AchievementType.__dict__.keys():
+    if key != "__dict__" and key != "__doc__" and key != "__module__"and key != "__weakref__":
+        exec("allachievements.append(  ezstatslib.Achievement(ezstatslib.AchievementType.%s, \"\" ) )" % (key))
+
+# sort by id
+allachievements = sorted(allachievements, key=lambda x: (x.achtype), reverse=False)        
+
+playersAchs = []
+playersAchs.append([])
+
+basicAchs = []
+advanceAchs = []
+rareAchs = []
+ultrarareAchs = []
+for ach in allachievements:
+    playersAchs.append([])
+    if ach.isImplemented():
+        if ach.achlevel == ezstatslib.AchievementLevel.BASIC_POSITIVE or ach.achlevel == ezstatslib.AchievementLevel.BASIC_NEGATIVE:
+            basicAchs.append(ach)
+        if ach.achlevel == ezstatslib.AchievementLevel.ADVANCE_POSITIVE or ach.achlevel == ezstatslib.AchievementLevel.ADVANCE_NEGATIVE:
+            advanceAchs.append(ach)
+        if ach.achlevel == ezstatslib.AchievementLevel.RARE_POSITIVE or ach.achlevel == ezstatslib.AchievementLevel.RARE_NEGATIVE:
+            rareAchs.append(ach)
+        if ach.achlevel == ezstatslib.AchievementLevel.ULTRA_RARE:
+            ultrarareAchs.append(ach)
+
+for plJson in jsonPlayers:
+    for achID in plJson.achievements.keys():
+        playersAchs[achID].append([plJson, plJson.achievements[achID]])
+        
+# for i in xrange(len(playersAchs)):
+
+    # sortedPlAchs = sorted(playersAchs[i], key=lambda x: (x[1], x[0].rank()), reverse=True)
+
+    # sss = ""
+    # for achPair in sortedPlAchs:
+        # sss += "%s: %d, " % (achPair[0].name, achPair[1])
+    # sss = sss[:-1]
+    # print "id: %d, %s\n" % (i, sss)
+    
+allAchievementsPageText = ""
+allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_WRAPPER_HEADER
+
+sortedAchs = [basicAchs, advanceAchs, rareAchs, ultrarareAchs]
+achsLevelsNames = ["Basic", "Advanced", "Rare", "UltraRare"]
+
+allAchievementsPageFoldingScriptsStr = ""
+
+for i in xrange(len(sortedAchs)):
+    achsHeaderStr = ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_SECTION_HEADER
+    achsHeaderStr = achsHeaderStr.replace("ACH_LEVEL_NAME", achsLevelsNames[i])
+    achsHeaderStr = achsHeaderStr.replace("ACHS_COUNT", "%d" % (len(sortedAchs[i])))
+    achsHeaderStr = achsHeaderStr.replace("ACH_DIV_ID", achsLevelsNames[i].lower())
+    allAchievementsPageText += achsHeaderStr
+
+    achFoldingScriptStr = ezstatslib.HTML_SCRIPT_ALLACHIEVEMENTS_PAGE_FOLDING
+    achFoldingScriptStr = achFoldingScriptStr.replace("ACH_LEVEL_NAME", achsLevelsNames[i])
+    achFoldingScriptStr = achFoldingScriptStr.replace("ACH_DIV_ID", achsLevelsNames[i].lower())
+    allAchievementsPageFoldingScriptsStr += achFoldingScriptStr    
+    
+    for ach in sortedAchs[i]:
+        sortedPlAchs = sorted(playersAchs[ach.achtype], key=lambda x: (x[1], x[0].rank()), reverse=True)
+    
+        achCardText = ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_CARD
+        achCardText = achCardText.replace("CARD_IMAGE", ezstatslib.Achievement.generateHtmlEx(ach, extraStyleParams = "margin-left: 14px;margin-top: 14px;"))
+        achCardText = achCardText.replace("CARD_MAIN_TEXT", str(ach.description()))
+        achCardText = achCardText.replace("CARD_TEXT_COLOR", ezstatslib.Achievement.getBorderColor(ach.achlevel))
+        achCardText = achCardText.replace("GOLD_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[0][0].name, sortedPlAchs[0][1]) if len(sortedPlAchs) > 0 else "---")
+        achCardText = achCardText.replace("SILVER_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[1][0].name, sortedPlAchs[1][1]) if len(sortedPlAchs) > 1 else "---")
+        achCardText = achCardText.replace("BRONZE_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[2][0].name, sortedPlAchs[2][1]) if len(sortedPlAchs) > 2 else "---")
+        achCardText = achCardText.replace("CARD_DESCRIPTION", str(ach.description()) + "<hr>" + "<HERE WILL BE FULL DESCRIPTION>")
+        achCardText = achCardText.replace("POSITIVE_VISIBLE", "none" if not ach.isPositive() else "")
+        achCardText = achCardText.replace("NEGATIVE_VISIBLE", "none" if ach.isPositive() else "")
+        allAchievementsPageText += achCardText
+
+
+    allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_DIV_FOOTER
+    
+allAchievementsPagePath = open(allAchievementsPagePath, "w")
+allAchievemensPageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
+allAchievemensPageHeaderStr += allAchievementsPageFoldingScriptsStr
+allAchievemensPageHeaderStr += ezstatslib.HTML_SCRIPT_ALLACHIEVEMENTS_INIT_PAGE
+allAchievemensPageHeaderStr += "</script>\n"
+allAchievemensPageHeaderStr = allAchievemensPageHeaderStr.replace("PAGE_TITLE", "All achievements")
+allAchievemensPageHeaderStr = allAchievemensPageHeaderStr.replace("SLIDER_STYLE", "")
+allAchievementsPagePath.write(allAchievemensPageHeaderStr)
+allAchievementsPagePath.write(ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_STYLE)
+allAchievementsPagePath.write("</head>\n<body onload=\"initPage();\">\n")
+
+allAchievementsPagePath.write(allAchievementsPageText)
+
+# add script section for folding
+allAchievementsPagePath.write(ezstatslib.HTML_BODY_FOLDING_SCRIPT)
+allAchievementsPagePath.write(ezstatslib.HTML_FOOTER_NO_PRE)        
+    
 
 # print "allCDates.size =", len(allCDates)
 

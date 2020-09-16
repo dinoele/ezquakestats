@@ -52,6 +52,7 @@ LOGS_BY_MAP_FILE_NAME = "logs_by_maps.html"
 TOURNAMENT_TABLE_FILE_NAME = "ezquakestats/tournament_table.html"
 TOTALS_FILE_NAME = "totals.html"
 ALLPLAYERS_FILE_NAME = "allplayers.html"
+ALLACHIEVEMENTS_FILE_NAME = "allachievements.html"
 REPORTS_FOLDER = "../";
 
 NEW_GIF_TAG = "<img src=\"new2.gif\" alt=\"New\" style=\"width:48px;height:36px;\">";
@@ -2314,7 +2315,338 @@ HTML_SCRIPT_ALL_PLAYERS_RATING_TABLE_ROW = \
 "</td>\n" \
 "</tr>\n"
   
-  
+# =========================================================================================================================================================      
+
+HTML_ALLACHIEVEMENTS_PAGE_STYLE = \
+"<style>\n" \
+".abs,\n" \
+"h2:after,\n" \
+".cards .card figcaption,\n" \
+".cards .card initialcaption,\n" \
+".cards .card:after,\n" \
+".news .card figcaption,\n" \
+".news .card:after,\n" \
+".news .article figcaption {\n" \
+"  position: absolute;\n" \
+"}\n" \
+".rel,\n" \
+"h2,\n" \
+"h2 strong,\n" \
+".cards .card,\n" \
+".news .card,\n" \
+".news .article {\n" \
+"  position: relative;\n" \
+"}\n" \
+"\n" \
+".rel,\n" \
+"h3,\n" \
+".cards .card,\n" \
+".news .card,\n" \
+".news .article {\n" \
+"  position: relative;\n" \
+"}\n" \
+"\n" \
+".fix {\n" \
+"  position: fixed;\n" \
+"}\n" \
+".dfix {\n" \
+"  display: inline;\n" \
+"}\n" \
+".dib {\n" \
+"  display: inline-block;\n" \
+"}\n" \
+".db {\n" \
+"  display: block;\n" \
+"}\n" \
+".dn {\n" \
+"  display: none;\n" \
+"}\n" \
+".df,\n" \
+".cards,\n" \
+".news {\n" \
+"  display: flex;\n" \
+"}\n" \
+".dif {\n" \
+"  display: inline-flex;\n" \
+"}\n" \
+".dg {\n" \
+"  display: grid;\n" \
+"}\n" \
+".dig {\n" \
+"  display: inline-grid;\n" \
+"}\n" \
+".vm,\n" \
+"h2,\n" \
+"h2 strong,\n" \
+"h2 span {\n" \
+"  vertical-align: middle;\n" \
+"}\n" \
+"body {\n" \
+"  background: #24282f;\n" \
+"  font-family: 'Alegreya Sans';\n" \
+"}\n" \
+".wrapper {\n" \
+"  padding: 15px;\n" \
+"}\n" \
+"h2 {\n" \
+"  padding: 10px;\n" \
+"  padding-left: 15px;\n" \
+"  color: #ccc;\n" \
+"  margin: 0;\n" \
+"}\n" \
+"\n" \
+"h3 {\n" \
+"    padding: 8px;\n" \
+"    padding-left: 20px;\n" \
+"    align-content: center;\n" \
+"    text-align: center;\n" \
+"    vertical-align: top;\n" \
+"    font-size: 22px;\n" \
+"}\n" \
+"\n" \
+"h2 strong {\n" \
+"  z-index: 2;\n" \
+"  background: #24282f;\n" \
+"  padding: 4px 8px;\n" \
+"}\n" \
+"h2 span {\n" \
+"  font-size: 0.7em;\n" \
+"  color: #aaa;\n" \
+"  margin-left: 10px;\n" \
+"}\n" \
+"h2:after {\n" \
+"  content: '';\n" \
+"  z-index: 1;\n" \
+"  bottom: 50%;\n" \
+"  margin-bottom: -2px;\n" \
+"  height: 2px;\n" \
+"  left: 0;\n" \
+"  right: 0;\n" \
+"  background: #373d47;\n" \
+"}\n" \
+".cards,\n" \
+".news {\n" \
+"  flex-flow: row wrap;\n" \
+"}\n" \
+".cards .card,\n" \
+".news .card {\n" \
+"  margin: 15px;\n" \
+"  width: 170px;\n" \
+"  height: 440px;\n" \
+"  overflow: hidden;\n" \
+"  box-shadow: 0 25px 20px rgba(0,0,0,1.8);\n" \
+"  transform-origin: center top;\n" \
+"  transform-style: preserve-3d;\n" \
+"  transform: translateZ(0);\n" \
+"  transition: 0.3s;\n" \
+"}\n" \
+".cards .card img,\n" \
+".news .card img {\n" \
+"  width: 150px;\n" \
+"  vertical-align: center;\n" \
+"}\n" \
+".cards .card figcaption,\n" \
+".news .card figcaption {\n" \
+"bottom: 0;\n" \
+"    left: 0;\n" \
+"    right: 0;\n" \
+"    padding: 20px;\n" \
+"    padding-bottom: 30px;\n" \
+"    font-size: 15px;\n" \
+"    background: none;\n" \
+"    color: #fff;\n" \
+"    transform: translateY(100%);\n" \
+"    transition: 0.3s;\n" \
+"    text-align: center;\n" \
+"}\n" \
+"\n" \
+".cards .card initialcaption\n" \
+"{\n" \
+"bottom: 0;\n" \
+"    left: 0;\n" \
+"    right: 0;\n" \
+"    padding: 14px;\n" \
+"    padding-bottom: 10px;\n" \
+"    font-size: 17px;\n" \
+"    background: none;\n" \
+"    color: #fff;\n" \
+"    transform: translateY(0%);\n" \
+"    transition: 0.3s;\n" \
+"    text-align: center;\n" \
+"}\n" \
+"\n" \
+".cards .card:after,\n" \
+".news .card:after {\n" \
+"  content: '';\n" \
+"  z-index: 10;\n" \
+"  width: 200%;\n" \
+"  height: 100%;\n" \
+"  top: -90%;\n" \
+"  left: -50px;\n" \
+"  opacity: 0.1;\n" \
+"  transform: rotate(45deg);\n" \
+"  background: linear-gradient(to top, transparent, #fff 25%, rgba(255,255,255,0.5));\n" \
+"  transition: 1.0s;\n" \
+"}\n" \
+".cards .card:hover,\n" \
+".news .card:hover,\n" \
+".cards .card:focus,\n" \
+".news .card:focus,\n" \
+".cards .card:active,\n" \
+".news .card:active {\n" \
+"  box-shadow: 0 8px 16px 10px rgba(0,0,0,0.9);\n" \
+"  transform: translateY(-7px) scale(1.07) rotateX(5deg);\n" \
+"}\n" \
+"\n" \
+".cards .card:hover figcaption,\n" \
+".news .card:hover figcaption,\n" \
+".cards .card:focus figcaption,\n" \
+".news .card:focus figcaption,\n" \
+".cards .card:active figcaption,\n" \
+".news .card:active figcaption {\n" \
+"  transform: none;\n" \
+"}\n" \
+"\n" \
+".cards .card:hover initialcaption,\n" \
+".cards .card:focus initialcaption,\n" \
+".cards .card:active initialcaption {\n" \
+"  transform: translateY(100%);\n" \
+"}\n" \
+"\n" \
+"\n" \
+".cards .card:hover:after,\n" \
+".news .card:hover:after,\n" \
+".cards .card:focus:after,\n" \
+".news .card:focus:after,\n" \
+".cards .card:active:after,\n" \
+".news .card:active:after {\n" \
+"  transform: rotate(55deg);\n" \
+"  top: -60%;\n" \
+"  opacity: 0.15;\n" \
+"}\n" \
+"\n" \
+".cards .card:hover:after initialcaption,\n" \
+".cards .card:focus:after initialcaption,\n" \
+".cards .card:active:after initialcaption\n" \
+"{\n" \
+"  transform: rotate(85deg);\n" \
+"  top: -70%;\n" \
+"  opacity: 0.15;\n" \
+"}\n" \
+"\n" \
+".news .article {\n" \
+"  overflow: hidden;\n" \
+"  width: 350px;\n" \
+"  height: 235px;\n" \
+"  margin: 20px;\n" \
+"}\n" \
+".news .article img {\n" \
+"  width: 100%;\n" \
+"  min-height: 100%;\n" \
+"  transition: 0.2s;\n" \
+"}\n" \
+".news .article figcaption {\n" \
+"  font-size: 14px;\n" \
+"  text-shadow: 0 1px 0 rgba(51,51,51,0.3);\n" \
+"  color: #fff;\n" \
+"  left: 0;\n" \
+"  right: 0;\n" \
+"  top: 0;\n" \
+"  bottom: 0;\n" \
+"  padding: 40px;\n" \
+"  box-shadow: 0 0 2px rgba(0,0,0,0.2);\n" \
+"  background: rgba(6,18,53,0.6);\n" \
+"  opacity: 0;\n" \
+"  transform: scale(1.15);\n" \
+"  transition: 0.2s;\n" \
+"}\n" \
+".news .article figcaption h3 {\n" \
+"  color: #3792e3;\n" \
+"  font-size: 16px;\n" \
+"  margin-bottom: 0;\n" \
+"  font-weight: bold;\n" \
+"}\n" \
+".news .article:hover img,\n" \
+".news .article:focus img,\n" \
+".news .article:active img {\n" \
+"  filter: blur(3px);\n" \
+"  transform: scale(0.97);\n" \
+"}\n" \
+".news .article:hover figcaption,\n" \
+".news .article:focus figcaption,\n" \
+".news .article:active figcaption {\n" \
+"  opacity: 1;\n" \
+"  transform: none;\n" \
+"}\n" \
+"</style>\n" 
+
+HTML_SCRIPT_ALLACHIEVEMENTS_PAGE_FOLDING = \
+" function showHideACH_LEVEL_NAME(t = 400) {\n" \
+" $('#ACH_DIV_ID').slideToggle(t);\n" \
+" }\n"
+
+HTML_SCRIPT_ALLACHIEVEMENTS_INIT_PAGE = \
+" function initPage() {\n" \
+" showHideAdvanced(0.5);\n" \
+" showHideRare(0.5);\n" \
+" showHideUltraRare(0.5);\n" \
+" }\n"
+
+HTML_ALLACHIEVEMENTS_PAGE_WRAPPER_HEADER = \
+"<div class=\"wrapper\">\n" 
+
+HTML_ALLACHIEVEMENTS_PAGE_SECTION_HEADER = \
+"  <h2 onclick=\"showHideACH_LEVEL_NAME()\"><strong>ACH_LEVEL_NAME<span>( ACHS_COUNT )</span></strong></h2>\n" \
+"  <div id=\"ACH_DIV_ID\" class=\"cards\">\n"
+
+HTML_ALLACHIEVEMENTS_PAGE_DIV_FOOTER = \
+"  </div>\n"
+
+HTML_ALLACHIEVEMENTS_PAGE_CARD = \
+"<figure class=\"card\">\n" \
+"    CARD_IMAGE\n" \
+"    <initialcaption>\n" \
+"    <h3 style=\"color: CARD_TEXT_COLOR\">CARD_MAIN_TEXT</h3>\n" \
+"    <table>\n" \
+"    <tr>\n" \
+"        <td style=\"width:10%;text-align:right\">\n" \
+"            <img src=\"ezquakestats\img\\total_page_imgs\medal1_noBG.png\" style=\"width: 22px;\" alt=\"#1\" title=\"#1\">\n" \
+"        </td>\n" \
+"        <td style=\"width:3%;\"></td>\n" \
+"        <td style=\"width:87%; text-align:left; vertical-align: top; font-size: 11px; font-family: cursive;\">\n" \
+"            <div style=\"margin-top: 3px\">GOLD_PLAYER_NAME</div>\n" \
+"        </td>\n" \
+"    </tr>\n" \
+"    <tr>\n" \
+"        <td style=\"width:10%;text-align:right\">\n" \
+"            <img src=\"ezquakestats\img\\total_page_imgs\medal2_noBG.png\" style=\"width: 22px;\" alt=\"#2\" title=\"#2\">\n" \
+"        </td>\n" \
+"        <td style=\"width:3%;\"></td>\n" \
+"        <td style=\"width:87%; text-align:left; vertical-align: top; font-size: 11px; font-family: cursive;\">\n" \
+"            <div style=\"margin-top: 3px\">SILVER_PLAYER_NAME</div>\n" \
+"        </td>    \n" \
+"    </tr>\n" \
+"    <tr>\n" \
+"        <td style=\"width:10%;text-align:right\">\n" \
+"            <img src=\"ezquakestats\img\\total_page_imgs\medal3_noBG.png\" style=\"width: 22px;\" alt=\"#2\" title=\"#2\">\n" \
+"        </td>\n" \
+"        <td style=\"width:3%;\"></td>\n" \
+"        <td style=\"width:87%; text-align:left; vertical-align: top; font-size: 11px; font-family: cursive;\">\n" \
+"            <div style=\"margin-top: 3px\">BRONZE_PLAYER_NAME</div>\n" \
+"        </td>\n" \
+"    </tr>\n" \
+"    </table>\n" \
+"    </initialcaption>\n" \
+"    <figcaption>\n" \
+"        CARD_DESCRIPTION\n" \
+"        <hr>\n" \
+"        <p style=\"font-size: 11px; color: #459939; display: POSITIVE_VISIBLE\">Positive</p>\n" \
+"        <p style=\"font-size: 11px; color: #D63838; display: NEGATIVE_VISIBLE\">Negative</p>\n" \
+"    </figcaption>\n" \
+"</figure>\n" \
+
+
+# =========================================================================================================================================================      
   
 BG_COLOR_GRAY  = "#bfbfbf"
 BG_COLOR_LIGHT_GRAY = "#e6e6e6"
@@ -3854,7 +4186,7 @@ class Achievement:
                % (self.getImgSrc(path), self.description(), self.description(), self.extra_info, size, size, Achievement.getBorderColor(self.achlevel), radius, radius, radius, shadowSize, shadowSize, shadowIntensity, extraStyleParams)
                
         if self.isNew():
-            res += Achievement.generateNewIconHtml()
+            res += Achievement.generateNewIconHtml(extraStyleParams = extraStyleParams)
         
         res += "</div>"
         return res
@@ -3894,9 +4226,9 @@ class Achievement:
         return res
     
     @staticmethod
-    def generateNewIconHtml(path = "ezquakestats/img/"):
-        return "<img style=\"position: absolute; top: 0px; right: 88px; width: 59px; height: 39px; border: 0px solid black;\" src=\"%snew-icon.png\" >" \
-                %(path)
+    def generateNewIconHtml(path = "ezquakestats/img/", extraStyleParams = ""):
+        return "<img style=\"position: absolute; top: 0px; right: 88px; width: 59px; height: 39px; border: 0px solid black;%s\" src=\"%snew-icon.png\" >" \
+                % (extraStyleParams, path)
     
     def isNew(self, lastAchievementsCount = 4):
         allachievements = []
@@ -3908,6 +4240,18 @@ class Achievement:
         allachievements = sorted(allachievements, key=lambda x: (x.achtype), reverse=False)
         maxVal = allachievements[len(allachievements)-1].achtype
         return self.achtype >= maxVal - lastAchievementsCount
+        
+    def isImplemented(self):
+        if self.achtype == AchievementType.GREAT_FINISH or self.achtype == AchievementType.OVERTIME_LOOSERS:
+            return False
+        else:
+            return True
+    
+    def isPositive(self):
+        return self.achlevel == AchievementLevel.BASIC_POSITIVE   or \
+               self.achlevel == AchievementLevel.ADVANCE_POSITIVE or \
+               self.achlevel == AchievementLevel.RARE_POSITIVE    or \
+               self.achlevel == AchievementLevel.ULTRA_RARE
     
     def description(self):
         if self.achtype == AchievementType.LONG_LIVE:
