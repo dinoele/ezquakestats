@@ -80,7 +80,7 @@ HTML_HEADER_SCRIPT_SECTION = \
     "<link rel=\"icon\" type=\"image/png\" href=\"ezquakestats/img/quake-icon.png\" />" \
     "<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js\"></script>\n" \
     "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" \
-    "<link href=\"http://seiyria.com/bootstrap-slider/css/bootstrap-slider.css\" rel=\"stylesheet\">\n"\
+    "<link href=\"https://seiyria.com/bootstrap-slider/css/bootstrap-slider.css\" rel=\"stylesheet\">\n"\
     "<style>\n" \
     "SLIDER_STYLE" \
     "</style>\n" \
@@ -1560,8 +1560,8 @@ HTML_FOOTER_NO_PRE = "</body>\n</html>"
 HTML_PRE_CLOSE_TAG = "</pre>\n"
 
 HTML_BODY_FOLDING_SCRIPT = \
-  "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/dependencies/js/jquery.min.js\"></script>\n" \
-  "<script type='text/javascript' src=\"http://seiyria.com/bootstrap-slider/js/bootstrap-slider.js\"></script>\n" \
+  "<script type='text/javascript' src=\"https://seiyria.com/bootstrap-slider/dependencies/js/jquery.min.js\"></script>\n" \
+  "<script type='text/javascript' src=\"https://seiyria.com/bootstrap-slider/js/bootstrap-slider.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/highcharts.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/highcharts-3d.js\"></script>\n" \
   "<script src=\"https://code.highcharts.com/modules/exporting.js\"></script>\n" \
