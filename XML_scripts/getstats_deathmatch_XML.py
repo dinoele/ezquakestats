@@ -295,14 +295,13 @@ for elem in damageElements:
     # print "---------------------------------------------"
 
 
-
 for elem in deathElements:
     if elem.isSuicide:
         for pl in xmlPlayers:
             if pl.name == elem.attacker:
                 pl.suicidesXML += 1
                 pl.lifetimeXML += elem.lifetime
-                if pl.firstDeathXML == "":
+                if pl.firstDeathXML.time == -1:
                     pl.firstDeathXML = elem
                     pl.connectionTimeXML = pl.firstDeathXML.time - pl.firstDeathXML.lifetime
                 pl.lastDeathXML = elem
@@ -319,12 +318,10 @@ for elem in deathElements:
             if pl.name == elem.target:
                 pl.deathsXML += 1
                 pl.lifetimeXML += elem.lifetime
-                if pl.firstDeathXML == "":
+                if pl.firstDeathXML.time == -1:
                     pl.firstDeathXML = elem
                     pl.connectionTimeXML = pl.firstDeathXML.time - pl.firstDeathXML.lifetime
                 pl.lastDeathXML = elem
-
-
 
 for elem in pickmapitemElements:
     # #print "%f  %s -> %s  \"%s\"  %f" % (elem.time, elem.attacker, elem.target, elem.type, elem.lifetime)
