@@ -2943,6 +2943,10 @@ HTML_ALLACHIEVEMENTS_PAGE_CARD_END = \
 "        <hr>\n" \
 "        <p style=\"font-size: 11px; color: #459939; display: POSITIVE_VISIBLE\">Positive</p>\n" \
 "        <p style=\"font-size: 11px; color: #D63838; display: NEGATIVE_VISIBLE\">Negative</p>\n" \
+"        <div style=\"display: SECTION_SPECIFIC_VISIBLE\">\n" \
+"          <p style=\"font-size: 11px; color: #BEBEBE; display: TEAM_SPECIFIC_VISIBLE\">#TeamSpecific</p>\n" \
+"          <p style=\"font-size: 11px; color: #BEBEBE; display: DM_SPECIFIC_VISIBLE\">#DeathmatchSpecific</p>\n" \
+"        </div>\n" \
 "    </figcaption>\n" \
 "</figure>\n" \
 
@@ -4502,6 +4506,8 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                                             )
 
 AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
+
+AchievementGameType = enum(BOTH=0, TEAM_SPECIFIC=1, DEATHMATCH_SPECIFIC=2)
                                             
 class Achievement:
     # constants
@@ -4628,6 +4634,22 @@ class Achievement:
                self.achlevel == AchievementLevel.RARE_POSITIVE    or \
                self.achlevel == AchievementLevel.ULTRA_RARE
     
+    def gameType(self):
+        if self.achtype == AchievementType.TEAMMATES_FAN           or \
+           self.achtype == AchievementType.LIKE_AN_ANGEL           or \
+           self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS or \
+           self.achtype == AchievementType.TEAM_BEST_FRIEND_KILLER:
+            return AchievementGameType.TEAM_SPECIFIC
+            
+        elif self.achtype == AchievementType.OVERTIME          or \
+             self.achtype == AchievementType.SECOND_OVERTIME   or \
+             self.achtype == AchievementType.KILLSTEAL_STEALER or \
+             self.achtype == AchievementType.KILLSTEAL_VICTIM:
+            return AchievementGameType.DEATHMATCH_SPECIFIC
+            
+        else:
+            return AchievementGameType.BOTH
+    
     def shortName(self):
         if self.achtype == AchievementType.LONG_LIVE:
             return "Long Liver"
@@ -4706,9 +4728,9 @@ class Achievement:
         if self.achtype == AchievementType.NO_SUICIDES:
             return "Life lover"
         if self.achtype == AchievementType.UNIVERSAL_SOLDIER:
-            return 'Universal soldier'
+            return "Universal soldier"
         if self.achtype == AchievementType.MULTIPLE_PENETRATION:
-            return 'Multiple penetration'
+            return "Multiple penetration"
         if self.achtype == AchievementType.LONG_LIVE_KING:
             return "Royal Long Liver"
         if self.achtype == AchievementType.HULK_SMASH:
@@ -4957,8 +4979,7 @@ class Achievement:
             return "Honestly earned kills were stolen a maximum of all players and more than %d times during the match." % (Achievement.KillstealVictimValue)
         if self.achtype == AchievementType.FAST_AND_FURIOUS:
             return "Average and maximum speed are a maximum of all players."
-            
-    # AchievementLevel = enum(UNKNOWN=0, BASIC_POSITIVE=1, BASIC_NEGATIVE=2, ADVANCE_POSITIVE=3, ADVANCE_NEGATIVE=5, RARE_POSITIVE=6, RARE_NEGATIVE=7, ULTRA_RARE=8)
+
     def level(self):
         if self.achtype == AchievementType.RED_ARMOR_EATER    or \
            self.achtype == AchievementType.GREEN_ARMOR_EATER  or \

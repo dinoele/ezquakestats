@@ -4250,6 +4250,14 @@ for i in xrange(len(sortedAchs)):
         achCardText = achCardText.replace("CARD_DESCRIPTION", str(ach.description()) + "<hr>" + ach.conditionsDescription())
         achCardText = achCardText.replace("POSITIVE_VISIBLE", "none" if not ach.isPositive() else "")
         achCardText = achCardText.replace("NEGATIVE_VISIBLE", "none" if ach.isPositive() else "")
+        
+        if ach.gameType() == ezstatslib.AchievementGameType.BOTH:
+            achCardText = achCardText.replace("SECTION_SPECIFIC_VISIBLE", "none")
+        else:
+            achCardText = achCardText.replace("SECTION_SPECIFIC_VISIBLE", "")
+            achCardText = achCardText.replace("TEAM_SPECIFIC_VISIBLE", "none" if not ach.gameType() == ezstatslib.AchievementGameType.TEAM_SPECIFIC else "")
+            achCardText = achCardText.replace("DM_SPECIFIC_VISIBLE", "none" if not ach.gameType() == ezstatslib.AchievementGameType.DEATHMATCH_SPECIFIC else "")
+        
         allAchievementsPageText += achCardText
     
     allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_DIV_FOOTER
