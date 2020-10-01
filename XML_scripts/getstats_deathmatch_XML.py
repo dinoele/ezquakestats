@@ -4175,6 +4175,7 @@ for plJson in jsonPlayers:
     # print "id: %d, %s\n" % (i, sss)
     
 allAchievementsPageText = ""
+allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_HEADER
 allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_WRAPPER_HEADER
 
 sortedAchs = [basicAchs, advanceAchs, rareAchs, ultrarareAchs]
@@ -4197,20 +4198,44 @@ for i in xrange(len(sortedAchs)):
     for ach in sortedAchs[i]:
         sortedPlAchs = sorted(playersAchs[ach.achtype], key=lambda x: (x[1], x[0].rank()), reverse=True)
     
-        achCardText = ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_CARD
+        if options.noLinks:
+            achCardText = ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_CARD_BEGIN + "<br><br><br><br>" + ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_CARD_END
+        else:
+            achCardText = ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_CARD_BEGIN + ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_CARD_TABLE + ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_CARD_END
         achCardText = achCardText.replace("CARD_IMAGE", ezstatslib.Achievement.generateHtmlEx(ach, extraStyleParams = "margin-left: 14px;margin-top: 14px;"))
-        achCardText = achCardText.replace("CARD_MAIN_TEXT", str(ach.description()))
+        
+        shortNameStr = ach.shortName()
+        shortNameWords = ach.shortName().split(" ")
+        endBRCount = 2 - len(shortNameWords)
+        if len(shortNameWords) <= 3:
+            shortNameStr = ""
+            for i in xrange(len(shortNameWords)):
+                shortNameStr += shortNameWords[i]
+                if len(shortNameWords[i]) > 3:
+                    shortNameStr += "<br>"
+                else:
+                    shortNameStr += " "
+                    endBRCount += 1
+
+        for i in xrange(endBRCount):
+            shortNameStr += "<br>"
+                    
+        achCardText = achCardText.replace("CARD_MAIN_TEXT", shortNameStr)
+        
         achCardText = achCardText.replace("CARD_TEXT_COLOR", ezstatslib.Achievement.getBorderColor(ach.achlevel))
-        achCardText = achCardText.replace("GOLD_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[0][0].name, sortedPlAchs[0][1]) if len(sortedPlAchs) > 0 else "---")
-        achCardText = achCardText.replace("SILVER_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[1][0].name, sortedPlAchs[1][1]) if len(sortedPlAchs) > 1 else "---")
-        achCardText = achCardText.replace("BRONZE_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[2][0].name, sortedPlAchs[2][1]) if len(sortedPlAchs) > 2 else "---")
-        achCardText = achCardText.replace("CARD_DESCRIPTION", str(ach.description()) + "<hr>" + "<HERE WILL BE FULL DESCRIPTION>")
+        
+        if not options.noLinks:
+            achCardText = achCardText.replace("GOLD_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[0][0].name, sortedPlAchs[0][1]) if len(sortedPlAchs) > 0 else "---")
+            achCardText = achCardText.replace("SILVER_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[1][0].name, sortedPlAchs[1][1]) if len(sortedPlAchs) > 1 else "---")
+            achCardText = achCardText.replace("BRONZE_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[2][0].name, sortedPlAchs[2][1]) if len(sortedPlAchs) > 2 else "---")
+            
+        achCardText = achCardText.replace("CARD_DESCRIPTION", str(ach.description()) + "<hr>" + ach.conditionsDescription())
         achCardText = achCardText.replace("POSITIVE_VISIBLE", "none" if not ach.isPositive() else "")
         achCardText = achCardText.replace("NEGATIVE_VISIBLE", "none" if ach.isPositive() else "")
         allAchievementsPageText += achCardText
-
-
+    
     allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_DIV_FOOTER
+    allAchievementsPageText += "<br>\n"
     
 allAchievementsPagePath = open(allAchievementsPagePath, "w")
 allAchievemensPageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
