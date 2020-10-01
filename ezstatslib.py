@@ -4901,8 +4901,8 @@ class Achievement:
             return "Hit more than %d rockets and DirectHit is more than %d per cent." % (Achievement.SniperRLShotsValue, Achievement.SniperDHPercentsValue)
         if self.achtype == AchievementType.RAINBOW_FLAG:
             return "Put on more than %d armors of each of three colors during the match." % (Achievement.RainbowFlagArmorValue)
-        if self.achtype == AchievementType.PERSONAL_STALKER: # TODO
-            return "Personal stalker"
+        if self.achtype == AchievementType.PERSONAL_STALKER:
+            return "One specific enemy kills count is more all other kills."
         if self.achtype == AchievementType.FINISH_GURU:
             return "Raised for more than %d places up during the last minute and won the match (match time should be more than %d minutes)." % (Achievement.FinishGuruValue, Achievement.FinishMatchMinMinutesValue)
         if self.achtype == AchievementType.SELF_DESTRUCTOR:
@@ -4913,7 +4913,7 @@ class Achievement:
             return "A maximum of all players and more than %d deaths from teammates during the match." % (Achievement.MaxTeamdeathValue)
         if self.achtype == AchievementType.LUMBERJACK:
             return "More than %d axe kills." % (Achievement.LumberjackValue)
-        if self.achtype == AchievementType.ELECTROMASTER:   # TODO
+        if self.achtype == AchievementType.ELECTROMASTER:
             return "Laser gun: more than %d per cent of all kills OR %d kills + more than %d per cent of all kills (should play at least half of the match time)." % (Achievement.ElectomasterNoConditionPercent, Achievement.ElectomasterKillsConditionValue, Achievement.ElectomasterKillsConditionPercent)
         if self.achtype == AchievementType.WHITEWASH:
             return "Duel with the enemy is fully won with no deaths (both players should play at least half of the match time)."
