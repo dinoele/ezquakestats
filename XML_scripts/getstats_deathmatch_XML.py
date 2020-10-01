@@ -67,6 +67,7 @@ parser.add_option("--fjson",   action="store",       dest="inputFileJSON",      
 parser.add_option("--league", action="store",   dest="leagueName",     type="str",  metavar="LEAGUE",   help="")
 parser.add_option("--scripts", action="store_false",   dest="withScripts", default=True,   help="")
 parser.add_option("--net-copy", action="store_true",   dest="netCopy", default=False,   help="")
+parser.add_option("--no-links", action="store_true",   dest="noLinks", default=False,   help="")
 
 # TODO add -q option: without output at all
 
@@ -1340,11 +1341,13 @@ resultString += "map: " + mapName + "\n"
 resultString += "\n"
 
 for pl in allplayersByFrags:
-    plLine = htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name), isBreak=False)
-    plLine += ("{0:%ds}" % (plNameMaxLen + 5 - len(pl.name))).format(" ")
-    #plLine += ("{0:%ds} {1:3d}    ({2:s})\n" % (plNameMaxLen)).format("NAME", pl.calcDelta(), pl.getFormatedStats_noTeamKills())
-    plLine += ("{0:3d}    ({1:s})\n").format(pl.calcDelta(), pl.getFormatedStats_noTeamKills())
-    resultString += plLine
+    if not options.noLinks:
+        plLine = htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name), isBreak=False)
+        plLine += ("{0:%ds}" % (plNameMaxLen + 5 - len(pl.name))).format(" ")
+        plLine += ("{0:3d}    ({1:s})\n").format(pl.calcDelta(), pl.getFormatedStats_noTeamKills())
+        resultString += plLine
+    else:
+        resultString += ("{0:%ds} {1:3d}    ({2:s})\n" % (plNameMaxLen)).format(pl.name, pl.calcDelta(), pl.getFormatedStats_noTeamKills())
 
 # if options.withScripts:
 #     resultString += "</pre>MAIN_STATS_PLACE\n<pre>"
@@ -1509,7 +1512,7 @@ htmlTable = HTML.Table(header_row=headerRow, border="2", cellspacing="3", col_al
                        style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12pt;")
 
 for pl in allplayersByFrags:
-    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name)),
+    tableRow = HTML.TableRow(cells=[htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name)) if not options.noLinks else ezstatslib.htmlBold(pl.name),
                                     ezstatslib.htmlBold(pl.frags()),
                                     ezstatslib.htmlBold(pl.kills),
                                     ezstatslib.htmlBold(pl.deaths)])
@@ -2597,7 +2600,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
     
     for pl in sortedPlayers:
         if len(pl.achievements) != 0:
-            tableRow = HTML.TableRow(cells=[ HTML.TableCell(htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name), isBreak=False),
+            tableRow = HTML.TableRow(cells=[ HTML.TableCell(htmlLink(ezstatslib.escapePlayerName(pl.name) + ".html", linkText=ezstatslib.htmlBold(pl.name), isBreak=False) if not options.noLinks else ezstatslib.htmlBold(pl.name),
                                                             align="center", width=cellWidth) ])  # TODO player name cell width
             achIds = pl.getAchievementsIds()
             i = 0
