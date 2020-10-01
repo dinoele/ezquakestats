@@ -2756,7 +2756,7 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
       # ['(75,55]', 26.78],
       # ['(55,0]', 10.71],
 
-        rlSkillFunctionStr = rlSkillFunctionStr.replace("CHART_TITLE", "%s<br>(%d / %d)" % (pl.name, cnt, pl.rl_attacks))
+        rlSkillFunctionStr = rlSkillFunctionStr.replace("CHART_TITLE", "%s<br>(%d%s)" % (pl.name, cnt, " / %d" % (pl.rl_attacks) if pl.rl_attacks != -1 and pl.rl_attacks > cnt*1.3 else ""))
         rlSkillFunctionStr = rlSkillFunctionStr.replace("ADD_ROWS", rlSkillRowsStr)
         f.write(rlSkillFunctionStr)
     # <-- highcharts RL skill
