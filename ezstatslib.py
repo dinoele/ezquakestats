@@ -2948,7 +2948,7 @@ HTML_ALLACHIEVEMENTS_PAGE_CARD_END = \
 
 HTML_ALLACHIEVEMENTS_PAGE_CARD_TABLE = \
 "    <table>\n" \
-"    <tr>\n" \
+"    <tr style=\"visibility:GOLD_PLAYER_VISIBILITY\">\n" \
 "        <td style=\"width:10%;text-align:right\">\n" \
 "            <img src=\"ezquakestats\img\\total_page_imgs\medal1_noBG.png\" style=\"width: 22px;\" alt=\"#1\" title=\"#1\">\n" \
 "        </td>\n" \
@@ -2957,7 +2957,7 @@ HTML_ALLACHIEVEMENTS_PAGE_CARD_TABLE = \
 "            <div style=\"margin-top: 1px; margin-left: 2px\">GOLD_PLAYER_NAME</div>\n" \
 "        </td>\n" \
 "    </tr>\n" \
-"    <tr>\n" \
+"    <tr style=\"visibility:SILVER_PLAYER_VISIBILITY\">\n" \
 "        <td style=\"width:10%;text-align:right\">\n" \
 "            <img src=\"ezquakestats\img\\total_page_imgs\medal2_noBG.png\" style=\"width: 22px;\" alt=\"#2\" title=\"#2\">\n" \
 "        </td>\n" \
@@ -2966,7 +2966,7 @@ HTML_ALLACHIEVEMENTS_PAGE_CARD_TABLE = \
 "            <div style=\"margin-top: 1px; margin-left: 2px\">SILVER_PLAYER_NAME</div>\n" \
 "        </td>    \n" \
 "    </tr>\n" \
-"    <tr>\n" \
+"    <tr style=\"visibility:BRONZE_PLAYER_VISIBILITY\">\n" \
 "        <td style=\"width:10%;text-align:right\">\n" \
 "            <img src=\"ezquakestats\img\\total_page_imgs\medal3_noBG.png\" style=\"width: 22px;\" alt=\"#2\" title=\"#2\">\n" \
 "        </td>\n" \

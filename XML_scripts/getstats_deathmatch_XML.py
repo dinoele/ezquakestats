@@ -4225,9 +4225,27 @@ for i in xrange(len(sortedAchs)):
         achCardText = achCardText.replace("CARD_TEXT_COLOR", ezstatslib.Achievement.getBorderColor(ach.achlevel))
         
         if not options.noLinks:
-            achCardText = achCardText.replace("GOLD_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[0][0].name, sortedPlAchs[0][1]) if len(sortedPlAchs) > 0 else "---")
-            achCardText = achCardText.replace("SILVER_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[1][0].name, sortedPlAchs[1][1]) if len(sortedPlAchs) > 1 else "---")
-            achCardText = achCardText.replace("BRONZE_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[2][0].name, sortedPlAchs[2][1]) if len(sortedPlAchs) > 2 else "---")
+            if len(sortedPlAchs) > 0:
+                achCardText = achCardText.replace("GOLD_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[0][0].name, sortedPlAchs[0][1]))
+                achCardText = achCardText.replace("GOLD_PLAYER_VISIBILITY", "show")
+                
+                if len(sortedPlAchs) > 1:
+                    achCardText = achCardText.replace("SILVER_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[1][0].name, sortedPlAchs[1][1]))
+                    achCardText = achCardText.replace("SILVER_PLAYER_VISIBILITY", "show")
+                    
+                    if len(sortedPlAchs) > 2:
+                        achCardText = achCardText.replace("BRONZE_PLAYER_NAME", "%s [%d]" % (sortedPlAchs[2][0].name, sortedPlAchs[2][1]))
+                        achCardText = achCardText.replace("BRONZE_PLAYER_VISIBILITY", "show")
+                    else:
+                        achCardText = achCardText.replace("BRONZE_PLAYER_VISIBILITY", "hidden")
+                    
+                else:
+                    achCardText = achCardText.replace("SILVER_PLAYER_VISIBILITY", "hidden")
+                    achCardText = achCardText.replace("BRONZE_PLAYER_VISIBILITY", "hidden")
+            else:
+                achCardText = achCardText.replace("GOLD_PLAYER_VISIBILITY", "hidden")
+                achCardText = achCardText.replace("SILVER_PLAYER_VISIBILITY", "hidden")
+                achCardText = achCardText.replace("BRONZE_PLAYER_VISIBILITY", "hidden")
             
         achCardText = achCardText.replace("CARD_DESCRIPTION", str(ach.description()) + "<hr>" + ach.conditionsDescription())
         achCardText = achCardText.replace("POSITIVE_VISIBLE", "none" if not ach.isPositive() else "")
