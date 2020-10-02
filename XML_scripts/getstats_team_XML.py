@@ -322,7 +322,7 @@ for elem in deathElements:
             if pl.name == elem.attacker:
                 pl.suicidesXML += 1
                 pl.lifetimeXML += elem.lifetime
-                if pl.firstDeathXML == "":
+                if pl.firstDeathXML.time == -1:
                     pl.firstDeathXML = elem
                 pl.lastDeathXML = elem
     else:
@@ -338,7 +338,7 @@ for elem in deathElements:
             if pl.name == elem.target:
                 pl.deathsXML += 1
                 pl.lifetimeXML += elem.lifetime
-                if pl.firstDeathXML == "":
+                if pl.firstDeathXML.time == -1:
                     pl.firstDeathXML = elem
                 pl.lastDeathXML = elem
 
