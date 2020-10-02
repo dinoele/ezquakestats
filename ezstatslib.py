@@ -2315,6 +2315,43 @@ HTML_SCRIPT_ALL_PLAYERS_RATING_TABLE_ROW = \
 "<p>BRONZE_PLAYER_NAME</p>\n" \
 "</td>\n" \
 "</tr>\n"
+
+# =========================================================================================================================================================    
+
+HTML_SCRIPT_PLAYER_PAGE_LIFETIME_STATS_BY_MINUTES_FUNCTION =\
+    "google.charts.setOnLoadCallback(drawLifetimeStatsByMinutes);\n" \
+    "function drawLifetimeStatsByMinutes() {\n" \
+    "var data = google.visualization.arrayToDataTable([\n" \
+    "ADD_HEADER_ROW" \
+    "ADD_STATS_ROWS" \
+    "]);\n" \
+    "\n" \
+    "var options = {\n" \
+    "  isStacked: false,\n" \
+    "  height: 250,\n" \
+    "  \n" \
+    "  legend: { position: 'right', maxLines: 2 },\n" \
+    "  title: \"Avg stats by minutes\"\n" \
+    "};\n" \
+    "\n" \
+    "var chart      = new google.visualization.ColumnChart(document.getElementById('lifetime_stats_by_minutes_div'));\n" \
+    "\n" \
+    "chart.draw(data, options);\n" \
+    "chartTotal.draw(dataTotal, optionsTotal);\n" \
+    "$(\"#kills_by_minutes\").attr(\"class\", \"symple-toggle state-closed\");\n" \
+    "}\n"
+
+HTML_PLAYER_PAGE_LIFETIME_STATS_BY_MINUTES_DIV_TAG = \
+  "<div class=\"wpb_text_column wpb_content_element \">\n" \
+  "<div class=\"wpb_wrapper\">\n" \
+  "  <div class=\"symple-toggle state-open\" id=\"kills_by_minutes\">\n" \
+  "    <h3 class=\"symple-toggle-trigger \">Lifetime stats by minutes</h3>\n" \
+  "    <div class=\"symple-toggle-container symple-clearfix\">\n" \
+  "            <div id=\"lifetime_stats_by_minutes_div\" style=\"width:  100%; height:  300px;\"></div>\n" \
+  "    </div>\n" \
+  "  </div>\n" \
+  "</div>\n" \
+  "</div>\n";
   
 # =========================================================================================================================================================      
 

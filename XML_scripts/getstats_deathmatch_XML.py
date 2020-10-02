@@ -3514,7 +3514,13 @@ for cdate, size, path in sorted(entries, reverse=False):
                             currentJsonMatch.deathStreaks = oo[o]
                         if o == "killStealsDuels":
                             currentJsonPlayer.killStealsDuels = oo[o]
-                            currentJsonMatch.killStealsDuels = oo[o]                            
+                            currentJsonMatch.killStealsDuels = oo[o]
+                        if o == "killsByMinutes":
+                            currentJsonMatch.killsByMinutes = oo[o]
+                        if o == "deathsByMinutes":
+                            currentJsonMatch.deathsByMinutes = oo[o]
+                        if o == "suicidesByMinutes":
+                            currentJsonMatch.suicidesByMinutes = oo[o]                            
                             
                     isFound = False
                     for plJson in jsonPlayers:
@@ -3954,6 +3960,8 @@ for plJson in jsonPlayers:
     
     playerText += "</pre>PLAYERS_ACHIEVEMENTS_PLACE\n<pre>"
     
+    playerText += "</pre>%s\n<pre>" % (ezstatslib.HTML_PLAYER_PAGE_LIFETIME_STATS_BY_MINUTES_DIV_TAG)
+    
     # players achievements -->
     playersAchievementsStr = ezstatslib.HTML_PLAYERS_ACHIEVEMENTS_DIV_TAG    
     cellWidth = "20px"
@@ -4004,8 +4012,54 @@ for plJson in jsonPlayers:
     pageHeaderStr = pageHeaderStr.replace("PAGE_TITLE", "%s stats" % (plJson.name))
     pageHeaderStr = pageHeaderStr.replace("SLIDER_STYLE", "")
     
+    pageHeaderStr += \
+        "google.charts.load('current', {'packages':['corechart', 'bar', 'line', 'timeline']});\n" \
+    
     playerPage.write(pageHeaderStr)
+    
+    # player page kills by minutes -->       
+    playerKillsByMinutesStr = ezstatslib.HTML_SCRIPT_PLAYER_PAGE_LIFETIME_STATS_BY_MINUTES_FUNCTION
+    
+    maxMinutes = -1
+    for match in plJson.matches.values():
+        matchMins = len(match.killsByMinutes)
+        if matchMins >= maxMinutes:
+            maxMinutes = matchMins    
+    
+    killsByMinutes = [0 for i in xrange(maxMinutes)]
+    deathsByMinutes = [0 for i in xrange(maxMinutes)]
+    suicidesByMinutes = [0 for i in xrange(maxMinutes)]
+    matchesPlayedByMinutes = [0 for i in xrange(maxMinutes)]
+        
+    for match in plJson.matches.values():
+        for k in xrange(1,min( len(match.killsByMinutes), len(killsByMinutes) )):
+            killsByMinutes[k] += match.killsByMinutes[k]
+            deathsByMinutes[k] += match.deathsByMinutes[k]
+            suicidesByMinutes[k] += match.suicidesByMinutes[k]
+            matchesPlayedByMinutes[k] += 1
+    
+    print "%s: matchesPlayedByMinutes: %s" % (plJson.name, str(matchesPlayedByMinutes))
+    print "\tkillsByMinutes: %s" % (str(killsByMinutes))
+    
+    for k in xrange(1,len(killsByMinutes)):
+        killsByMinutes[k] = (float(killsByMinutes[k]) / matchesPlayedByMinutes[k]) if matchesPlayedByMinutes[k] != 0 else 0
+        deathsByMinutes[k] = (float(deathsByMinutes[k]) / matchesPlayedByMinutes[k]) if matchesPlayedByMinutes[k] != 0 else 0
+        suicidesByMinutes[k] = (float(suicidesByMinutes[k]) / matchesPlayedByMinutes[k]) if matchesPlayedByMinutes[k] != 0 else 0
+    
+    playerKillsByMinutesHeaderStr = "['Minute','Kills','Deaths','Suicides'],\n"
 
+    playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_HEADER_ROW", playerKillsByMinutesHeaderStr)
+    
+    playerKillsByMinutesRowsStr = ""    
+    for k in xrange(1,len(killsByMinutes)):
+        playerKillsByMinutesRowsStr += "['%d',%f,%f,%f],\n" % (k, killsByMinutes[k], deathsByMinutes[k], suicidesByMinutes[k])
+    playerKillsByMinutesStr = playerKillsByMinutesStr.replace("ADD_STATS_ROWS", playerKillsByMinutesRowsStr)          
+    
+    playerPage.write(playerKillsByMinutesStr)
+    # <-- players kills by minutes
+
+    playerPage.write(ezstatslib.HTML_SCRIPT_ON_PAGE_LOAD_FUNCTION.replace("FUNCTIONS",""))
+    
     playerPage.write(ezstatslib.HTML_SCRIPT_SECTION_FOOTER)
 
     playerPage.write(playerText)
