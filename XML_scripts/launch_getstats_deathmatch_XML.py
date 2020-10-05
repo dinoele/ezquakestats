@@ -59,6 +59,7 @@ print "RES", pathXML
 print "RES", pathTXT
 
 os.system("python getstats_deathmatch_XML.py --league Premier --fxml %s --fjson %s %s" % (pathXML, pathTXT, "--net-copy" if options.netCopy else ""))
+os.system("python generate_common_pages.py")
 
 if not os.path.exists(stat_conf.matches_dir):
     os.system("mkdir %s" % (stat_conf.matches_dir))
