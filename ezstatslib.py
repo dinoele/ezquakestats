@@ -5168,35 +5168,35 @@ class Achievement:
         if self.achtype == AchievementType.LONG_LIVE:
             return path + "ach_long_liver.jpg"
         if self.achtype == AchievementType.SUICIDE_MASTER:
-            return path + "ach_suicide_master.jpg"
+            return path + "ach_suicide_master_noBG.png"   # "ach_suicide_master.jpg"
         if self.achtype == AchievementType.SUICIDE_KING:
             return path + "ach_suicide_king.jpg"
         if self.achtype == AchievementType.DEATH_STREAK_PAIN:
-            return path + "ach_death_pain.jpg"
+            return path + "ach_death_pain_noBG.png"  # "ach_death_pain.jpg"
         if self.achtype == AchievementType.HORRIBLE_FINISH:
             return path + "ach_horrible_finish.jpg"
         if self.achtype == AchievementType.RED_ARMOR_EATER:
-            return path + "ach_ra_eater.jpg"
+            return path + "ach_ra_eater_noBG.png" # "ach_ra_eater.jpg"
         if self.achtype == AchievementType.GREEN_ARMOR_EATER:
-            return path + "ach_ga_eater.jpg"
+            return path + "ach_ga_eater_noBG.png"   # "ach_ga_eater.jpg"
         if self.achtype == AchievementType.YELLOW_ARMOR_EATER:
-            return path + "ach_ya_eater.jpg"
+            return path + "ach_ya_eater_noBG.png"   # "ach_ya_eater.jpg"
         if self.achtype == AchievementType.MEGA_HEALTH_EATER:
-            return path + "ach_mh_eater.jpg"
+            return path + "ach_mh_eater_noBG.png"   # "ach_mh_eater.jpg"
         if self.achtype == AchievementType.CHILD_KILLER:
-            return path + "ach_child_killer.png"
+            return path + "ach_child_killer_noBG.png"  # "ach_child_killer.png"
         if self.achtype == AchievementType.ALWAYS_THE_LAST:
             return path + "ach_always_the_last.jpg"
         if self.achtype == AchievementType.RED_ARMOR_ALLERGY:
-            return path + "ach_ra_allergy.jpg"
+            return path + "ach_ra_allergy_noBG.png"   # "ach_ra_allergy.jpg"
         if self.achtype == AchievementType.GREEN_ARMOR_ALLERGY:
-            return path + "ach_ga_allergy.jpg"
+            return path + "ach_ga_allergy_noGB.png"  # "ach_ga_allergy.jpg"
         if self.achtype == AchievementType.YELLOW_ARMOR_ALLERGY:
-            return path + "ach_ya_allergy.jpg"
+            return path + "ach_ya_allergy_noBG.png"   # "ach_ya_allergy.jpg"
         if self.achtype == AchievementType.MEGA_HEALTH_ALLERGY:
-            return path + "ach_mh_allergy.jpg"
+            return path + "ach_mh_allergy_noBG.png"   # "ach_mh_allergy.jpg"
         if self.achtype == AchievementType.ROCKETS_LOVER:
-            return path + "ach_rockets_lover.png"
+            return path + "ach_rockets_lover_noBG.png" # "ach_rockets_lover.png"
         if self.achtype == AchievementType.DUEL_WINNER:
             return path + "ach_duel_winner.jpg"
         if self.achtype == AchievementType.SNIPER:
@@ -5210,9 +5210,9 @@ class Achievement:
         if self.achtype == AchievementType.SELF_DESTRUCTOR:
             return path + "ach_self_destructor.jpg"
         if self.achtype == AchievementType.TEAM_BEST_FRIEND_KILLER:
-            return path + "ach_team_killer.jpg"
+            return path + "ach_team_killer_noBG.png"   # "ach_team_killer.jpg"
         if self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
-            return path + "ach_team_deaths.jpg"
+            return path + "ach_team_deaths_noBG.png"   # "ach_team_deaths.jpg"
         if self.achtype == AchievementType.LUMBERJACK:
             return path + "ach_lumberjack.jpg"
         if self.achtype == AchievementType.ELECTROMASTER:
