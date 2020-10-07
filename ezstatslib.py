@@ -5166,11 +5166,11 @@ class Achievement:
                     
     def getImgSrc(self, path):
         if self.achtype == AchievementType.LONG_LIVE:
-            return path + "ach_long_liver.jpg"
+            return path + "ach_long_liver_noBG.png"   # "ach_long_liver.jpg"
         if self.achtype == AchievementType.SUICIDE_MASTER:
             return path + "ach_suicide_master_noBG.png"   # "ach_suicide_master.jpg"
         if self.achtype == AchievementType.SUICIDE_KING:
-            return path + "ach_suicide_king.jpg"
+            return path + "ach_suicide_king_noBG.png"   # "ach_suicide_king.jpg"
         if self.achtype == AchievementType.DEATH_STREAK_PAIN:
             return path + "ach_death_pain_noBG.png"  # "ach_death_pain.jpg"
         if self.achtype == AchievementType.HORRIBLE_FINISH:
@@ -5186,7 +5186,7 @@ class Achievement:
         if self.achtype == AchievementType.CHILD_KILLER:
             return path + "ach_child_killer_noBG.png"  # "ach_child_killer.png"
         if self.achtype == AchievementType.ALWAYS_THE_LAST:
-            return path + "ach_always_the_last.jpg"
+            return path + "ach_always_the_last_noBG.png"   # "ach_always_the_last.jpg"
         if self.achtype == AchievementType.RED_ARMOR_ALLERGY:
             return path + "ach_ra_allergy_noBG.png"   # "ach_ra_allergy.jpg"
         if self.achtype == AchievementType.GREEN_ARMOR_ALLERGY:
@@ -5198,17 +5198,17 @@ class Achievement:
         if self.achtype == AchievementType.ROCKETS_LOVER:
             return path + "ach_rockets_lover_noBG.png" # "ach_rockets_lover.png"
         if self.achtype == AchievementType.DUEL_WINNER:
-            return path + "ach_duel_winner.jpg"
+            return path + "ach_duel_winner_noBG.png"   # "ach_duel_winner.jpg"
         if self.achtype == AchievementType.SNIPER:
             return path + "ach_sniper.jpg"
         if self.achtype == AchievementType.RAINBOW_FLAG:
             return path + "ach_rainbow_flag.jpg"
         if self.achtype == AchievementType.PERSONAL_STALKER:
-            return path + "ach_personal_stalker.jpg"
+            return path + "ach_personal_stalker_noBG.png"   # "ach_personal_stalker.jpg"
         if self.achtype == AchievementType.FINISH_GURU:
             return path + "ach_finish_guru.jpg"
         if self.achtype == AchievementType.SELF_DESTRUCTOR:
-            return path + "ach_self_destructor.jpg"
+            return path + "ach_self_destructor_noBG.png"   # "ach_self_destructor.jpg"
         if self.achtype == AchievementType.TEAM_BEST_FRIEND_KILLER:
             return path + "ach_team_killer_noBG.png"   # "ach_team_killer.jpg"
         if self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
@@ -5220,13 +5220,13 @@ class Achievement:
         if self.achtype == AchievementType.WHITEWASH:
             return path + "ach_whitewash.png"
         if self.achtype == AchievementType.FASTER_THAN_BULLET:
-            return path + "ach_faster_than_bullet.png"
+            return path + "ach_faster_than_bullet_noBG.png"   # "ach_faster_than_bullet.png"
         if self.achtype == AchievementType.DEATH_CHEATER:
             return path + "ach_death_cheater.jpg"
         if self.achtype == AchievementType.TEAMMATES_FAN:
-            return path + "ach_teammates_fan.jpg"
+            return path + "ach_teammates_fan_noBG.png"   # "ach_teammates_fan.jpg"
         if self.achtype == AchievementType.NO_SUICIDES:
-            return path + "ach_no_suicides.jpg"
+            return path + "ach_no_suicides_noBG.png"   # "ach_no_suicides.jpg"
         if self.achtype == AchievementType.UNIVERSAL_SOLDIER:
             return path + "ach_universal_soldier.jpg"
         if self.achtype == AchievementType.MULTIPLE_PENETRATION:
@@ -5238,31 +5238,31 @@ class Achievement:
         if self.achtype == AchievementType.KILL_STREAK:
             return path + "ach_kill_streak.jpg"
         if self.achtype == AchievementType.CHILD_LOVER:
-            return path + "ach_child_lover.png"
+            return path + "ach_child_lover_noBG.png"   # "ach_child_lover.png"
         if self.achtype == AchievementType.GL_LOVER:
-            return path + "ach_gl_lover.jpg"
+            return path + "ach_gl_lover_noBG.png"  # "ach_gl_lover.jpg"
         if self.achtype == AchievementType.BALANCED_PLAYER:
             return path + "ach_balanced_player.png"
         if self.achtype == AchievementType.LIKE_AN_ANGEL:
             return path + "ach_like_an_angel.png"
         if self.achtype == AchievementType.OVERTIME:
-            return path + "ach_overtime.jpg"
+            return path + "ach_overtime_noBG.png"   # "ach_overtime.jpg"
         if self.achtype == AchievementType.COMBO_DOUBLE_KILL:
             return path + "ach_double_kill.png"
         if self.achtype == AchievementType.COMBO_MUTUAL_KILL:
             return path + "ach_combo_mutual_kill.png"
         if self.achtype == AchievementType.COMBO_KAMIKAZE:
-            return path + "ach_combo_kamikaze.png"
+            return path + "ach_combo_kamikaze_noBG.png"   # "ach_combo_kamikaze.png"
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
-            return path + "ach_always_the_first.jpg"
+            return path + "ach_always_the_first_noBG.png"   # "ach_always_the_first.jpg"
         if self.achtype == AchievementType.COMBO_TRIPLE_KILL:
             return path + "ach_combo_triple_kill.png"
         if self.achtype == AchievementType.KILLSTEAL_STEALER:
-            return path + "ach_killsteal_stealer.png"
+            return path + "ach_killsteal_stealer_noBG.png"   # "ach_killsteal_stealer.png"
         if self.achtype == AchievementType.KILLSTEAL_VICTIM:
-            return path + "ach_killsteal_victim.png"
+            return path + "ach_killsteal_victim_noBG.png"   # "ach_killsteal_victim.png"
         if self.achtype == AchievementType.FAST_AND_FURIOUS:
-            return path + "ach_fast_and_furious.png"
+            return path + "ach_fast_and_furious_noBG.png"   # "ach_fast_and_furious.png"
         if self.achtype == AchievementType.SECOND_OVERTIME:
             return path + "ach_2nd_overtime.png"            
 
