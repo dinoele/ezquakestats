@@ -2928,6 +2928,61 @@ HTML_ALLACHIEVEMENTS_PAGE_STYLE = \
 "  text-align: center; \n" \
 "  font-family: \"Monoton\", cursive; \n" \
 "} \n" \
+".pulse:hover, \n" \
+".pulse:focus { \n" \
+"  -webkit-animation: pulse 1s; \n" \
+"          animation: pulse 1s; \n" \
+"  box-shadow: 0 0 0 2em rgba(255, 255, 255, 0); \n" \
+"} \n" \
+" \n" \
+"@-webkit-keyframes pulse { \n" \
+"  0% { \n" \
+"    box-shadow: 0 0 0 0 var(--hover); \n" \
+"  } \n" \
+"} \n" \
+" \n" \
+"@keyframes pulse { \n" \
+"  0% { \n" \
+"    box-shadow: 0 0 0 0 var(--hover); \n" \
+"  } \n" \
+"} \n" \
+" \n" \
+".pulse { \n" \
+"  --color: #ef6eae; \n" \
+"  --hover: #ef8f6e; \n" \
+"} \n" \
+" \n" \
+".raise { \n" \
+"  --color: #9bfcc5; \n" \
+"  --hover: #e5ff60; \n" \
+"} \n" \
+" \n" \
+".raise:hover, \n" \
+".raise:focus { \n" \
+"  box-shadow: 0 0.5em 0.5em -0.4em var(--hover); \n" \
+"  -webkit-transform: translateY(-0.25em); \n" \
+"          transform: translateY(-0.25em); \n" \
+"} \n" \
+" \n" \
+"button { \n" \
+"  color: var(--color); \n" \
+"  -webkit-transition: 0.25s; \n" \
+"  transition: 0.25s; \n" \
+"} \n" \
+"button:hover, button:focus { \n" \
+"  border-color: var(--hover); \n" \
+"  color: #fff; \n" \
+"} \n" \
+" \n" \
+"button { \n" \
+"  background: none; \n" \
+"  border: 2px solid; \n" \
+"  font: inherit; \n" \
+"  line-height: 1; \n" \
+"  margin: 0.5em; \n" \
+"  padding: 1em 2em; \n" \
+"  width: 200px; \n" \
+"} \n" \
 "</style>\n" 
 
 HTML_SCRIPT_ALLACHIEVEMENTS_PAGE_FOLDING = \
@@ -2953,6 +3008,13 @@ HTML_SCRIPT_ALLACHIEVEMENTS_INIT_PAGE = \
 " neonGlory(target); \n" \
 " target.onclick = ({ target }) =>  neonGlory(target); \n" \
 " }\n"
+
+HTML_ALLACHIEVEMENTS_PAGE_LINKS = \
+" <div class=\"buttons\">\n" \
+" <button class=\"raise\" onclick=\"window.location.href='INDEX_LINK'\">Main</button>\n" \
+" <button class=\"raise\" onclick=\"window.location.href='ALLPLAYERS_LINK'\">All Players</button>\n" \
+" <button class=\"raise\" onclick=\"window.location.href='TOTALS_LINK'\">Totals</button>\n" \
+" </div>\n"
 
 HTML_ALLACHIEVEMENTS_PAGE_HEADER = \
 "<h1>Achievements</h1>\n" \

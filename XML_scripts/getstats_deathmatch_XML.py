@@ -2617,7 +2617,10 @@ def writeHtmlWithScripts(f, sortedPlayers, resStr):
             
             achievementsHtmlTable.rows.append(tableRow)
         
-    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable) + ezstatslib.Achievement.generateAchievementsLevelLegendTable())
+    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", \
+                                            str(achievementsHtmlTable) + \
+                                            ezstatslib.Achievement.generateAchievementsLevelLegendTable() + \
+                                            "<br>" + htmlLink(ezstatslib.ALLACHIEVEMENTS_FILE_NAME, linkText=ezstatslib.htmlBold(">> All Achievements Page <<")))
     # <-- players achievements
     
     # highcharts players rank progress -->
@@ -3200,7 +3203,9 @@ logsf.write(htmlLink(ezstatslib.TEAM_LOGS_INDEX_FILE_NAME, linkText = "Team matc
 logsf.write("<hr>")
 logsf.write(htmlLink(ezstatslib.TOTALS_FILE_NAME, linkText = "Totals"))
 logsf.write("<hr>")
-logsf.write(htmlLink(ezstatslib.ALLPLAYERS_FILE_NAME, linkText = "All players page", gifPath=newGifTag))
+logsf.write(htmlLink(ezstatslib.ALLPLAYERS_FILE_NAME, linkText = "All players page"))
+logsf.write("<hr>")
+logsf.write(htmlLink(ezstatslib.ALLACHIEVEMENTS_FILE_NAME, linkText = "All Achievements", gifPath=newGifTag))
 logsf.write("<hr>")
 logsf.write(str(filesTable))
 

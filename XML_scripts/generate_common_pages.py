@@ -39,6 +39,7 @@ import xml.etree.ElementTree as ET
 from collections import Counter
 
 ezstatslib.REPORTS_FOLDER = stat_conf.reports_dir
+ezstatslib.LOGS_INDEX_FILE_NAME = "index.html"
 
 totalsPath = ezstatslib.REPORTS_FOLDER + ezstatslib.TOTALS_FILE_NAME
 
@@ -951,7 +952,7 @@ allPlayersPage.write(ezstatslib.HTML_FOOTER_NO_PRE)
     
     
 # all achievements page    
-allAchievementsPagePath = ezstatslib.REPORTS_FOLDER + ezstatslib.ALLACHIEVEMENTS_FILE_NAME    
+allAchievementsPagePath = ezstatslib.REPORTS_FOLDER + ezstatslib.ALLACHIEVEMENTS_FILE_NAME
 
 allachievements = []
 for key in ezstatslib.AchievementType.__dict__.keys():
@@ -995,6 +996,13 @@ for plJson in jsonPlayers:
     # print "id: %d, %s\n" % (i, sss)
     
 allAchievementsPageText = ""
+
+allAchievementsPageLinksText = ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_LINKS
+allAchievementsPageLinksText = allAchievementsPageLinksText.replace("TOTALS_LINK", ezstatslib.TOTALS_FILE_NAME)
+allAchievementsPageLinksText = allAchievementsPageLinksText.replace("ALLPLAYERS_LINK", ezstatslib.ALLPLAYERS_FILE_NAME)
+allAchievementsPageLinksText = allAchievementsPageLinksText.replace("INDEX_LINK", ezstatslib.LOGS_INDEX_FILE_NAME)
+allAchievementsPageText += allAchievementsPageLinksText
+
 allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_HEADER
 allAchievementsPageText += ezstatslib.HTML_ALLACHIEVEMENTS_PAGE_WRAPPER_HEADER
 
