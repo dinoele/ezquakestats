@@ -5252,7 +5252,7 @@ class Achievement:
         if self.achtype == AchievementType.RED_ARMOR_ALLERGY:
             return path + "ach_ra_allergy_noBG.png"   # "ach_ra_allergy.jpg"
         if self.achtype == AchievementType.GREEN_ARMOR_ALLERGY:
-            return path + "ach_ga_allergy_noGB.png"  # "ach_ga_allergy.jpg"
+            return path + "ach_ga_allergy_noBG.png"  # "ach_ga_allergy.jpg"
         if self.achtype == AchievementType.YELLOW_ARMOR_ALLERGY:
             return path + "ach_ya_allergy_noBG.png"   # "ach_ya_allergy.jpg"
         if self.achtype == AchievementType.MEGA_HEALTH_ALLERGY:
