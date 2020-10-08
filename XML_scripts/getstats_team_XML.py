@@ -2498,7 +2498,10 @@ def writeHtmlWithScripts(f, teams, resStr):
 
             achievementsHtmlTable.rows.append(tableRow)
 
-    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", str(achievementsHtmlTable) + ezstatslib.Achievement.generateAchievementsLevelLegendTable())
+    playersAchievementsStr = playersAchievementsStr.replace("PLAYERS_ACHIEVEMENTS_TABLE", \
+                                            str(achievementsHtmlTable) + \
+                                            ezstatslib.Achievement.generateAchievementsLevelLegendTable() + \
+                                            "<br>" + htmlLink(ezstatslib.ALLACHIEVEMENTS_FILE_NAME, linkText=ezstatslib.htmlBold(">> All Achievements Page <<")))
     # <-- players achievements
 
     # power ups donuts -->
