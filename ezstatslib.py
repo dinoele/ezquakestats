@@ -5202,7 +5202,7 @@ class Achievement:
         if self.achtype == AchievementType.SNIPER:
             return path + "ach_sniper_noBG.png"   # "ach_sniper.jpg"
         if self.achtype == AchievementType.RAINBOW_FLAG:
-            return path + "ach_rainbow_flag.jpg"
+            return path + "ach_rainbow_flag_noBG.png"   # "ach_rainbow_flag.jpg"
         if self.achtype == AchievementType.PERSONAL_STALKER:
             return path + "ach_personal_stalker_noBG.png"   # "ach_personal_stalker.jpg"
         if self.achtype == AchievementType.FINISH_GURU:
@@ -5214,7 +5214,7 @@ class Achievement:
         if self.achtype == AchievementType.TEAM_MAXIMUM_TEAMDEATHS:
             return path + "ach_team_deaths_noBG.png"   # "ach_team_deaths.jpg"
         if self.achtype == AchievementType.LUMBERJACK:
-            return path + "ach_lumberjack.jpg"
+            return path + "ach_lumberjack_noBG.png"   # "ach_lumberjack.jpg"
         if self.achtype == AchievementType.ELECTROMASTER:
             return path + "ach_electromaster_noBG.png"   # "ach_electromaster.png"
         if self.achtype == AchievementType.WHITEWASH:
@@ -5256,7 +5256,7 @@ class Achievement:
         if self.achtype == AchievementType.ALWAYS_THE_FIRST:
             return path + "ach_always_the_first_noBG.png"   # "ach_always_the_first.jpg"
         if self.achtype == AchievementType.COMBO_TRIPLE_KILL:
-            return path + "ach_combo_triple_kill.png"
+            return path + "ach_combo_triple_kill_noBG.png"   # "ach_combo_triple_kill.png"
         if self.achtype == AchievementType.KILLSTEAL_STEALER:
             return path + "ach_killsteal_stealer_noBG.png"   # "ach_killsteal_stealer.png"
         if self.achtype == AchievementType.KILLSTEAL_VICTIM:
@@ -5270,7 +5270,7 @@ class Achievement:
         if self.achtype == AchievementType.HUNDRED_DEATHS:
             return path + "ach_100_deaths_noBG.png"   # "ach_100_deaths_TMP.jpg"
         if self.achtype == AchievementType.HUNDRED_FRAGS:
-            return path + "ach_100_frags_TMP.jpg"
+            return path + "ach_100_frags_noBG.png"   # "ach_100_frags_TMP.jpg"
 
         return "NotImplemented"
 
