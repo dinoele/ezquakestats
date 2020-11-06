@@ -633,7 +633,7 @@ for element in elements:
         if not weap in ezstatslib.possibleWeapons:
             if weap == "lg_beam" or weap == "lg_dis":
                 weap = "lg"
-            elif weap == "stomp" or weap == "squish" or weap == "lava" or weap == "suicide":
+            elif weap == "stomp" or weap == "squish" or weap == "lava" or weap == "suicide" or weap == "water":
                 ezstatslib.logError("ERROR: weapon is treated as 'other': %s\n" % (weap))
                 weap = "other"  # TODO fall on the player  # TODO ULTRA RARE ACH
             else:
@@ -679,7 +679,7 @@ for element in elements:
         if not weap in ezstatslib.possibleWeapons:            
             if weap == "lg_beam":
                 weap = "lg"
-            elif weap == "fall" or weap == "squish" or weap == "lava":
+            elif weap == "fall" or weap == "squish" or weap == "lava" or weap == "water":
                 ezstatslib.logError("ERROR: damage weapon is treated as 'other': %s\n" % (weap))
                 who = whom
                 weap = "other"  # TODO world -> whom
