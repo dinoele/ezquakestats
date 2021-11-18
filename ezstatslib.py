@@ -37,7 +37,7 @@ possibleColors = [HtmlColor.COLOR_RED,
                   HtmlColor.COLOR_CYAN,
                   HtmlColor.COLOR_MAGENTA]
 
-CURRENT_VERSION = "1.28"
+CURRENT_VERSION = "1.29"
                   
 LOG_TIMESTAMP_DELIMITER = " <-> "
 
@@ -4618,12 +4618,13 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         KILLSTEAL_STEALER = 54,  # "King of theft" : "stole %d kills" # maximum kill steals - stealer                                           #DEATHMATCH_SPECIFIC   DONE
                         KILLSTEAL_VICTIM = 55,   # "Too unlucky and carefree..." : "honestly earned kills were stolen %d times" # maximum kill steals - victim  #DEATHMATCH_SPECIFIC   DONE
                         FAST_AND_FURIOUS = 56,   # "Fast and Furious!" : "the fastest player with %d max and %d avg speed"      #XML_SPECIFIC   DONE
-                        LAZER_DISCHARGE = 57,    # "Electricity + fluid = death" : "too careless with lazer gun in fluid..."    # lg_dis event
+                        LAZER_DISCHARGE = 57,    # "Electricity + fluid = death" : "too careless with lazer gun in fluid..."    # lg_dis suicide event   DONE
                         # TODO win with low speed or simply too slow
                         # kill + teamkill
                         # suicide + teamkill
                         # Lumberjack junior
                         # shotgut master Fo4_Rifleman.png
+                        # team work: together kill enemy
                         
                                             )
 
