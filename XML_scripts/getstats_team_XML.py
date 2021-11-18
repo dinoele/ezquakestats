@@ -688,6 +688,7 @@ for element in elements:
     
     # suicide    
     if isinstance(element, DeathElement) and (element.isSuicide or element.attacker == "world"):
+        weap = element.type
         if element.attacker == "world":
             checkname = element.target
         else:
@@ -695,7 +696,7 @@ for element in elements:
         isFound = False
         for pl in allplayers:
             if pl.name == checkname:
-                pl.incSuicides(currentMatchTime)
+                pl.incSuicides(currentMatchTime, weap)
                 fillH2H(checkname,checkname,currentMinute)
                 isFound = True
                 break;
@@ -972,6 +973,9 @@ for i in xrange(len(elementsByTime)):
             
         else:
             # mutual kill
+            # TODO check names:
+            # OLOLO: 225.288116 mutual kill: (attacker1(random), target1(girgelezobeton), wp1(rl)); (attacker2(ssharok), target2(whathappened?), wp2(rl)
+            # OLOLO: 63.175964 mutual kill: (attacker1(TWINHOOKER), target1(ssharok), wp1(rl)); (attacker2(ssharok), target2(girgelezobeton), wp2(rl)
             for pl in allplayers:
                 if pl.name == attacker1:
                     pl.mutual_kills.append([tt,target1,wp1,wp2])
@@ -1646,8 +1650,9 @@ plNameMaxLen = 23;
 resultString += "Players weapons:\n"
 weaponsCheck = ezstatslib.getWeaponsCheck(allplayers)
 for pl in sorted(allplayers, key=attrgetter("kills"), reverse=True):
-    resultString += "{0:23s} kills  {1:3d} :: {2:100s}\n".format("[%s]%s" % (pl.teamname, pl.name), pl.kills,  pl.getWeaponsKills(pl.kills,   weaponsCheck))
-    resultString += "{0:23s} deaths {1:3d} :: {2:100s}\n".format("",                                pl.deaths, pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
+    resultString += "{0:23s} kills    {1:3d} :: {2:100s}\n".format("[%s]%s" % (pl.teamname, pl.name), pl.kills,    pl.getWeaponsKills(pl.kills,   weaponsCheck))
+    resultString += "{0:23s} deaths   {1:3d} :: {2:100s}\n".format("",                                pl.deaths,   pl.getWeaponsDeaths(pl.deaths, weaponsCheck))
+    resultString += "{0:23s} suicides {1:3d} :: {2:100s}\n".format("",                                pl.suicides, pl.getWeaponsSuicides())
     resultString += "\n"
     resultString += ("{0:%ds} given {1:4d} :: {2:100s}\n" % (plNameMaxLen)).format("", pl.damageGvn+pl.damageGvnArmor, pl.getWeaponsDamageGvn(pl.damageGvn+pl.damageGvnArmor, weaponsCheck))
     resultString += ("{0:%ds} taken {1:4d} :: {2:100s}\n" % (plNameMaxLen)).format("", pl.damageTkn+pl.damageTknArmor, pl.getWeaponsDamageTkn(pl.damageTkn+pl.damageTknArmor, weaponsCheck))

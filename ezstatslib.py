@@ -3692,6 +3692,7 @@ class Player:
         self.deathsByMinutes = []
         self.suicidesByMinutes = []       
 
+        self.suicidesWeapons = {}
         
     def addLifetimeItem(self, element):
         if isinstance(element, DamageElement):
@@ -3898,8 +3899,14 @@ class Player:
             
         self.deathsByMinutes[currentMin] += 1
 
-    def incSuicides(self, time):
+    def incSuicides(self, time, weap):
         self.suicides += 1
+        
+        if not weap in self.suicidesWeapons.keys():
+            self.suicidesWeapons[weap] = [time]
+        else:
+            self.suicidesWeapons[weap].append(time)
+        
         self.currentDeathStreak.count += 1
 
         # self.currentDeathStreak.names.append("SELF")
@@ -4152,6 +4159,15 @@ class Player:
         if len(resstr) > 2:
             resstr = resstr[:-2]
         return resstr
+
+    def getWeaponsSuicides(self):
+        resstr = ""
+        for suicide_weap in self.suicidesWeapons.keys():
+            resstr += "%s(%d), " % (suicide_weap, len(self.suicidesWeapons[suicide_weap]))
+        
+        if len(resstr) > 2:
+            resstr = resstr[:-2]
+        return resstr            
 
     def getWeaponsAccuracy(self, weaponsCheck):
         rlstr   = "" if not weaponsCheck.is_rl    or self.rl_damage_gvn_cnt == 0 else "rl:  {0:5.4}({1:3d}), ".format(   (float(self.rl_damage_gvn)   / float(self.rl_damage_gvn_cnt) ), self.rl_damage_gvn_cnt);
