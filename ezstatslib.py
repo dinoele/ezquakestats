@@ -4544,11 +4544,16 @@ class Player:
             
         # COMBO_KAMIKAZE
         if len(self.suicide_kills) >= Achievement.ComboKamikazeValue:
-            self.achievements.append( Achievement(AchievementType.COMBO_KAMIKAZE, "The sun on the wings - move forward! For the last time, the enemy will see the sunrise! One plane for one enemy! %d times..." % (len(self.suicide_kills))) )            
+            self.achievements.append( Achievement(AchievementType.COMBO_KAMIKAZE, "%d times..." % (len(self.suicide_kills))) )            
             
         # COMBO_TRIPLE_KILL
         for i in xrange(len(self.triple_kills)):
             self.achievements.append( Achievement(AchievementType.COMBO_TRIPLE_KILL, "killed %s, %s and %s with one %s shot!" % (self.triple_kills[i][1], self.triple_kills[i][2], self.triple_kills[i][3], self.triple_kills[i][4])) )
+            
+        # LAZER_DISCHARGE
+        for suicide_weap in self.suicidesWeapons.keys():
+            if (suicide_weap == "lg_dis"):
+                self.achievements.append( Achievement(AchievementType.LAZER_DISCHARGE, "Too careless with lazer gun in the fluid...") )
             
         if isTeamGame:
             # TEAMMATES_FAN
@@ -4613,10 +4618,12 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         KILLSTEAL_STEALER = 54,  # "King of theft" : "stole %d kills" # maximum kill steals - stealer                                           #DEATHMATCH_SPECIFIC   DONE
                         KILLSTEAL_VICTIM = 55,   # "Too unlucky and carefree..." : "honestly earned kills were stolen %d times" # maximum kill steals - victim  #DEATHMATCH_SPECIFIC   DONE
                         FAST_AND_FURIOUS = 56,   # "Fast and Furious!" : "the fastest player with %d max and %d avg speed"      #XML_SPECIFIC   DONE
+                        LAZER_DISCHARGE = 57,    # "Electricity + fluid = death" : "too careless with lazer gun in fluid..."    # lg_dis event
                         # TODO win with low speed or simply too slow
                         # kill + teamkill
                         # suicide + teamkill
                         # Lumberjack junior
+                        # shotgut master Fo4_Rifleman.png
                         
                                             )
 
@@ -4874,6 +4881,8 @@ class Achievement:
             return "Kill steals victim"
         if self.achtype == AchievementType.FAST_AND_FURIOUS:
             return "Fast and Furious"
+        if self.achtype == AchievementType.LAZER_DISCHARGE:
+            return "Electro swimmer"
     
     def description(self):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -4984,6 +4993,8 @@ class Achievement:
             return "Too unlucky and carefree..."
         if self.achtype == AchievementType.FAST_AND_FURIOUS:
             return "Faster than light"
+        if self.achtype == AchievementType.LAZER_DISCHARGE:
+            return "Electricity + Fluid = Death"
 
     def conditionsDescription(self):
         if self.achtype == AchievementType.LONG_LIVE:
@@ -5094,6 +5105,8 @@ class Achievement:
             return "Honestly earned kills were stolen a maximum of all players and more than %d times during the match." % (Achievement.KillstealVictimValue)
         if self.achtype == AchievementType.FAST_AND_FURIOUS:
             return "Average and maximum speed are a maximum of all players."
+        if self.achtype == AchievementType.LAZER_DISCHARGE:
+            return "Recklessly used Lazer Gun in the fluid."
 
     def level(self):
         if self.achtype == AchievementType.RED_ARMOR_EATER    or \
@@ -5132,7 +5145,8 @@ class Achievement:
         if self.achtype == AchievementType.SUICIDE_KING    or \
            self.achtype == AchievementType.ALWAYS_THE_LAST or \
            self.achtype == AchievementType.SELF_DESTRUCTOR or \
-           self.achtype == AchievementType.KILLSTEAL_VICTIM:
+           self.achtype == AchievementType.KILLSTEAL_VICTIM or \
+           self.achtype == AchievementType.LAZER_DISCHARGE:
             return AchievementLevel.ADVANCE_NEGATIVE            
                
         if self.achtype == AchievementType.GREAT_FINISH           or \
@@ -5349,6 +5363,8 @@ class Achievement:
             return path + "ach_100_deaths_noBG.png"   # "ach_100_deaths_TMP.jpg"
         if self.achtype == AchievementType.HUNDRED_FRAGS:
             return path + "ach_100_frags_noBG.png"   # "ach_100_frags_TMP.jpg"
+        if self.achtype == AchievementType.LAZER_DISCHARGE:
+            return path + "ach_lg_dis_noBG.png"
 
         return "NotImplemented"
 
