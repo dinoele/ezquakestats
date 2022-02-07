@@ -988,6 +988,7 @@ for i in xrange(len(elementsByTime)):
     
     elif deaths >= 3:
         # TODO
+        # 592.457565 deaths(3) >= 3: (attacker1(DimaG), target1(Sasha), wp1(rl)); (attacker2(DimaG), target2(mche), wp2(rl)); (attacker3(DimaG), target3(dinoel), wp3(rl));   kill+kill+teamkill
         if deaths == 3:
             attacker = ""            
             isAttackerTheSame = True
@@ -1409,6 +1410,256 @@ for pl in allplayers:
 # remove elements with one timestamp - the last one for same time should be left    
 for pl in allplayers:
     pl.correctLifetime(minutesPlayedXML)    
+
+
+# game balance
+tmpBalanceOutput = ""
+try:
+    gameBalanceArr = []
+    fragsLinesIntersections = []
+    fragsTies = []
+
+    mProgressElemIndex = 0
+    currDelta = 0
+    for mProgressElem in matchProgressDictEx2:
+        currentSecD = mProgressElem[team1.name][0] # double value
+
+        team1Val = mProgressElem[team1.name][1]
+        team2Val = mProgressElem[team2.name][1]
+
+        teamDelta = team1Val - team2Val
+        if len(gameBalanceArr) == 0:
+            pass
+        else:
+            if teamDelta == 0 and team1Val != 0 and team2Val != 0:
+                fragsTies.append(currentSecD)
+
+            if teamDelta*currDelta < 0 or (teamDelta == 0 and currDelta != 0) or (teamDelta != 0 and currDelta == 0):
+                fragsLinesIntersections.append(currentSecD)
+
+        currDelta = teamDelta
+
+        # print "currentSec: %f, team1Val: %d, team1Va2: %d, teamDelta: %d" % (currentSecD, team1Val, team2Val, teamDelta)
+
+        gameBalanceArr.append([currentSecD, teamDelta])
+
+    tieDuration = 0
+    tie_DurationByQuarters = [0,0,0,0]
+    tie_Overtimes = [0,0,0]
+    if len(gameBalanceArr) > 1:
+        tieStart = -1
+        tieStop = -1
+        for gameBalanaceInd in xrange(len(gameBalanceArr)-1):
+            if gameBalanceArr[gameBalanaceInd][1] == 0:
+                if tieStart == -1:
+                    tieStart = gameBalanceArr[gameBalanaceInd][0]
+
+                if gameBalanceArr[gameBalanaceInd+1][1] != 0:
+                    tieStop = gameBalanceArr[gameBalanaceInd][0]
+                    tieDuration += tieStop - tieStart
+
+                    if tieStop <= timelimit*60:
+                        tieStartQuarter = int(tieStart) / (timelimit*60/4)
+                        tieStopQuarter = int(tieStop) / (timelimit*60/4)
+                        if tieStartQuarter == tieStopQuarter:
+                            tie_DurationByQuarters[tieStartQuarter] += tieStop - tieStart
+                        else:
+                            tie_DurationByQuarters[tieStartQuarter] += (tieStartQuarter+1)*timelimit*60/4 - tieStop
+
+                        if tieStopQuarter - tieStartQuarter == 3:
+                            tie_DurationByQuarters[tieStopQuarter-2] += timelimit*60/4
+
+                        if tieStopQuarter - tieStartQuarter >= 2:
+                            tie_DurationByQuarters[tieStopQuarter-1] += timelimit*60/4
+
+                            tie_DurationByQuarters[tieStopQuarter] += tieStop - (tieStopQuarter)*timelimit*60/4
+                    else:
+                        # overtimes
+                        if tieStop <= timelimit*60 + overtimeMinutesVal*60:
+                            tie_Overtimes[0] += tieStop - tieStart
+                        elif tieStop <= timelimit*60 + 2*overtimeMinutesVal*60:
+                            tie_Overtimes[1] += tieStop - tieStart
+                        elif tieStop <= timelimit*60 + 3*overtimeMinutesVal*60:
+                            tie_Overtimes[2] += tieStop - tieStart
+
+                    tieStart = -1
+
+    maxDelta = 0
+    avgDelta = 0
+    team1_Duration = 0
+    team1_DurationByQuarters = [0,0,0,0]
+    team1_Overtimes = [0,0,0]
+    team1_MaxDelta = 0
+    team1_AvgDelta = 0
+
+    team2_Duration = 0
+    team2_DurationByQuarters = [0,0,0,0]
+    team2_Overtimes = [0,0,0]
+    team2_MaxDelta = 0
+    team2_AvgDelta = 0
+    leaderChanges = []
+
+    team1Cnt = 0
+    team1Sum = 0
+    team2Cnt = 0
+    team2Sum = 0
+    currentTeam = -1 # 1 or 2
+    currentTeamStart = -1
+    for gameBalanaceInd in xrange(len(gameBalanceArr)):
+        if gameBalanceArr[gameBalanaceInd][1] == 0 and currentTeamStart == -1:
+            continue
+
+        if currentTeamStart == -1:
+            currentTeamStart = gameBalanceArr[gameBalanaceInd][0]
+            currentTeamNew = 1 if gameBalanceArr[gameBalanaceInd][1] > 0 else 2
+            if currentTeam != -1 and currentTeamNew != currentTeam:
+                leaderChanges.append(gameBalanceArr[gameBalanaceInd][0])
+            currentTeam = currentTeamNew
+        else:
+            if gameBalanceArr[gameBalanaceInd][1] == 0:
+                teamStop = gameBalanceArr[gameBalanaceInd][0]
+                if teamStop <= timelimit*60:
+                    startQuarter = int(currentTeamStart) / (timelimit*60/4)
+                    stopQuarter = int(teamStop) / (timelimit*60/4)
+                    if startQuarter == stopQuarter:
+                        exec("team%d_DurationByQuarters[startQuarter] += teamStop - currentTeamStart" % (currentTeam))
+                    else:
+                        # pdb.set_trace()
+
+                        exec("team%d_DurationByQuarters[startQuarter] += (startQuarter+1)*timelimit*60/4 - currentTeamStart" % (currentTeam))
+
+                        if stopQuarter - startQuarter == 3:
+                            exec("team%d_DurationByQuarters[stopQuarter-2] += timelimit*60/4" % (currentTeam))
+
+                        if stopQuarter - startQuarter >= 2:
+                            exec("team%d_DurationByQuarters[stopQuarter-1] += timelimit*60/4" % (currentTeam))
+
+                        exec("team%d_DurationByQuarters[stopQuarter] += teamStop - (stopQuarter)*timelimit*60/4" % (currentTeam))
+
+                else:
+                    # overtimes
+                    # pdb.set_trace()
+                    if teamStop <= timelimit*60 + overtimeMinutesVal*60:
+                        exec("team%d_Overtimes[0] += teamStop - currentTeamStart" % (currentTeam))
+                    elif teamStop <= timelimit*60 + 2*overtimeMinutesVal*60:
+                        exec("team%d_Overtimes[1] += teamStop - currentTeamStart" % (currentTeam))
+                    elif teamStop <= timelimit*60 + 3*overtimeMinutesVal*60:
+                        exec("team%d_Overtimes[2] += teamStop - currentTeamStart" % (currentTeam))
+
+                exec("team%d_Duration += gameBalanceArr[gameBalanaceInd][0] - currentTeamStart" % (currentTeam))
+
+                currentTeamStart = -1
+
+        if gameBalanceArr[gameBalanaceInd][1] > 0:
+            # team1
+            if abs(gameBalanceArr[gameBalanaceInd][1]) > team1_MaxDelta:
+                team1_MaxDelta = abs(gameBalanceArr[gameBalanaceInd][1])
+
+            team1Sum += abs(gameBalanceArr[gameBalanaceInd][1])
+            team1Cnt += 1
+
+        if gameBalanceArr[gameBalanaceInd][1] < 0:
+            # team2
+            if abs(gameBalanceArr[gameBalanaceInd][1]) > team2_MaxDelta:
+                team2_MaxDelta = abs(gameBalanceArr[gameBalanaceInd][1])
+
+            team2Sum += abs(gameBalanceArr[gameBalanaceInd][1])
+            team2Cnt += 1
+
+    # add final durations --->
+    exec("team%d_Duration += gameBalanceArr[len(gameBalanceArr)-1][0] - currentTeamStart" % (currentTeam))
+
+    teamStop = gameBalanceArr[len(gameBalanceArr)-1][0]
+    if teamStop <= timelimit*60:
+        startQuarter = (int(currentTeamStart)-1) / (timelimit*60/4)
+        stopQuarter = (int(teamStop)-1) / (timelimit*60/4)
+
+        if startQuarter == stopQuarter:
+            exec("team%d_DurationByQuarters[startQuarter] += teamStop - currentTeamStart" % (currentTeam))
+        else:
+            exec("team%d_DurationByQuarters[startQuarter] += (startQuarter+1)*timelimit*60/4 - currentTeamStart" % (currentTeam))
+
+            if stopQuarter - startQuarter == 3:
+                exec("team%d_DurationByQuarters[stopQuarter-2] += timelimit*60/4" % (currentTeam))
+
+            if stopQuarter - startQuarter >= 2:
+                exec("team%d_DurationByQuarters[stopQuarter-1] += timelimit*60/4" % (currentTeam))
+
+            exec("team%d_DurationByQuarters[stopQuarter] += teamStop - (stopQuarter)*timelimit*60/4" % (currentTeam))
+    else:
+        # overtimes
+        if teamStop <= timelimit*60 + overtimeMinutesVal*60:
+            exec("team%d_Overtimes[0] += teamStop - currentTeamStart" % (currentTeam))
+        elif teamStop <= timelimit*60 + 2*overtimeMinutesVal*60:
+            exec("team%d_Overtimes[1] += teamStop - currentTeamStart" % (currentTeam))
+        elif teamStop <= timelimit*60 + 3*overtimeMinutesVal*60:
+            exec("team%d_Overtimes[2] += teamStop - currentTeamStart" % (currentTeam))
+    # <--- add final durations
+
+
+    team1_AvgDelta = float(team1Sum) / team1Cnt
+    team2_AvgDelta = float(team2Sum) / team2Cnt
+
+    maxDelta = max(team1_MaxDelta, team2_MaxDelta)
+    avgDelta = float(team1Sum + team2Sum) / len(gameBalanceArr)
+
+    # print "tieDuration: %f, leaderChanges: %s" % (tieDuration, str(leaderChanges))
+    # print "maxDelta: %d, avgDelta: %f, team1_Duration: %f, team1_MaxDelta: %d, team1_AvgDelta: %f, team2_Duration: %f, team2_MaxDelta: %d, team2_AvgDelta: %f" % (maxDelta, avgDelta, team1_Duration, team1_MaxDelta, team1_AvgDelta, team2_Duration, team2_MaxDelta, team2_AvgDelta)
+    # print "SUM: %f" % (tieDuration + team1_Duration + team2_Duration)
+
+    tmpBalanceOutput += "BALANCE: leaderChanges: %s\n" % (str(leaderChanges))
+    tmpBalanceOutput += "BALANCE: maxDelta: %d, avgDelta: %f, team1_MaxDelta: %d, team1_AvgDelta: %f, team2_MaxDelta: %d, team2_AvgDelta: %f\n" % (maxDelta, avgDelta, team1_MaxDelta, team1_AvgDelta, team2_MaxDelta, team2_AvgDelta)
+    tmpBalanceOutput += "BALANCE: durations: %s: %f(%f%%), tie: %f(%f%%), %s: %f(%f%%)\n" % (team1.name, team1_Duration, team1_Duration / (tieDuration + team1_Duration + team2_Duration), tieDuration, tieDuration / (tieDuration + team1_Duration + team2_Duration), team2.name, team2_Duration, team2_Duration / (tieDuration + team1_Duration + team2_Duration))
+
+    tmpBalanceOutput += "BALANCE: durations by quarters:\n"
+    for quarterInd in xrange(4):
+        tmpBalanceOutput += "BALANCE:          %s: %s: %f(%f%%)\ttie: %f(%f%%)\t%s: %f(%f%%)\n" % (quarterInd+1, \
+                                                                                              team1.name, \
+                                                                                              team1_DurationByQuarters[quarterInd], \
+                                                                                              team1_DurationByQuarters[quarterInd] / (tie_DurationByQuarters[quarterInd] + team1_DurationByQuarters[quarterInd] + team2_DurationByQuarters[quarterInd]), \
+                                                                                              tie_DurationByQuarters[quarterInd], \
+                                                                                              tie_DurationByQuarters[quarterInd] / (tie_DurationByQuarters[quarterInd] + team1_DurationByQuarters[quarterInd] + team2_DurationByQuarters[quarterInd]), \
+                                                                                              team2.name, \
+                                                                                              team2_DurationByQuarters[quarterInd], \
+                                                                                              team2_DurationByQuarters[quarterInd] / (tie_DurationByQuarters[quarterInd] + team1_DurationByQuarters[quarterInd] + team2_DurationByQuarters[quarterInd]))
+
+    # pdb.set_trace()
+
+    if isOverTime:
+        tmpBalanceOutput += "BALANCE: overtime#1: %s: %f(%f%%)\ttie: %f(%f%%)\t%s: %f(%f%%)\n" % ( \
+                                                                                              team1.name, \
+                                                                                              team1_Overtimes[0], \
+                                                                                              team1_Overtimes[0] / (tie_Overtimes[0] + team1_Overtimes[0] + team2_Overtimes[0]), \
+                                                                                              tie_Overtimes[0], \
+                                                                                              tie_Overtimes[0] / (tie_Overtimes[0] + team1_Overtimes[0] + team2_Overtimes[0]), \
+                                                                                              team2.name, \
+                                                                                              team2_Overtimes[0], \
+                                                                                              team2_Overtimes[0] / (tie_Overtimes[0] + team1_Overtimes[0] + team2_Overtimes[0]))
+
+    if isOverTime_2nd:
+        tmpBalanceOutput += "BALANCE: overtime#2: %s: %f(%f%%)\ttie: %f(%f%%)\t%s: %f(%f%%)\n" % ( \
+                                                                                              team1.name, \
+                                                                                              team1_Overtimes[1], \
+                                                                                              team1_Overtimes[1] / (tie_Overtimes[1] + team1_Overtimes[1] + team2_Overtimes[1]), \
+                                                                                              tie_Overtimes[1], \
+                                                                                              tie_Overtimes[1] / (tie_Overtimes[1] + team1_Overtimes[1] + team2_Overtimes[1]), \
+                                                                                              team2.name, \
+                                                                                              team2_Overtimes[1], \
+                                                                                              team2_Overtimes[1] / (tie_Overtimes[1] + team1_Overtimes[1] + team2_Overtimes[1]))
+
+    if isOverTime_3rd:
+        tmpBalanceOutput += "BALANCE: overtime#3: %s: %f(%f%%)\ttie: %f(%f%%)\t%s: %f(%f%%)\n" % ( \
+                                                                                              team1.name, \
+                                                                                              team1_Overtimes[2], \
+                                                                                              team1_Overtimes[2] / (tie_Overtimes[2] + team1_Overtimes[2] + team2_Overtimes[2]), \
+                                                                                              tie_Overtimes[2], \
+                                                                                              tie_Overtimes[2] / (tie_Overtimes[2] + team1_Overtimes[2] + team2_Overtimes[2]), \
+                                                                                              team2.name, \
+                                                                                              team2_Overtimes[2], \
+                                                                                              team2_Overtimes[2] / (tie_Overtimes[2] + team1_Overtimes[2] + team2_Overtimes[2]))
+except Exception, ex:
+    tmpBalanceOutput += "BALANCE: ERROR: %s" % (str(ex))
+
     
 # generate output string
 resultString = ""
@@ -1849,6 +2100,8 @@ def writeHtmlWithScripts(f, teams, resStr):
     f.write("<!--\nCOMBOS\n" + tmpComboStr + "-->\n")  # TEMP!!
     
     f.write("<!--\nMATCHDATELOG\n" + matchdateLog + "-->\n")  # TEMP!!
+
+    f.write("<!--\nBALANCE\n" + tmpBalanceOutput + "-->\n")  # TEMP!!
 
     pageHeaderStr = ezstatslib.HTML_HEADER_SCRIPT_SECTION
     pageTitle = "%s %s %s" % ("TEAM", mapName, matchdate)  # global values
