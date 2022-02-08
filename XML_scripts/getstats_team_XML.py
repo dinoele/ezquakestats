@@ -1597,8 +1597,8 @@ try:
     # <--- add final durations
 
 
-    team1_AvgDelta = float(team1Sum) / team1Cnt
-    team2_AvgDelta = float(team2Sum) / team2Cnt
+    team1_AvgDelta = 0 if team1Cnt == 0 else float(team1Sum) / team1Cnt
+    team2_AvgDelta = 0 if team2Cnt == 0 else float(team2Sum) / team2Cnt
 
     maxDelta = max(team1_MaxDelta, team2_MaxDelta)
     avgDelta = float(team1Sum + team2Sum) / len(gameBalanceArr)
