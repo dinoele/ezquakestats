@@ -895,6 +895,7 @@ for i in xrange(len(elementsByTime)):
 
         # ezstatslib.logError("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))    
         # OLOLO: 247.862579 deaths(3) >= 3: (attacker1(Sasha), target1(dinoel), wp1(rl)); (attacker2(Sasha), target2(Andrey), wp2(rl)); (attacker3(dinoel), target3(Sasha), wp3(rl));
+        # TODO suicide + kill + rubbish OLOLO: 49.301239 deaths(3) >= 3: (attacker1(DimaG), target1(Andrey), wp1(rl)); (attacker2(dinoel), target2(Sasha), wp2(rl)); (attacker3(dinoel), target3(dinoel), wp3(rl)); 
         tmpComboStr += ("OLOLO: %f deaths(%d) >= 3: %s\n" % (tt, deaths, resStr))
         
 tmpComboStr += "==========================================\n"        
