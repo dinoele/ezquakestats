@@ -4625,6 +4625,10 @@ AchievementType = enum( LONG_LIVE  = 1, #"Long Live and Prosper",  # the 1st 30 
                         # Lumberjack junior
                         # shotgut master Fo4_Rifleman.png
                         # team work: together kill enemy
+						# final frags differ not more than 15-20 percents for 3 players
+					    # final frags differ not more than 15-20 percents for 4 players
+					    # final victory after timeout when the player wasn't on the top
+						
                         
                                             )
 
